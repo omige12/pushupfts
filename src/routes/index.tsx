@@ -659,6 +659,12 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
   const [editing, setEditing] = useState(initialEditing);
   const [formData, setFormData] = useState(user);
 
+  useEffect(() => {
+    if (initialEditing) {
+      setEditing(true);
+    }
+  }, [initialEditing]);
+
   const stats = user;
   
   const handleSave = () => {
