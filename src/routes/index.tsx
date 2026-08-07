@@ -768,13 +768,11 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
 
 
 function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
-  const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState(user);
+  const [editing, setEditing] = useState(initialEditing);
+  const [formData, setFormData] = useState({ ...user });
 
   useEffect(() => {
-    if (initialEditing) {
-      setEditing(true);
-    }
+    if (initialEditing) setEditing(true);
   }, [initialEditing]);
 
   const stats = user;
@@ -790,13 +788,13 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
   if (editing) {
     return (
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-6 space-y-6 pb-24">
         <div className="flex items-center gap-4 mb-6">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setEditing(false)}><ArrowLeft className="w-5 h-5" /></Button>
-          <h2 className="text-3xl font-black italic text-white tracking-tighter">EDITAR PERFIL</h2>
+          <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">EDITAR DADOS</h2>
         </div>
 
-        <div className="glass-panel p-6 space-y-6">
+        <div className="glass-panel p-6 space-y-6 border-gold/20 relative overflow-hidden">
           <div className="flex flex-col items-center gap-4 mb-2">
             <div className="relative group cursor-pointer" onClick={() => {
               const input = document.createElement('input');
@@ -822,8 +820,50 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                 )}
               </div>
               <div className="absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity backdrop-blur-sm">
-                <span className="text-[10px] font-black text-white uppercase tracking-widest">Alterar Foto</span>
+                <div className="flex flex-col items-center gap-1">
+                  <Camera className="w-6 h-6 text-white" />
+                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Alterar Foto</span>
+                </div>
               </div>
+            </div>
+            <div className="flex gap-2">
+               <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-[10px] font-black uppercase h-8 px-4" onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = 'image/*';
+                  input.capture = 'user';
+                  input.onchange = (e) => {
+                    const file = (e.target as HTMLInputElement).files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (re) => {
+                        setFormData({ ...formData, avatar: re.target?.result as string });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  };
+                  input.click();
+               }}>
+                 <Camera className="w-3 h-3 mr-1" /> Câmera
+               </Button>
+               <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-[10px] font-black uppercase h-8 px-4" onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = 'image/*';
+                  input.onchange = (e) => {
+                    const file = (e.target as HTMLInputElement).files?.[0];
+                    if (file) {
+                      const reader = new FileReader();
+                      reader.onload = (re) => {
+                        setFormData({ ...formData, avatar: re.target?.result as string });
+                      };
+                      reader.readAsDataURL(file);
+                    }
+                  };
+                  input.click();
+               }}>
+                 <ImageIcon className="w-3 h-3 mr-1" /> Galeria
+               </Button>
             </div>
           </div>
 
