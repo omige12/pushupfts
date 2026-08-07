@@ -189,44 +189,137 @@ function Challenge({ bot, onExit }: { bot: any, onExit: () => void }) {
   const [playerPushups, setPlayerPushups] = useState(0);
   const [botPushups, setBotPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
+  const [gameState, setGameState] = useState<'countdown' | 'playing' | 'finished'>('countdown');
+  const [countdown, setCountdown] = useState(3);
 
   useEffect(() => {
-    if (timeLeft > 0) {
+    if (gameState === 'countdown') {
+      if (countdown > 0) {
+        const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+        return () => clearTimeout(timer);
+      } else {
+        setGameState('playing');
+      }
+    }
+
+    if (gameState === 'playing' && timeLeft > 0) {
       const timer = setInterval(() => {
         setTimeLeft(t => t - 1);
-        if (bot) setBotPushups(b => b + Math.floor(Math.random() * 2));
+        if (bot) {
+          // Bots have different speeds based on difficulty
+          const chance = bot.level / 20; // 0.05 to 2.5
+          if (Math.random() < chance) {
+            setBotPushups(b => b + 1);
+          }
+        }
       }, 1000);
       return () => clearInterval(timer);
-    } else {
-        confetti({ particleCount: 200, spread: 100, origin: { y: 0.8 } });
+    } else if (gameState === 'playing' && timeLeft === 0) {
+      setGameState('finished');
+      if (playerPushups >= botPushups) {
+        confetti({ 
+          particleCount: 250, 
+          spread: 80, 
+          origin: { y: 0.6 },
+          colors: ['#FFD700', '#60A5FA', '#F43F5E']
+        });
+      }
     }
-  }, [timeLeft, bot]);
+  }, [timeLeft, bot, gameState, countdown, playerPushups, botPushups]);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 flex flex-col items-center gap-6">
-      <div className="w-full flex justify-between items-center bg-black/40 p-4 rounded-2xl border border-white/10">
-        <div className="text-center font-black">
-          <p className="text-sm">VOCÊ</p>
-          <p className="text-3xl">{playerPushups}</p>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 flex flex-col h-[calc(100vh-80px)]">
+      <div className="flex justify-between items-center mb-6 relative">
+        <div className="flex-1 glass-panel p-3 border-r-0 rounded-r-none border-primary/30 bg-primary/10">
+          <p className="text-[10px] font-black italic text-primary uppercase tracking-widest">Você</p>
+          <div className="flex items-center gap-2">
+            <span className="text-3xl font-black text-white italic">{playerPushups}</span>
+            <span className="text-xs font-black text-white/40">💪</span>
+          </div>
         </div>
-        <div className="text-4xl font-black tabular-nums text-energy-red">{timeLeft}s</div>
-        <div className="text-center font-black">
-          <p className="text-sm">{bot?.name || 'BOT'}</p>
-          <p className="text-3xl">{botPushups}</p>
+        <div className="z-10 bg-card border-4 border-background w-16 h-16 rounded-full flex items-center justify-center -mx-2 shadow-xl">
+          <span className={`text-2xl font-black italic tabular-nums ${timeLeft <= 5 ? 'text-energy-red animate-pulse' : 'text-white'}`}>
+            {timeLeft}
+          </span>
+        </div>
+        <div className="flex-1 glass-panel p-3 border-l-0 rounded-l-none border-energy-red/30 bg-energy-red/10 text-right">
+          <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest">{bot?.name || 'BOT'}</p>
+          <div className="flex items-center gap-2 justify-end">
+            <span className="text-xs font-black text-white/40">💪</span>
+            <span className="text-3xl font-black text-white italic">{botPushups}</span>
+          </div>
         </div>
       </div>
-      
-      <PushUpCounter isActive={timeLeft > 0} onCount={setPlayerPushups} />
-      
-      {timeLeft === 0 && (
-        <div className="text-center space-y-4 animate-bounce">
-            <h2 className="text-4xl font-black">{playerPushups >= botPushups ? "VITÓRIA!" : "DERROTA!"}</h2>
-            <Button onClick={onExit} className="game-button bg-primary">VOLTAR</Button>
+
+      <div className="flex-1 relative flex flex-col gap-6">
+        <PushUpCounter isActive={gameState === 'playing'} onCount={setPlayerPushups} />
+        
+        <div className="glass-panel p-4 bg-white/5 border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-1.5 h-10 bg-primary rounded-full" />
+            <div>
+              <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Vantagem</p>
+              <p className="text-xs font-black text-white italic">
+                {playerPushups > botPushups ? `+${playerPushups - botPushups} FLEXÕES` : 
+                 botPushups > playerPushups ? `-${botPushups - playerPushups} FLEXÕES` : 'EMPATE'}
+              </p>
+            </div>
+          </div>
+          <Timer className="w-6 h-6 text-white/20" />
         </div>
-      )}
+      </div>
+
+      <AnimatePresence>
+        {gameState === 'countdown' && (
+          <motion.div 
+            initial={{ scale: 0.5, opacity: 0 }}
+            animate={{ scale: 1.5, opacity: 1 }}
+            exit={{ scale: 2, opacity: 0 }}
+            className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none"
+          >
+            <span className="text-8xl font-black italic text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.5)]">
+              {countdown === 0 ? "VAI!" : countdown}
+            </span>
+          </motion.div>
+        )}
+
+        {gameState === 'finished' && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-background/90 backdrop-blur-md"
+          >
+            <div className="glass-panel p-8 w-full max-w-sm text-center space-y-8 border-primary/20">
+              <div className="space-y-2">
+                <Trophy className={`w-20 h-20 mx-auto ${playerPushups >= botPushups ? 'text-gold' : 'text-muted-foreground opacity-50'}`} />
+                <h2 className="text-5xl font-black italic text-white tracking-tighter">
+                  {playerPushups >= botPushups ? "VITÓRIA!" : "DERROTA!"}
+                </h2>
+                <p className="text-xs font-black text-muted-foreground uppercase tracking-widest italic">
+                  RESULTADO FINAL: {playerPushups} vs {botPushups}
+                </p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-white/5 p-4 rounded-2xl">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">XP Ganho</p>
+                  <p className="text-xl font-black text-gold">+{playerPushups >= botPushups ? 150 : 45}</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-2xl">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Bônus</p>
+                  <p className="text-xl font-black text-purple-evolve">+12</p>
+                </div>
+              </div>
+
+              <Button onClick={onExit} className="game-button bg-primary w-full py-6 text-xl tracking-tighter italic">CONTINUAR</Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
+
 
 function Profile({ setView }: { setView: (v: View) => void }) {
   const [name, setName] = useState("Guerreiro Alpha");
