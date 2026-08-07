@@ -1028,25 +1028,31 @@ function FriendChallenge({ setView, user }: { setView: (v: View) => void, user: 
 
 
 function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
-  const [tab, setTab] = useState<'global' | 'local'>('global');
+  const [tab, setTab] = useState<'global' | 'local' | 'friends'>('global');
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24">
       <div className="flex flex-col gap-6">
         <h2 className="text-3xl font-black italic text-white tracking-tighter">RANKING</h2>
         
         <div className="flex p-1 bg-white/5 rounded-2xl">
           <button 
             onClick={() => setTab('global')}
-            className={`flex-1 py-3 text-sm font-black italic rounded-xl transition-all ${tab === 'global' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+            className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'global' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
           >
             🌎 GLOBAL
           </button>
           <button 
             onClick={() => setTab('local')}
-            className={`flex-1 py-3 text-sm font-black italic rounded-xl transition-all ${tab === 'local' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+            className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'local' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
           >
             🇧🇷 BRASIL
+          </button>
+          <button 
+            onClick={() => setTab('friends')}
+            className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'friends' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+          >
+            👥 AMIGOS
           </button>
         </div>
 
