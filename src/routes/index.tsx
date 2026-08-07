@@ -275,7 +275,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
-      <header className="flex justify-between items-center">
+      <header className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
           <div className="w-14 h-14 bg-gradient-to-br from-gold to-orange-500 rounded-2xl border-2 border-white/20 shadow-lg shadow-gold/10 overflow-hidden">
             {stats.avatar ? (
@@ -297,38 +297,44 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
             </div>
           </div>
         </div>
-        <div className="w-10 h-10" />
       </header>
 
-      <div className="glass-panel p-5 relative overflow-hidden group">
-        <div className="absolute top-0 left-0 w-full h-1 bg-primary/30" />
-        <div className="flex justify-between items-end mb-2">
-          <span className="text-[10px] font-black italic text-muted-foreground uppercase tracking-widest">{getPatentEmoji(stats.patent)} {stats.patent}</span>
+      {/* Evolution Info Section */}
+      <div className="glass-panel p-5 relative overflow-hidden">
+        <div className="flex justify-between items-end mb-3">
+          <span className="text-[10px] font-black italic text-muted-foreground uppercase tracking-widest">{getPatentEmoji(stats.patent)} {stats.patent} {stats.subRank}</span>
           <span className="text-[10px] font-black italic text-white tracking-tighter">{stats.xp} / {stats.maxXp} XP</span>
         </div>
-        <Progress value={(stats.xp / stats.maxXp) * 100} className="h-2.5 bg-white/5" />
+        <Progress value={(stats.xp / stats.maxXp) * 100} className="h-3 bg-white/10" />
+        <p className="text-[10px] font-bold text-center mt-3 text-muted-foreground uppercase tracking-wider italic">
+          Faltam {stats.maxXp - stats.xp} XP para subir de patente
+        </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Button className="game-button bg-energy-red col-span-2 h-36 relative overflow-hidden group" onClick={() => setView('multiplayer')}>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-          <div className="relative flex flex-col items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Swords className="w-8 h-8 group-hover:scale-110 transition-transform" />
-              <span className="text-2xl tracking-tighter italic uppercase">Multiplayer</span>
-            </div>
-            <p className="text-[10px] font-bold opacity-80 tracking-widest">BATALHA ONLINE</p>
-          </div>
+      {/* Main Buttons Section */}
+      <div className="flex justify-between gap-4">
+        <Button className="game-button bg-primary/20 flex-1 h-20 flex flex-col gap-1.5" onClick={() => setView('achievements')}>
+          <Medal className="w-6 h-6 text-primary" />
+          <span className="text-[10px] font-black uppercase tracking-widest">Conquistas</span>
         </Button>
-        <Button className="game-button bg-primary/20 border border-primary/30 h-32 flex flex-col gap-2" onClick={() => { setSelectedBot(null); setView('select-duration'); }}>
-          <Dumbbell className="w-6 h-6 text-primary" />
-          <span className="text-lg tracking-tighter italic">TREINAR</span>
-        </Button>
-        <Button className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-32 flex flex-col gap-2" onClick={() => setView('profile')}>
-          <UserCircle className="w-6 h-6 text-purple-evolve" />
-          <span className="text-lg tracking-tighter italic">PERFIL</span>
+        <Button className="game-button bg-primary/20 flex-1 h-20 flex flex-col gap-1.5" onClick={() => setView('profile')}>
+          <UserCircle className="w-6 h-6 text-primary" />
+          <span className="text-[10px] font-black uppercase tracking-widest">Perfil</span>
         </Button>
       </div>
+
+      <Button className="game-button bg-energy-red w-full h-32 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)]" onClick={() => setView('multiplayer')}>
+        <div className="relative flex flex-col items-center gap-2">
+            <Swords className="w-10 h-10 group-hover:scale-110 transition-transform" />
+            <span className="text-2xl tracking-tighter italic uppercase">Multijogador</span>
+        </div>
+      </Button>
+
+      <Button className="game-button bg-white/10 w-full h-20 flex gap-4" onClick={() => { setSelectedBot(null); setView('select-duration'); }}>
+          <Dumbbell className="w-8 h-8 text-white" />
+          <span className="text-xl tracking-tighter italic uppercase">Treinar</span>
+      </Button>
+
 
       <div className="space-y-4">
         <div className="flex justify-between items-center">
