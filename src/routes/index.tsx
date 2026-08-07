@@ -353,7 +353,9 @@ function App() {
         xp: newTotalXp,
         patent: newRank.patentName,
         subRank: newRank.subRank,
+        level: newRank.level,
         history: [newMatch, ...prev.history].slice(0, 15)
+
       };
     });
   };
