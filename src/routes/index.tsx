@@ -729,12 +729,12 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
           >
             <div className="glass-panel p-8 w-full max-w-sm text-center space-y-8 border-primary/20">
               <div className="space-y-2">
-                <Trophy className={`w-20 h-20 mx-auto ${playerPushups >= botPushups ? 'text-gold' : 'text-muted-foreground opacity-50'}`} />
+                <Trophy className={`w-20 h-20 mx-auto ${playerPushups >= oppPushups ? 'text-gold' : 'text-muted-foreground opacity-50'}`} />
                 <h2 className="text-5xl font-black italic text-white tracking-tighter">
-                  {playerPushups >= botPushups ? "VITÓRIA!" : "DERROTA!"}
+                  {playerPushups >= oppPushups ? "VITÓRIA!" : "DERROTA!"}
                 </h2>
                 <p className="text-xs font-black text-muted-foreground uppercase tracking-widest italic">
-                  RESULTADO FINAL: {playerPushups} vs {botPushups}
+                  RESULTADO FINAL: {playerPushups} vs {oppPushups}
                 </p>
               </div>
 
