@@ -817,12 +817,18 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               <span className="text-[10px] font-mono text-muted-foreground">{stats.id}</span>
               {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
             </div>
-            <Badge className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold">{getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}</Badge>
+            <Badge 
+              className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold cursor-pointer hover:scale-105 transition-transform"
+              onClick={() => setView('patents-list')}
+            >
+              {getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}
+            </Badge>
           </div>
           <div className="flex justify-center mt-1">
              <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.age} ANOS • {stats.height}CM</Badge>
           </div>
         </div>
+
 
         <div 
           className="w-full space-y-2 cursor-pointer active:scale-[0.98] transition-all"
