@@ -196,7 +196,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
       <div className="glass-panel p-5 relative overflow-hidden group">
         <div className="absolute top-0 left-0 w-full h-1 bg-primary/30" />
         <div className="flex justify-between items-end mb-2">
-          <span className="text-[10px] font-black italic text-muted-foreground uppercase tracking-widest">Nível {stats.level}</span>
+          <span className="text-[10px] font-black italic text-muted-foreground uppercase tracking-widest">{getPatentEmoji(stats.patent)} {stats.patent}</span>
           <span className="text-[10px] font-black italic text-white tracking-tighter">{stats.xp} / {stats.maxXp} XP</span>
         </div>
         <Progress value={(stats.xp / stats.maxXp) * 100} className="h-2.5 bg-white/5" />
