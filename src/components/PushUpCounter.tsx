@@ -30,8 +30,8 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
     const setupPose = async () => {
       await tf.setBackend('webgl');
       
-      pose = new pose.Pose({
-        locateFile: (file: string) => {
+      pose = new Pose({
+        locateFile: (file) => {
           return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
         },
       });
