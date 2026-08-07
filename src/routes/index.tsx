@@ -547,6 +547,10 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
   const [gameState, setGameState] = useState<'countdown' | 'playing' | 'finished'>('countdown');
   const [countdown, setCountdown] = useState(3);
 
+  const handlePlayerCount = useCallback((count: number) => {
+    setPlayerPushups(count);
+  }, []);
+
   useEffect(() => {
     if (gameState === 'countdown') {
       if (countdown > 0) {
