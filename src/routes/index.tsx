@@ -187,8 +187,8 @@ function App() {
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
-      case 'settings': return <Profile setView={setView} user={user} setUser={setUser} />;
-      case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} />;
+      case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
+      case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
@@ -196,6 +196,7 @@ function App() {
       case 'history': return <FullHistory setView={setView} user={user} />;
       case 'friend-challenge': return <FriendChallenge setView={setView} user={user} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
+      case 'patents-list': return <PatentsList setView={setView} user={user} />;
       default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
     }
   };
