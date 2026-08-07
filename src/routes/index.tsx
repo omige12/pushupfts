@@ -1737,12 +1737,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
         <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
       </div>
       
-      {/* ⭐ Destaques Section */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Star className="w-5 h-5 text-gold fill-gold" />
-          <h3 className="text-sm font-black italic tracking-widest text-white uppercase">⭐ Destaques</h3>
-        </div>
         <div className="grid grid-cols-2 gap-3">
           {[
             { label: 'Melhor Recorde', val: user.record, sub: 'FLEXÕES', icon: Target, color: 'text-gold' },
