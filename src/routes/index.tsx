@@ -186,9 +186,9 @@ function App() {
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
-      case 'profile': return <Profile setView={setView} user={user} />;
-      case 'settings': return <SettingsView setView={setView} user={user} />;
-      case 'edit-profile': return <EditProfile setView={setView} user={user} setUser={setUser} />;
+      case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
+      case 'settings': return <Profile setView={setView} user={user} setUser={setUser} />;
+      case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
