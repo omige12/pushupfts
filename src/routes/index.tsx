@@ -551,12 +551,14 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           onClick={() => setView('edit-profile')}
         >
           <UserCircle className="w-10 h-10 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <span className="text-[10px] font-black italic tracking-tighter uppercase">Editar Perfil</span>
         </Button>
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
           onClick={() => setView('achievements')}
         >
           <Medal className="w-10 h-10 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <span className="text-[10px] font-black italic tracking-tighter uppercase">Conquistas</span>
         </Button>
       </div>
 
