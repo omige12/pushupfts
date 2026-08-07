@@ -389,17 +389,15 @@ function Challenge({ bot, onExit, onComplete }: { bot: any, onExit: () => void, 
 }
 
 
-function Profile({ setView }: { setView: (v: View) => void }) {
-  const [name, setName] = useState("Guerreiro Alpha");
-  const stats = {
-    level: 15,
-    xp: 12450,
-    maxXp: 15000,
-    wins: 87,
-    losses: 23,
-    record: 54,
-    league: "Elite",
-    rank: 124
+function Profile({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: any }) {
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState(user);
+
+  const stats = user;
+  
+  const handleSave = () => {
+    setUser(formData);
+    setEditing(false);
   };
 
   return (
