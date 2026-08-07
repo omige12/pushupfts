@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { 
   Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon,
-  Flame, ArrowLeft, Timer, Settings, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
-  Copy, Check, Search, Zap, Award, Sparkles
+  Flame, ArrowLeft, Timer, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
+  Copy, Check, Search, Zap, Award, Sparkles, Pencil
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -304,26 +304,26 @@ function App() {
         )}
       </AnimatePresence>
 
-      <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around p-3 z-50">
-        <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
+      <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around items-center p-3 z-50">
+        <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
           <Home className="w-5 h-5" />
           <span className="text-[10px] font-black uppercase tracking-tighter">Início</span>
         </button>
-        <button onClick={() => setView('multiplayer')} className={`flex flex-col items-center gap-1 ${view === 'multiplayer' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <Swords className="w-5 h-5" />
+        <button onClick={() => setView('achievements')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'achievements' ? 'text-primary' : 'text-muted-foreground'}`}>
+          <Medal className="w-5 h-5" />
+          <span className="text-[10px] font-black uppercase tracking-tighter">Conquistas</span>
+        </button>
+        <button onClick={() => setView('multiplayer')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'multiplayer' ? 'text-primary' : 'text-muted-foreground'}`}>
+          <Swords className="w-6 h-6" />
           <span className="text-[10px] font-black uppercase tracking-tighter">Batalha</span>
         </button>
-        <button onClick={() => setView('ranking')} className={`flex flex-col items-center gap-1 ${view === 'ranking' ? 'text-primary' : 'text-muted-foreground'}`}>
+        <button onClick={() => setView('ranking')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'ranking' ? 'text-primary' : 'text-muted-foreground'}`}>
           <Trophy className="w-5 h-5" />
           <span className="text-[10px] font-black uppercase tracking-tighter">Ranking</span>
         </button>
-        <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 ${view === 'profile' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-muted-foreground'}`}>
+        <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'profile' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-muted-foreground'}`}>
           <UserCircle className="w-5 h-5" />
           <span className="text-[10px] font-black uppercase tracking-tighter">Perfil</span>
-        </button>
-        <button onClick={() => setView('achievements')} className={`flex flex-col items-center gap-1 ${view === 'achievements' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <Medal className="w-5 h-5" />
-          <span className="text-[10px] font-black uppercase tracking-tighter">Conquistas</span>
         </button>
       </nav>
     </div>
@@ -547,6 +547,10 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
   const [gameState, setGameState] = useState<'countdown' | 'playing' | 'finished'>('countdown');
   const [countdown, setCountdown] = useState(3);
 
+  const handlePlayerCount = useCallback((count: number) => {
+    setPlayerPushups(count);
+  }, []);
+
   useEffect(() => {
     if (gameState === 'countdown') {
       if (countdown > 0) {
@@ -673,7 +677,7 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
       </div>
 
       <div className="flex-1 relative flex flex-col gap-6">
-        <PushUpCounter isActive={gameState === 'playing'} onCount={setPlayerPushups} />
+        <PushUpCounter isActive={gameState === 'playing'} onCount={handlePlayerCount} />
         
         <div className="glass-panel p-4 bg-white/5 border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -994,17 +998,17 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         <Button 
           variant="ghost" 
-          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10 w-full"
+          className="game-button bg-primary/20 w-full p-6 h-auto flex justify-between items-center border-primary/20 hover:bg-primary/30 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.2)]"
           onClick={() => setEditing(true)}
         >
           <div className="flex items-center gap-4">
-            <Settings className="w-6 h-6 text-white/40" />
+            <Pencil className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
             <div className="text-left">
-              <p className="font-black text-white italic">CONFIGURAÇÕES</p>
-              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Editar seu personagem</p>
+              <p className="font-black text-white italic text-xl uppercase tracking-tighter">✏️ Editar Perfil</p>
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Alterar foto e dados</p>
             </div>
           </div>
-          <ChevronRight className="w-5 h-5 text-white/20" />
+          <ChevronRight className="w-6 h-6 text-primary" />
         </Button>
       </div>
     </motion.div>
