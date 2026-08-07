@@ -19,12 +19,16 @@ export const Route = createFileRoute("/")({
 type View = 'dashboard' | 'challenge' | 'select-bot' | 'profile' | 'ranking' | 'achievements';
 
 const BOTS = [
-  { id: 'beginner', name: 'Bot Iniciante', color: 'bg-green-500', level: 1, difficulty: 'Fácil', avgPushups: 10 },
-  { id: 'amateur', name: 'Bot Amador', color: 'bg-blue-500', level: 3, difficulty: 'Médio', avgPushups: 20 },
-  { id: 'pro', name: 'Bot Intermediário', color: 'bg-purple-500', level: 6, difficulty: 'Difícil', avgPushups: 35 },
-  { id: 'advanced', name: 'Bot Avançado', color: 'bg-orange-500', level: 12, difficulty: 'Elite', avgPushups: 50 },
-  { id: 'elite', name: 'Bot Elite', color: 'bg-red-500', level: 20, difficulty: 'Expert', avgPushups: 70 },
-  { id: 'legendary', name: 'Bot Lendário', color: 'bg-yellow-500', level: 50, difficulty: 'Máximo', avgPushups: 100 },
+  { id: '1', name: 'Bot Iniciante', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
+  { id: '2', name: 'Bot Nível 2', color: 'bg-green-600', level: 2, difficulty: 'Fácil', avgPushups: 10 },
+  { id: '3', name: 'Bot Competitivo', color: 'bg-yellow-500', level: 3, difficulty: 'Iniciante', avgPushups: 15 },
+  { id: '4', name: 'Bot Amador', color: 'bg-yellow-600', level: 4, difficulty: 'Médio', avgPushups: 25 },
+  { id: '5', name: 'Bot Equilibrado', color: 'bg-orange-500', level: 5, difficulty: 'Desafiante', avgPushups: 35 },
+  { id: '6', name: 'Bot Difícil', color: 'bg-orange-600', level: 6, difficulty: 'Difícil', avgPushups: 45 },
+  { id: '7', name: 'Bot Muito Difícil', color: 'bg-red-500', level: 7, difficulty: 'Muito Difícil', avgPushups: 55 },
+  { id: '8', name: 'Bot Elite', color: 'bg-red-600', level: 8, difficulty: 'Elite', avgPushups: 70 },
+  { id: '9', name: 'Bot Mestre', color: 'bg-purple-500', level: 9, difficulty: 'Mestre', avgPushups: 90 },
+  { id: '10', name: 'Bot Lendário', color: 'bg-yellow-400', level: 10, difficulty: 'Lendário', avgPushups: 120 },
 ];
 
 function App() {
