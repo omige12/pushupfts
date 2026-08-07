@@ -300,7 +300,10 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
         </div>
       </header>
 
-      <div className="glass-panel p-5 relative overflow-hidden group border-primary/20">
+      <div 
+        className="glass-panel p-5 relative overflow-hidden group border-primary/20 cursor-pointer active:scale-[0.98] transition-all"
+        onClick={() => setView('patents-list')}
+      >
         <div className="absolute top-0 left-0 w-full h-1 bg-primary/30" />
         <div className="flex justify-between items-end mb-2">
           <div className="flex flex-col">
@@ -316,10 +319,11 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           </p>
           <div className="flex items-center gap-1">
              <Star className="w-3 h-3 text-gold fill-gold" />
-             <span className="text-[8px] font-black text-gold uppercase tracking-widest">Moldura Rara</span>
+             <span className="text-[8px] font-black text-gold uppercase tracking-widest">Ver Trilhas</span>
           </div>
         </div>
       </div>
+
 
 
       <div className="grid grid-cols-2 gap-4">
