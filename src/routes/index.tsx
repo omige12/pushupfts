@@ -87,11 +87,12 @@ const BOTS = [
     avatar: '/__l5e/assets-v1/38600428-3d1e-452a-a930-5df3237659ce/bot1.jpg', 
     color: 'bg-green-500', 
     level: 1, 
-    difficulty: 'Muito Fácil', 
-    avgPushups: 10,
+    difficulty: 'Fácil', 
+    avgPushups: 20,
     league: 'Bronze',
-    stats: { strength: 15, stamina: 10, speed: 12 },
-    record: 15
+    stats: { strength: 25, stamina: 20, speed: 25 },
+    record: 25,
+    pushupRate: 0.12 // Pushups per second chance
   },
   { 
     id: '2', 
@@ -99,11 +100,12 @@ const BOTS = [
     avatar: '/__l5e/assets-v1/f7a3c87a-4217-408f-9f48-c3622417f6b3/bot2.jpg', 
     color: 'bg-green-600', 
     level: 2, 
-    difficulty: 'Fácil', 
-    avgPushups: 25,
+    difficulty: 'Normal', 
+    avgPushups: 40,
     league: 'Bronze',
-    stats: { strength: 25, stamina: 20, speed: 22 },
-    record: 30
+    stats: { strength: 40, stamina: 35, speed: 40 },
+    record: 45,
+    pushupRate: 0.25
   },
   { 
     id: '3', 
@@ -112,10 +114,11 @@ const BOTS = [
     color: 'bg-yellow-500', 
     level: 3, 
     difficulty: 'Médio', 
-    avgPushups: 45,
+    avgPushups: 65,
     league: 'Prata',
-    stats: { strength: 45, stamina: 40, speed: 38 },
-    record: 55
+    stats: { strength: 65, stamina: 60, speed: 60 },
+    record: 75,
+    pushupRate: 0.45
   },
   { 
     id: '4', 
@@ -124,10 +127,11 @@ const BOTS = [
     color: 'bg-orange-600', 
     level: 4, 
     difficulty: 'Difícil', 
-    avgPushups: 80,
+    avgPushups: 100,
     league: 'Prata',
-    stats: { strength: 75, stamina: 70, speed: 65 },
-    record: 95
+    stats: { strength: 85, stamina: 80, speed: 85 },
+    record: 120,
+    pushupRate: 0.75
   },
   { 
     id: '5', 
@@ -136,10 +140,11 @@ const BOTS = [
     color: 'bg-yellow-400', 
     level: 5, 
     difficulty: 'Lendário', 
-    avgPushups: 250,
+    avgPushups: 350,
     league: 'Ouro',
-    stats: { strength: 100, stamina: 100, speed: 95 },
-    record: 350
+    stats: { strength: 100, stamina: 100, speed: 100 },
+    record: 450,
+    pushupRate: 1.5
   },
 ];
 
@@ -384,17 +389,17 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
       <div className="grid grid-cols-2 gap-4">
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
-          onClick={() => setView('achievements')}
-        >
-          <Medal className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-          <span className="text-[10px] font-black uppercase tracking-widest italic">🎖️ Conquistas</span>
-        </Button>
-        <Button 
-          className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
           onClick={() => setView('profile')}
         >
           <UserCircle className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
           <span className="text-[10px] font-black uppercase tracking-widest italic">👤 Perfil</span>
+        </Button>
+        <Button 
+          className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
+          onClick={() => setView('achievements')}
+        >
+          <Medal className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <span className="text-[10px] font-black uppercase tracking-widest italic">🎖️ Conquistas</span>
         </Button>
       </div>
 
@@ -556,12 +561,20 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
       const timer = setInterval(() => {
         setTimeLeft(t => t - 1);
         if (bot) {
-          // Bots have different speeds based on difficulty
-          // David Goggins is much harder
-          const baseChance = bot.id === '5' ? bot.level / 12 : bot.level / 20;
-          const chance = baseChance; // High performance for Goggins
+          // New difficulty logic based on pushupRate
+          // pushupRate is the chance to add a pushup every second.
+          // For David Goggins (1.5), it means 1 guaranteed pushup + 50% chance for a second one.
+          const rate = bot.pushupRate || 0.1;
+          const guaranteed = Math.floor(rate);
+          const chance = rate - guaranteed;
+          
+          let increment = guaranteed;
           if (Math.random() < chance) {
-            setBotPushups(b => b + 1);
+            increment += 1;
+          }
+          
+          if (increment > 0) {
+            setBotPushups(b => b + increment);
           }
         }
       }, 1000);
@@ -808,52 +821,50 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Idade</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Idade</label>
                 <input 
                   type="number"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
                   value={formData.age}
                   onChange={(e) => setFormData({ ...formData, age: parseInt(e.target.value) || 0 })}
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Peso (kg)</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Peso (kg)</label>
                 <input 
                   type="number"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
                   value={formData.weight}
                   onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 0 })}
                 />
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Altura (cm)</label>
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Altura (cm)</label>
                 <input 
                   type="number"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary transition-all"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
                   value={formData.height}
                   onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) || 0 })}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Objetivo</label>
-                <div className="relative">
-                  <select 
-                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary appearance-none h-[58px] italic"
-                    value={formData.goal}
-                    onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
-                  >
-                    <option value="Ganhar força">GANHAR FORÇA</option>
-                    <option value="Resistência">RESISTÊNCIA</option>
-                    <option value="Hipertrofia">HIPERTROFIA</option>
-                    <option value="Perda de peso">PERDA DE PESO</option>
-                  </select>
-                  <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 rotate-90 pointer-events-none" />
-                </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Objetivo Fitness</label>
+              <div className="relative">
+                <select 
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary appearance-none h-[58px] italic"
+                  value={formData.goal}
+                  onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+                >
+                  <option value="Ganhar força">GANHAR FORÇA</option>
+                  <option value="Resistência">RESISTÊNCIA</option>
+                  <option value="Hipertrofia">HIPERTROFIA</option>
+                  <option value="Perda de peso">PERDA DE PESO</option>
+                </select>
+                <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 rotate-90 pointer-events-none" />
               </div>
             </div>
           </div>
@@ -877,9 +888,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">PERFIL</h2>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
       </div>
 
       <div className="glass-panel p-8 flex flex-col items-center gap-6 relative overflow-hidden group">
@@ -1108,7 +1119,7 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
       else if (lower.includes('treino')) response = "No modo treino, você pode praticar sozinho. Nossa IA analisa sua postura e conta suas repetições em tempo real.";
       else if (lower.includes('patente') || lower.includes('liga')) response = "Existem 7 patentes: Bronze, Prata, Ouro, Diamante, Pro, Mestre e Lenda. Evolua seu nível e recorde para subir de patente!";
       else if (lower.includes('bot')) response = "Temos 10 níveis de bots, do Iniciante ao Lendário. Cada nível aumenta a velocidade e quantidade de flexões do oponente.";
-      else if (lower.includes('ranking')) response = "O ranking mostra os melhores jogadores Global e do Brasil. Acumule vitórias para subir nas tabelas!";
+      else if (lower.includes('ranking')) response = "O ranking mostra os melhores jogadores do Brasil e seus amigos. Acumule vitórias para subir nas tabelas!";
       else if (lower.includes('perfil') || lower.includes('configuração')) response = "Você pode editar seu nome, peso, altura e foto diretamente na tela de Configurações dentro do seu Perfil.";
 
       setMessages(prev => [...prev, { role: 'ai', text: response }]);
@@ -1322,7 +1333,7 @@ function FriendChallenge({ setView, user }: { setView: (v: View) => void, user: 
 
 
 function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
-  const [tab, setTab] = useState<'global' | 'local' | 'friends'>('global');
+  const [tab, setTab] = useState<'local' | 'friends'>('local');
   
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24">
@@ -1330,12 +1341,6 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
         <h2 className="text-3xl font-black italic text-white tracking-tighter">RANKING</h2>
         
         <div className="flex p-1 bg-white/5 rounded-2xl">
-          <button 
-            onClick={() => setTab('global')}
-            className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'global' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
-          >
-            🌎 GLOBAL
-          </button>
           <button 
             onClick={() => setTab('local')}
             className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'local' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
