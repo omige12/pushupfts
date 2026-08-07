@@ -169,9 +169,9 @@ function App() {
     frame: "basic",
     achievements: ["1", "2"],
     history: [
-      { id: 'h1', opp: "Bot Elite", res: "Vitória", score: "42-39", xp: "+150", date: '2026-08-01' },
-      { id: 'h2', opp: "Bot Avançado", res: "Vitória", score: "38-30", xp: "+120", date: '2026-07-28' },
-      { id: 'h3', opp: "Bot Lendário", res: "Derrota", score: "45-52", xp: "+45", date: '2026-07-25' },
+      { id: 'h1', opp: "Guerreiro", res: "Vitória", score: "42-39", xp: "+150", date: '2026-08-01' },
+      { id: 'h2', opp: "Determinado", res: "Vitória", score: "38-30", xp: "+120", date: '2026-07-28' },
+      { id: 'h3', opp: "David Goggins \"Lendário\"", res: "Derrota", score: "45-82", xp: "+45", date: '2026-07-25' },
     ]
   });
 
