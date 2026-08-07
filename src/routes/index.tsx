@@ -19,26 +19,98 @@ export const Route = createFileRoute("/")({
 type View = 'dashboard' | 'challenge' | 'select-bot' | 'profile' | 'ranking' | 'achievements';
 
 const BOTS = [
-  { id: 'beginner', name: 'Bot Iniciante', color: 'bg-green-500', level: 1, difficulty: 'Fácil', avgPushups: 10 },
-  { id: 'amateur', name: 'Bot Amador', color: 'bg-blue-500', level: 3, difficulty: 'Médio', avgPushups: 20 },
-  { id: 'pro', name: 'Bot Intermediário', color: 'bg-purple-500', level: 6, difficulty: 'Difícil', avgPushups: 35 },
-  { id: 'advanced', name: 'Bot Avançado', color: 'bg-orange-500', level: 12, difficulty: 'Elite', avgPushups: 50 },
-  { id: 'elite', name: 'Bot Elite', color: 'bg-red-500', level: 20, difficulty: 'Expert', avgPushups: 70 },
-  { id: 'legendary', name: 'Bot Lendário', color: 'bg-yellow-500', level: 50, difficulty: 'Máximo', avgPushups: 100 },
+  { id: '1', name: 'Bot Iniciante', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
+  { id: '2', name: 'Bot Nível 2', color: 'bg-green-600', level: 2, difficulty: 'Fácil', avgPushups: 10 },
+  { id: '3', name: 'Bot Competitivo', color: 'bg-yellow-500', level: 3, difficulty: 'Iniciante', avgPushups: 15 },
+  { id: '4', name: 'Bot Amador', color: 'bg-yellow-600', level: 4, difficulty: 'Médio', avgPushups: 25 },
+  { id: '5', name: 'Bot Equilibrado', color: 'bg-orange-500', level: 5, difficulty: 'Desafiante', avgPushups: 35 },
+  { id: '6', name: 'Bot Difícil', color: 'bg-orange-600', level: 6, difficulty: 'Difícil', avgPushups: 45 },
+  { id: '7', name: 'Bot Muito Difícil', color: 'bg-red-500', level: 7, difficulty: 'Muito Difícil', avgPushups: 55 },
+  { id: '8', name: 'Bot Elite', color: 'bg-red-600', level: 8, difficulty: 'Elite', avgPushups: 70 },
+  { id: '9', name: 'Bot Mestre', color: 'bg-purple-500', level: 9, difficulty: 'Mestre', avgPushups: 90 },
+  { id: '10', name: 'Bot Lendário', color: 'bg-yellow-400', level: 10, difficulty: 'Lendário', avgPushups: 120 },
 ];
 
 function App() {
   const [view, setView] = useState<View>('dashboard');
   const [selectedBot, setSelectedBot] = useState<typeof BOTS[0] | null>(null);
+  const [user, setUser] = useState({
+    name: "GUERREIRO ALPHA",
+    age: 25,
+    weight: 75,
+    height: 175,
+    goal: "Ganhar força",
+    level: 15,
+    xp: 12450,
+    maxXp: 15000,
+    wins: 87,
+    losses: 23,
+    record: 54,
+    totalPushups: 10450,
+    league: "Bronze",
+    avatar: null,
+    frame: "basic",
+    achievements: ["1", "2"],
+    history: [
+      { id: 'h1', opp: "Bot Elite", res: "Vitória", score: "42-39", xp: "+150", date: '2026-08-01' },
+      { id: 'h2', opp: "Bot Avançado", res: "Vitória", score: "38-30", xp: "+120", date: '2026-07-28' },
+      { id: 'h3', opp: "Bot Lendário", res: "Derrota", score: "45-52", xp: "+45", date: '2026-07-25' },
+    ]
+  });
+
+  const getLeague = (record: number) => {
+    if (record >= 1500) return "Lenda";
+    if (record >= 1000) return "Mestre";
+    if (record >= 800) return "Diamante";
+    if (record >= 500) return "Ouro";
+    if (record >= 300) return "Prata";
+    return "Bronze";
+  };
+
+  const updateStats = (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => {
+    setUser(prev => {
+      const newRecord = Math.max(prev.record, pushups);
+      const newXp = prev.xp + xpGained;
+      let newLevel = prev.level;
+      let nextMaxXp = prev.maxXp;
+      
+      if (newXp >= prev.maxXp) {
+        newLevel += 1;
+        nextMaxXp = Math.floor(prev.maxXp * 1.2);
+      }
+
+      const newMatch = {
+        id: Math.random().toString(36).substr(2, 9),
+        opp: botName,
+        res: won ? "Vitória" : "Derrota",
+        score: `${pushups}-${botPushups}`,
+        xp: `+${xpGained}`,
+        date: new Date().toISOString().split('T')[0]
+      };
+
+      return {
+        ...prev,
+        wins: won ? prev.wins + 1 : prev.wins,
+        losses: !won ? prev.losses + 1 : prev.losses,
+        record: newRecord,
+        totalPushups: prev.totalPushups + pushups,
+        xp: newXp % prev.maxXp,
+        level: newLevel,
+        maxXp: nextMaxXp,
+        league: getLeague(newRecord),
+        history: [newMatch, ...prev.history].slice(0, 10)
+      };
+    });
+  };
 
   const renderView = () => {
     switch (view) {
-      case 'dashboard': return <Dashboard setView={setView} />;
+      case 'dashboard': return <Dashboard setView={setView} user={user} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('challenge'); }} />;
-      case 'challenge': return <Challenge bot={selectedBot} onExit={() => setView('dashboard')} />;
-      case 'profile': return <Profile setView={setView} />;
-      case 'ranking': return <Ranking setView={setView} />;
-      case 'achievements': return <Achievements setView={setView} />;
+      case 'challenge': return <Challenge bot={selectedBot} onExit={() => setView('dashboard')} onComplete={updateStats} />;
+      case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
+      case 'ranking': return <Ranking setView={setView} user={user} />;
+      case 'achievements': return <Achievements setView={setView} user={user} />;
     }
   };
 
@@ -65,15 +137,8 @@ function App() {
   );
 }
 
-function Dashboard({ setView }: { setView: (v: View) => void }) {
-  const stats = {
-    level: 15,
-    xp: 12450,
-    maxXp: 15000,
-    wins: 87,
-    streak: 12,
-    league: "Elite"
-  };
+function Dashboard({ setView, user }: { setView: (v: View) => void, user: any }) {
+  const stats = user;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
@@ -185,7 +250,7 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
 }
 
 
-function Challenge({ bot, onExit }: { bot: any, onExit: () => void }) {
+function Challenge({ bot, onExit, onComplete }: { bot: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => void }) {
   const [playerPushups, setPlayerPushups] = useState(0);
   const [botPushups, setBotPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
@@ -223,9 +288,12 @@ function Challenge({ bot, onExit }: { bot: any, onExit: () => void }) {
           origin: { y: 0.6 },
           colors: ['#FFD700', '#60A5FA', '#F43F5E']
         });
+        onComplete(true, playerPushups, 150 + playerPushups, bot.name, botPushups);
+      } else {
+        onComplete(false, playerPushups, 45 + playerPushups, bot.name, botPushups);
       }
     }
-  }, [timeLeft, bot, gameState, countdown, playerPushups, botPushups]);
+  }, [timeLeft, bot, gameState, countdown, playerPushups, botPushups, onComplete]);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 flex flex-col h-[calc(100vh-80px)]">
@@ -321,45 +389,98 @@ function Challenge({ bot, onExit }: { bot: any, onExit: () => void }) {
 }
 
 
-function Profile({ setView }: { setView: (v: View) => void }) {
-  const [name, setName] = useState("Guerreiro Alpha");
-  const stats = {
-    level: 15,
-    xp: 12450,
-    maxXp: 15000,
-    wins: 87,
-    losses: 23,
-    record: 54,
-    league: "Elite",
-    rank: 124
+function Profile({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: any }) {
+  const [editing, setEditing] = useState(false);
+  const [formData, setFormData] = useState(user);
+
+  const stats = user;
+  
+  const handleSave = () => {
+    setUser(formData);
+    setEditing(false);
   };
+
+  if (editing) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
+        <div className="flex items-center gap-4 mb-6">
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setEditing(false)}><ArrowLeft className="w-5 h-5" /></Button>
+          <h2 className="text-3xl font-black italic text-white tracking-tighter">EDITAR PERFIL</h2>
+        </div>
+
+        <div className="glass-panel p-6 space-y-4">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Nome de Usuário</label>
+            <input 
+              className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Idade</label>
+              <input 
+                type="number"
+                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary"
+                value={formData.age}
+                onChange={(e) => setFormData({ ...formData, age: parseInt(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Peso (kg)</label>
+              <input 
+                type="number"
+                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary"
+                value={formData.weight}
+                onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) })}
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Objetivo</label>
+            <select 
+              className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary appearance-none"
+              value={formData.goal}
+              onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+            >
+              <option value="Ganhar força">Ganhar força</option>
+              <option value="Resistência">Resistência</option>
+              <option value="Hipertrofia">Hipertrofia</option>
+              <option value="Perda de peso">Perda de peso</option>
+            </select>
+          </div>
+          <Button onClick={handleSave} className="game-button bg-primary w-full py-6 mt-4">SALVAR ALTERAÇÕES</Button>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-black italic text-white tracking-tighter">PERFIL</h2>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5"><Settings className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setEditing(true)}><Settings className="w-5 h-5" /></Button>
       </div>
 
       <div className="glass-panel p-8 flex flex-col items-center gap-6 relative overflow-hidden group">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold via-purple-evolve to-energy-red" />
         
         <div className="relative">
-          <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:scale-105 transition-transform duration-500" />
+          <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
+             <UserIcon className="w-16 h-16 text-muted-foreground" />
+          </div>
           <div className="absolute -bottom-2 -right-2 bg-purple-evolve p-2 rounded-full border-2 border-background shadow-lg">
             <Star className="w-4 h-4 text-white" />
           </div>
         </div>
 
         <div className="text-center space-y-1">
+          <h3 className="font-black text-2xl text-white tracking-tight">{stats.name.toUpperCase()}</h3>
           <div className="flex items-center justify-center gap-2">
-            <input 
-              className="bg-transparent text-center font-black text-2xl text-white focus:outline-none w-full border-b border-transparent focus:border-white/20 pb-1" 
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
+            <Badge className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold">LIGA {stats.league.toUpperCase()}</Badge>
+            <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.goal.toUpperCase()}</Badge>
           </div>
-          <Badge className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold">LIGA {stats.league.toUpperCase()}</Badge>
         </div>
 
         <div className="w-full space-y-2">
@@ -380,25 +501,21 @@ function Profile({ setView }: { setView: (v: View) => void }) {
             <p className="text-xl font-black text-gold">{stats.record}</p>
           </div>
           <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
-            <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Rank</p>
-            <p className="text-xl font-black text-purple-evolve">#{stats.rank}</p>
+            <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Total</p>
+            <p className="text-xl font-black text-purple-evolve">{stats.totalPushups}</p>
           </div>
         </div>
       </div>
 
       <div className="space-y-4">
         <h3 className="text-lg font-black italic tracking-tight text-white/80">HISTÓRICO RECENTE</h3>
-        {[
-          { opp: "Bot Elite", res: "Vitória", score: "42-39", xp: "+150" },
-          { opp: "Bot Avançado", res: "Vitória", score: "38-30", xp: "+120" },
-          { opp: "Bot Lendário", res: "Derrota", score: "45-52", xp: "+45" },
-        ].map((match, i) => (
-          <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+        {stats.history.map((match: any, i: number) => (
+          <div key={match.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
             <div className="flex items-center gap-3">
               <div className={`w-2 h-2 rounded-full ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`} />
               <div>
                 <p className="text-sm font-bold text-white">{match.opp}</p>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tighter">{match.score}</p>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tighter">{match.score} • {match.date}</p>
               </div>
             </div>
             <div className="text-right">
@@ -412,7 +529,7 @@ function Profile({ setView }: { setView: (v: View) => void }) {
   );
 }
 
-function Ranking({ setView }: { setView: (v: View) => void }) {
+function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   const [tab, setTab] = useState<'global' | 'local'>('global');
   
   return (
@@ -470,7 +587,7 @@ function Ranking({ setView }: { setView: (v: View) => void }) {
   );
 }
 
-function Achievements({ setView }: { setView: (v: View) => void }) {
+function Achievements({ setView, user }: { setView: (v: View) => void, user: any }) {
   const achievements = [
     { title: "Primeiro Duelo", desc: "Vença sua primeira partida contra um bot", icon: Trophy, color: "text-gold", completed: true },
     { title: "Monstro das Flexões", desc: "Faça 100 flexões em um único dia", icon: Flame, color: "text-energy-red", completed: true },
