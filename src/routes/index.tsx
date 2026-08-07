@@ -262,10 +262,11 @@ function App() {
                 res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
                 score: `${m.player_score}-${m.opponent_score}`,
                 xp: `+${m.xp_gained}`,
-                date: new Date(m.created_at).toISOString().split('T')[0]
+                date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
               }))
             }));
           }
+
         } else {
           // Create profile if it doesn't exist
           const newPlayerId = "PUSH-" + Math.random().toString(36).substr(2, 4).toUpperCase();
@@ -1088,8 +1089,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold cursor-pointer hover:scale-105 transition-transform"
               onClick={() => setView('patents-list')}
             >
-              {getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}
+              {getRankInfo(stats.xp).emoji} {getRankInfo(stats.xp).rankName.toUpperCase()}
             </Badge>
+
           </div>
           <div className="flex justify-center mt-1">
              <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.age} ANOS • {stats.height}CM</Badge>
@@ -1860,9 +1862,10 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
         <div className="absolute left-[39px] top-10 bottom-10 w-1 bg-gradient-to-b from-primary/50 via-white/5 to-transparent z-0" />
         
         {patents.map((p, i) => {
-          const isUnlocked = currentInfo.score >= p.min;
-          const isCurrent = currentInfo.name === p.name;
-          const isNext = !isUnlocked && (i === 0 || currentInfo.score >= patents[i-1].min);
+          const isUnlocked = currentInfo.totalXp >= p.min;
+          const isCurrent = currentInfo.patentName === p.name;
+          const isNext = !isUnlocked && (i === 0 || currentInfo.totalXp >= patents[i-1].min);
+
 
           return (
             <motion.div 
