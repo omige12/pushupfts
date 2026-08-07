@@ -356,7 +356,10 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
       <header className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-14 h-14 bg-gradient-to-br from-gold to-orange-500 rounded-2xl border-2 border-white/20 shadow-lg shadow-gold/10 overflow-hidden">
+          <div 
+            className="w-14 h-14 bg-gradient-to-br from-gold to-orange-500 rounded-2xl border-2 border-white/20 shadow-lg shadow-gold/10 overflow-hidden cursor-pointer active:scale-90 transition-transform"
+            onClick={() => setView('edit-profile')}
+          >
             {stats.avatar ? (
               <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
             ) : (
@@ -365,7 +368,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
               </div>
             )}
           </div>
-          <div>
+          <div className="cursor-pointer" onClick={() => setView('profile')}>
             <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{stats.name.toUpperCase()}</h1>
             <div className="flex items-center gap-1.5">
               <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}</Badge>
