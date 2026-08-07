@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Pose, Results } from '@mediapipe/pose';
+import { Pose } from '@mediapipe/pose';
+import type { Results } from '@mediapipe/pose';
 import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 import { Shield, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
@@ -23,7 +24,7 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
   useEffect(() => {
     if (!isActive) return;
 
-    let pose: Pose | null = null;
+    let pose: any = null;
     let camera: any = null;
 
     const setupPose = async () => {

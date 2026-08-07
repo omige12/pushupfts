@@ -656,8 +656,14 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
 
 
 function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
-  const [editing, setEditing] = useState(initialEditing);
+  const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState(user);
+
+  useEffect(() => {
+    if (initialEditing) {
+      setEditing(true);
+    }
+  }, [initialEditing]);
 
   const stats = user;
   
@@ -895,7 +901,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         <Button 
           variant="ghost" 
-          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10"
+          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10 w-full"
           onClick={() => setEditing(true)}
         >
           <div className="flex items-center gap-4">
