@@ -87,11 +87,12 @@ const BOTS = [
     avatar: '/__l5e/assets-v1/38600428-3d1e-452a-a930-5df3237659ce/bot1.jpg', 
     color: 'bg-green-500', 
     level: 1, 
-    difficulty: 'Muito Fácil', 
-    avgPushups: 10,
+    difficulty: 'Fácil', 
+    avgPushups: 20,
     league: 'Bronze',
-    stats: { strength: 15, stamina: 10, speed: 12 },
-    record: 15
+    stats: { strength: 25, stamina: 20, speed: 25 },
+    record: 25,
+    pushupRate: 0.12 // Pushups per second chance
   },
   { 
     id: '2', 
@@ -99,11 +100,12 @@ const BOTS = [
     avatar: '/__l5e/assets-v1/f7a3c87a-4217-408f-9f48-c3622417f6b3/bot2.jpg', 
     color: 'bg-green-600', 
     level: 2, 
-    difficulty: 'Fácil', 
-    avgPushups: 25,
+    difficulty: 'Normal', 
+    avgPushups: 40,
     league: 'Bronze',
-    stats: { strength: 25, stamina: 20, speed: 22 },
-    record: 30
+    stats: { strength: 40, stamina: 35, speed: 40 },
+    record: 45,
+    pushupRate: 0.25
   },
   { 
     id: '3', 
@@ -112,10 +114,11 @@ const BOTS = [
     color: 'bg-yellow-500', 
     level: 3, 
     difficulty: 'Médio', 
-    avgPushups: 45,
+    avgPushups: 65,
     league: 'Prata',
-    stats: { strength: 45, stamina: 40, speed: 38 },
-    record: 55
+    stats: { strength: 65, stamina: 60, speed: 60 },
+    record: 75,
+    pushupRate: 0.45
   },
   { 
     id: '4', 
@@ -124,10 +127,11 @@ const BOTS = [
     color: 'bg-orange-600', 
     level: 4, 
     difficulty: 'Difícil', 
-    avgPushups: 80,
+    avgPushups: 100,
     league: 'Prata',
-    stats: { strength: 75, stamina: 70, speed: 65 },
-    record: 95
+    stats: { strength: 85, stamina: 80, speed: 85 },
+    record: 120,
+    pushupRate: 0.75
   },
   { 
     id: '5', 
@@ -136,10 +140,11 @@ const BOTS = [
     color: 'bg-yellow-400', 
     level: 5, 
     difficulty: 'Lendário', 
-    avgPushups: 250,
+    avgPushups: 350,
     league: 'Ouro',
-    stats: { strength: 100, stamina: 100, speed: 95 },
-    record: 350
+    stats: { strength: 100, stamina: 100, speed: 100 },
+    record: 450,
+    pushupRate: 1.5
   },
 ];
 
