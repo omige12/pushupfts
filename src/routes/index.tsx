@@ -450,18 +450,23 @@ function App() {
         <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around items-center p-3 z-50">
           <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
             <Home className="w-6 h-6" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Início</span>
           </button>
           <button onClick={() => setView('achievements')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'achievements' ? 'text-primary' : 'text-muted-foreground'}`}>
             <Medal className="w-6 h-6" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Conquistas</span>
           </button>
           <button onClick={() => setView('multiplayer')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'multiplayer' ? 'text-primary' : 'text-muted-foreground'}`}>
             <Swords className="w-7 h-7" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Batalha</span>
           </button>
           <button onClick={() => setView('ranking')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'ranking' ? 'text-primary' : 'text-muted-foreground'}`}>
             <Trophy className="w-6 h-6" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Ranking</span>
           </button>
           <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'profile' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-muted-foreground'}`}>
             <UserCircle className="w-6 h-6" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Perfil</span>
           </button>
         </nav>
       )}
