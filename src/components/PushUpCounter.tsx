@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import * as pose from '@mediapipe/pose';
+import { Pose } from '@mediapipe/pose';
 import type { Results } from '@mediapipe/pose';
 import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
