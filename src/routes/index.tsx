@@ -698,8 +698,8 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
             <div>
               <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Vantagem</p>
               <p className="text-xs font-black text-white italic">
-                {playerPushups > botPushups ? `+${playerPushups - botPushups} FLEXÕES` : 
-                 botPushups > playerPushups ? `-${botPushups - playerPushups} FLEXÕES` : 'EMPATE'}
+                {playerPushups > oppPushups ? `+${playerPushups - oppPushups} FLEXÕES` : 
+                 oppPushups > playerPushups ? `-${oppPushups - playerPushups} FLEXÕES` : 'EMPATE'}
               </p>
             </div>
           </div>
