@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'ranking' | 'achievements' | 'support' | 'support-chat' | 'history';
+type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'tournaments';
 
 const BOTS = [
   { id: '1', name: 'Bot Iniciante', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
