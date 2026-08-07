@@ -400,7 +400,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           <Progress value={getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold ? (Math.min(100, (getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score % 1000) / 10)) : 100} className="h-3 bg-white/10 border border-white/5" />
           <div className="mt-3 flex justify-between items-center">
             <p className="text-[9px] font-black text-muted-foreground uppercase tracking-wider italic">
-              {getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold ? `Faltam ${Math.max(0, Math.floor(getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold - getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score))} pontos para o próximo nível` : 'Nível Máximo Atingido'}
+              {getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold ? `Faltam ${Math.max(0, Math.floor((getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold || 0) - getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score))} pontos para o próximo nível` : 'Nível Máximo Atingido'}
             </p>
             <div className="flex items-center gap-1 bg-primary/20 px-2 py-0.5 rounded-full border border-primary/30">
                <Star className="w-3 h-3 text-gold fill-gold" />
