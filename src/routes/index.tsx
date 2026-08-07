@@ -5,7 +5,7 @@ import confetti from "canvas-confetti";
 import { 
   Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon,
   Flame, ArrowLeft, Timer, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
-  Copy, Check, Search, Zap, Award, Sparkles, Pencil, Camera, Image as ImageIcon, Globe, Loader2
+  Copy, Check, Search, Zap, Award, Sparkles, Pencil, Camera, Image as ImageIcon, Globe, Loader2, X
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { PushUpCounter } from "@/components/PushUpCounter";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -20,81 +22,76 @@ export const Route = createFileRoute("/")({
 
 type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle';
 
-const getPatentInfo = (wins: number, totalPushups: number, record: number, xp: number) => {
-  const score = (wins * 10) + (totalPushups / 10) + (record * 2) + (xp / 100);
+const RANKS = [
+  "Bronze III", "Bronze II", "Bronze I",
+  "Prata III", "Prata II", "Prata I",
+  "Ouro III", "Ouro II", "Ouro I",
+  "Diamante III", "Diamante II", "Diamante I",
+  "Pro III", "Pro II", "Pro I",
+  "Mestre III", "Mestre II", "Mestre I",
+  "Lendário III", "Lendário II", "Lendário I"
+];
+
+const XP_PER_DIVISION = 500;
+
+const getRankInfo = (totalXp: number) => {
+  const rankIndex = Math.min(RANKS.length - 1, Math.floor(totalXp / XP_PER_DIVISION));
+  const currentRankName = RANKS[rankIndex];
+  const [patentName, subRank] = currentRankName.split(' ');
   
-  const patents = [
-    { id: "bronze", name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", divisions: ["III", "II", "I"] },
-    { id: "prata", name: "Prata", min: 1000, emoji: "🥈", color: "from-slate-400 to-slate-200", divisions: ["III", "II", "I"] },
-    { id: "ouro", name: "Ouro", min: 3000, emoji: "🥇", color: "from-yellow-600 to-yellow-300", divisions: ["III", "II", "I"] },
-    { id: "diamante", name: "Diamante", min: 7000, emoji: "💎", color: "from-blue-600 to-cyan-300", divisions: ["III", "II", "I"] },
-    { id: "pro", name: "Pro", min: 15000, emoji: "🔥", color: "from-red-600 to-orange-500", divisions: ["III", "II", "I"] },
-    { id: "mestre", name: "Mestre", min: 30000, emoji: "👑", color: "from-purple-600 to-pink-500", divisions: ["III", "II", "I"] },
-    { id: "lendario", name: "Lendário", min: 60000, emoji: "🌟", color: "from-gold to-white", divisions: ["III", "II", "I"] }
-  ];
+  const xpInLevel = totalXp % XP_PER_DIVISION;
+  const isMax = rankIndex === RANKS.length - 1;
+  const progress = isMax ? 100 : (xpInLevel / XP_PER_DIVISION) * 100;
   
-  let currentPatentIndex = 0;
-  for (let i = 0; i < patents.length; i++) {
-    if (score >= patents[i].min) {
-      currentPatentIndex = i;
-    } else {
-      break;
-    }
-  }
-  
-  const currentPatent = patents[currentPatentIndex];
-  const nextPatent = patents[currentPatentIndex + 1] || null;
-  
-  let subRank = "III";
-  let nextThreshold = null;
-  
-  if (nextPatent) {
-    const range = nextPatent.min - currentPatent.min;
-    const progressWithinPatent = score - currentPatent.min;
-    const divisionSize = range / 3;
-    
-    if (progressWithinPatent >= divisionSize * 2) {
-      subRank = "I";
-      nextThreshold = nextPatent.min;
-    } else if (progressWithinPatent >= divisionSize) {
-      subRank = "II";
-      nextThreshold = currentPatent.min + (divisionSize * 2);
-    } else {
-      subRank = "III";
-      nextThreshold = currentPatent.min + divisionSize;
-    }
-  } else {
-    // Max level (Lendário I) logic
-    const divisionSize = 10000; // Arbitrary for Lendário
-    const progressAboveMin = score - currentPatent.min;
-    if (progressAboveMin >= divisionSize * 2) subRank = "I";
-    else if (progressAboveMin >= divisionSize) subRank = "II";
-    else subRank = "III";
-    nextThreshold = null;
-  }
+  const patentColors: Record<string, string> = {
+    "Bronze": "from-orange-700 to-orange-400",
+    "Prata": "from-slate-400 to-slate-200",
+    "Ouro": "from-yellow-600 to-yellow-300",
+    "Diamante": "from-blue-600 to-cyan-300",
+    "Pro": "from-red-600 to-orange-500",
+    "Mestre": "from-purple-600 to-pink-500",
+    "Lendário": "from-gold to-white"
+  };
+
+  const patentEmojis: Record<string, string> = {
+    "Bronze": "🥉",
+    "Prata": "🥈",
+    "Ouro": "🥇",
+    "Diamante": "💎",
+    "Pro": "🔥",
+    "Mestre": "👑",
+    "Lendário": "🌟"
+  };
 
   return {
-    name: currentPatent.name,
+    rankName: currentRankName,
+    patentName,
     subRank,
-    emoji: currentPatent.emoji,
-    score,
-    nextThreshold,
-    color: currentPatent.color
+    xpInLevel,
+    xpForNext: XP_PER_DIVISION,
+    progress,
+    isMax,
+    color: patentColors[patentName] || "from-primary to-primary/50",
+    emoji: patentEmojis[patentName] || "🥉",
+    totalXp: totalXp,
+    level: rankIndex + 1
   };
 };
 
+
 const getPatentEmoji = (patent: string) => {
-  switch (patent) {
-    case "Bronze": return "🥉";
-    case "Prata": return "🥈";
-    case "Ouro": return "🥇";
-    case "Diamante": return "💎";
-    case "Pro": return "🔥";
-    case "Mestre": return "👑";
-    case "Lendário": return "🌟";
-    default: return "🥉";
-  }
+  const emojis: Record<string, string> = {
+    "Bronze": "🥉",
+    "Prata": "🥈",
+    "Ouro": "🥇",
+    "Diamante": "💎",
+    "Pro": "🔥",
+    "Mestre": "👑",
+    "Lendário": "🌟"
+  };
+  return emojis[patent] || "🥉";
 };
+
 
 
 const BOTS = [
@@ -169,10 +166,32 @@ function App() {
   const [view, setView] = useState<View>('dashboard');
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
   const [opponent, setOpponent] = useState<any | null>(null);
-  const [duration, setDuration] = useState(30);
+  const [duration, setDuration] = useState(60);
   const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
-  const [user, setUser] = useState({
-    id: "PUSH-" + Math.random().toString(36).substr(2, 4).toUpperCase(),
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<{
+    id: string;
+    name: string;
+    age: number;
+    weight: number;
+    height: number;
+    goal: string;
+    level: number;
+    patent: string;
+    subRank: string;
+    xp: number;
+    maxXp: number;
+    wins: number;
+    losses: number;
+    record: number;
+    totalPushups: number;
+    streak: number;
+    avatar: string | null;
+    frame: string;
+    achievements: string[];
+    history: any[];
+  }>({
+    id: "PUSH-USER",
     name: "GUERREIRO ALPHA",
     age: 25,
     weight: 75,
@@ -180,90 +199,180 @@ function App() {
     goal: "Ganhar força",
     level: 1,
     patent: "Bronze",
-    subRank: "I",
-    xp: 350,
-    maxXp: 500,
-    wins: 87,
-    losses: 23,
-    record: 54,
-    totalPushups: 10450,
-    streak: 12,
+    subRank: "III",
+    xp: 0,
+    maxXp: XP_PER_DIVISION,
+    wins: 0,
+    losses: 0,
+    record: 0,
+    totalPushups: 0,
+    streak: 0,
     avatar: null,
     frame: "basic",
-    achievements: ["1", "2"],
-    history: [
-      { id: 'h1', opp: "Guerreiro", res: "Vitória", score: "42-39", xp: "+150", date: '2026-08-01' },
-      { id: 'h2', opp: "Determinado", res: "Vitória", score: "38-30", xp: "+120", date: '2026-07-28' },
-      { id: 'h3', opp: "David Goggins \"Lendário\"", res: "Derrota", score: "45-82", xp: "+45", date: '2026-07-25' },
-    ]
+    achievements: [],
+    history: []
   });
 
-  const updateStats = (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => {
-    setUser(prev => {
-      const newRecord = Math.max(prev.record, pushups);
-      const totalPushups = prev.totalPushups + pushups;
-      const wins = won ? prev.wins + 1 : prev.wins;
-      
-      const oldPatentData = getPatentInfo(prev.wins, prev.totalPushups, prev.record, prev.xp);
-      const newPatentData = getPatentInfo(wins, totalPushups, newRecord, prev.xp + xpGained);
 
-      if (newPatentData.name !== oldPatentData.name || newPatentData.subRank !== oldPatentData.subRank) {
-        if (newPatentData.score > oldPatentData.score) {
-          setLevelUpData({ 
-            old: `${oldPatentData.name} ${oldPatentData.subRank}`, 
-            new: `${newPatentData.name} ${newPatentData.subRank}` 
+  // Load user data from Supabase
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      
+      if (authUser) {
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', authUser.id)
+          .single();
+
+        if (profile) {
+          const rankInfo = getRankInfo(Number(profile.xp));
+          setUser(prev => ({
+            ...prev,
+            id: profile.player_id,
+            name: profile.name,
+            age: profile.age || prev.age,
+            weight: profile.weight || prev.weight,
+            height: profile.height || prev.height,
+            goal: profile.goal || prev.goal,
+            level: profile.level,
+            xp: Number(profile.xp),
+            wins: profile.wins,
+            losses: profile.losses,
+            record: profile.record,
+            totalPushups: profile.total_pushups,
+            streak: profile.streak,
+            avatar: profile.avatar_url,
+            achievements: profile.achievements || [],
+          }));
+
+          // Fetch match history
+          const { data: matches } = await supabase
+            .from('matches')
+            .select('*')
+            .eq('player_id', authUser.id)
+            .order('created_at', { ascending: false })
+            .limit(15);
+          
+          if (matches) {
+            setUser(prev => ({
+              ...prev,
+              history: matches.map(m => ({
+                id: m.id,
+                opp: m.opponent_name,
+                res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
+                score: `${m.player_score}-${m.opponent_score}`,
+                xp: `+${m.xp_gained}`,
+                date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
+              }))
+            }));
+          }
+
+        } else {
+          // Create profile if it doesn't exist
+          const newPlayerId = "PUSH-" + Math.random().toString(36).substr(2, 4).toUpperCase();
+          const { error: insertError } = await supabase.from('profiles').insert({
+            id: authUser.id,
+            player_id: newPlayerId,
+            name: user.name,
+            xp: 0,
+            level: 1
           });
-          confetti({ 
-            particleCount: 200, 
-            spread: 70, 
-            origin: { y: 0.6 },
-            colors: ['#FFD700', '#FFFFFF', '#60A5FA']
-          });
+          if (!insertError) {
+            setUser(prev => ({ ...prev, id: newPlayerId }));
+          }
         }
       }
+      setLoading(false);
+    };
 
+    fetchProfile();
+  }, []);
+
+  const updateStats = async (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => {
+    const newTotalXp = user.xp + xpGained;
+    const oldRank = getRankInfo(user.xp);
+    const newRank = getRankInfo(newTotalXp);
+    
+    if (newRank.rankName !== oldRank.rankName) {
+      setLevelUpData({ 
+        old: oldRank.rankName, 
+        new: newRank.rankName 
+      });
+      confetti({ 
+        particleCount: 200, 
+        spread: 70, 
+        origin: { y: 0.6 },
+        colors: ['#FFD700', '#FFFFFF', '#60A5FA']
+      });
+    }
+
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+
+    // Save match to database
+    if (authUser) {
+      await supabase.from('matches').insert({
+        player_id: authUser.id,
+        opponent_name: oppName,
+        duration: duration,
+        player_score: pushups,
+        opponent_score: oppPushups,
+        status: 'completed',
+        result: won ? 'win' : (pushups === oppPushups ? 'draw' : 'loss'),
+        xp_gained: xpGained
+      });
+
+      // Update profile
+      await supabase.from('profiles').update({
+        xp: newTotalXp,
+        wins: won ? user.wins + 1 : user.wins,
+        losses: !won && pushups !== oppPushups ? user.losses + 1 : user.losses,
+        record: Math.max(user.record, pushups),
+        total_pushups: user.totalPushups + pushups,
+        updated_at: new Date().toISOString()
+      }).eq('id', authUser.id);
+    }
+
+    setUser(prev => {
       const newMatch = {
         id: Math.random().toString(36).substr(2, 9),
         opp: oppName,
-        res: won ? "Vitória" : "Derrota",
+        res: won ? "Vitória" : (pushups === oppPushups ? "Empate" : "Derrota"),
         score: `${pushups}-${oppPushups}`,
         xp: `+${xpGained}`,
         date: new Date().toISOString().split('T')[0]
       };
 
-      let newXp = prev.xp + xpGained;
-      let newLevel = prev.level;
-      let nextMaxXp = prev.maxXp;
-      
-      while (newXp >= nextMaxXp) {
-        newXp -= nextMaxXp;
-        newLevel += 1;
-        nextMaxXp = Math.floor(nextMaxXp * 1.2);
-      }
-      
       return {
         ...prev,
-        wins: wins,
-        losses: !won ? prev.losses + 1 : prev.losses,
-        record: newRecord,
-        totalPushups: totalPushups,
-        xp: newXp,
-        level: newLevel,
-        maxXp: nextMaxXp,
-        patent: newPatentData.name,
-        subRank: newPatentData.subRank,
+        wins: won ? prev.wins + 1 : prev.wins,
+        losses: !won && pushups !== oppPushups ? prev.losses + 1 : prev.losses,
+        record: Math.max(prev.record, pushups),
+        totalPushups: prev.totalPushups + pushups,
+        xp: newTotalXp,
+        patent: newRank.patentName,
+        subRank: newRank.subRank,
+        level: newRank.level,
         history: [newMatch, ...prev.history].slice(0, 15)
+
       };
     });
   };
 
   const renderView = () => {
+    if (loading) return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      </div>
+    );
+
     switch (view) {
       case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
-      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setDuration(60); setView('challenge'); }} />;
+      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); }} onComplete={updateStats} />;
-      case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setDuration(60); setView('challenge'); }} onCancel={() => setView('multiplayer')} />;
+      case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('select-duration'); }} onCancel={() => setView('multiplayer')} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
@@ -272,12 +381,27 @@ function App() {
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
       case 'history': return <FullHistory setView={setView} user={user} />;
-      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setDuration(60); setView('challenge'); }} />;
+      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setView('select-duration'); }} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'patents-list': return <PatentsList setView={setView} user={user} />;
       default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
     }
   };
+
+
+  const isBattleActive = view === 'challenge' && (selectedBot || opponent);
+  
+  useEffect(() => {
+    if (isBattleActive) {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        e.returnValue = '';
+      };
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+  }, [isBattleActive]);
+
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
@@ -316,41 +440,45 @@ function App() {
                   <p className="text-3xl font-black text-gold italic drop-shadow-sm">{levelUpData.new}</p>
                 </div>
               </div>
-              <Button className="game-button bg-primary w-full py-8 text-xl italic uppercase">CONTINUAR JORNADA</Button>
+              <Button className="game-button bg-primary w-full py-8 text-xl italic uppercase" onClick={() => setLevelUpData(null)}>CONTINUAR JORNADA</Button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around items-center p-3 z-50">
-        <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <Home className="w-5 h-5" />
-          <span className="text-[10px] font-black uppercase tracking-tighter">Início</span>
-        </button>
-        <button onClick={() => setView('achievements')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'achievements' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <Medal className="w-5 h-5" />
-          <span className="text-[10px] font-black uppercase tracking-tighter">Conquistas</span>
-        </button>
-        <button onClick={() => setView('multiplayer')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'multiplayer' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <Swords className="w-6 h-6" />
-          <span className="text-[10px] font-black uppercase tracking-tighter">Batalha</span>
-        </button>
-        <button onClick={() => setView('ranking')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'ranking' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <Trophy className="w-5 h-5" />
-          <span className="text-[10px] font-black uppercase tracking-tighter">Ranking</span>
-        </button>
-        <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'profile' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-muted-foreground'}`}>
-          <UserCircle className="w-5 h-5" />
-          <span className="text-[10px] font-black uppercase tracking-tighter">Perfil</span>
-        </button>
-      </nav>
+      {!isBattleActive && (
+        <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around items-center p-3 z-50">
+          <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
+            <Home className="w-5 h-5" />
+            <span className="text-[10px] font-black uppercase tracking-tighter">Início</span>
+          </button>
+          <button onClick={() => setView('achievements')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'achievements' ? 'text-primary' : 'text-muted-foreground'}`}>
+            <Medal className="w-5 h-5" />
+            <span className="text-[10px] font-black uppercase tracking-tighter">Conquistas</span>
+          </button>
+          <button onClick={() => setView('multiplayer')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'multiplayer' ? 'text-primary' : 'text-muted-foreground'}`}>
+            <Swords className="w-6 h-6" />
+            <span className="text-[10px] font-black uppercase tracking-tighter">Batalha</span>
+          </button>
+          <button onClick={() => setView('ranking')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'ranking' ? 'text-primary' : 'text-muted-foreground'}`}>
+            <Trophy className="w-5 h-5" />
+            <span className="text-[10px] font-black uppercase tracking-tighter">Ranking</span>
+          </button>
+          <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'profile' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-muted-foreground'}`}>
+            <UserCircle className="w-5 h-5" />
+            <span className="text-[10px] font-black uppercase tracking-tighter">Perfil</span>
+          </button>
+        </nav>
+      )}
     </div>
   );
 }
 
 
+
 function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void }) {
   const stats = user;
+  const rank = getRankInfo(user.xp);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
@@ -371,7 +499,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           <div className="cursor-pointer" onClick={() => setView('profile')}>
             <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{stats.name.toUpperCase()}</h1>
             <div className="flex items-center gap-1.5">
-              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}</Badge>
+              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(rank.patentName)} {rank.patentName.toUpperCase()}</Badge>
               <div className="flex items-center gap-0.5 text-gold">
                 <Flame className="w-3 h-3 fill-gold" />
                 <span className="text-[10px] font-black">{stats.streak}</span>
@@ -382,29 +510,29 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
       </header>
 
       <div 
-        className={`glass-panel p-5 relative overflow-hidden group border-2 cursor-pointer active:scale-[0.98] transition-all bg-gradient-to-br ${getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).color || 'from-primary/20 to-transparent'} border-white/10`}
+        className={`glass-panel p-5 relative overflow-hidden group border-2 cursor-pointer active:scale-[0.98] transition-all bg-gradient-to-br ${rank.color || 'from-primary/20 to-transparent'} border-white/10`}
         onClick={() => setView('patents-list')}
       >
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
         <div className="relative z-10">
           <div className="flex justify-between items-end mb-3">
             <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).color || 'from-primary/20 to-transparent'} flex items-center justify-center text-3xl shadow-lg border border-white/20`}>
-                {getPatentEmoji(stats.patent)}
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${rank.color || 'from-primary/20 to-transparent'} flex items-center justify-center text-3xl shadow-lg border border-white/20`}>
+                {rank.emoji}
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">{stats.patent} {stats.subRank}</span>
+                <span className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName}</span>
                 <span className="text-[9px] font-black text-primary/80 uppercase tracking-widest mt-1">Sua Patente Atual</span>
               </div>
             </div>
             <div className="text-right">
-              <span className="text-xs font-black italic text-white tracking-tighter">{Math.floor(getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score)} / {getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold || 'MAX'} XP</span>
+              <span className="text-xs font-black italic text-white tracking-tighter">{rank.xpInLevel} / {rank.xpForNext} XP</span>
             </div>
           </div>
-          <Progress value={getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold ? (Math.min(100, (getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score % 1000) / 10)) : 100} className="h-3 bg-white/10 border border-white/5" />
+          <Progress value={rank.progress} className="h-3 bg-white/10 border border-white/5" />
           <div className="mt-3 flex justify-between items-center">
             <p className="text-[9px] font-black text-muted-foreground uppercase tracking-wider italic">
-              {getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold ? `Faltam ${Math.max(0, Math.floor((getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold || 0) - getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score))} pontos para o próximo nível` : 'Nível Máximo Atingido'}
+              {rank.isMax ? 'Nível Máximo Atingido' : `Faltam ${XP_PER_DIVISION - rank.xpInLevel} XP para o próximo nível`}
             </p>
             <div className="flex items-center gap-1 bg-primary/20 px-2 py-0.5 rounded-full border border-primary/30">
                <Star className="w-3 h-3 text-gold fill-gold" />
@@ -413,6 +541,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           </div>
         </div>
       </div>
+
 
 
 
@@ -633,9 +762,10 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
           <div className="min-w-0">
             <p className="text-[9px] font-black italic text-primary uppercase truncate">{user.name}</p>
             <div className="flex items-center gap-1">
-              <span className="text-[8px] font-black text-white/60">{getPatentEmoji(user.patent)}</span>
+              <span className="text-[8px] font-black text-white/60">{getPatentEmoji(getRankInfo(user.xp).patentName)}</span>
               <span className="text-[14px] font-black text-white italic">{playerPushups}</span>
             </div>
+
           </div>
         </div>
 
@@ -975,8 +1105,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold cursor-pointer hover:scale-105 transition-transform"
               onClick={() => setView('patents-list')}
             >
-              {getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}
+              {getRankInfo(stats.xp).emoji} {getRankInfo(stats.xp).rankName.toUpperCase()}
             </Badge>
+
           </div>
           <div className="flex justify-center mt-1">
              <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.age} ANOS • {stats.height}CM</Badge>
@@ -989,10 +1120,11 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between text-xs font-black italic text-muted-foreground uppercase tracking-widest">
-            <span>Nível {stats.level}</span>
-            <span>{stats.xp} / {stats.maxXp} XP</span>
+            <span>Nível {getRankInfo(stats.xp).level}</span>
+            <span>{getRankInfo(stats.xp).xpInLevel} / {XP_PER_DIVISION} XP</span>
           </div>
-          <Progress value={(stats.xp / stats.maxXp) * 100} className="h-3 bg-white/5" />
+          <Progress value={getRankInfo(stats.xp).progress} className="h-3 bg-white/5" />
+
           <div className="flex justify-center">
              <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">Toque para ver patentes</span>
           </div>
@@ -1696,15 +1828,16 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
 function PatentsList({ setView, user }: { setView: (v: View) => void, user: any }) {
   const patents = [
     { name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", rewards: ["Moldura Básica", "XP Base"], divisions: ["III", "II", "I"] },
-    { name: "Prata", min: 1000, emoji: "🥈", color: "from-slate-400 to-slate-200", rewards: ["Moldura Prateada", "XP +10%"], divisions: ["III", "II", "I"] },
+    { name: "Prata", min: 1500, emoji: "🥈", color: "from-slate-400 to-slate-200", rewards: ["Moldura Prateada", "XP +10%"], divisions: ["III", "II", "I"] },
     { name: "Ouro", min: 3000, emoji: "🥇", color: "from-yellow-600 to-yellow-300", rewards: ["Moldura Dourada", "XP +25%"], divisions: ["III", "II", "I"] },
-    { name: "Diamante", min: 7000, emoji: "💎", color: "from-blue-600 to-cyan-300", rewards: ["Moldura Diamante", "XP +50%"], divisions: ["III", "II", "I"] },
-    { name: "Pro", min: 15000, emoji: "🔥", color: "from-red-600 to-orange-500", rewards: ["Efeito de Fogo", "XP +100%"], divisions: ["III", "II", "I"] },
-    { name: "Mestre", min: 30000, emoji: "👑", color: "from-purple-600 to-pink-500", rewards: ["Coroa Especial", "XP +150%"], divisions: ["III", "II", "I"] },
-    { name: "Lendário", min: 60000, emoji: "🌟", color: "from-gold to-white", rewards: ["Aura Lendária", "XP +200%"], divisions: ["III", "II", "I"] }
+    { name: "Diamante", min: 4500, emoji: "💎", color: "from-blue-600 to-cyan-300", rewards: ["Moldura Diamante", "XP +50%"], divisions: ["III", "II", "I"] },
+    { name: "Pro", min: 6000, emoji: "🔥", color: "from-red-600 to-orange-500", rewards: ["Efeito de Fogo", "XP +100%"], divisions: ["III", "II", "I"] },
+    { name: "Mestre", min: 7500, emoji: "👑", color: "from-purple-600 to-pink-500", rewards: ["Coroa Especial", "XP +150%"], divisions: ["III", "II", "I"] },
+    { name: "Lendário", min: 9000, emoji: "🌟", color: "from-gold to-white", rewards: ["Aura Lendária", "XP +200%"], divisions: ["III", "II", "I"] }
+
   ];
 
-  const currentInfo = getPatentInfo(user.wins, user.totalPushups, user.record, user.xp);
+  const currentInfo = getRankInfo(user.xp);
   
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24 space-y-6">
@@ -1720,35 +1853,37 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
             {currentInfo.emoji}
           </div>
           <div>
-            <h3 className="font-black text-2xl italic text-white uppercase tracking-tighter leading-none mb-1">{currentInfo.name} {currentInfo.subRank}</h3>
+            <h3 className="font-black text-2xl italic text-white uppercase tracking-tighter leading-none mb-1">{currentInfo.rankName}</h3>
             <p className="text-[10px] font-black text-primary uppercase tracking-widest">PATENTE ATUAL</p>
           </div>
         </div>
         
         <div className="space-y-3 relative">
           <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-            <span>Score Atual: {Math.floor(currentInfo.score)}</span>
-            <span>Próxima Divisão: {currentInfo.nextThreshold || 'MAX'}</span>
+            <span>XP Atual: {currentInfo.xpInLevel}</span>
+            <span>Meta: {currentInfo.xpForNext} XP</span>
           </div>
           <Progress 
-            value={currentInfo.nextThreshold ? ((currentInfo.score - patents.find(p => p.name === currentInfo.name)!.min) / (currentInfo.nextThreshold - patents.find(p => p.name === currentInfo.name)!.min)) * 100 : 100} 
+            value={currentInfo.progress} 
             className="h-3 bg-white/5 border border-white/5" 
           />
-          {currentInfo.nextThreshold && (
+          {!currentInfo.isMax && (
              <p className="text-[10px] font-black text-gold italic text-center uppercase tracking-wider animate-pulse mt-2">
-               Faltam {Math.max(0, Math.floor(currentInfo.nextThreshold - currentInfo.score))} pontos para o próximo nível
+               Faltam {currentInfo.xpForNext - currentInfo.xpInLevel} XP para a próxima divisão
              </p>
           )}
         </div>
       </div>
 
+
       <div className="space-y-6 relative mt-10">
         <div className="absolute left-[39px] top-10 bottom-10 w-1 bg-gradient-to-b from-primary/50 via-white/5 to-transparent z-0" />
         
         {patents.map((p, i) => {
-          const isUnlocked = currentInfo.score >= p.min;
-          const isCurrent = currentInfo.name === p.name;
-          const isNext = !isUnlocked && (i === 0 || currentInfo.score >= patents[i-1].min);
+          const isUnlocked = currentInfo.totalXp >= p.min;
+          const isCurrent = currentInfo.patentName === p.name;
+          const isNext = !isUnlocked && (i === 0 || currentInfo.totalXp >= patents[i-1].min);
+
 
           return (
             <motion.div 
@@ -1769,8 +1904,9 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
               <div className="flex-1 pt-1">
                 <div className="flex justify-between items-center mb-2">
                    <h4 className="font-black text-xl italic text-white uppercase tracking-tighter">{p.name}</h4>
-                   <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{p.min} SCORE</span>
+                   <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{p.min} XP</span>
                 </div>
+
                 
                 <div className="flex flex-wrap gap-2 mb-3">
                   {p.divisions.map(div => (
