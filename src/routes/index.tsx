@@ -113,8 +113,9 @@ function App() {
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
       case 'history': return <FullHistory setView={setView} user={user} />;
-      case 'friend-challenge': return <FriendChallenge setView={setView} />;
-      case 'tournaments': return <Tournaments setView={setView} />;
+      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} />;
+      case 'ranking': return <Ranking setView={setView} user={user} />;
+      default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
     }
   };
 
