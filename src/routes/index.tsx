@@ -129,8 +129,7 @@ function App() {
       <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around p-3 z-50">
         {[
           { icon: Home, label: 'Início', id: 'dashboard' },
-          { icon: Swords, label: 'Lutar', id: 'select-bot' },
-          { icon: Trophy, label: 'Rank', id: 'ranking' },
+          { icon: Swords, label: 'Multiplayer', id: 'multiplayer' },
           { icon: UserCircle, label: 'Perfil', id: 'profile' },
           { icon: Star, label: 'Conquistas', id: 'achievements' },
         ].map(item => (
