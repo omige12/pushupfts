@@ -92,6 +92,7 @@ function App() {
   const [view, setView] = useState<View>('dashboard');
   const [selectedBot, setSelectedBot] = useState<typeof BOTS[0] | null>(null);
   const [duration, setDuration] = useState(30);
+  const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
   const [user, setUser] = useState({
     id: "PUSH-" + Math.random().toString(36).substr(2, 4).toUpperCase(),
     name: "GUERREIRO ALPHA",
@@ -101,8 +102,9 @@ function App() {
     goal: "Ganhar força",
     level: 1,
     patent: "Bronze",
-    xp: 250,
-    maxXp: 1000,
+    subRank: "III",
+    xp: 350,
+    maxXp: 500,
     wins: 87,
     losses: 23,
     record: 54,
@@ -118,17 +120,29 @@ function App() {
     ]
   });
 
-
   const updateStats = (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => {
     setUser(prev => {
       const newRecord = Math.max(prev.record, pushups);
-      const newXp = prev.xp + xpGained;
-      let newLevel = prev.level;
-      let nextMaxXp = prev.maxXp;
+      const totalPushups = prev.totalPushups + pushups;
+      const wins = won ? prev.wins + 1 : prev.wins;
+      const newXpTotal = (prev.wins * 100) + (prev.totalPushups) + xpGained; // Arbitrary total XP for patent calculation
       
-      if (newXp >= prev.maxXp) {
-        newLevel += 1;
-        nextMaxXp = Math.floor(prev.maxXp * 1.2);
+      const oldPatentData = getPatentInfo(prev.wins, prev.totalPushups, prev.record, prev.xp);
+      const newPatentData = getPatentInfo(wins, totalPushups, newRecord, prev.xp + xpGained);
+
+      if (newPatentData.name !== oldPatentData.name || newPatentData.subRank !== oldPatentData.subRank) {
+        if (newPatentData.score > oldPatentData.score) {
+          setLevelUpData({ 
+            old: `${oldPatentData.name} ${oldPatentData.subRank}`, 
+            new: `${newPatentData.name} ${newPatentData.subRank}` 
+          });
+          confetti({ 
+            particleCount: 200, 
+            spread: 70, 
+            origin: { y: 0.6 },
+            colors: ['#FFD700', '#FFFFFF', '#60A5FA']
+          });
+        }
       }
 
       const newMatch = {
@@ -140,8 +154,15 @@ function App() {
         date: new Date().toISOString().split('T')[0]
       };
 
-      const wins = won ? prev.wins + 1 : prev.wins;
-      const totalPushups = prev.totalPushups + pushups;
+      let newXp = prev.xp + xpGained;
+      let newLevel = prev.level;
+      let nextMaxXp = prev.maxXp;
+      
+      while (newXp >= nextMaxXp) {
+        newXp -= nextMaxXp;
+        newLevel += 1;
+        nextMaxXp = Math.floor(nextMaxXp * 1.2);
+      }
       
       return {
         ...prev,
@@ -149,13 +170,13 @@ function App() {
         losses: !won ? prev.losses + 1 : prev.losses,
         record: newRecord,
         totalPushups: totalPushups,
-        xp: newXp % prev.maxXp,
+        xp: newXp,
         level: newLevel,
         maxXp: nextMaxXp,
-        patent: getPatentInfo(wins, totalPushups, newRecord, newXp).name,
-        history: [newMatch, ...prev.history].slice(0, 10)
+        patent: newPatentData.name,
+        subRank: newPatentData.subRank,
+        history: [newMatch, ...prev.history].slice(0, 15)
       };
-
     });
   };
 
@@ -165,7 +186,9 @@ function App() {
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
-      case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
+      case 'profile': return <Profile setView={setView} user={user} />;
+      case 'settings': return <SettingsView setView={setView} user={user} />;
+      case 'edit-profile': return <EditProfile setView={setView} user={user} setUser={setUser} />;
       case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
@@ -182,6 +205,44 @@ function App() {
       <AnimatePresence mode="wait">
         {renderView()}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {levelUpData && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 1.5 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/80 backdrop-blur-xl"
+            onClick={() => setLevelUpData(null)}
+          >
+            <div className="text-center space-y-6">
+              <motion.div
+                animate={{ rotate: [0, -10, 10, -10, 10, 0], scale: [1, 1.2, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                <Trophy className="w-32 h-32 text-gold mx-auto drop-shadow-[0_0_30px_rgba(255,215,0,0.5)]" />
+              </motion.div>
+              <div className="space-y-2">
+                <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase">🎉 NOVA PATENTE!</h2>
+                <p className="text-muted-foreground font-bold tracking-widest uppercase">VOCÊ EVOLUIU NA ARENA</p>
+              </div>
+              <div className="flex items-center justify-center gap-6">
+                <div className="text-center opacity-50">
+                  <p className="text-[10px] font-black mb-1 uppercase tracking-widest">Anterior</p>
+                  <p className="text-xl font-black text-white italic">{levelUpData.old}</p>
+                </div>
+                <ChevronRight className="w-8 h-8 text-primary" />
+                <div className="text-center">
+                  <p className="text-[10px] font-black mb-1 uppercase tracking-widest text-primary">Atual</p>
+                  <p className="text-3xl font-black text-gold italic drop-shadow-sm">{levelUpData.new}</p>
+                </div>
+              </div>
+              <Button className="game-button bg-primary w-full py-8 text-xl italic uppercase">CONTINUAR JORNADA</Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around p-3 z-50">
         {[
           { icon: Home, label: 'Início', id: 'dashboard' },
@@ -199,6 +260,7 @@ function App() {
     </div>
   );
 }
+
 
 function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void }) {
   const stats = user;
