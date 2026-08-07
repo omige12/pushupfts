@@ -82,28 +82,6 @@ function App() {
     ]
   });
 
-  const handleSearch = () => {
-    if (searchId.trim().toUpperCase() === 'PUSH-DEMO') {
-      setFoundPlayer({
-        id: 'PUSH-DEMO',
-        name: 'RICARDO BRUTO',
-        level: 18,
-        patent: 'Ouro',
-        record: 85,
-        avatar: null
-      });
-    } else {
-      setFoundPlayer(null);
-    }
-  };
-
-  const sendChallenge = () => {
-    alert(`Desafio enviado para ${foundPlayer.name}!`);
-    // Demo: auto-receive challenge back after 2s
-    setTimeout(() => {
-      setChallengeReceived(foundPlayer.name);
-    }, 2000);
-  };
 
   const updateStats = (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => {
     setUser(prev => {
