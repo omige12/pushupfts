@@ -395,9 +395,9 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
               className="absolute inset-0 bg-energy-red pointer-events-none"
             />
           </AnimatePresence>
-          <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest">{bot?.name || 'BOT'}</p>
+          <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest">{bot?.name || 'ADVERSÁRIO'}</p>
           <div className="flex items-center gap-2 justify-end">
-            <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">LVL {bot?.level}</Badge>
+            <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">{bot?.id ? `LVL ${bot.level}` : 'RIVAL'}</Badge>
             <span className="text-xs font-black text-white/40">💪</span>
             <motion.span 
               key={botPushups}
