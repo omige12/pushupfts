@@ -569,6 +569,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
         >
           <div className="relative flex flex-col items-center gap-2">
             <Swords className="w-16 h-16 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Multijogador</span>
           </div>
           <div className="absolute top-0 right-0 p-2">
             <Badge className="bg-yellow-400 text-black font-black italic text-[8px] animate-pulse">RANKED</Badge>
@@ -580,6 +581,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           onClick={() => { setSelectedBot(null); setView('select-duration'); }}
         >
           <Dumbbell className="w-10 h-10 text-white opacity-80" />
+          <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Treinar</span>
         </Button>
       </div>
 
