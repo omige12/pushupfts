@@ -450,18 +450,23 @@ function App() {
         <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around items-center p-3 z-50">
           <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
             <Home className="w-6 h-6" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Início</span>
           </button>
           <button onClick={() => setView('achievements')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'achievements' ? 'text-primary' : 'text-muted-foreground'}`}>
             <Medal className="w-6 h-6" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Conquistas</span>
           </button>
           <button onClick={() => setView('multiplayer')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'multiplayer' ? 'text-primary' : 'text-muted-foreground'}`}>
             <Swords className="w-7 h-7" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Batalha</span>
           </button>
           <button onClick={() => setView('ranking')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'ranking' ? 'text-primary' : 'text-muted-foreground'}`}>
             <Trophy className="w-6 h-6" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Ranking</span>
           </button>
           <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'profile' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-muted-foreground'}`}>
             <UserCircle className="w-6 h-6" />
+            <span className="text-[8px] font-black uppercase tracking-tighter">Perfil</span>
           </button>
         </nav>
       )}
@@ -546,12 +551,14 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           onClick={() => setView('edit-profile')}
         >
           <UserCircle className="w-10 h-10 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <span className="text-[10px] font-black italic tracking-tighter uppercase">Editar Perfil</span>
         </Button>
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
           onClick={() => setView('achievements')}
         >
           <Medal className="w-10 h-10 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <span className="text-[10px] font-black italic tracking-tighter uppercase">Conquistas</span>
         </Button>
       </div>
 
@@ -562,6 +569,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
         >
           <div className="relative flex flex-col items-center gap-2">
             <Swords className="w-16 h-16 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Multijogador</span>
           </div>
           <div className="absolute top-0 right-0 p-2">
             <Badge className="bg-yellow-400 text-black font-black italic text-[8px] animate-pulse">RANKED</Badge>
@@ -573,6 +581,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           onClick={() => { setSelectedBot(null); setView('select-duration'); }}
         >
           <Dumbbell className="w-10 h-10 text-white opacity-80" />
+          <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Treinar</span>
         </Button>
       </div>
 
@@ -1728,12 +1737,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
         <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
       </div>
       
-      {/* ⭐ Destaques Section */}
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Star className="w-5 h-5 text-gold fill-gold" />
-          <h3 className="text-sm font-black italic tracking-widest text-white uppercase">⭐ Destaques</h3>
-        </div>
         <div className="grid grid-cols-2 gap-3">
           {[
             { label: 'Melhor Recorde', val: user.record, sub: 'FLEXÕES', icon: Target, color: 'text-gold' },
