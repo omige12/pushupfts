@@ -1127,49 +1127,105 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
 }
 
 function Achievements({ setView, user }: { setView: (v: View) => void, user: any }) {
-  const achievements = [
-    { title: "Primeiro Duelo", desc: "Vença sua primeira partida contra um bot", icon: Trophy, color: "text-gold", completed: true },
-    { title: "Monstro das Flexões", desc: "Faça 100 flexões em um único dia", icon: Flame, color: "text-energy-red", completed: true },
-    { title: "Elite Alpha", desc: "Alcance o Rank Elite na temporada", icon: Shield, color: "text-purple-evolve", completed: false },
-    { title: "Mestre da Rapidez", desc: "Vença um Bot Lendário em 30s", icon: Timer, color: "text-blue-400", completed: false },
-    { title: "Colecionador", desc: "Desbloqueie 5 molduras diferentes", icon: Medal, color: "text-orange-500", completed: true },
-    { title: "Lendário", desc: "Fique no Top 10 Global por 1 semana", icon: Star, color: "text-yellow-400", completed: false },
+  const categories = [
+    { 
+      id: 'treino', 
+      label: 'Treino', 
+      icon: Dumbbell,
+      items: [
+        { title: "Primeira Flexão", desc: "Comece sua jornada", req: 1, current: user.totalPushups, reward: "XP +50", icon: Zap },
+        { title: "Cem Flexões", desc: "Mostre consistência", req: 100, current: user.totalPushups, reward: "XP +200", icon: Award },
+        { title: "Guerreiro Mil", desc: "Nível impressionante", req: 1000, current: user.totalPushups, reward: "Moldura Mil", icon: Shield },
+      ]
+    },
+    { 
+      id: 'competição', 
+      label: 'Competição', 
+      icon: Swords,
+      items: [
+        { title: "Primeira Vitória", desc: "Vença um duelo", req: 1, current: user.wins, reward: "XP +100", icon: Trophy },
+        { title: "Dez Vitórias", desc: "Competidor Nato", req: 10, current: user.wins, reward: "Medalha Bronze", icon: Medal },
+        { title: "Cinquenta Vitórias", desc: "Elite da Arena", req: 50, current: user.wins, reward: "Título Mestre", icon: Star },
+      ]
+    },
+    { 
+      id: 'evolução', 
+      label: 'Evolução', 
+      icon: TrendingUp,
+      items: [
+        { title: "Rank Prata", desc: "Evoluindo sempre", req: 250, current: user.xp, reward: "XP +500", icon: Sparkles },
+        { title: "Rank Ouro", desc: "Jogador Experiente", req: 600, current: user.xp, reward: "XP +1000", icon: Flame },
+        { title: "Rank Diamante", desc: "Elite do Fitness", req: 1200, current: user.xp, reward: "Moldura Rara", icon: Shield },
+      ]
+    }
   ];
 
+  const [activeCat, setActiveCat] = useState('treino');
+
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6">
-      <h2 className="text-3xl font-black italic text-white tracking-tighter mb-6">CONQUISTAS</h2>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 pb-24 space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">CONQUISTAS</h2>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+      </div>
       
-      <div className="grid grid-cols-2 gap-4">
-        {achievements.map((ach, i) => (
-          <div key={i} className={`glass-panel p-5 flex flex-col items-center gap-3 relative transition-all duration-300 ${!ach.completed ? 'opacity-40 grayscale' : 'hover:scale-[1.05] hover:shadow-gold/20 shadow-xl'}`}>
-            <div className={`p-4 rounded-2xl bg-white/5 border border-white/10 ${ach.color}`}>
-              <ach.icon className="w-8 h-8" />
-            </div>
-            <div className="text-center">
-              <p className="text-xs font-black text-white uppercase tracking-tighter leading-tight mb-1">{ach.title}</p>
-              <p className="text-[8px] text-muted-foreground font-medium leading-tight">{ach.desc}</p>
-            </div>
-            {!ach.completed && (
-              <div className="absolute top-2 right-2">
-                <Shield className="w-4 h-4 text-white/20" />
-              </div>
-            )}
-            {ach.completed && (
-              <div className="absolute top-2 right-2 bg-green-500 w-2 h-2 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
-            )}
-          </div>
+      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+        {categories.map(cat => (
+          <Button 
+            key={cat.id} 
+            onClick={() => setActiveCat(cat.id)}
+            className={`game-button h-12 px-6 flex items-center gap-2 border-none shadow-none text-xs ${activeCat === cat.id ? 'bg-primary' : 'bg-white/5 opacity-50'}`}
+          >
+            <cat.icon className="w-4 h-4" />
+            {cat.label.toUpperCase()}
+          </Button>
         ))}
       </div>
 
-      <div className="mt-8 p-6 glass-panel relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 blur-3xl -mr-16 -mt-16 rounded-full" />
-        <h3 className="text-sm font-black italic text-white uppercase mb-4 tracking-widest">PROGRESSO TOTAL</h3>
-        <div className="flex items-end justify-between mb-2">
-          <span className="text-3xl font-black text-gold">12 <span className="text-sm text-white/40">/ 40</span></span>
-          <span className="text-xs font-black text-muted-foreground italic mb-1">RECOMPENSAS EXCLUSIVAS</span>
-        </div>
-        <Progress value={30} className="h-2 bg-white/5" />
+      <div className="space-y-4">
+        {categories.find(c => c.id === activeCat)?.items.map((ach, i) => {
+          const isCompleted = ach.current >= ach.req;
+          const progress = Math.min((ach.current / ach.req) * 100, 100);
+          
+          return (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`glass-panel p-5 border-white/5 relative overflow-hidden group ${!isCompleted && 'opacity-70'}`}
+            >
+              {isCompleted && (
+                <div className="absolute top-0 right-0 w-24 h-24 bg-gold/10 blur-2xl -mr-12 -mt-12 rounded-full" />
+              )}
+              
+              <div className="flex items-center gap-4">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 ${isCompleted ? 'bg-gold/20 border-gold/40 text-gold' : 'bg-white/5 border-white/10 text-white/20'}`}>
+                  <ach.icon className="w-7 h-7" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex justify-between items-start mb-1">
+                    <div>
+                      <h4 className={`font-black text-sm italic tracking-tight ${isCompleted ? 'text-white' : 'text-white/60'}`}>{ach.title.toUpperCase()}</h4>
+                      <p className="text-[9px] font-medium text-muted-foreground uppercase">{ach.desc}</p>
+                    </div>
+                    {isCompleted && (
+                      <Badge className="bg-gold text-black text-[8px] h-4 font-black italic border-none">DESBLOQUEADO</Badge>
+                    )}
+                  </div>
+                  
+                  <div className="mt-3 space-y-1.5">
+                    <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground">
+                      <span>{ach.current} / {ach.req}</span>
+                      <span className="text-primary">{ach.reward}</span>
+                    </div>
+                    <Progress value={progress} className="h-1.5 bg-white/5" />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
     </motion.div>
   );
