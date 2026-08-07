@@ -250,7 +250,7 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
 }
 
 
-function Challenge({ bot, onExit }: { bot: any, onExit: () => void }) {
+function Challenge({ bot, onExit, onComplete }: { bot: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => void }) {
   const [playerPushups, setPlayerPushups] = useState(0);
   const [botPushups, setBotPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(30);
