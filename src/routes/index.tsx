@@ -1121,7 +1121,7 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
       else if (lower.includes('treino')) response = "No modo treino, você pode praticar sozinho. Nossa IA analisa sua postura e conta suas repetições em tempo real.";
       else if (lower.includes('patente') || lower.includes('liga')) response = "Existem 7 patentes: Bronze, Prata, Ouro, Diamante, Pro, Mestre e Lenda. Evolua seu nível e recorde para subir de patente!";
       else if (lower.includes('bot')) response = "Temos 10 níveis de bots, do Iniciante ao Lendário. Cada nível aumenta a velocidade e quantidade de flexões do oponente.";
-      else if (lower.includes('ranking')) response = "O ranking mostra os melhores jogadores Global e do Brasil. Acumule vitórias para subir nas tabelas!";
+      else if (lower.includes('ranking')) response = "O ranking mostra os melhores jogadores do Brasil e seus amigos. Acumule vitórias para subir nas tabelas!";
       else if (lower.includes('perfil') || lower.includes('configuração')) response = "Você pode editar seu nome, peso, altura e foto diretamente na tela de Configurações dentro do seu Perfil.";
 
       setMessages(prev => [...prev, { role: 'ai', text: response }]);
