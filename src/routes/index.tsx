@@ -137,15 +137,8 @@ function App() {
   );
 }
 
-function Dashboard({ setView }: { setView: (v: View) => void }) {
-  const stats = {
-    level: 15,
-    xp: 12450,
-    maxXp: 15000,
-    wins: 87,
-    streak: 12,
-    league: "Elite"
-  };
+function Dashboard({ setView, user }: { setView: (v: View) => void, user: any }) {
+  const stats = user;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
