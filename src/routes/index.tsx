@@ -186,9 +186,9 @@ function App() {
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
-      case 'profile': return <Profile setView={setView} user={user} />;
-      case 'settings': return <SettingsView setView={setView} user={user} />;
-      case 'edit-profile': return <EditProfile setView={setView} user={user} setUser={setUser} />;
+      case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
+      case 'settings': return <Profile setView={setView} user={user} setUser={setUser} />;
+      case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
@@ -244,8 +244,26 @@ function App() {
       </AnimatePresence>
 
       <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around p-3 z-50">
-// Placeholder to be filled in a comprehensive write.
-
+        <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
+          <Home className="w-5 h-5" />
+          <span className="text-[10px] font-black uppercase tracking-tighter">Início</span>
+        </button>
+        <button onClick={() => setView('multiplayer')} className={`flex flex-col items-center gap-1 ${view === 'multiplayer' ? 'text-primary' : 'text-muted-foreground'}`}>
+          <Swords className="w-5 h-5" />
+          <span className="text-[10px] font-black uppercase tracking-tighter">Batalha</span>
+        </button>
+        <button onClick={() => setView('ranking')} className={`flex flex-col items-center gap-1 ${view === 'ranking' ? 'text-primary' : 'text-muted-foreground'}`}>
+          <Trophy className="w-5 h-5" />
+          <span className="text-[10px] font-black uppercase tracking-tighter">Ranking</span>
+        </button>
+        <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 ${view === 'profile' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-muted-foreground'}`}>
+          <UserCircle className="w-5 h-5" />
+          <span className="text-[10px] font-black uppercase tracking-tighter">Perfil</span>
+        </button>
+        <button onClick={() => setView('achievements')} className={`flex flex-col items-center gap-1 ${view === 'achievements' ? 'text-primary' : 'text-muted-foreground'}`}>
+          <Medal className="w-5 h-5" />
+          <span className="text-[10px] font-black uppercase tracking-tighter">Conquistas</span>
+        </button>
       </nav>
     </div>
   );
