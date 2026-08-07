@@ -663,27 +663,27 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
             <motion.div 
               initial={{ scale: 1, opacity: 0 }}
               animate={{ scale: [1, 1.2, 1], opacity: [0, 0.2, 0] }}
-              key={botPushups}
+              key={oppPushups}
               transition={{ duration: 0.3 }}
               className="absolute inset-0 bg-energy-red pointer-events-none"
             />
           </AnimatePresence>
           <div className="flex items-center justify-end gap-2 mb-1">
              <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10">
-                <img src={bot?.avatar} className="w-full h-full object-cover" alt="Bot" />
+                <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" alt="Opponent" />
              </div>
-             <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest leading-none">{bot?.name || 'ADVERSÁRIO'}</p>
+             <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest leading-none">{activeOpponent?.name || 'ADVERSÁRIO'}</p>
           </div>
           <div className="flex items-center gap-2 justify-end">
-            <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">{bot?.id ? `LVL ${bot.level}` : 'RIVAL'}</Badge>
+            <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">{activeOpponent?.patent ? activeOpponent.patent : activeOpponent?.level ? `LVL ${activeOpponent.level}` : 'RIVAL'}</Badge>
             <span className="text-xs font-black text-white/40">💪</span>
             <motion.span 
-              key={botPushups}
+              key={oppPushups}
               initial={{ scale: 0.8, y: 5 }}
               animate={{ scale: 1, y: 0 }}
               className="text-3xl font-black text-white italic"
             >
-              {botPushups}
+              {oppPushups}
             </motion.span>
           </div>
         </div>
