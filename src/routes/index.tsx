@@ -898,13 +898,19 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       <div className="glass-panel p-8 flex flex-col items-center gap-6 relative overflow-hidden group">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold via-purple-evolve to-energy-red" />
         
-        <div className="relative">
-          <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:scale-105 transition-transform duration-500 flex items-center justify-center overflow-hidden">
+        <div 
+          className="relative cursor-pointer active:scale-95 transition-transform"
+          onClick={() => setEditing(true)}
+        >
+          <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:scale-105 transition-transform duration-500 flex items-center justify-center overflow-hidden relative">
              {stats.avatar ? (
                <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
              ) : (
                <UserIcon className="w-16 h-16 text-muted-foreground" />
              )}
+             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+               <Pencil className="w-8 h-8 text-white" />
+             </div>
           </div>
           <div className="absolute -bottom-2 -right-2 bg-purple-evolve p-2 rounded-full border-2 border-background shadow-lg">
             <Star className="w-4 h-4 text-white" />
