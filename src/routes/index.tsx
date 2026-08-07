@@ -73,9 +73,11 @@ const getRankInfo = (totalXp: number) => {
     isMax,
     color: patentColors[patentName] || "from-primary to-primary/50",
     emoji: patentEmojis[patentName] || "🥉",
-    totalXp: totalXp
+    totalXp: totalXp,
+    level: rankIndex + 1
   };
 };
+
 
 const getPatentEmoji = (patent: string) => {
   const emojis: Record<string, string> = {
