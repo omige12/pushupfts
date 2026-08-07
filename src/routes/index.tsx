@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'ranking' | 'achievements';
+type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'ranking' | 'achievements' | 'support' | 'support-chat' | 'history';
 
 const BOTS = [
   { id: '1', name: 'Bot Iniciante', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
@@ -113,6 +113,9 @@ function App() {
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
+      case 'support': return <Support setView={setView} />;
+      case 'support-chat': return <SupportChat setView={setView} />;
+      case 'history': return <FullHistory setView={setView} user={user} />;
     }
   };
 
@@ -598,7 +601,7 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-black italic text-white tracking-tighter">PERFIL</h2>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setEditing(true)}><Settings className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
       </div>
 
       <div className="glass-panel p-8 flex flex-col items-center gap-6 relative overflow-hidden group">
@@ -649,23 +652,206 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
         </div>
       </div>
 
+      <div className="grid grid-cols-1 gap-4">
+        <Button 
+          variant="ghost" 
+          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10"
+          onClick={() => setView('history')}
+        >
+          <div className="flex items-center gap-4">
+            <LayoutDashboard className="w-6 h-6 text-primary" />
+            <div className="text-left">
+              <p className="font-black text-white italic">HISTÓRICO</p>
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Partidas anteriores</p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-white/20" />
+        </Button>
+
+        <Button 
+          variant="ghost" 
+          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10"
+          onClick={() => setView('support')}
+        >
+          <div className="flex items-center gap-4">
+            <Shield className="w-6 h-6 text-green-400" />
+            <div className="text-left">
+              <p className="font-black text-white italic">SUPORTE</p>
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Ajuda e atendimento</p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-white/20" />
+        </Button>
+
+        <Button 
+          variant="ghost" 
+          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10"
+          onClick={() => setEditing(true)}
+        >
+          <div className="flex items-center gap-4">
+            <Settings className="w-6 h-6 text-white/40" />
+            <div className="text-left">
+              <p className="font-black text-white italic">CONFIGURAÇÕES</p>
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Editar seu personagem</p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-white/20" />
+        </Button>
+      </div>
+    </motion.div>
+  );
+}
+
+function FullHistory({ setView, user }: { setView: (v: View) => void, user: any }) {
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('profile')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">HISTÓRICO</h2>
+      </div>
+
       <div className="space-y-4">
-        <h3 className="text-lg font-black italic tracking-tight text-white/80">HISTÓRICO RECENTE</h3>
-        {stats.history.map((match: any, i: number) => (
-          <div key={match.id} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
-            <div className="flex items-center gap-3">
-              <div className={`w-2 h-2 rounded-full ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`} />
+        {user.history.map((match: any) => (
+          <div key={match.id} className="glass-panel p-5 flex items-center justify-between border-white/5">
+            <div className="flex items-center gap-4">
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white text-xl shadow-lg border-2 border-white/20 ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`}>
+                {match.opp[0]}
+              </div>
               <div>
-                <p className="text-sm font-bold text-white">{match.opp}</p>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tighter">{match.score} • {match.date}</p>
+                <p className="font-black text-lg italic text-white tracking-tight">{match.opp.toUpperCase()}</p>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{match.score} • {match.date}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className={`text-sm font-black ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{match.res}</p>
+              <p className={`text-lg font-black italic ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{match.res.toUpperCase()}</p>
               <p className="text-[10px] text-gold font-black italic">{match.xp} XP</p>
             </div>
           </div>
         ))}
+      </div>
+    </motion.div>
+  );
+}
+
+function Support({ setView }: { setView: (v: View) => void }) {
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('profile')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">SUPORTE</h2>
+      </div>
+
+      <div className="grid gap-4">
+        <div className="glass-panel p-8 text-center space-y-4 border-primary/20">
+          <Shield className="w-16 h-16 text-primary mx-auto opacity-50" />
+          <h3 className="text-xl font-black text-white italic uppercase tracking-tighter">Como podemos ajudar?</h3>
+          <p className="text-sm text-muted-foreground font-medium">Nossa equipe e IA estão prontas para resolver suas dúvidas.</p>
+        </div>
+
+        <Button 
+          className="game-button bg-white/5 border border-white/10 h-24 flex items-center justify-between px-8"
+          onClick={() => setView('support-chat')}
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-primary/20 flex items-center justify-center">
+              <Flame className="w-6 h-6 text-primary" />
+            </div>
+            <div className="text-left">
+              <p className="text-lg tracking-tighter italic">CHAT 24 HORAS</p>
+              <p className="text-[8px] opacity-60 tracking-widest font-black uppercase">Atendimento por IA</p>
+            </div>
+          </div>
+          <ChevronRight className="w-6 h-6 text-white/20" />
+        </Button>
+
+        <a 
+          href="mailto:suporte@pushuparena.com"
+          className="game-button bg-white/5 border border-white/10 h-24 flex items-center justify-between px-8"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-green-500/20 flex items-center justify-center">
+              <Target className="w-6 h-6 text-green-400" />
+            </div>
+            <div className="text-left">
+              <p className="text-lg tracking-tighter italic">ENVIAR E-MAIL</p>
+              <p className="text-[8px] opacity-60 tracking-widest font-black uppercase">suporte@pushuparena.com</p>
+            </div>
+          </div>
+          <ChevronRight className="w-6 h-6 text-white/20" />
+        </a>
+      </div>
+    </motion.div>
+  );
+}
+
+function SupportChat({ setView }: { setView: (v: View) => void }) {
+  const [messages, setMessages] = useState([
+    { role: 'ai', text: 'Olá! Sou seu assistente do PushUp Arena. Como posso ajudar você hoje com duelos, treinos ou sua conta?' }
+  ]);
+  const [input, setInput] = useState('');
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    
+    const userMsg = input.trim();
+    setMessages([...messages, { role: 'user', text: userMsg }]);
+    setInput('');
+
+    // AI Logic (Simple keyword matching for the demo as requested by "A IA deve responder somente assuntos relacionados ao aplicativo")
+    setTimeout(() => {
+      let response = "Desculpe, só posso responder perguntas relacionadas ao PushUp Arena. Tente perguntar sobre duelos, treinos, ligas ou ranking!";
+      
+      const lower = userMsg.toLowerCase();
+      if (lower.includes('duelo')) response = "Nos duelos, você compete contra bots de diferentes níveis. Escolha a duração e tente fazer mais flexões que o adversário!";
+      else if (lower.includes('treino')) response = "No modo treino, você pode praticar sozinho. Nossa IA analisa sua postura e conta suas repetições em tempo real.";
+      else if (lower.includes('liga')) response = "Existem 6 ligas: Bronze, Prata, Ouro, Diamante, Mestre e Lenda. Melhore seu recorde para subir de liga!";
+      else if (lower.includes('bot')) response = "Temos 10 níveis de bots, do Iniciante ao Lendário. Cada nível aumenta a velocidade e quantidade de flexões do oponente.";
+      else if (lower.includes('ranking')) response = "O ranking mostra os melhores jogadores Global e do Brasil. Acumule vitórias para subir nas tabelas!";
+      else if (lower.includes('perfil') || lower.includes('configuração')) response = "Você pode editar seu nome, peso, altura e foto diretamente na tela de Configurações dentro do seu Perfil.";
+
+      setMessages(prev => [...prev, { role: 'ai', text: response }]);
+    }, 600);
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col h-[calc(100vh-80px)] p-6 gap-6">
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('support')}><ArrowLeft className="w-5 h-5" /></Button>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30 relative">
+            <Shield className="w-6 h-6 text-primary" />
+            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
+          </div>
+          <div>
+            <h2 className="text-xl font-black italic text-white tracking-tighter leading-none mb-1">ARENA AI</h2>
+            <p className="text-[8px] font-black text-green-500 uppercase tracking-widest">ONLINE AGORA</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1 glass-panel p-4 flex flex-col gap-4 overflow-y-auto no-scrollbar">
+        {messages.map((msg, i) => (
+          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[80%] p-4 rounded-2xl text-sm font-medium ${
+              msg.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white/10 text-white/90 rounded-tl-none border border-white/5'
+            }`}>
+              {msg.text}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex gap-2">
+        <input 
+          className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 font-bold text-white focus:outline-none focus:border-primary"
+          placeholder="Como subir de liga?"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+        />
+        <Button onClick={handleSend} className="game-button bg-primary px-6 h-[58px]">
+          <Target className="w-6 h-6 rotate-90" />
+        </Button>
       </div>
     </motion.div>
   );
