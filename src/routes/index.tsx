@@ -656,7 +656,7 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
 
 
 function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
-  const [editing, setEditing] = useState(initialEditing);
+  const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState(user);
 
   useEffect(() => {
