@@ -275,7 +275,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
-      <header className="flex justify-between items-center">
+      <header className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-3">
           <div className="w-14 h-14 bg-gradient-to-br from-gold to-orange-500 rounded-2xl border-2 border-white/20 shadow-lg shadow-gold/10 overflow-hidden">
             {stats.avatar ? (
@@ -297,38 +297,71 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
             </div>
           </div>
         </div>
-        <div className="w-10 h-10" />
       </header>
 
-      <div className="glass-panel p-5 relative overflow-hidden group">
+      <div className="glass-panel p-5 relative overflow-hidden group border-primary/20">
         <div className="absolute top-0 left-0 w-full h-1 bg-primary/30" />
         <div className="flex justify-between items-end mb-2">
-          <span className="text-[10px] font-black italic text-muted-foreground uppercase tracking-widest">{getPatentEmoji(stats.patent)} {stats.patent}</span>
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black italic text-muted-foreground uppercase tracking-widest">{getPatentEmoji(stats.patent)} {stats.patent} {stats.subRank}</span>
+            <span className="text-[8px] font-black text-primary/80 uppercase tracking-tighter">Próxima Patente: {getPatentInfo(stats.wins + 50, stats.totalPushups, stats.record, stats.xp).name}</span>
+          </div>
           <span className="text-[10px] font-black italic text-white tracking-tighter">{stats.xp} / {stats.maxXp} XP</span>
         </div>
         <Progress value={(stats.xp / stats.maxXp) * 100} className="h-2.5 bg-white/5" />
+        <div className="mt-3 flex justify-between items-center">
+          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider italic">
+            Faltam {stats.maxXp - stats.xp} XP para subir de nível
+          </p>
+          <div className="flex items-center gap-1">
+             <Star className="w-3 h-3 text-gold fill-gold" />
+             <span className="text-[8px] font-black text-gold uppercase tracking-widest">Moldura Rara</span>
+          </div>
+        </div>
       </div>
 
+
       <div className="grid grid-cols-2 gap-4">
-        <Button className="game-button bg-energy-red col-span-2 h-36 relative overflow-hidden group" onClick={() => setView('multiplayer')}>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-          <div className="relative flex flex-col items-center gap-2">
-            <div className="flex items-center gap-2">
-              <Swords className="w-8 h-8 group-hover:scale-110 transition-transform" />
-              <span className="text-2xl tracking-tighter italic uppercase">Multiplayer</span>
-            </div>
-            <p className="text-[10px] font-bold opacity-80 tracking-widest">BATALHA ONLINE</p>
-          </div>
+        <Button 
+          className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
+          onClick={() => setView('achievements')}
+        >
+          <Medal className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <span className="text-[10px] font-black uppercase tracking-widest italic">🎖️ Conquistas</span>
         </Button>
-        <Button className="game-button bg-primary/20 border border-primary/30 h-32 flex flex-col gap-2" onClick={() => { setSelectedBot(null); setView('select-duration'); }}>
-          <Dumbbell className="w-6 h-6 text-primary" />
-          <span className="text-lg tracking-tighter italic">TREINAR</span>
-        </Button>
-        <Button className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-32 flex flex-col gap-2" onClick={() => setView('profile')}>
-          <UserCircle className="w-6 h-6 text-purple-evolve" />
-          <span className="text-lg tracking-tighter italic">PERFIL</span>
+        <Button 
+          className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
+          onClick={() => setView('profile')}
+        >
+          <UserCircle className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <span className="text-[10px] font-black uppercase tracking-widest italic">👤 Perfil</span>
         </Button>
       </div>
+
+      <div className="space-y-4 pt-2">
+        <Button 
+          className="game-button bg-energy-red w-full h-36 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
+          onClick={() => setView('multiplayer')}
+        >
+          <div className="relative flex flex-col items-center gap-2">
+            <Swords className="w-12 h-12 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">⚔️ Multijogador</span>
+          </div>
+          <div className="absolute top-0 right-0 p-2">
+            <Badge className="bg-yellow-400 text-black font-black italic text-[8px] animate-pulse">RANKED</Badge>
+          </div>
+        </Button>
+
+        <Button 
+          className="game-button bg-white/10 w-full h-20 flex gap-4 border-white/10 shadow-[0_6px_0_0_rgba(0,0,0,0.2)] active:scale-95 active:translate-y-[6px] active:shadow-none" 
+          onClick={() => { setSelectedBot(null); setView('select-duration'); }}
+        >
+          <Dumbbell className="w-8 h-8 text-white opacity-80" />
+          <span className="text-xl tracking-tighter italic font-black uppercase">💪 Treinar</span>
+        </Button>
+      </div>
+
+
 
       <div className="space-y-4">
         <div className="flex justify-between items-center">
@@ -640,8 +673,8 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
           <h2 className="text-3xl font-black italic text-white tracking-tighter">EDITAR PERFIL</h2>
         </div>
 
-        <div className="glass-panel p-6 space-y-4">
-          <div className="flex flex-col items-center gap-4 mb-6">
+        <div className="glass-panel p-6 space-y-6">
+          <div className="flex flex-col items-center gap-4 mb-2">
             <div className="relative group cursor-pointer" onClick={() => {
               const input = document.createElement('input');
               input.type = 'file';
@@ -658,73 +691,85 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
               };
               input.click();
             }}>
-              <div className="w-24 h-24 bg-secondary rounded-full border-4 border-gold flex items-center justify-center overflow-hidden">
+              <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold flex items-center justify-center overflow-hidden shadow-2xl">
                 {formData.avatar ? (
                   <img src={formData.avatar} className="w-full h-full object-cover" alt="Preview" />
                 ) : (
-                  <UserIcon className="w-12 h-12 text-muted-foreground" />
+                  <UserIcon className="w-16 h-16 text-muted-foreground" />
                 )}
               </div>
-              <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                <span className="text-[8px] font-black text-white uppercase">Trocar Foto</span>
+              <div className="absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity backdrop-blur-sm">
+                <span className="text-[10px] font-black text-white uppercase tracking-widest">Alterar Foto</span>
               </div>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Nome de Usuário</label>
-            <input 
-              className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Idade</label>
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nome de Atleta</label>
               <input 
-                type="number"
-                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary"
-                value={formData.age}
-                onChange={(e) => setFormData({ ...formData, age: parseInt(e.target.value) })}
+                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-lg uppercase tracking-tight"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value.toUpperCase() })}
+                placeholder="EX: GUERREIRO"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Peso (kg)</label>
-              <input 
-                type="number"
-                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary"
-                value={formData.weight}
-                onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) })}
-              />
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Idade</label>
+                <input 
+                  type="number"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary transition-all"
+                  value={formData.age}
+                  onChange={(e) => setFormData({ ...formData, age: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Peso (kg)</label>
+                <input 
+                  type="number"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary transition-all"
+                  value={formData.weight}
+                  onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Altura (cm)</label>
+                <input 
+                  type="number"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary transition-all"
+                  value={formData.height}
+                  onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Objetivo</label>
+                <div className="relative">
+                  <select 
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary appearance-none h-[58px] italic"
+                    value={formData.goal}
+                    onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+                  >
+                    <option value="Ganhar força">GANHAR FORÇA</option>
+                    <option value="Resistência">RESISTÊNCIA</option>
+                    <option value="Hipertrofia">HIPERTROFIA</option>
+                    <option value="Perda de peso">PERDA DE PESO</option>
+                  </select>
+                  <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 rotate-90 pointer-events-none" />
+                </div>
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Altura (cm)</label>
-              <input 
-                type="number"
-                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary"
-                value={formData.height}
-                onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) })}
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Objetivo</label>
-              <select 
-                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary appearance-none h-[50px]"
-                value={formData.goal}
-                onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
-              >
-                <option value="Ganhar força">Ganhar força</option>
-                <option value="Resistência">Resistência</option>
-                <option value="Hipertrofia">Hipertrofia</option>
-                <option value="Perda de peso">Perda de peso</option>
-              </select>
-            </div>
-          </div>
-          <Button onClick={handleSave} className="game-button bg-primary w-full py-6 mt-4">SALVAR ALTERAÇÕES</Button>
+
+          <Button onClick={handleSave} className="game-button bg-primary w-full py-8 mt-4 text-xl italic uppercase tracking-tighter">
+            Salvar Alterações
+          </Button>
         </div>
+
       </motion.div>
     );
   }
