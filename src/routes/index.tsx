@@ -1398,7 +1398,7 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
   );
 }
 
-function Matchmaking({ user, onMatchFound, onCancel }: { user: any, onMatchFound: (opp: any) => void, onCancel: () => void }) {
+function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, onMatchFound: (opp: any) => void, onCancel: () => void, duration: number }) {
   const [status, setStatus] = useState('searching');
   const [dots, setDots] = useState('');
   const [matchedOpponent, setMatchedOpponent] = useState<any>(null);
