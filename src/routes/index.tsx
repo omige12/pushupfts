@@ -1503,7 +1503,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
         <div className="w-full max-w-sm space-y-12">
           <div className="space-y-2">
             <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase">OPONENTE ENCONTRADO!</h2>
-            <p className="text-xs font-black text-primary uppercase tracking-widest animate-pulse">A PARTIDA VAI COMEÇAR EM 3S</p>
+            <p className="text-xs font-black text-primary uppercase tracking-widest animate-pulse">A PARTIDA VAI COMEÇAR EM {duration / 60 >= 1 ? `${duration / 60} MIN` : `${duration} SEG`}</p>
           </div>
           
           <div className="flex items-center justify-center gap-4">
