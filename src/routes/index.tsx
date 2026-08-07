@@ -32,6 +32,7 @@ function App() {
   const [selectedBot, setSelectedBot] = useState<typeof BOTS[0] | null>(null);
   const [duration, setDuration] = useState(30);
   const [user, setUser] = useState({
+    id: "PUSH-" + Math.random().toString(36).substr(2, 4).toUpperCase(),
     name: "GUERREIRO ALPHA",
     age: 25,
     weight: 75,
