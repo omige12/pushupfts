@@ -1015,8 +1015,14 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
             <p className="text-xl font-black text-purple-evolve">{stats.totalPushups}</p>
           </div>
         </div>
-      </div>
 
+        <Button 
+          className="game-button bg-primary w-full py-6 text-sm uppercase italic flex items-center justify-center gap-2"
+          onClick={() => setView('edit-profile')}
+        >
+          <Pencil className="w-4 h-4" /> Editar Perfil
+        </Button>
+      </div>
 
       <div className="grid grid-cols-1 gap-4">
         <Button 
@@ -1262,7 +1268,7 @@ function Matchmaking({ user, onMatchFound, onCancel }: { user: any, onMatchFound
       setTimeout(() => {
         onMatchFound(opp);
       }, 3000);
-    }, 4000);
+    }, 3000);
 
     return () => {
       clearInterval(dotsInterval);
@@ -1397,16 +1403,16 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
 
         <div className="glass-panel p-6 space-y-4 border-white/5">
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center flex items-center justify-center gap-2">
-            <Search className="w-3 h-3" /> Procurar Jogador por ID
+            <Search className="w-3 h-3" /> Procurar por ID
           </p>
           <div className="flex gap-2">
             <input 
               className="flex-1 bg-white/5 border border-white/10 rounded-xl p-4 font-mono text-sm text-white focus:outline-none focus:border-primary text-center tracking-widest"
-              placeholder="PUSH-XXXX"
+              placeholder="ID do jogador"
               value={searchId}
               onChange={(e) => setSearchId(e.target.value.toUpperCase())}
             />
-            <Button onClick={handleSearch} className="game-button bg-primary h-auto px-6"><Search className="w-5 h-5" /></Button>
+            <Button onClick={handleSearch} className="game-button bg-primary h-auto px-6 italic">⚔️ DESAFIAR</Button>
           </div>
         </div>
 
