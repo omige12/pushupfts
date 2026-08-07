@@ -24,45 +24,62 @@ const getPatentInfo = (wins: number, totalPushups: number, record: number, xp: n
   const score = (wins * 10) + (totalPushups / 10) + (record * 2) + (xp / 100);
   
   const patents = [
-    { name: "Bronze", min: 0, emoji: "🥉" },
-    { name: "Prata", min: 500, emoji: "🥈" },
-    { name: "Ouro", min: 1500, emoji: "🥇" },
-    { name: "Diamante", min: 3000, emoji: "💎" },
-    { name: "Pro", min: 6000, emoji: "🔥" },
-    { name: "Mestre", min: 10000, emoji: "👑" },
-    { name: "Lenda", min: 20000, emoji: "🌟" }
+    { name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", divisions: ["III", "II", "I"] },
+    { name: "Prata", min: 1000, emoji: "🥈", color: "from-slate-400 to-slate-200", divisions: ["III", "II", "I"] },
+    { name: "Ouro", min: 3000, emoji: "🥇", color: "from-yellow-600 to-yellow-300", divisions: ["III", "II", "I"] },
+    { name: "Diamante", min: 7000, emoji: "💎", color: "from-blue-600 to-cyan-300", divisions: ["III", "II", "I"] },
+    { name: "Pro", min: 15000, emoji: "🔥", color: "from-red-600 to-orange-500", divisions: ["III", "II", "I"] },
+    { name: "Mestre", min: 30000, emoji: "👑", color: "from-purple-600 to-pink-500", divisions: ["III", "II", "I"] },
+    { name: "Lendário", min: 60000, emoji: "🌟", color: "from-gold to-white", divisions: ["III", "II", "I"] }
   ];
   
-  let currentPatent = patents[0];
-  let nextPatent = patents[1];
-  
+  let currentPatentIndex = 0;
   for (let i = 0; i < patents.length; i++) {
     if (score >= patents[i].min) {
-      currentPatent = patents[i];
-      nextPatent = patents[i+1] || null;
+      currentPatentIndex = i;
     } else {
       break;
     }
   }
   
-  if (currentPatent.name === "Lenda") {
-    return { name: "Lenda", subRank: "", emoji: "🌟", score, nextThreshold: null };
-  }
-
-  const range = nextPatent.min - currentPatent.min;
-  const progress = score - currentPatent.min;
-  const subRankSize = range / 3;
+  const currentPatent = patents[currentPatentIndex];
+  const nextPatent = patents[currentPatentIndex + 1] || null;
   
   let subRank = "III";
-  if (progress >= subRankSize * 2) subRank = "I";
-  else if (progress >= subRankSize) subRank = "II";
+  let nextThreshold = null;
+  
+  if (nextPatent) {
+    const range = nextPatent.min - currentPatent.min;
+    const progressWithinPatent = score - currentPatent.min;
+    const divisionSize = range / 3;
+    
+    if (progressWithinPatent >= divisionSize * 2) {
+      subRank = "I";
+      nextThreshold = nextPatent.min;
+    } else if (progressWithinPatent >= divisionSize) {
+      subRank = "II";
+      nextThreshold = currentPatent.min + (divisionSize * 2);
+    } else {
+      subRank = "III";
+      nextThreshold = currentPatent.min + divisionSize;
+    }
+  } else {
+    // Max level (Lendário I) logic
+    const divisionSize = 10000; // Arbitrary for Lendário
+    const progressAboveMin = score - currentPatent.min;
+    if (progressAboveMin >= divisionSize * 2) subRank = "I";
+    else if (progressAboveMin >= divisionSize) subRank = "II";
+    else subRank = "III";
+    nextThreshold = null;
+  }
 
   return {
     name: currentPatent.name,
     subRank,
     emoji: currentPatent.emoji,
     score,
-    nextThreshold: nextPatent.min
+    nextThreshold,
+    color: currentPatent.color
   };
 };
 
