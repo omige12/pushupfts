@@ -263,7 +263,7 @@ function App() {
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setDuration(60); setView('challenge'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); }} onComplete={updateStats} />;
-      case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp) => { setOpponent(opp); setDuration(60); setView('challenge'); }} onCancel={() => setView('multiplayer')} />;
+      case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setDuration(60); setView('challenge'); }} onCancel={() => setView('multiplayer')} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
@@ -272,7 +272,7 @@ function App() {
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
       case 'history': return <FullHistory setView={setView} user={user} />;
-      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp) => { setOpponent(opp); setDuration(60); setView('challenge'); }} />;
+      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setDuration(60); setView('challenge'); }} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'patents-list': return <PatentsList setView={setView} user={user} />;
       default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
