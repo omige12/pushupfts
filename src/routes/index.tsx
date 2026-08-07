@@ -748,16 +748,16 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
                   <p className="text-xl font-black text-gold">{user.record}</p>
                 </div>
                 <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Média/Min</p>
-                  <p className="text-xl font-black text-blue-400">{(playerPushups / (duration / 60)).toFixed(1)}</p>
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">XP Ganho</p>
+                  <p className="text-xl font-black text-primary">+{playerPushups >= oppPushups ? 150 + playerPushups : 45 + playerPushups}</p>
                 </div>
                 <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">XP Total</p>
-                  <p className="text-xl font-black text-purple-evolve">+{playerPushups >= botPushups ? 150 + playerPushups : 45 + playerPushups}</p>
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Rival</p>
+                  <p className="text-xl font-black text-energy-red">{oppPushups}</p>
                 </div>
               </div>
 
-              <Button onClick={onExit} className="game-button bg-primary w-full py-6 text-xl tracking-tighter italic">CONTINUAR</Button>
+              <Button onClick={onExit} className="game-button bg-primary w-full py-8 text-xl italic uppercase">SAIR DO DUELO</Button>
             </div>
           </motion.div>
         )}
