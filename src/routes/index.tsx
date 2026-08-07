@@ -244,18 +244,8 @@ function App() {
       </AnimatePresence>
 
       <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around p-3 z-50">
-        {[
-          { icon: Home, label: 'Início', id: 'dashboard' },
-          { icon: Swords, label: 'Multiplayer', id: 'multiplayer' },
-          { icon: TrendingUp, label: 'Ranking', id: 'ranking' },
-          { icon: UserCircle, label: 'Perfil', id: 'profile' },
-          { icon: Star, label: 'Conquistas', id: 'achievements' },
-        ].map(item => (
-          <button key={item.id} onClick={() => setView(item.id as View)} className={`flex flex-col items-center gap-1 ${view === item.id ? 'text-primary' : 'text-muted-foreground'}`}>
-            <item.icon className="w-6 h-6" />
-            <span className="text-[10px] font-bold">{item.label}</span>
-          </button>
-        ))}
+// Placeholder to be filled in a comprehensive write.
+
       </nav>
     </div>
   );
