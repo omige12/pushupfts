@@ -872,23 +872,32 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
 }
 
 function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => void, user: any, onSelectBot: () => void }) {
-  const [showRanking, setShowRanking] = useState(false);
+  const [searchId, setSearchId] = useState('');
+  const [foundPlayer, setFoundPlayer] = useState<any>(null);
+  const [challengeReceived, setChallengeReceived] = useState<string | null>(null);
 
-  if (showRanking) {
-    return (
-      <div className="relative">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="fixed top-6 left-6 z-50 rounded-xl bg-white/5" 
-          onClick={() => setShowRanking(false)}
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <Ranking setView={setView} user={user} />
-      </div>
-    );
-  }
+  const handleSearch = () => {
+    if (searchId.trim().toUpperCase() === 'PUSH-DEMO') {
+      setFoundPlayer({
+        id: 'PUSH-DEMO',
+        name: 'RICARDO BRUTO',
+        level: 18,
+        league: 'Ouro',
+        record: 85,
+        avatar: null
+      });
+    } else {
+      setFoundPlayer(null);
+    }
+  };
+
+  const sendChallenge = () => {
+    alert(`Desafio enviado para ${foundPlayer.name}!`);
+    // Demo: auto-receive challenge back after 2s
+    setTimeout(() => {
+      setChallengeReceived(foundPlayer.name);
+    }, 2000);
+  };
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
@@ -897,49 +906,95 @@ function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => voi
         <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
       </div>
 
-      <div className="grid gap-4">
+      <div className="space-y-4">
+        <div className="glass-panel p-4 space-y-3">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">🔍 PROCURAR JOGADOR POR ID</p>
+          <div className="flex gap-2">
+            <input 
+              className="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 font-mono text-sm text-white focus:outline-none focus:border-primary"
+              placeholder="Ex: PUSH-DEMO"
+              value={searchId}
+              onChange={(e) => setSearchId(e.target.value.toUpperCase())}
+            />
+            <Button onClick={handleSearch} size="icon" className="game-button bg-primary"><Search className="w-5 h-5" /></Button>
+          </div>
+        </div>
+
+        {foundPlayer && (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel p-5 border-primary/30 bg-primary/5">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center border-2 border-primary/30">
+                <UserIcon className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <div className="flex-1">
+                <p className="font-black text-lg italic text-white tracking-tight">{foundPlayer.name}</p>
+                <div className="flex items-center gap-2">
+                   <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none">{foundPlayer.id}</Badge>
+                   <Badge className="bg-gold/20 text-gold border-none text-[8px] h-4 px-1.5 uppercase font-black italic">LIGA {foundPlayer.league}</Badge>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+               <div className="bg-white/5 p-2 rounded-xl text-center">
+                  <p className="text-[8px] text-muted-foreground uppercase font-black">Nível</p>
+                  <p className="text-sm font-black text-white">{foundPlayer.level}</p>
+               </div>
+               <div className="bg-white/5 p-2 rounded-xl text-center">
+                  <p className="text-[8px] text-muted-foreground uppercase font-black">Recorde</p>
+                  <p className="text-sm font-black text-gold">{foundPlayer.record}</p>
+               </div>
+            </div>
+            <Button className="game-button bg-primary w-full py-4 text-sm uppercase italic" onClick={sendChallenge}>Enviar Desafio</Button>
+          </motion.div>
+        )}
+
         <Button 
-          className="game-button bg-energy-red h-28 flex flex-col items-center justify-center relative overflow-hidden group"
+          className="game-button bg-energy-red h-24 flex flex-col items-center justify-center relative overflow-hidden group"
           onClick={onSelectBot}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-          <Swords className="w-8 h-8 mb-1 group-hover:scale-110 transition-transform" />
-          <span className="text-xl tracking-tighter italic uppercase">Desafio Rápido</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Oponentes do seu nível</p>
+          <Swords className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
+          <span className="text-lg tracking-tighter italic uppercase leading-none">Desafio Rápido</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase mt-1">Oponentes Reais (Bots Matchmaking)</p>
         </Button>
 
         <Button 
-          className="game-button bg-blue-500/20 border border-blue-500/30 h-28 flex flex-col items-center justify-center group"
+          className="game-button bg-blue-500/20 border border-blue-500/30 h-24 flex flex-col items-center justify-center group"
           onClick={() => setView('friend-challenge')}
         >
-          <UserIcon className="w-8 h-8 mb-1 text-blue-400 group-hover:scale-110 transition-transform" />
-          <span className="text-xl tracking-tighter italic uppercase">Jogar com Amigos</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Desafie seus contatos</p>
-        </Button>
-
-        <Button 
-          className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-28 flex flex-col items-center justify-center group"
-          onClick={() => setView('tournaments')}
-        >
-          <Trophy className="w-8 h-8 mb-1 text-purple-evolve group-hover:scale-110 transition-transform" />
-          <span className="text-xl tracking-tighter italic uppercase">Campeonatos</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Competições especiais</p>
-        </Button>
-
-        <Button 
-          className="game-button bg-gold/10 border border-gold/20 h-28 flex flex-col items-center justify-center group"
-          onClick={() => setShowRanking(true)}
-        >
-          <TrendingUp className="w-8 h-8 mb-1 text-gold group-hover:scale-110 transition-transform" />
-          <span className="text-xl tracking-tighter italic uppercase">Ranking</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Global • Brasil • Amigos</p>
+          <UserIcon className="w-6 h-6 mb-1 text-blue-400 group-hover:scale-110 transition-transform" />
+          <span className="text-lg tracking-tighter italic uppercase leading-none">Jogar com Amigos</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase mt-1">Convidar via link</p>
         </Button>
       </div>
+
+      <AnimatePresence>
+        {challengeReceived && (
+          <motion.div initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }} className="fixed bottom-24 left-6 right-6 z-50 glass-panel p-6 border-gold/50 bg-gold/10 shadow-[0_0_30px_rgba(255,215,0,0.2)]">
+            <h3 className="text-lg font-black italic text-white tracking-tighter mb-4">VOCÊ RECEBEU UM DESAFIO!</h3>
+            <p className="text-sm font-medium text-white/80 mb-6 uppercase tracking-wide">
+              <span className="text-gold">{challengeReceived}</span> quer duelar com você!
+            </p>
+            <div className="flex gap-3">
+              <Button className="game-button bg-green-500 flex-1 py-4" onClick={() => { setView('select-duration'); setChallengeReceived(null); }}>✅ ACEITAR</Button>
+              <Button className="game-button bg-energy-red flex-1 py-4" onClick={() => setChallengeReceived(null)}>❌ RECUSAR</Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
 
-function FriendChallenge({ setView }: { setView: (v: View) => void }) {
+function FriendChallenge({ setView, user }: { setView: (v: View) => void, user: any }) {
+  const [copied, setCopied] = useState(false);
+
+  const copyId = () => {
+    navigator.clipboard.writeText(user.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
       <div className="flex items-center gap-4 mb-6">
@@ -953,11 +1008,14 @@ function FriendChallenge({ setView }: { setView: (v: View) => void }) {
         </div>
         <div>
           <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">Convidar Amigos</h3>
-          <p className="text-xs text-muted-foreground font-medium px-4">Compartilhe seu código ou link de desafio para competir contra quem você conhece.</p>
+          <p className="text-xs text-muted-foreground font-medium px-4">Compartilhe seu ID para competir contra quem você conhece.</p>
         </div>
         
-        <div className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-lg font-black text-white tracking-[0.2em]">
-          PUSH-87X2
+        <div className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-lg font-black text-white tracking-[0.2em] relative group cursor-pointer" onClick={copyId}>
+          {user.id}
+          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-xl transition-opacity">
+            {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5 text-white" />}
+          </div>
         </div>
 
         <Button className="game-button bg-blue-500 w-full py-6 text-lg tracking-tighter italic uppercase">
