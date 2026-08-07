@@ -288,9 +288,12 @@ function Challenge({ bot, onExit, onComplete }: { bot: any, onExit: () => void, 
           origin: { y: 0.6 },
           colors: ['#FFD700', '#60A5FA', '#F43F5E']
         });
+        onComplete(true, playerPushups, 150 + playerPushups, bot.name, botPushups);
+      } else {
+        onComplete(false, playerPushups, 45 + playerPushups, bot.name, botPushups);
       }
     }
-  }, [timeLeft, bot, gameState, countdown, playerPushups, botPushups]);
+  }, [timeLeft, bot, gameState, countdown, playerPushups, botPushups, onComplete]);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 flex flex-col h-[calc(100vh-80px)]">
