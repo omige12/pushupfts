@@ -128,6 +128,7 @@ function App() {
         {[
           { icon: Home, label: 'Início', id: 'dashboard' },
           { icon: Swords, label: 'Multiplayer', id: 'multiplayer' },
+          { icon: TrendingUp, label: 'Ranking', id: 'ranking' },
           { icon: UserCircle, label: 'Perfil', id: 'profile' },
           { icon: Star, label: 'Conquistas', id: 'achievements' },
         ].map(item => (
