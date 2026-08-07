@@ -1762,10 +1762,9 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
           <Button 
             key={cat.id} 
             onClick={() => setActiveCat(cat.id)}
-            className={`game-button h-12 px-6 flex items-center gap-2 border-none shadow-none text-xs ${activeCat === cat.id ? 'bg-primary' : 'bg-white/5 opacity-50'}`}
+            className={`game-button h-12 w-12 flex items-center justify-center p-0 border-none shadow-none ${activeCat === cat.id ? 'bg-primary' : 'bg-white/5 opacity-50'}`}
           >
-            <cat.icon className="w-4 h-4" />
-            {cat.label.toUpperCase()}
+            <cat.icon className="w-5 h-5" />
           </Button>
         ))}
       </div>
