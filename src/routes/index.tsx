@@ -92,7 +92,7 @@ const BOTS = [
     league: 'Bronze',
     stats: { strength: 25, stamina: 20, speed: 25 },
     record: 25,
-    pushupRate: 0.12 // Pushups per second chance
+    pushupRate: 0.35 // Increased from 0.12
   },
   { 
     id: '2', 
@@ -105,7 +105,7 @@ const BOTS = [
     league: 'Bronze',
     stats: { strength: 40, stamina: 35, speed: 40 },
     record: 45,
-    pushupRate: 0.25
+    pushupRate: 0.65 // Increased from 0.25
   },
   { 
     id: '3', 
@@ -118,7 +118,7 @@ const BOTS = [
     league: 'Prata',
     stats: { strength: 65, stamina: 60, speed: 60 },
     record: 75,
-    pushupRate: 0.45
+    pushupRate: 1.15 // Increased from 0.45
   },
   { 
     id: '4', 
@@ -131,7 +131,7 @@ const BOTS = [
     league: 'Prata',
     stats: { strength: 85, stamina: 80, speed: 85 },
     record: 120,
-    pushupRate: 0.75
+    pushupRate: 1.85 // Increased from 0.75
   },
   { 
     id: '5', 
@@ -144,7 +144,7 @@ const BOTS = [
     league: 'Ouro',
     stats: { strength: 100, stamina: 100, speed: 100 },
     record: 450,
-    pushupRate: 1.5
+    pushupRate: 2.85 // Increased from 1.5
   },
 ];
 
@@ -428,25 +428,6 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
 
 
 
-      <div className="space-y-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-sm font-black italic tracking-widest text-white/60 uppercase">Destaques</h3>
-          <Button variant="link" className="text-[10px] font-black text-primary p-0 h-auto uppercase italic tracking-widest" onClick={() => setView('achievements')}>Ver Tudo</Button>
-        </div>
-        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-          {[
-            { label: 'Recorde', val: stats.record, sub: 'flexões', icon: Target, color: 'text-gold' },
-            { label: 'Vitórias', val: stats.wins, sub: 'partidas', icon: Shield, color: 'text-blue-400' },
-            { label: 'Sequência', val: '12', sub: 'dias', icon: Flame, color: 'text-energy-red' },
-          ].map((item, i) => (
-            <div key={i} className="min-w-[120px] glass-panel p-4 border-white/5 flex flex-col items-center gap-1">
-              <item.icon className={`w-5 h-5 ${item.color} mb-1`} />
-              <span className="text-xl font-black italic text-white leading-none">{item.val}</span>
-              <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{item.sub}</span>
-            </div>
-          ))}
-        </div>
-      </div>
     </motion.div>
   );
 }
@@ -949,6 +930,14 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
 
 
+        <Button 
+          className="game-button bg-primary w-full py-6 text-lg italic uppercase tracking-tighter shadow-[0_6px_0_0_rgba(0,0,0,0.3)] active:scale-95 transition-all active:translate-y-[6px] active:shadow-none mb-4"
+          onClick={() => setEditing(true)}
+        >
+          <Pencil className="w-5 h-5 mr-2" />
+          Editar Perfil
+        </Button>
+
         <div className="grid grid-cols-3 gap-3 w-full">
           <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
             <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Vitórias</p>
@@ -964,6 +953,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           </div>
         </div>
       </div>
+
 
       <div className="grid grid-cols-1 gap-4">
         <Button 
@@ -1427,6 +1417,31 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
         <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
       </div>
       
+      {/* ⭐ Destaques Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Star className="w-5 h-5 text-gold fill-gold" />
+          <h3 className="text-sm font-black italic tracking-widest text-white uppercase">⭐ Destaques</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { label: 'Melhor Recorde', val: user.record, sub: 'FLEXÕES', icon: Target, color: 'text-gold' },
+            { label: 'Total Flexões', val: user.totalPushups, sub: 'FLEXÕES', icon: Dumbbell, color: 'text-primary' },
+            { label: 'Sequência Dias', val: user.streak, sub: 'DIAS 🔥', icon: Flame, color: 'text-energy-red' },
+            { label: 'Sequência Vitórias', val: Math.floor(user.wins / 10) + 1, sub: 'VITÓRIAS', icon: Swords, color: 'text-blue-400' },
+            { label: 'Melhor Desempenho', val: Math.floor(user.record * 0.9), sub: 'RECENTE', icon: TrendingUp, color: 'text-green-400' },
+            { label: 'Última Conquista', val: 'Elite', sub: 'RANK PRO', icon: Medal, color: 'text-purple-evolve' },
+          ].map((item, i) => (
+            <div key={i} className="glass-panel p-4 border-white/5 flex flex-col items-center gap-1 text-center">
+              <item.icon className={`w-5 h-5 ${item.color} mb-1`} />
+              <p className="text-[7px] font-black text-muted-foreground uppercase tracking-widest">{item.label}</p>
+              <span className="text-xl font-black italic text-white leading-none">{item.val}</span>
+              <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{item.sub}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
         {categories.map(cat => (
           <Button 
@@ -1485,6 +1500,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
           );
         })}
       </div>
+
     </motion.div>
   );
 }
