@@ -721,12 +721,20 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
   const battleMessage = useMemo(() => {
     if (gameState !== 'playing') return "";
     const diff = playerPushups - oppPushups;
-    if (diff > 5) return "🔥 VOCÊ ESTÁ DOMINANDO!";
-    if (diff > 0) return "🔥 VOCÊ ESTÁ NA FRENTE!";
-    if (diff === 0) return "⚔️ DISPUTA ACIRRADA!";
-    if (diff > -5) return "⚠️ ELE ESTÁ TE ALCANÇANDO!";
-    return "🔥 VOCÊ PRECISA ACELERAR!";
-  }, [playerPushups, oppPushups, gameState]);
+    if (diff > 0 && lastWhoIsAhead !== 'player') {
+      setLastWhoIsAhead('player');
+      return "🔥 VOCÊ ESTÁ NA FRENTE!";
+    }
+    if (diff < 0 && lastWhoIsAhead !== 'opponent') {
+      setLastWhoIsAhead('opponent');
+      return `⚠️ ${activeOpponent?.name || 'ADVERSÁRIO'} ESTÁ NA FRENTE!`;
+    }
+    if (diff === 0 && lastWhoIsAhead !== null) {
+      setLastWhoIsAhead(null);
+      return "⚔️ DISPUTA ACIRRADA!";
+    }
+    return "";
+  }, [playerPushups, oppPushups, gameState, lastWhoIsAhead, activeOpponent]);
 
   useEffect(() => {
     if (gameState === 'countdown') {
