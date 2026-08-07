@@ -440,18 +440,8 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{item.sub}</span>
             </div>
           ))}
-                  <div className="flex gap-2 mt-2">
-                    {Object.entries(bot.stats).map(([key, val]: [string, any]) => (
-                      <div key={key} className="flex flex-col">
-                        <span className="text-[7px] font-black text-white/30 uppercase tracking-tighter">{key === 'strength' ? 'FOR' : key === 'stamina' ? 'RES' : 'VEL'}</span>
-                        <div className="h-1 w-8 bg-white/5 rounded-full overflow-hidden">
-                          <div className="h-full bg-primary/60" style={{ width: `${val}%` }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -489,7 +479,18 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
                       <Target className="w-3 h-3 text-white/40" />
                       <span className="text-[10px] font-black text-muted-foreground italic uppercase">{bot.record} Recorde</span>
                     </div>
+                    <div className="flex gap-2 mt-1">
+                      {Object.entries(bot.stats).map(([key, val]: [string, any]) => (
+                        <div key={key} className="flex flex-col">
+                          <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter leading-none">{key === 'strength' ? 'FOR' : key === 'stamina' ? 'RES' : 'VEL'}</span>
+                          <div className="h-0.5 w-6 bg-white/5 rounded-full overflow-hidden mt-0.5">
+                            <div className="h-full bg-primary/60" style={{ width: `${val}%` }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                </div>
                 </div>
               </div>
             </div>
