@@ -858,6 +858,142 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
   );
 }
 
+function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => void, user: any, onSelectBot: () => void }) {
+  const [showRanking, setShowRanking] = useState(false);
+
+  if (showRanking) {
+    return (
+      <div className="relative">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="fixed top-6 left-6 z-50 rounded-xl bg-white/5" 
+          onClick={() => setShowRanking(false)}
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <Ranking setView={setView} user={user} />
+      </div>
+    );
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">MULTIJOGADOR</h2>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+      </div>
+
+      <div className="grid gap-4">
+        <Button 
+          className="game-button bg-energy-red h-28 flex flex-col items-center justify-center relative overflow-hidden group"
+          onClick={onSelectBot}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          <Swords className="w-8 h-8 mb-1 group-hover:scale-110 transition-transform" />
+          <span className="text-xl tracking-tighter italic uppercase">Desafio Rápido</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Oponentes do seu nível</p>
+        </Button>
+
+        <Button 
+          className="game-button bg-blue-500/20 border border-blue-500/30 h-28 flex flex-col items-center justify-center group"
+          onClick={() => setView('friend-challenge')}
+        >
+          <UserIcon className="w-8 h-8 mb-1 text-blue-400 group-hover:scale-110 transition-transform" />
+          <span className="text-xl tracking-tighter italic uppercase">Jogar com Amigos</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Desafie seus contatos</p>
+        </Button>
+
+        <Button 
+          className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-28 flex flex-col items-center justify-center group"
+          onClick={() => setView('tournaments')}
+        >
+          <Trophy className="w-8 h-8 mb-1 text-purple-evolve group-hover:scale-110 transition-transform" />
+          <span className="text-xl tracking-tighter italic uppercase">Campeonatos</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Competições especiais</p>
+        </Button>
+
+        <Button 
+          className="game-button bg-gold/10 border border-gold/20 h-28 flex flex-col items-center justify-center group"
+          onClick={() => setShowRanking(true)}
+        >
+          <TrendingUp className="w-8 h-8 mb-1 text-gold group-hover:scale-110 transition-transform" />
+          <span className="text-xl tracking-tighter italic uppercase">Ranking</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Global • Brasil • Amigos</p>
+        </Button>
+      </div>
+    </motion.div>
+  );
+}
+
+function FriendChallenge({ setView }: { setView: (v: View) => void }) {
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">AMIGOS</h2>
+      </div>
+
+      <div className="glass-panel p-8 text-center space-y-6 border-blue-500/20">
+        <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto border-2 border-blue-500/30">
+          <UserIcon className="w-10 h-10 text-blue-400" />
+        </div>
+        <div>
+          <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">Convidar Amigos</h3>
+          <p className="text-xs text-muted-foreground font-medium px-4">Compartilhe seu código ou link de desafio para competir contra quem você conhece.</p>
+        </div>
+        
+        <div className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-lg font-black text-white tracking-[0.2em]">
+          PUSH-87X2
+        </div>
+
+        <Button className="game-button bg-blue-500 w-full py-6 text-lg tracking-tighter italic uppercase">
+          Compartilhar Link
+        </Button>
+      </div>
+    </motion.div>
+  );
+}
+
+function Tournaments({ setView }: { setView: (v: View) => void }) {
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">CAMPEONATOS</h2>
+      </div>
+
+      <div className="space-y-4">
+        {[
+          { title: "Copa Push-Up Brasil", status: "Em Aberto", reward: "Moldura Dourada Rara", participants: "1,240" },
+          { title: "Desafio da Madrugada", status: "Inicia em 2h", reward: "Título: Noturno", participants: "450" },
+        ].map((t, i) => (
+          <div key={i} className="glass-panel p-6 border-purple-evolve/20 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-evolve/5 blur-2xl -mr-12 -mt-12" />
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <Badge className="bg-purple-evolve/20 text-purple-evolve border-none text-[8px] mb-2">{t.status.toUpperCase()}</Badge>
+                <h3 className="text-xl font-black text-white italic tracking-tighter uppercase">{t.title}</h3>
+              </div>
+              <Trophy className="w-6 h-6 text-gold" />
+            </div>
+            <div className="flex justify-between items-end">
+              <div className="space-y-1">
+                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Recompensa</p>
+                <p className="text-xs font-black text-gold italic">{t.reward}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{t.participants} Jogadores</p>
+                <Button className="game-button bg-purple-evolve h-8 px-4 mt-2 text-[10px] italic">ENTRAR</Button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   const [tab, setTab] = useState<'global' | 'local'>('global');
   
