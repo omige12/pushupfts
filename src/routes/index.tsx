@@ -18,7 +18,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking';
+type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list';
 
 const getPatentInfo = (wins: number, totalPushups: number, record: number, xp: number) => {
   const score = (wins * 10) + (totalPushups / 10) + (record * 2) + (xp / 100);
@@ -187,8 +187,8 @@ function App() {
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
-      case 'settings': return <Profile setView={setView} user={user} setUser={setUser} />;
-      case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} />;
+      case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
+      case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
@@ -196,6 +196,7 @@ function App() {
       case 'history': return <FullHistory setView={setView} user={user} />;
       case 'friend-challenge': return <FriendChallenge setView={setView} user={user} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
+      case 'patents-list': return <PatentsList setView={setView} user={user} />;
       default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
     }
   };
@@ -299,7 +300,10 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
         </div>
       </header>
 
-      <div className="glass-panel p-5 relative overflow-hidden group border-primary/20">
+      <div 
+        className="glass-panel p-5 relative overflow-hidden group border-primary/20 cursor-pointer active:scale-[0.98] transition-all"
+        onClick={() => setView('patents-list')}
+      >
         <div className="absolute top-0 left-0 w-full h-1 bg-primary/30" />
         <div className="flex justify-between items-end mb-2">
           <div className="flex flex-col">
@@ -315,10 +319,11 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           </p>
           <div className="flex items-center gap-1">
              <Star className="w-3 h-3 text-gold fill-gold" />
-             <span className="text-[8px] font-black text-gold uppercase tracking-widest">Moldura Rara</span>
+             <span className="text-[8px] font-black text-gold uppercase tracking-widest">Ver Trilhas</span>
           </div>
         </div>
       </div>
+
 
 
       <div className="grid grid-cols-2 gap-4">
@@ -650,8 +655,8 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
 }
 
 
-function Profile({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: any }) {
-  const [editing, setEditing] = useState(false);
+function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
+  const [editing, setEditing] = useState(initialEditing);
   const [formData, setFormData] = useState(user);
 
   const stats = user;
@@ -812,20 +817,34 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
               <span className="text-[10px] font-mono text-muted-foreground">{stats.id}</span>
               {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
             </div>
-            <Badge className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold">{getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}</Badge>
+            <Badge 
+              className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold cursor-pointer hover:scale-105 transition-transform"
+              onClick={() => setView('patents-list')}
+            >
+              {getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}
+            </Badge>
           </div>
           <div className="flex justify-center mt-1">
              <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.age} ANOS • {stats.height}CM</Badge>
           </div>
         </div>
 
-        <div className="w-full space-y-2">
+
+        <div 
+          className="w-full space-y-2 cursor-pointer active:scale-[0.98] transition-all"
+          onClick={() => setView('patents-list')}
+        >
           <div className="flex justify-between text-xs font-black italic text-muted-foreground uppercase tracking-widest">
             <span>Nível {stats.level}</span>
             <span>{stats.xp} / {stats.maxXp} XP</span>
           </div>
           <Progress value={(stats.xp / stats.maxXp) * 100} className="h-3 bg-white/5" />
+          <div className="flex justify-center">
+             <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">Toque para ver patentes</span>
+          </div>
         </div>
+
+
 
         <div className="grid grid-cols-3 gap-3 w-full">
           <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
@@ -1382,5 +1401,104 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
     </motion.div>
   );
 }
+
+function PatentsList({ setView, user }: { setView: (v: View) => void, user: any }) {
+  const patents = [
+    { name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", rewards: ["Moldura Básica", "XP Base"] },
+    { name: "Prata", min: 500, emoji: "🥈", color: "from-slate-400 to-slate-200", rewards: ["Moldura Prateada", "XP +10%"] },
+    { name: "Ouro", min: 1500, emoji: "🥇", color: "from-yellow-600 to-yellow-300", rewards: ["Moldura Dourada", "XP +25%"] },
+    { name: "Diamante", min: 3000, emoji: "💎", color: "from-blue-600 to-cyan-300", rewards: ["Moldura Diamante", "XP +50%"] },
+    { name: "Pro", min: 6000, emoji: "🔥", color: "from-red-600 to-orange-500", rewards: ["Efeito de Fogo", "XP +100%"] },
+    { name: "Mestre", min: 10000, emoji: "👑", color: "from-purple-600 to-pink-500", rewards: ["Coroa Especial", "XP +150%"] },
+    { name: "Lenda", min: 20000, emoji: "🌟", color: "from-gold to-white", rewards: ["Aura Lendária", "XP +200%"] }
+  ];
+
+  const currentInfo = getPatentInfo(user.wins, user.totalPushups, user.record, user.xp);
+  
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24 space-y-6">
+      <div className="flex items-center gap-4 mb-2">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">TRILHA DE PATENTES</h2>
+      </div>
+
+      <div className="glass-panel p-6 bg-gradient-to-br from-primary/20 to-transparent border-primary/30">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="text-4xl">{currentInfo.emoji}</div>
+          <div>
+            <h3 className="font-black text-xl italic text-white uppercase tracking-tighter">Sua Patente Atual</h3>
+            <p className="text-primary font-bold">{currentInfo.name} {currentInfo.subRank}</p>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <span>Progresso</span>
+            <span>{user.xp} / {user.maxXp} XP</span>
+          </div>
+          <Progress value={(user.xp / user.maxXp) * 100} className="h-2 bg-white/5" />
+          {currentInfo.nextThreshold && (
+             <p className="text-[10px] font-bold text-gold italic mt-2">
+               Faltam {Math.max(0, currentInfo.nextThreshold - Math.floor(currentInfo.score))} pontos de score para {patents.find(p => p.min === currentInfo.nextThreshold)?.name}
+             </p>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4 relative">
+        <div className="absolute left-8 top-8 bottom-8 w-1 bg-white/5 z-0" />
+        
+        {patents.map((p, i) => {
+          const isUnlocked = currentInfo.score >= p.min;
+          const isCurrent = currentInfo.name === p.name;
+          const isNext = !isUnlocked && (i === 0 || currentInfo.score >= patents[i-1].min);
+
+          return (
+            <motion.div 
+              key={p.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`relative z-10 flex items-center gap-6 p-4 rounded-2xl border transition-all ${
+                isCurrent ? 'bg-white/10 border-gold shadow-[0_0_20px_rgba(255,215,0,0.2)] scale-[1.05]' : 
+                isUnlocked ? 'bg-white/5 border-white/10' : 
+                'bg-black/20 border-white/5 grayscale opacity-50'
+              }`}
+            >
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center text-2xl shadow-lg shrink-0`}>
+                {p.emoji}
+              </div>
+              
+              <div className="flex-1">
+                <div className="flex justify-between items-center mb-1">
+                   <h4 className="font-black text-lg italic text-white uppercase tracking-tighter">{p.name}</h4>
+                   <span className="text-[8px] font-black text-muted-foreground uppercase">{p.min} SCORE</span>
+                </div>
+                <div className="flex gap-2">
+                  {p.rewards.map((r, idx) => (
+                    <Badge key={idx} variant="outline" className="text-[7px] font-black border-white/10 text-white/60 py-0 uppercase">
+                      {r}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {isCurrent && (
+                <div className="absolute -right-1 -top-1">
+                  <Badge className="bg-gold text-black font-black italic text-[8px] animate-pulse">ATUAL</Badge>
+                </div>
+              )}
+              {isNext && (
+                 <div className="absolute -right-1 -top-1">
+                  <Badge className="bg-primary text-white font-black italic text-[8px]">PRÓXIMA</Badge>
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
 
 
