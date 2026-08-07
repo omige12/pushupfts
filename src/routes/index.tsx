@@ -1106,7 +1106,7 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
                 {player.avatar}
               </div>
               <div className="flex-1">
-                <span className="font-black text-white tracking-tight">{player.name}</span>
+                <span className="font-black text-white tracking-tight">{getPatentEmoji(player.patent || "Bronze")} {player.name}</span>
                 {player.isUser && <Badge className="ml-2 bg-primary text-[8px] h-4 py-0">VOCÊ</Badge>}
                 <div className="flex items-center gap-3 text-[7px] font-black text-muted-foreground uppercase tracking-widest mt-1">
                   <div className="flex items-center gap-0.5"><Target className="w-2.5 h-2.5 text-gold" /> {player.record}</div>
