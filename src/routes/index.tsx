@@ -1135,7 +1135,7 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
         xp: "Você ganha XP ao completar treinos e vencer duelos. O XP aumenta seu nível de jogador e libera recompensas.",
         conquistas: "As conquistas são desafios específicos que dam bônus de XP e molduras exclusivas para seu perfil.",
         bots: "Temos 5 bots: Iniciante, Determinado, Guerreiro, Máquina e o lendário David Goggins. Cada um tem um ritmo de flexões diferente.",
-        multiplayer: "No multiplayer, você pode buscar jogadores pelo ID único (ex: PUSH-XXXX) ou aceitar desafios rápidos do servidor.",
+        multiplayer: "No multiplayer, você pode buscar jogadores pelo ID único (ex: PUSH-XXXX) ou jogar com pessoas aleatórias ao redor do mundo.",
         perfil: "Para editar seu perfil, basta tocar na sua foto na tela de Perfil. Lá você altera nome, idade, peso e altura.",
         ajuda: "Estou aqui para ajudar 24 horas! Posso tirar dúvidas sobre treinos, patentes, bots ou qualquer função do app.",
       };
