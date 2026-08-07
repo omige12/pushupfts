@@ -1107,17 +1107,39 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
     setMessages([...messages, { role: 'user', text: userMsg }]);
     setInput('');
 
-    // AI Logic (Simple keyword matching for the demo as requested by "A IA deve responder somente assuntos relacionados ao aplicativo")
+    // AI Logic (Advanced response system for the 24h AI Support)
     setTimeout(() => {
-      let response = "Desculpe, só posso responder perguntas relacionadas ao PushUp Arena. Tente perguntar sobre duelos, treinos, ligas ou ranking!";
-      
       const lower = userMsg.toLowerCase();
-      if (lower.includes('duelo')) response = "Nos duelos, você compete contra bots de diferentes níveis. Escolha a duração e tente fazer mais flexões que o adversário!";
-      else if (lower.includes('treino')) response = "No modo treino, você pode praticar sozinho. Nossa IA analisa sua postura e conta suas repetições em tempo real.";
-      else if (lower.includes('patente') || lower.includes('liga')) response = "Existem 7 patentes: Bronze, Prata, Ouro, Diamante, Pro, Mestre e Lenda. Evolua seu nível e recorde para subir de patente!";
-      else if (lower.includes('bot')) response = "Temos 5 níveis de bots, do Iniciante ao David Goggins 'Lendário'. Cada nível aumenta a velocidade e quantidade de flexões do oponente.";
-      else if (lower.includes('ranking')) response = "O ranking mostra os melhores jogadores do Brasil e seus amigos. Acumule vitórias para subir nas tabelas!";
-      else if (lower.includes('perfil') || lower.includes('configuração') || lower.includes('erro') || lower.includes('mudar')) response = "Se você está tendo problemas para editar seu perfil, certifique-se de preencher todos os campos corretamente (Nome, Idade, Peso e Altura) e clicar em 'Salvar Alterações'. Se o erro persistir, tente carregar uma foto menor ou reiniciar o app.";
+      let response = "";
+      
+      const knowledge = {
+        app: "O PushUp Arena é um aplicativo de competição de flexões com sistema de patentes, bots desafiadores e modo multiplayer em tempo real.",
+        treino: "No modo treino, você pratica sozinho com ajuda da nossa IA que analisa sua postura e conta cada repetição. Ideal para aquecer!",
+        duelo: "As competições (duelos) permitem que você enfrente bots ou outros jogadores. Você escolhe a duração e quem fizer mais flexões vence.",
+        conta: "Sua conta armazena todo seu progresso, recordes e conquistas. Você pode personalizar seu perfil tocando na sua foto.",
+        patentes: "Nosso sistema competitivo vai de Bronze a Lendário, cada uma com 3 divisões (I, II, III). Acumule Score para subir!",
+        xp: "Você ganha XP ao completar treinos e vencer duelos. O XP aumenta seu nível de jogador e libera recompensas.",
+        conquistas: "As conquistas são desafios específicos que dam bônus de XP e molduras exclusivas para seu perfil.",
+        bots: "Temos 5 bots: Iniciante, Determinado, Guerreiro, Máquina e o lendário David Goggins. Cada um tem um ritmo de flexões diferente.",
+        multiplayer: "No multiplayer, você pode buscar jogadores pelo ID único (ex: PUSH-XXXX) ou aceitar desafios rápidos do servidor.",
+        perfil: "Para editar seu perfil, basta tocar na sua foto na tela de Perfil. Lá você altera nome, idade, peso e altura.",
+        ajuda: "Estou aqui para ajudar 24 horas! Posso tirar dúvidas sobre treinos, patentes, bots ou qualquer função do app.",
+      };
+
+      if (lower.includes('duelo') || lower.includes('combate') || lower.includes('vencer')) response = knowledge.duelo;
+      else if (lower.includes('treino') || lower.includes('praticar') || lower.includes('exercício')) response = knowledge.treino;
+      else if (lower.includes('patente') || lower.includes('liga') || lower.includes('rank') || lower.includes('bronze') || lower.includes('lenda')) response = knowledge.patentes;
+      else if (lower.includes('bot') || lower.includes('goggins') || lower.includes('máquina')) response = knowledge.bots;
+      else if (lower.includes('ranking') || lower.includes('pontos') || lower.includes('score')) response = "O Score é calculado com base em vitórias, total de flexões e recordes. Use isso para subir no Ranking Brasil!";
+      else if (lower.includes('perfil') || lower.includes('mudar') || lower.includes('foto') || lower.includes('nome') || lower.includes('editar')) response = knowledge.perfil;
+      else if (lower.includes('xp') || lower.includes('nível') || lower.includes('level')) response = knowledge.xp;
+      else if (lower.includes('conquista') || lower.includes('medalha') || lower.includes('troféu')) response = knowledge.conquistas;
+      else if (lower.includes('multiplayer') || lower.includes('amigo') || lower.includes('desafiar')) response = knowledge.multiplayer;
+      else if (lower.includes('aplicativo') || lower.includes('app') || lower.includes('pushup arena')) response = knowledge.app;
+      else if (lower.includes('oi') || lower.includes('olá') || lower.includes('bom dia') || lower.includes('ajuda')) response = "Olá! Como posso ajudar você hoje na Arena? Pergunte sobre treinos, patentes ou como melhorar seu desempenho!";
+      else {
+        response = "Essa é uma ótima pergunta! No momento, só consigo ajudar com informações sobre o PushUp Arena (treinos, patentes, bots, perfil, etc). Se precisar de algo técnico ou humano, nossa equipe de suporte via e-mail pode ajudar!";
+      }
 
       setMessages(prev => [...prev, { role: 'ai', text: response }]);
     }, 600);
