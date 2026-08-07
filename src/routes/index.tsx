@@ -1057,14 +1057,16 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
         </div>
 
         <div className="space-y-3">
-          {[
-            { name: "Mega Flex", count: 12500, avatar: "MF", color: "bg-gold" },
-            { name: "Push Master", count: 11200, avatar: "PM", color: "bg-silver-400" },
-            { name: "Elite Beast", count: 10800, avatar: "EB", color: "bg-orange-600" },
-            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true },
-            { name: "Titan X", count: 9800, avatar: "TX", color: "bg-secondary" },
-            { name: "Iron Chest", count: 9500, avatar: "IC", color: "bg-secondary" },
-          ].map((player, i) => (
+          {(tab === 'friends' ? [
+            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12 },
+            { name: "Amigo 1", count: 8200, avatar: "A1", color: "bg-secondary", record: 42, wins: 56, streak: 3 },
+          ] : [
+            { name: "Mega Flex", count: 12500, avatar: "MF", color: "bg-gold", record: 120, wins: 342, streak: 45 },
+            { name: "Push Master", count: 11200, avatar: "PM", color: "bg-slate-400", record: 98, wins: 287, streak: 32 },
+            { name: "Elite Beast", count: 10800, avatar: "EB", color: "bg-orange-600", record: 92, wins: 215, streak: 21 },
+            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12 },
+            { name: "Titan X", count: 9800, avatar: "TX", color: "bg-secondary", record: 88, wins: 156, streak: 15 },
+          ]).map((player: any, i) => (
             <div key={i} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${player.isUser ? 'bg-primary/20 border-primary/50 scale-[1.02] shadow-[0_0_20px_rgba(96,165,250,0.2)]' : 'bg-white/5 border-white/5'}`}>
               <span className={`w-8 font-black text-lg italic ${i === 0 ? 'text-gold' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-orange-400' : 'text-muted-foreground'}`}>
                 {i + 1}º
@@ -1075,8 +1077,10 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
               <div className="flex-1">
                 <span className="font-black text-white tracking-tight">{player.name}</span>
                 {player.isUser && <Badge className="ml-2 bg-primary text-[8px] h-4 py-0">VOCÊ</Badge>}
-                <div className="flex items-center gap-1 text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-0.5">
-                  <Flame className="w-3 h-3 text-energy-red" /> 12 dias seguidos
+                <div className="flex items-center gap-3 text-[7px] font-black text-muted-foreground uppercase tracking-widest mt-1">
+                  <div className="flex items-center gap-0.5"><Target className="w-2.5 h-2.5 text-gold" /> {player.record}</div>
+                  <div className="flex items-center gap-0.5"><Shield className="w-2.5 h-2.5 text-blue-400" /> {player.wins}W</div>
+                  <div className="flex items-center gap-0.5"><Flame className="w-2.5 h-2.5 text-energy-red" /> {player.streak}D</div>
                 </div>
               </div>
               <div className="text-right">
