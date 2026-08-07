@@ -66,27 +66,82 @@ function App() {
 }
 
 function Dashboard({ setView }: { setView: (v: View) => void }) {
+  const stats = {
+    level: 15,
+    xp: 12450,
+    maxXp: 15000,
+    wins: 87,
+    streak: 12,
+    league: "Elite"
+  };
+
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6">
-      <div className="glass-panel p-6 mb-6 flex items-center gap-4">
-        <div className="w-16 h-16 bg-gradient-to-br from-gold to-orange-500 rounded-full border-4 border-white/10" />
-        <div>
-          <h2 className="font-black text-xl text-white">Guerreiro Alpha</h2>
-          <div className="flex items-center gap-2 text-gold">
-            <Trophy className="w-4 h-4" /> <span className="font-bold text-sm">Liga Elite</span>
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
+      <header className="flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <div className="w-14 h-14 bg-gradient-to-br from-gold to-orange-500 rounded-2xl border-2 border-white/20 shadow-lg shadow-gold/10" />
+          <div>
+            <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">GUERREIRO ALPHA</h1>
+            <div className="flex items-center gap-1.5">
+              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">LIGA {stats.league.toUpperCase()}</Badge>
+              <div className="flex items-center gap-0.5 text-gold">
+                <Flame className="w-3 h-3 fill-gold" />
+                <span className="text-[10px] font-black">{stats.streak}</span>
+              </div>
+            </div>
           </div>
         </div>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 border border-white/5" onClick={() => setView('profile')}><UserCircle className="w-6 h-6" /></Button>
+      </header>
+
+      <div className="glass-panel p-5 relative overflow-hidden group">
+        <div className="absolute top-0 left-0 w-full h-1 bg-primary/30" />
+        <div className="flex justify-between items-end mb-2">
+          <span className="text-[10px] font-black italic text-muted-foreground uppercase tracking-widest">Nível {stats.level}</span>
+          <span className="text-[10px] font-black italic text-white tracking-tighter">{stats.xp} / {stats.maxXp} XP</span>
+        </div>
+        <Progress value={(stats.xp / stats.maxXp) * 100} className="h-2.5 bg-white/5" />
       </div>
+
       <div className="grid grid-cols-2 gap-4">
-        <Button className="game-button bg-energy-red col-span-2 h-32" onClick={() => setView('select-bot')}>
-          <Swords className="w-10 h-10 mr-2" /> DESAFIAR
+        <Button className="game-button bg-energy-red col-span-2 h-36 relative overflow-hidden group" onClick={() => setView('select-bot')}>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          <div className="relative flex flex-col items-center gap-2">
+            <div className="flex items-center gap-2">
+              <Swords className="w-8 h-8 group-hover:scale-110 transition-transform" />
+              <span className="text-2xl tracking-tighter italic">DESAFIAR</span>
+            </div>
+            <p className="text-[10px] font-bold opacity-80 tracking-widest">BATALHA DE FLEXÕES</p>
+          </div>
         </Button>
-        <Button className="game-button bg-primary/20 h-28" onClick={() => setView('select-bot')}>
-          <Dumbbell /> TREINAR
+        <Button className="game-button bg-primary/20 border border-primary/30 h-32 flex flex-col gap-2" onClick={() => setView('select-bot')}>
+          <Dumbbell className="w-6 h-6 text-primary" />
+          <span className="text-lg tracking-tighter italic">TREINAR</span>
         </Button>
-        <Button className="game-button bg-purple-evolve h-28" onClick={() => setView('ranking')}>
-          <Trophy /> RANKING
+        <Button className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-32 flex flex-col gap-2" onClick={() => setView('ranking')}>
+          <Trophy className="w-6 h-6 text-purple-evolve" />
+          <span className="text-lg tracking-tighter italic">RANKING</span>
         </Button>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className="text-sm font-black italic tracking-widest text-white/60 uppercase">Destaques</h3>
+          <Button variant="link" className="text-[10px] font-black text-primary p-0 h-auto uppercase italic tracking-widest" onClick={() => setView('achievements')}>Ver Tudo</Button>
+        </div>
+        <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+          {[
+            { label: 'Recorde', val: '54', sub: 'flexões', icon: Target, color: 'text-gold' },
+            { label: 'Vitórias', val: '87', sub: 'partidas', icon: Shield, color: 'text-blue-400' },
+            { label: 'Sequência', val: '12', sub: 'dias', icon: Flame, color: 'text-energy-red' },
+          ].map((item, i) => (
+            <div key={i} className="min-w-[120px] glass-panel p-4 border-white/5 flex flex-col items-center gap-1">
+              <item.icon className={`w-5 h-5 ${item.color} mb-1`} />
+              <span className="text-xl font-black italic text-white leading-none">{item.val}</span>
+              <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{item.sub}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
@@ -94,27 +149,41 @@ function Dashboard({ setView }: { setView: (v: View) => void }) {
 
 function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect: (b: typeof BOTS[0]) => void }) {
   return (
-    <motion.div initial={{ x: 20 }} animate={{ x: 0 }} className="p-6">
-      <h2 className="text-2xl font-black mb-6">Escolha o Bot</h2>
-      <div className="space-y-3">
+    <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6">
+      <div className="flex items-center gap-4 mb-8">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">OPONENTES</h2>
+      </div>
+
+      <div className="space-y-4">
         {BOTS.map(bot => (
-          <Card key={bot.id} className="glass-panel p-4 flex items-center justify-between cursor-pointer hover:bg-white/10 transition" onClick={() => onSelect(bot)}>
+          <Card key={bot.id} className="glass-panel p-5 flex items-center justify-between cursor-pointer hover:bg-white/10 hover:scale-[1.02] transition-all border-white/5 group" onClick={() => onSelect(bot)}>
             <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-full ${bot.color} flex items-center justify-center font-bold text-white`}>
+              <div className={`w-16 h-16 rounded-2xl ${bot.color} flex items-center justify-center font-black text-white text-2xl shadow-lg border-2 border-white/20 group-hover:rotate-3 transition-transform`}>
                 {bot.name[0]}
               </div>
               <div>
-                <p className="font-bold">{bot.name}</p>
-                <p className="text-xs text-muted-foreground">{bot.difficulty} • Nível {bot.level}</p>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="font-black text-lg italic text-white tracking-tight">{bot.name.toUpperCase()}</p>
+                  <Badge variant="outline" className="text-[8px] font-black h-4 px-1 opacity-60">Nível {bot.level}</Badge>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{bot.difficulty}</span>
+                  <div className="w-1 h-1 rounded-full bg-white/20" />
+                  <span className="text-[10px] font-black text-gold italic">{bot.avgPushups} FLEXÕES MÉDIA</span>
+                </div>
               </div>
             </div>
-            <ChevronRight className="text-muted-foreground" />
+            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-primary group-hover:translate-x-1 transition-transform">
+              <ChevronRight className="w-6 h-6" />
+            </div>
           </Card>
         ))}
       </div>
     </motion.div>
   );
 }
+
 
 function Challenge({ bot, onExit }: { bot: any, onExit: () => void }) {
   const [playerPushups, setPlayerPushups] = useState(0);
