@@ -561,12 +561,20 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
       const timer = setInterval(() => {
         setTimeLeft(t => t - 1);
         if (bot) {
-          // Bots have different speeds based on difficulty
-          // David Goggins is much harder
-          const baseChance = bot.id === '5' ? bot.level / 12 : bot.level / 20;
-          const chance = baseChance; // High performance for Goggins
+          // New difficulty logic based on pushupRate
+          // pushupRate is the chance to add a pushup every second.
+          // For David Goggins (1.5), it means 1 guaranteed pushup + 50% chance for a second one.
+          const rate = bot.pushupRate || 0.1;
+          const guaranteed = Math.floor(rate);
+          const chance = rate - guaranteed;
+          
+          let increment = guaranteed;
           if (Math.random() < chance) {
-            setBotPushups(b => b + 1);
+            increment += 1;
+          }
+          
+          if (increment > 0) {
+            setBotPushups(b => b + increment);
           }
         }
       }, 1000);
