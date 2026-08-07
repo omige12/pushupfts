@@ -259,7 +259,7 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
   );
 }
 
-function SelectDuration({ setView, onSelect }: { setView: (v: View) => void, onSelect: (d: number) => void }) {
+function SelectDuration({ setView, onSelect, selectedBot }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot: any }) {
   const durations = [
     { label: '30 seg', value: 30 },
     { label: '1 min', value: 60 },
