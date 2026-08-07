@@ -375,7 +375,7 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
           </AnimatePresence>
           <p className="text-[10px] font-black italic text-primary uppercase tracking-widest">{user.name} ({user.id})</p>
           <div className="flex items-center gap-2">
-            <Badge className="bg-primary/20 text-[8px] h-3 px-1 border-none">{user.league}</Badge>
+            <Badge className="bg-primary/20 text-[8px] h-3 px-1 border-none">{getPatentEmoji(user.patent)} {user.patent}</Badge>
             <motion.span 
               key={playerPushups}
               initial={{ scale: 0.8, y: 5 }}
