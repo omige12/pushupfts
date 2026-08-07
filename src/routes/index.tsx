@@ -105,16 +105,19 @@ function App() {
         date: new Date().toISOString().split('T')[0]
       };
 
+      const wins = won ? prev.wins + 1 : prev.wins;
+      const totalPushups = prev.totalPushups + pushups;
+      
       return {
         ...prev,
-        wins: won ? prev.wins + 1 : prev.wins,
+        wins: wins,
         losses: !won ? prev.losses + 1 : prev.losses,
         record: newRecord,
-        totalPushups: prev.totalPushups + pushups,
+        totalPushups: totalPushups,
         xp: newXp % prev.maxXp,
         level: newLevel,
         maxXp: nextMaxXp,
-        league: getLeague(newRecord),
+        patent: getPatent(wins, totalPushups, newRecord, newXp),
         history: [newMatch, ...prev.history].slice(0, 10)
       };
     });
