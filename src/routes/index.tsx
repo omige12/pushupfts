@@ -1026,44 +1026,6 @@ function FriendChallenge({ setView, user }: { setView: (v: View) => void, user: 
   );
 }
 
-function Tournaments({ setView }: { setView: (v: View) => void }) {
-  return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">CAMPEONATOS</h2>
-      </div>
-
-      <div className="space-y-4">
-        {[
-          { title: "Copa Push-Up Brasil", status: "Em Aberto", reward: "Moldura Dourada Rara", participants: "1,240" },
-          { title: "Desafio da Madrugada", status: "Inicia em 2h", reward: "Título: Noturno", participants: "450" },
-        ].map((t, i) => (
-          <div key={i} className="glass-panel p-6 border-purple-evolve/20 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-evolve/5 blur-2xl -mr-12 -mt-12" />
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <Badge className="bg-purple-evolve/20 text-purple-evolve border-none text-[8px] mb-2">{t.status.toUpperCase()}</Badge>
-                <h3 className="text-xl font-black text-white italic tracking-tighter uppercase">{t.title}</h3>
-              </div>
-              <Trophy className="w-6 h-6 text-gold" />
-            </div>
-            <div className="flex justify-between items-end">
-              <div className="space-y-1">
-                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Recompensa</p>
-                <p className="text-xs font-black text-gold italic">{t.reward}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{t.participants} Jogadores</p>
-                <Button className="game-button bg-purple-evolve h-8 px-4 mt-2 text-[10px] italic">ENTRAR</Button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  );
-}
 
 function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   const [tab, setTab] = useState<'global' | 'local'>('global');
