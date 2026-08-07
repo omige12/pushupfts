@@ -931,66 +931,72 @@ function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => voi
         <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
       </div>
 
-      <div className="space-y-4">
-        <div className="glass-panel p-4 space-y-3">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">🔍 PROCURAR JOGADOR POR ID</p>
+      <div className="flex flex-col gap-4 items-stretch">
+        <div className="glass-panel p-6 space-y-4 border-white/5">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center flex items-center justify-center gap-2">
+            <Search className="w-3 h-3" /> PROCURAR JOGADOR POR ID
+          </p>
           <div className="flex gap-2">
             <input 
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 font-mono text-sm text-white focus:outline-none focus:border-primary"
-              placeholder="Ex: PUSH-DEMO"
+              className="flex-1 bg-white/5 border border-white/10 rounded-xl p-4 font-mono text-sm text-white focus:outline-none focus:border-primary text-center tracking-widest"
+              placeholder="PUSH-XXXX"
               value={searchId}
               onChange={(e) => setSearchId(e.target.value.toUpperCase())}
             />
-            <Button onClick={handleSearch} size="icon" className="game-button bg-primary"><Search className="w-5 h-5" /></Button>
+            <Button onClick={handleSearch} className="game-button bg-primary h-auto px-6"><Search className="w-5 h-5" /></Button>
           </div>
         </div>
 
         {foundPlayer && (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel p-5 border-primary/30 bg-primary/5">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center border-2 border-primary/30">
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel p-6 border-primary/30 bg-primary/5 flex flex-col gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center border-2 border-primary/30 shadow-lg">
                 <UserIcon className="w-8 h-8 text-muted-foreground" />
               </div>
               <div className="flex-1">
-                <p className="font-black text-lg italic text-white tracking-tight">{foundPlayer.name}</p>
+                <p className="font-black text-xl italic text-white tracking-tight leading-none mb-1">{foundPlayer.name}</p>
                 <div className="flex items-center gap-2">
-                   <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none">{foundPlayer.id}</Badge>
-                   <Badge className="bg-gold/20 text-gold border-none text-[8px] h-4 px-1.5 uppercase font-black italic">LIGA {foundPlayer.league}</Badge>
+                   <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none font-mono">{foundPlayer.id}</Badge>
+                   <Badge className="bg-gold/20 text-gold border-none text-[8px] h-4 px-1.5 uppercase font-black italic">
+                     {getPatentEmoji(foundPlayer.patent)} {foundPlayer.patent.toUpperCase()}
+                   </Badge>
                 </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3 mb-4">
-               <div className="bg-white/5 p-2 rounded-xl text-center">
-                  <p className="text-[8px] text-muted-foreground uppercase font-black">Nível</p>
-                  <p className="text-sm font-black text-white">{foundPlayer.level}</p>
+            <div className="grid grid-cols-2 gap-4">
+               <div className="bg-white/5 p-3 rounded-xl text-center border border-white/5">
+                  <p className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Nível</p>
+                  <p className="text-lg font-black text-white italic">{foundPlayer.level}</p>
                </div>
-               <div className="bg-white/5 p-2 rounded-xl text-center">
-                  <p className="text-[8px] text-muted-foreground uppercase font-black">Recorde</p>
-                  <p className="text-sm font-black text-gold">{foundPlayer.record}</p>
+               <div className="bg-white/5 p-3 rounded-xl text-center border border-white/5">
+                  <p className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Recorde</p>
+                  <p className="text-lg font-black text-gold italic">{foundPlayer.record}</p>
                </div>
             </div>
-            <Button className="game-button bg-primary w-full py-4 text-sm uppercase italic" onClick={sendChallenge}>Enviar Desafio</Button>
+            <Button className="game-button bg-primary w-full py-4 text-sm uppercase italic" onClick={sendChallenge}>Desafiar Agora</Button>
           </motion.div>
         )}
 
-        <Button 
-          className="game-button bg-energy-red h-24 flex flex-col items-center justify-center relative overflow-hidden group"
-          onClick={onSelectBot}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-          <Swords className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
-          <span className="text-lg tracking-tighter italic uppercase leading-none">Desafio Rápido</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase mt-1">Oponentes Reais (Bots Matchmaking)</p>
-        </Button>
+        <div className="grid grid-cols-1 gap-4">
+          <Button 
+            className="game-button bg-energy-red h-28 flex flex-col items-center justify-center relative overflow-hidden group border-none"
+            onClick={onSelectBot}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            <Swords className="w-8 h-8 mb-1 group-hover:scale-110 transition-transform duration-300" />
+            <span className="text-xl tracking-tighter italic uppercase leading-none">Desafio Rápido</span>
+            <p className="text-[9px] font-black opacity-60 tracking-widest uppercase mt-1">Bots Matchmaking</p>
+          </Button>
 
-        <Button 
-          className="game-button bg-blue-500/20 border border-blue-500/30 h-24 flex flex-col items-center justify-center group"
-          onClick={() => setView('friend-challenge')}
-        >
-          <UserIcon className="w-6 h-6 mb-1 text-blue-400 group-hover:scale-110 transition-transform" />
-          <span className="text-lg tracking-tighter italic uppercase leading-none">Jogar com Amigos</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase mt-1">Convidar via link</p>
-        </Button>
+          <Button 
+            className="game-button bg-blue-500/10 border-2 border-blue-500/20 h-28 flex flex-col items-center justify-center group shadow-none"
+            onClick={() => setView('friend-challenge')}
+          >
+            <UserIcon className="w-8 h-8 mb-1 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
+            <span className="text-xl tracking-tighter italic uppercase leading-none text-blue-400">Jogar com Amigos</span>
+            <p className="text-[9px] font-black text-blue-400/60 tracking-widest uppercase mt-1">Convidar via ID</p>
+          </Button>
+        </div>
       </div>
 
       <AnimatePresence>
