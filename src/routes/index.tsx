@@ -340,46 +340,66 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 flex flex-col h-[calc(100vh-80px)]">
       <div className="flex justify-between items-center mb-6 relative">
         <div className="flex-1 glass-panel p-3 border-r-0 rounded-r-none border-primary/30 bg-primary/10 relative overflow-hidden">
-          <motion.div 
-            initial={false}
-            animate={{ scale: [1, 1.05, 1] }}
-            key={playerPushups}
-            className="absolute inset-0 bg-primary/5 pointer-events-none"
-          />
+          <AnimatePresence>
+            <motion.div 
+              initial={{ scale: 1, opacity: 0 }}
+              animate={{ scale: [1, 1.2, 1], opacity: [0, 0.2, 0] }}
+              key={playerPushups}
+              transition={{ duration: 0.3 }}
+              className="absolute inset-0 bg-primary pointer-events-none"
+            />
+          </AnimatePresence>
           <p className="text-[10px] font-black italic text-primary uppercase tracking-widest">{user.name}</p>
           <div className="flex items-center gap-2">
             <Badge className="bg-primary/20 text-[8px] h-3 px-1 border-none">{user.league}</Badge>
             <motion.span 
               key={playerPushups}
-              initial={{ scale: 0.5 }}
-              animate={{ scale: 1 }}
+              initial={{ scale: 0.8, y: 5 }}
+              animate={{ scale: 1, y: 0 }}
               className="text-3xl font-black text-white italic"
             >
               {playerPushups}
             </motion.span>
             <span className="text-xs font-black text-white/40">💪</span>
+            {playerPushups > 0 && playerPushups === user.record + 1 && (
+              <motion.span 
+                initial={{ scale: 0, rotate: -20 }}
+                animate={{ scale: 1, rotate: 0 }}
+                className="absolute -top-1 right-2 text-[8px] font-black text-gold italic bg-black/40 px-1 rounded"
+              >
+                RECORD!
+              </motion.span>
+            )}
           </div>
         </div>
-        <div className="z-10 bg-card border-4 border-background w-16 h-16 rounded-full flex items-center justify-center -mx-2 shadow-xl">
-          <span className={`text-2xl font-black italic tabular-nums ${timeLeft <= 5 ? 'text-energy-red animate-pulse scale-110' : 'text-white'}`}>
+        <div className="z-10 bg-card border-4 border-background w-16 h-16 rounded-full flex items-center justify-center -mx-2 shadow-xl overflow-hidden relative">
+          <motion.div 
+            animate={timeLeft <= 5 ? { scale: [1, 1.1, 1], backgroundColor: ['rgba(0,0,0,0)', 'rgba(244,63,94,0.2)', 'rgba(0,0,0,0)'] } : {}}
+            transition={{ repeat: Infinity, duration: 0.5 }}
+            className="absolute inset-0"
+          />
+          <span className={`text-2xl font-black italic tabular-nums relative z-10 ${timeLeft <= 5 ? 'text-energy-red' : 'text-white'}`}>
             {timeLeft}
           </span>
         </div>
         <div className="flex-1 glass-panel p-3 border-l-0 rounded-l-none border-energy-red/30 bg-energy-red/10 text-right relative overflow-hidden">
-          <motion.div 
-            initial={false}
-            animate={{ scale: [1, 1.05, 1] }}
-            key={botPushups}
-            className="absolute inset-0 bg-energy-red/5 pointer-events-none"
-          />
+          <AnimatePresence>
+            <motion.div 
+              initial={{ scale: 1, opacity: 0 }}
+              animate={{ scale: [1, 1.2, 1], opacity: [0, 0.2, 0] }}
+              key={botPushups}
+              transition={{ duration: 0.3 }}
+              className="absolute inset-0 bg-energy-red pointer-events-none"
+            />
+          </AnimatePresence>
           <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest">{bot?.name || 'BOT'}</p>
           <div className="flex items-center gap-2 justify-end">
             <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">LVL {bot?.level}</Badge>
             <span className="text-xs font-black text-white/40">💪</span>
             <motion.span 
               key={botPushups}
-              initial={{ scale: 0.5 }}
-              animate={{ scale: 1 }}
+              initial={{ scale: 0.8, y: 5 }}
+              animate={{ scale: 1, y: 0 }}
               className="text-3xl font-black text-white italic"
             >
               {botPushups}
