@@ -106,10 +106,10 @@ function App() {
 
   const renderView = () => {
     switch (view) {
-      case 'dashboard': return <Dashboard setView={setView} user={user} />;
+      case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
-      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} />;
-      case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => setView('dashboard')} onComplete={updateStats} />;
+      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
+      case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
@@ -139,7 +139,7 @@ function App() {
   );
 }
 
-function Dashboard({ setView, user }: { setView: (v: View) => void, user: any }) {
+function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void }) {
   const stats = user;
 
   return (
@@ -189,7 +189,7 @@ function Dashboard({ setView, user }: { setView: (v: View) => void, user: any })
             <p className="text-[10px] font-bold opacity-80 tracking-widest">BATALHA DE FLEXÕES</p>
           </div>
         </Button>
-        <Button className="game-button bg-primary/20 border border-primary/30 h-32 flex flex-col gap-2" onClick={() => setView('select-bot')}>
+        <Button className="game-button bg-primary/20 border border-primary/30 h-32 flex flex-col gap-2" onClick={() => { setSelectedBot(null); setView('select-duration'); }}>
           <Dumbbell className="w-6 h-6 text-primary" />
           <span className="text-lg tracking-tighter italic">TREINAR</span>
         </Button>
@@ -259,7 +259,7 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
   );
 }
 
-function SelectDuration({ setView, onSelect }: { setView: (v: View) => void, onSelect: (d: number) => void }) {
+function SelectDuration({ setView, onSelect, selectedBot }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot: any }) {
   const durations = [
     { label: '30 seg', value: 30 },
     { label: '1 min', value: 60 },
@@ -271,7 +271,7 @@ function SelectDuration({ setView, onSelect }: { setView: (v: View) => void, onS
   return (
     <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6">
       <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('select-bot')}><ArrowLeft className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView(selectedBot ? 'select-bot' : 'dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">DURAÇÃO</h2>
       </div>
 
@@ -339,25 +339,71 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 flex flex-col h-[calc(100vh-80px)]">
       <div className="flex justify-between items-center mb-6 relative">
-        <div className="flex-1 glass-panel p-3 border-r-0 rounded-r-none border-primary/30 bg-primary/10">
+        <div className="flex-1 glass-panel p-3 border-r-0 rounded-r-none border-primary/30 bg-primary/10 relative overflow-hidden">
+          <AnimatePresence>
+            <motion.div 
+              initial={{ scale: 1, opacity: 0 }}
+              animate={{ scale: [1, 1.2, 1], opacity: [0, 0.2, 0] }}
+              key={playerPushups}
+              transition={{ duration: 0.3 }}
+              className="absolute inset-0 bg-primary pointer-events-none"
+            />
+          </AnimatePresence>
           <p className="text-[10px] font-black italic text-primary uppercase tracking-widest">{user.name}</p>
           <div className="flex items-center gap-2">
             <Badge className="bg-primary/20 text-[8px] h-3 px-1 border-none">{user.league}</Badge>
-            <span className="text-3xl font-black text-white italic">{playerPushups}</span>
+            <motion.span 
+              key={playerPushups}
+              initial={{ scale: 0.8, y: 5 }}
+              animate={{ scale: 1, y: 0 }}
+              className="text-3xl font-black text-white italic"
+            >
+              {playerPushups}
+            </motion.span>
             <span className="text-xs font-black text-white/40">💪</span>
+            {playerPushups > 0 && playerPushups === user.record + 1 && (
+              <motion.span 
+                initial={{ scale: 0, rotate: -20 }}
+                animate={{ scale: 1, rotate: 0 }}
+                className="absolute -top-1 right-2 text-[8px] font-black text-gold italic bg-black/40 px-1 rounded"
+              >
+                RECORD!
+              </motion.span>
+            )}
           </div>
         </div>
-        <div className="z-10 bg-card border-4 border-background w-16 h-16 rounded-full flex items-center justify-center -mx-2 shadow-xl">
-          <span className={`text-2xl font-black italic tabular-nums ${timeLeft <= 5 ? 'text-energy-red animate-pulse' : 'text-white'}`}>
+        <div className="z-10 bg-card border-4 border-background w-16 h-16 rounded-full flex items-center justify-center -mx-2 shadow-xl overflow-hidden relative">
+          <motion.div 
+            animate={timeLeft <= 5 ? { scale: [1, 1.1, 1], backgroundColor: ['rgba(0,0,0,0)', 'rgba(244,63,94,0.2)', 'rgba(0,0,0,0)'] } : {}}
+            transition={{ repeat: Infinity, duration: 0.5 }}
+            className="absolute inset-0"
+          />
+          <span className={`text-2xl font-black italic tabular-nums relative z-10 ${timeLeft <= 5 ? 'text-energy-red' : 'text-white'}`}>
             {timeLeft}
           </span>
         </div>
-        <div className="flex-1 glass-panel p-3 border-l-0 rounded-l-none border-energy-red/30 bg-energy-red/10 text-right">
+        <div className="flex-1 glass-panel p-3 border-l-0 rounded-l-none border-energy-red/30 bg-energy-red/10 text-right relative overflow-hidden">
+          <AnimatePresence>
+            <motion.div 
+              initial={{ scale: 1, opacity: 0 }}
+              animate={{ scale: [1, 1.2, 1], opacity: [0, 0.2, 0] }}
+              key={botPushups}
+              transition={{ duration: 0.3 }}
+              className="absolute inset-0 bg-energy-red pointer-events-none"
+            />
+          </AnimatePresence>
           <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest">{bot?.name || 'BOT'}</p>
           <div className="flex items-center gap-2 justify-end">
             <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">LVL {bot?.level}</Badge>
             <span className="text-xs font-black text-white/40">💪</span>
-            <span className="text-3xl font-black text-white italic">{botPushups}</span>
+            <motion.span 
+              key={botPushups}
+              initial={{ scale: 0.8, y: 5 }}
+              animate={{ scale: 1, y: 0 }}
+              className="text-3xl font-black text-white italic"
+            >
+              {botPushups}
+            </motion.span>
           </div>
         </div>
       </div>
@@ -412,13 +458,21 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/5 p-4 rounded-2xl">
-                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">XP Ganho</p>
-                  <p className="text-xl font-black text-gold">+{playerPushups >= botPushups ? 150 : 45}</p>
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Total Flexões</p>
+                  <p className="text-xl font-black text-white">{playerPushups}</p>
                 </div>
-                <div className="bg-white/5 p-4 rounded-2xl">
-                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Bônus</p>
-                  <p className="text-xl font-black text-purple-evolve">+12</p>
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Recorde</p>
+                  <p className="text-xl font-black text-gold">{user.record}</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Média/Min</p>
+                  <p className="text-xl font-black text-blue-400">{(playerPushups / (duration / 60)).toFixed(1)}</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">XP Total</p>
+                  <p className="text-xl font-black text-purple-evolve">+{playerPushups >= botPushups ? 150 + playerPushups : 45 + playerPushups}</p>
                 </div>
               </div>
 
