@@ -5,13 +5,14 @@ import confetti from "canvas-confetti";
 import { 
   Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon,
   Flame, ArrowLeft, Timer, Settings, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
-  Copy, Check, Search
+  Copy, Check, Search, Zap, Award, Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { PushUpCounter } from "@/components/PushUpCounter";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   component: App,
