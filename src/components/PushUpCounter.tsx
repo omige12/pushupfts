@@ -35,10 +35,10 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
       });
 
       pose.setOptions({
-        modelComplexity: 1,
+        modelComplexity: 0, // Faster processing for mobile
         smoothLandmarks: true,
-        minDetectionConfidence: 0.6,
-        minTrackingConfidence: 0.6,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5,
       });
 
       pose.onResults(onResults);
@@ -171,9 +171,15 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
       }
     };
 
+    let frameCount = 0;
     const detectFrame = async () => {
       if (videoRef.current && pose) {
-        await pose.send({ image: videoRef.current });
+        // Skip every other frame to reduce CPU usage if needed, 
+        // or just ensure we don't overlap sends.
+        frameCount++;
+        if (frameCount % 1 === 0) { 
+           await pose.send({ image: videoRef.current });
+        }
         requestAnimationFrame(detectFrame);
       }
     };
