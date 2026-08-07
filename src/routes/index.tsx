@@ -1397,7 +1397,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
   );
 }
 
-function FriendChallenge({ setView, user }: { setView: (v: View) => void, user: any }) {
+function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void }) {
   const [copied, setCopied] = useState(false);
 
   const copyId = () => {
