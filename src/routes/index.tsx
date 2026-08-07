@@ -1534,7 +1534,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
     }
   ];
 
-  const [activeCat, setActiveCat] = useState('treino');
+  const [activeCat, setActiveCat] = useState('flexoes');
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 pb-24 space-y-6">
@@ -1569,7 +1569,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       </div>
 
       <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-        {categories.map(cat => (
+        {achievements.map(cat => (
           <Button 
             key={cat.id} 
             onClick={() => setActiveCat(cat.id)}
@@ -1582,7 +1582,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       </div>
 
       <div className="space-y-4">
-        {categories.find(c => c.id === activeCat)?.items.map((ach, i) => {
+        {achievements.find(c => c.id === activeCat)?.items.map((ach, i) => {
           const isCompleted = ach.current >= ach.req;
           const progress = Math.min((ach.current / ach.req) * 100, 100);
           
