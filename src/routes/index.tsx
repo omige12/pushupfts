@@ -390,6 +390,18 @@ function App() {
 
 
   const isBattleActive = view === 'challenge' && (selectedBot || opponent);
+  
+  useEffect(() => {
+    if (isBattleActive) {
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        e.returnValue = '';
+      };
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    }
+  }, [isBattleActive]);
+
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
