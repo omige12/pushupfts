@@ -169,7 +169,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
             </div>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 border border-white/5" onClick={() => setView('profile')}><UserCircle className="w-6 h-6" /></Button>
+        <div className="w-10 h-10" />
       </header>
 
       <div className="glass-panel p-5 relative overflow-hidden group">
