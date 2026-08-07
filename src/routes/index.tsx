@@ -648,7 +648,8 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
   );
 }
 
-function SelectDuration({ setView, onSelect, selectedBot }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot: any }) {
+function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot: any, onStartMatchmaking?: () => void }) {
+  const [localDuration, setLocalDuration] = useState(60);
   const durations = [
     { label: '30 seg', value: 30 },
     { label: '1 min', value: 60 },
@@ -658,23 +659,46 @@ function SelectDuration({ setView, onSelect, selectedBot }: { setView: (v: View)
   ];
 
   return (
-    <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6">
+    <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6 flex flex-col min-h-screen pb-24">
       <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView(selectedBot ? 'select-bot' : 'dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">DURAÇÃO</h2>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView(selectedBot ? 'select-bot' : 'multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">⚔️ ESCOLHA A DURAÇÃO</h2>
       </div>
 
-      <div className="grid gap-4">
+      <div className="grid gap-4 flex-1">
         {durations.map(d => (
           <Button 
             key={d.value} 
-            className="game-button bg-white/5 border border-white/10 h-20 text-xl tracking-tighter italic"
-            onClick={() => onSelect(d.value)}
+            variant="ghost"
+            className={`game-button h-20 text-xl tracking-tighter italic border-2 transition-all ${localDuration === d.value ? 'bg-primary/20 border-primary text-primary shadow-[0_0_20px_rgba(59,130,246,0.3)]' : 'bg-white/5 border-white/5 text-white'}`}
+            onClick={() => {
+              setLocalDuration(d.value);
+              onSelect(d.value);
+            }}
           >
-            {d.label.toUpperCase()}
+            <div className="flex items-center justify-between w-full px-4">
+              <span className="flex items-center gap-3">
+                <Timer className={`w-6 h-6 ${localDuration === d.value ? 'text-primary' : 'text-white/40'}`} />
+                {d.label.toUpperCase()}
+              </span>
+              {localDuration === d.value && <Check className="w-6 h-6" />}
+            </div>
           </Button>
         ))}
       </div>
+
+      <Button 
+        className="game-button bg-primary w-full py-8 text-xl italic uppercase mt-8 shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all"
+        onClick={() => {
+          if (selectedBot) {
+            setView('challenge');
+          } else if (onStartMatchmaking) {
+            onStartMatchmaking();
+          }
+        }}
+      >
+        {selectedBot ? "⚔️ INICIAR DESAFIO" : "⚔️ ENCONTRAR ADVERSÁRIO"}
+      </Button>
     </motion.div>
   );
 }
