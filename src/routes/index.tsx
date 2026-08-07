@@ -1593,7 +1593,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       </div>
 
       <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
-        {achievements.map(cat => (
+        {achievements.map((cat: any) => (
           <Button 
             key={cat.id} 
             onClick={() => setActiveCat(cat.id)}
@@ -1606,7 +1606,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       </div>
 
       <div className="space-y-4">
-        {achievements.find(c => c.id === activeCat)?.items.map((ach, i) => {
+        {achievements.find((c: any) => c.id === activeCat)?.items.map((ach: any, i: number) => {
           const isCompleted = ach.current >= ach.req;
           const progress = Math.min((ach.current / ach.req) * 100, 100);
           
