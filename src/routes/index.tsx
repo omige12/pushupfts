@@ -660,7 +660,7 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
               <span className="text-[10px] font-mono text-muted-foreground">{stats.id}</span>
               {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
             </div>
-            <Badge className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold">LIGA {stats.league.toUpperCase()}</Badge>
+            <Badge className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold">{getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}</Badge>
           </div>
           <div className="flex justify-center mt-1">
              <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.age} ANOS • {stats.height}CM</Badge>
