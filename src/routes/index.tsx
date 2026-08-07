@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'profile' | 'ranking' | 'achievements';
+type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'ranking' | 'achievements';
 
 const BOTS = [
   { id: '1', name: 'Bot Iniciante', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
@@ -34,6 +34,7 @@ const BOTS = [
 function App() {
   const [view, setView] = useState<View>('dashboard');
   const [selectedBot, setSelectedBot] = useState<typeof BOTS[0] | null>(null);
+  const [duration, setDuration] = useState(30);
   const [user, setUser] = useState({
     name: "GUERREIRO ALPHA",
     age: 25,
@@ -106,8 +107,9 @@ function App() {
   const renderView = () => {
     switch (view) {
       case 'dashboard': return <Dashboard setView={setView} user={user} />;
-      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('challenge'); }} />;
-      case 'challenge': return <Challenge bot={selectedBot} onExit={() => setView('dashboard')} onComplete={updateStats} />;
+      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
+      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} />;
+      case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => setView('dashboard')} onComplete={updateStats} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
@@ -144,9 +146,17 @@ function Dashboard({ setView, user }: { setView: (v: View) => void, user: any })
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
       <header className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <div className="w-14 h-14 bg-gradient-to-br from-gold to-orange-500 rounded-2xl border-2 border-white/20 shadow-lg shadow-gold/10" />
+          <div className="w-14 h-14 bg-gradient-to-br from-gold to-orange-500 rounded-2xl border-2 border-white/20 shadow-lg shadow-gold/10 overflow-hidden">
+            {stats.avatar ? (
+              <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
+            ) : (
+              <div className="w-full h-full bg-secondary flex items-center justify-center">
+                <UserIcon className="w-6 h-6 text-muted-foreground" />
+              </div>
+            )}
+          </div>
           <div>
-            <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">GUERREIRO ALPHA</h1>
+            <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{stats.name.toUpperCase()}</h1>
             <div className="flex items-center gap-1.5">
               <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">LIGA {stats.league.toUpperCase()}</Badge>
               <div className="flex items-center gap-0.5 text-gold">
@@ -249,11 +259,42 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
   );
 }
 
+function SelectDuration({ setView, onSelect }: { setView: (v: View) => void, onSelect: (d: number) => void }) {
+  const durations = [
+    { label: '30 seg', value: 30 },
+    { label: '1 min', value: 60 },
+    { label: '2 min', value: 120 },
+    { label: '3 min', value: 180 },
+    { label: '5 min', value: 300 },
+  ];
 
-function Challenge({ bot, onExit, onComplete }: { bot: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => void }) {
+  return (
+    <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6">
+      <div className="flex items-center gap-4 mb-8">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('select-bot')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">DURAÇÃO</h2>
+      </div>
+
+      <div className="grid gap-4">
+        {durations.map(d => (
+          <Button 
+            key={d.value} 
+            className="game-button bg-white/5 border border-white/10 h-20 text-xl tracking-tighter italic"
+            onClick={() => onSelect(d.value)}
+          >
+            {d.label.toUpperCase()}
+          </Button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
+
+function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => void }) {
   const [playerPushups, setPlayerPushups] = useState(0);
   const [botPushups, setBotPushups] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(30);
+  const [timeLeft, setTimeLeft] = useState(duration);
   const [gameState, setGameState] = useState<'countdown' | 'playing' | 'finished'>('countdown');
   const [countdown, setCountdown] = useState(3);
 
@@ -299,8 +340,9 @@ function Challenge({ bot, onExit, onComplete }: { bot: any, onExit: () => void, 
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 flex flex-col h-[calc(100vh-80px)]">
       <div className="flex justify-between items-center mb-6 relative">
         <div className="flex-1 glass-panel p-3 border-r-0 rounded-r-none border-primary/30 bg-primary/10">
-          <p className="text-[10px] font-black italic text-primary uppercase tracking-widest">Você</p>
+          <p className="text-[10px] font-black italic text-primary uppercase tracking-widest">{user.name}</p>
           <div className="flex items-center gap-2">
+            <Badge className="bg-primary/20 text-[8px] h-3 px-1 border-none">{user.league}</Badge>
             <span className="text-3xl font-black text-white italic">{playerPushups}</span>
             <span className="text-xs font-black text-white/40">💪</span>
           </div>
@@ -313,6 +355,7 @@ function Challenge({ bot, onExit, onComplete }: { bot: any, onExit: () => void, 
         <div className="flex-1 glass-panel p-3 border-l-0 rounded-l-none border-energy-red/30 bg-energy-red/10 text-right">
           <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest">{bot?.name || 'BOT'}</p>
           <div className="flex items-center gap-2 justify-end">
+            <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">LVL {bot?.level}</Badge>
             <span className="text-xs font-black text-white/40">💪</span>
             <span className="text-3xl font-black text-white italic">{botPushups}</span>
           </div>
@@ -409,6 +452,36 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
         </div>
 
         <div className="glass-panel p-6 space-y-4">
+          <div className="flex flex-col items-center gap-4 mb-6">
+            <div className="relative group cursor-pointer" onClick={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'image/*';
+              input.onchange = (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (re) => {
+                    setFormData({ ...formData, avatar: re.target?.result as string });
+                  };
+                  reader.readAsDataURL(file);
+                }
+              };
+              input.click();
+            }}>
+              <div className="w-24 h-24 bg-secondary rounded-full border-4 border-gold flex items-center justify-center overflow-hidden">
+                {formData.avatar ? (
+                  <img src={formData.avatar} className="w-full h-full object-cover" alt="Preview" />
+                ) : (
+                  <UserIcon className="w-12 h-12 text-muted-foreground" />
+                )}
+              </div>
+              <div className="absolute inset-0 bg-black/40 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                <span className="text-[8px] font-black text-white uppercase">Trocar Foto</span>
+              </div>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Nome de Usuário</label>
             <input 
@@ -437,18 +510,29 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
               />
             </div>
           </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Objetivo</label>
-            <select 
-              className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary appearance-none"
-              value={formData.goal}
-              onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
-            >
-              <option value="Ganhar força">Ganhar força</option>
-              <option value="Resistência">Resistência</option>
-              <option value="Hipertrofia">Hipertrofia</option>
-              <option value="Perda de peso">Perda de peso</option>
-            </select>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Altura (cm)</label>
+              <input 
+                type="number"
+                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary"
+                value={formData.height}
+                onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) })}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Objetivo</label>
+              <select 
+                className="w-full bg-white/5 border border-white/10 rounded-xl p-3 font-bold text-white focus:outline-none focus:border-primary appearance-none h-[50px]"
+                value={formData.goal}
+                onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
+              >
+                <option value="Ganhar força">Ganhar força</option>
+                <option value="Resistência">Resistência</option>
+                <option value="Hipertrofia">Hipertrofia</option>
+                <option value="Perda de peso">Perda de peso</option>
+              </select>
+            </div>
           </div>
           <Button onClick={handleSave} className="game-button bg-primary w-full py-6 mt-4">SALVAR ALTERAÇÕES</Button>
         </div>
@@ -467,8 +551,12 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold via-purple-evolve to-energy-red" />
         
         <div className="relative">
-          <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:scale-105 transition-transform duration-500 flex items-center justify-center">
-             <UserIcon className="w-16 h-16 text-muted-foreground" />
+          <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:scale-105 transition-transform duration-500 flex items-center justify-center overflow-hidden">
+             {stats.avatar ? (
+               <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
+             ) : (
+               <UserIcon className="w-16 h-16 text-muted-foreground" />
+             )}
           </div>
           <div className="absolute -bottom-2 -right-2 bg-purple-evolve p-2 rounded-full border-2 border-background shadow-lg">
             <Star className="w-4 h-4 text-white" />
