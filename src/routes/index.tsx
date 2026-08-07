@@ -34,15 +34,83 @@ const BOTS = [
 function App() {
   const [view, setView] = useState<View>('dashboard');
   const [selectedBot, setSelectedBot] = useState<typeof BOTS[0] | null>(null);
+  const [user, setUser] = useState({
+    name: "GUERREIRO ALPHA",
+    age: 25,
+    weight: 75,
+    height: 175,
+    goal: "Ganhar força",
+    level: 15,
+    xp: 12450,
+    maxXp: 15000,
+    wins: 87,
+    losses: 23,
+    record: 54,
+    totalPushups: 10450,
+    league: "Bronze",
+    avatar: null,
+    frame: "basic",
+    achievements: ["1", "2"],
+    history: [
+      { id: 'h1', opp: "Bot Elite", res: "Vitória", score: "42-39", xp: "+150", date: '2026-08-01' },
+      { id: 'h2', opp: "Bot Avançado", res: "Vitória", score: "38-30", xp: "+120", date: '2026-07-28' },
+      { id: 'h3', opp: "Bot Lendário", res: "Derrota", score: "45-52", xp: "+45", date: '2026-07-25' },
+    ]
+  });
+
+  const getLeague = (record: number) => {
+    if (record >= 1500) return "Lenda";
+    if (record >= 1000) return "Mestre";
+    if (record >= 800) return "Diamante";
+    if (record >= 500) return "Ouro";
+    if (record >= 300) return "Prata";
+    return "Bronze";
+  };
+
+  const updateStats = (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => {
+    setUser(prev => {
+      const newRecord = Math.max(prev.record, pushups);
+      const newXp = prev.xp + xpGained;
+      let newLevel = prev.level;
+      let nextMaxXp = prev.maxXp;
+      
+      if (newXp >= prev.maxXp) {
+        newLevel += 1;
+        nextMaxXp = Math.floor(prev.maxXp * 1.2);
+      }
+
+      const newMatch = {
+        id: Math.random().toString(36).substr(2, 9),
+        opp: botName,
+        res: won ? "Vitória" : "Derrota",
+        score: `${pushups}-${botPushups}`,
+        xp: `+${xpGained}`,
+        date: new Date().toISOString().split('T')[0]
+      };
+
+      return {
+        ...prev,
+        wins: won ? prev.wins + 1 : prev.wins,
+        losses: !won ? prev.losses + 1 : prev.losses,
+        record: newRecord,
+        totalPushups: prev.totalPushups + pushups,
+        xp: newXp % prev.maxXp,
+        level: newLevel,
+        maxXp: nextMaxXp,
+        league: getLeague(newRecord),
+        history: [newMatch, ...prev.history].slice(0, 10)
+      };
+    });
+  };
 
   const renderView = () => {
     switch (view) {
-      case 'dashboard': return <Dashboard setView={setView} />;
+      case 'dashboard': return <Dashboard setView={setView} user={user} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('challenge'); }} />;
-      case 'challenge': return <Challenge bot={selectedBot} onExit={() => setView('dashboard')} />;
-      case 'profile': return <Profile setView={setView} />;
-      case 'ranking': return <Ranking setView={setView} />;
-      case 'achievements': return <Achievements setView={setView} />;
+      case 'challenge': return <Challenge bot={selectedBot} onExit={() => setView('dashboard')} onComplete={updateStats} />;
+      case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
+      case 'ranking': return <Ranking setView={setView} user={user} />;
+      case 'achievements': return <Achievements setView={setView} user={user} />;
     }
   };
 
