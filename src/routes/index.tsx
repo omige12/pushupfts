@@ -419,10 +419,10 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
       <div className="grid grid-cols-2 gap-4">
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
-          onClick={() => setView('profile')}
+          onClick={() => setView('edit-profile')}
         >
           <UserCircle className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-          <span className="text-[10px] font-black uppercase tracking-widest italic">👤 Perfil</span>
+          <span className="text-[10px] font-black uppercase tracking-widest italic">👤 Editar Perfil</span>
         </Button>
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
