@@ -81,11 +81,66 @@ const getPatentEmoji = (patent: string) => {
 
 
 const BOTS = [
-  { id: '1', name: 'Bot Nível 1', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
-  { id: '2', name: 'Bot Nível 2', color: 'bg-green-600', level: 2, difficulty: 'Fácil', avgPushups: 15 },
-  { id: '3', name: 'Bot Nível 3', color: 'bg-yellow-500', level: 3, difficulty: 'Médio', avgPushups: 30 },
-  { id: '4', name: 'Bot Nível 4', color: 'bg-orange-600', level: 4, difficulty: 'Difícil', avgPushups: 60 },
-  { id: '5', name: 'Bot Nível 5', color: 'bg-yellow-400', level: 5, difficulty: 'Lendário', avgPushups: 120 },
+  { 
+    id: '1', 
+    name: 'Iniciante', 
+    avatar: '/__l5e/assets-v1/38600428-3d1e-452a-a930-5df3237659ce/bot1.jpg', 
+    color: 'bg-green-500', 
+    level: 1, 
+    difficulty: 'Muito Fácil', 
+    avgPushups: 10,
+    league: 'Bronze',
+    stats: { strength: 15, stamina: 10, speed: 12 },
+    record: 15
+  },
+  { 
+    id: '2', 
+    name: 'Determinado', 
+    avatar: '/__l5e/assets-v1/f7a3c87a-4217-408f-9f48-c3622417f6b3/bot2.jpg', 
+    color: 'bg-green-600', 
+    level: 2, 
+    difficulty: 'Fácil', 
+    avgPushups: 25,
+    league: 'Bronze',
+    stats: { strength: 25, stamina: 20, speed: 22 },
+    record: 30
+  },
+  { 
+    id: '3', 
+    name: 'Guerreiro', 
+    avatar: '/__l5e/assets-v1/fefd13a2-e94d-4c4e-8905-1e643f4ba559/bot3.jpg', 
+    color: 'bg-yellow-500', 
+    level: 3, 
+    difficulty: 'Médio', 
+    avgPushups: 45,
+    league: 'Prata',
+    stats: { strength: 45, stamina: 40, speed: 38 },
+    record: 55
+  },
+  { 
+    id: '4', 
+    name: 'Máquina', 
+    avatar: '/__l5e/assets-v1/de17b012-30cb-48de-98d8-a7244435b40d/bot4.jpg', 
+    color: 'bg-orange-600', 
+    level: 4, 
+    difficulty: 'Difícil', 
+    avgPushups: 80,
+    league: 'Prata',
+    stats: { strength: 75, stamina: 70, speed: 65 },
+    record: 95
+  },
+  { 
+    id: '5', 
+    name: 'David Goggins "Lendário"', 
+    avatar: '/__l5e/assets-v1/f377642d-ef7d-403a-97da-018c2f682720/bot5.jpg', 
+    color: 'bg-yellow-400', 
+    level: 5, 
+    difficulty: 'Lendário', 
+    avgPushups: 250,
+    league: 'Ouro',
+    stats: { strength: 100, stamina: 100, speed: 95 },
+    record: 350
+  },
 ];
 
 function App() {
@@ -114,9 +169,9 @@ function App() {
     frame: "basic",
     achievements: ["1", "2"],
     history: [
-      { id: 'h1', opp: "Bot Elite", res: "Vitória", score: "42-39", xp: "+150", date: '2026-08-01' },
-      { id: 'h2', opp: "Bot Avançado", res: "Vitória", score: "38-30", xp: "+120", date: '2026-07-28' },
-      { id: 'h3', opp: "Bot Lendário", res: "Derrota", score: "45-52", xp: "+45", date: '2026-07-25' },
+      { id: 'h1', opp: "Guerreiro", res: "Vitória", score: "42-39", xp: "+150", date: '2026-08-01' },
+      { id: 'h2', opp: "Determinado", res: "Vitória", score: "38-30", xp: "+120", date: '2026-07-28' },
+      { id: 'h3', opp: "David Goggins \"Lendário\"", res: "Derrota", score: "45-82", xp: "+45", date: '2026-07-25' },
     ]
   });
 
@@ -401,24 +456,44 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
 
       <div className="space-y-4">
         {BOTS.map(bot => (
-          <Card key={bot.id} className="glass-panel p-5 flex items-center justify-between cursor-pointer hover:bg-white/10 hover:scale-[1.02] transition-all border-white/5 group" onClick={() => onSelect(bot)}>
+          <Card key={bot.id} className="glass-panel p-5 flex items-center justify-between cursor-pointer hover:bg-white/10 hover:scale-[1.02] transition-all border-white/5 group overflow-hidden" onClick={() => onSelect(bot)}>
             <div className="flex items-center gap-4">
-              <div className={`w-16 h-16 rounded-2xl ${bot.color} flex items-center justify-center font-black text-white text-2xl shadow-lg border-2 border-white/20 group-hover:rotate-3 transition-transform`}>
-                {bot.name[0]}
+              <div className="w-20 h-20 rounded-2xl bg-secondary border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:rotate-2 transition-transform">
+                <img src={bot.avatar} className="w-full h-full object-cover" alt={bot.name} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-2">
+                  <span className="text-[8px] font-black text-white uppercase tracking-tighter">Ver Perfil</span>
+                </div>
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
-                  <p className="font-black text-lg italic text-white tracking-tight">{bot.name.toUpperCase()}</p>
-                  <Badge variant="outline" className="text-[8px] font-black h-4 px-1 opacity-60">Nível {bot.level}</Badge>
+                  <p className="font-black text-lg italic text-white tracking-tight leading-tight">{bot.name.toUpperCase()}</p>
+                  <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none font-black italic">LVL {bot.level}</Badge>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{bot.difficulty}</span>
-                  <div className="w-1 h-1 rounded-full bg-white/20" />
-                  <span className="text-[10px] font-black text-gold italic">{bot.avgPushups} FLEXÕES MÉDIA</span>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-[8px] font-black h-4 px-1 opacity-60 uppercase border-white/10">{bot.difficulty}</Badge>
+                    <span className="text-[9px] font-black text-gold italic uppercase tracking-widest">{bot.league}</span>
+                  </div>
+                  <div className="flex items-center gap-3 mt-1">
+                    <div className="flex items-center gap-1">
+                      <Target className="w-3 h-3 text-white/40" />
+                      <span className="text-[10px] font-black text-muted-foreground italic uppercase">{bot.record} Recorde</span>
+                    </div>
+                    <div className="flex gap-2 mt-1">
+                      {Object.entries(bot.stats).map(([key, val]: [string, any]) => (
+                        <div key={key} className="flex flex-col">
+                          <span className="text-[6px] font-black text-white/30 uppercase tracking-tighter leading-none">{key === 'strength' ? 'FOR' : key === 'stamina' ? 'RES' : 'VEL'}</span>
+                          <div className="h-0.5 w-6 bg-white/5 rounded-full overflow-hidden mt-0.5">
+                            <div className="h-full bg-primary/60" style={{ width: `${val}%` }} />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-primary group-hover:translate-x-1 transition-transform">
+            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-primary group-hover:translate-x-1 transition-transform border border-white/5">
               <ChevronRight className="w-6 h-6" />
             </div>
           </Card>
@@ -482,7 +557,9 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
         setTimeLeft(t => t - 1);
         if (bot) {
           // Bots have different speeds based on difficulty
-          const chance = bot.level / 20; // 0.05 to 2.5
+          // David Goggins is much harder
+          const baseChance = bot.id === '5' ? bot.level / 12 : bot.level / 20;
+          const chance = baseChance; // High performance for Goggins
           if (Math.random() < chance) {
             setBotPushups(b => b + 1);
           }
@@ -561,7 +638,12 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
               className="absolute inset-0 bg-energy-red pointer-events-none"
             />
           </AnimatePresence>
-          <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest">{bot?.name || 'ADVERSÁRIO'}</p>
+          <div className="flex items-center justify-end gap-2 mb-1">
+             <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10">
+                <img src={bot?.avatar} className="w-full h-full object-cover" alt="Bot" />
+             </div>
+             <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest leading-none">{bot?.name || 'ADVERSÁRIO'}</p>
+          </div>
           <div className="flex items-center gap-2 justify-end">
             <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">{bot?.id ? `LVL ${bot.level}` : 'RIVAL'}</Badge>
             <span className="text-xs font-black text-white/40">💪</span>
@@ -930,8 +1012,12 @@ function FullHistory({ setView, user }: { setView: (v: View) => void, user: any 
         {user.history.map((match: any) => (
           <div key={match.id} className="glass-panel p-5 flex items-center justify-between border-white/5">
             <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white text-xl shadow-lg border-2 border-white/20 ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`}>
-                {match.opp[0]}
+              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white text-xl shadow-lg border-2 border-white/20 overflow-hidden ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`}>
+                {BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp) ? (
+                  <img src={BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp)?.avatar} className="w-full h-full object-cover" alt="Bot" />
+                ) : (
+                  match.opp[0]
+                )}
               </div>
               <div>
                 <p className="font-black text-lg italic text-white tracking-tight">{match.opp.toUpperCase()}</p>
