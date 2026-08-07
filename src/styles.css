@@ -49,26 +49,26 @@
 }
 
 :root {
-  --radius: 1rem;
-  --background: oklch(0.12 0.04 250);
-  --foreground: oklch(0.98 0.01 250);
-  --card: oklch(0.18 0.05 250);
-  --card-foreground: oklch(0.98 0.01 250);
-  --popover: oklch(0.18 0.05 250);
-  --popover-foreground: oklch(0.98 0.01 250);
-  --primary: oklch(0.55 0.18 250);
+  --radius: 1.25rem;
+  --background: oklch(0.1 0.03 260);
+  --foreground: oklch(0.98 0.01 260);
+  --card: oklch(0.15 0.04 260);
+  --card-foreground: oklch(0.98 0.01 260);
+  --popover: oklch(0.15 0.04 260);
+  --popover-foreground: oklch(0.98 0.01 260);
+  --primary: oklch(0.6 0.18 250);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.25 0.05 250);
-  --secondary-foreground: oklch(0.98 0.01 250);
-  --muted: oklch(0.25 0.05 250);
-  --muted-foreground: oklch(0.7 0.02 250);
+  --secondary: oklch(0.25 0.05 260);
+  --secondary-foreground: oklch(0.98 0.01 260);
+  --muted: oklch(0.25 0.05 260);
+  --muted-foreground: oklch(0.7 0.02 260);
   --accent: oklch(0.75 0.15 85);
-  --accent-foreground: oklch(0.12 0.04 250);
+  --accent-foreground: oklch(0.1 0.03 260);
   --destructive: oklch(0.6 0.2 25);
-  --destructive-foreground: oklch(0.98 0.01 250);
-  --border: oklch(0.3 0.05 250 / 0.2);
-  --input: oklch(0.3 0.05 250 / 0.2);
-  --ring: oklch(0.55 0.18 250);
+  --destructive-foreground: oklch(0.98 0.01 260);
+  --border: oklch(0.3 0.05 260 / 0.3);
+  --input: oklch(0.3 0.05 260 / 0.3);
+  --ring: oklch(0.6 0.18 250);
 }
 
 @layer base {
@@ -79,13 +79,21 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: 'Inter', system-ui, sans-serif;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
-@utility game-button {
-  @apply relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-200 transform rounded-2xl shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] active:translate-y-[6px] active:shadow-none uppercase tracking-wider;
+@layer utilities {
+  .game-button {
+    @apply relative inline-flex items-center justify-center px-8 py-4 font-black text-white transition-all duration-200 transform rounded-2xl shadow-[0_6px_0_0_rgba(0,0,0,0.4)] hover:translate-y-[2px] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.4)] active:translate-y-[6px] active:shadow-none uppercase tracking-wider text-shadow-sm;
+  }
+
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl;
+  }
+
+  .text-shadow-sm {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  }
 }
 
-@utility glass-panel {
-  @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-3xl overflow-hidden;
-}
