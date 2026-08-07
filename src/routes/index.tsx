@@ -1203,32 +1203,128 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
   );
 }
 
-function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => void, user: any, onSelectBot: () => void }) {
+function Matchmaking({ user, onMatchFound, onCancel }: { user: any, onMatchFound: (opp: any) => void, onCancel: () => void }) {
+  const [status, setStatus] = useState('searching');
+  const [dots, setDots] = useState('');
+  const [matchedOpponent, setMatchedOpponent] = useState<any>(null);
+
+  useEffect(() => {
+    const dotsInterval = setInterval(() => {
+      setDots(prev => (prev.length >= 3 ? '' : prev + '.'));
+    }, 500);
+
+    // Simulate matchmaking
+    const timer = setTimeout(() => {
+      setStatus('found');
+      const opp = {
+        id: 'PUSH-' + Math.random().toString(36).substr(2, 4).toUpperCase(),
+        name: ['BRUNO FERRAZ', 'ANA BEAST', 'MARCOS PUSH', 'LUCAS ELITE', 'CARLA FORÇA'][Math.floor(Math.random() * 5)],
+        level: user.level + Math.floor(Math.random() * 3) - 1,
+        patent: user.patent,
+        record: user.record + Math.floor(Math.random() * 10) - 5,
+        avatar: null
+      };
+      setMatchedOpponent(opp);
+      
+      // Auto-start after showing opponent
+      setTimeout(() => {
+        onMatchFound(opp);
+      }, 3000);
+    }, 4000);
+
+    return () => {
+      clearInterval(dotsInterval);
+      clearTimeout(timer);
+    };
+  }, [user, onMatchFound]);
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-6 text-center">
+      {status === 'searching' ? (
+        <div className="space-y-8">
+          <div className="relative">
+            <div className="w-32 h-32 rounded-full border-4 border-primary/20 flex items-center justify-center">
+              <Globe className="w-16 h-16 text-primary animate-pulse" />
+            </div>
+            <motion.div 
+              animate={{ rotate: 360 }}
+              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              className="absolute inset-0 border-4 border-t-primary border-transparent rounded-full"
+            />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">Encontrando adversário{dots}</h2>
+            <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">Buscando oponentes com nível e patente semelhantes</p>
+          </div>
+          <Button variant="ghost" onClick={onCancel} className="text-energy-red font-black uppercase tracking-widest italic">Cancelar Busca</Button>
+        </div>
+      ) : (
+        <div className="w-full max-w-sm space-y-12">
+          <div className="space-y-2">
+            <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase">OPONENTE ENCONTRADO!</h2>
+            <p className="text-xs font-black text-primary uppercase tracking-widest animate-pulse">A PARTIDA VAI COMEÇAR EM 3S</p>
+          </div>
+          
+          <div className="flex items-center justify-center gap-4">
+             {/* Player */}
+             <div className="flex-1 space-y-3">
+               <div className="w-20 h-20 mx-auto bg-primary/20 rounded-2xl border-2 border-primary flex items-center justify-center overflow-hidden">
+                 {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-10 h-10 text-primary" />}
+               </div>
+               <div>
+                 <p className="text-xs font-black text-white italic truncate">{user.name}</p>
+                 <Badge className="bg-primary/20 text-[8px] h-3 border-none">{user.patent}</Badge>
+               </div>
+             </div>
+             
+             <div className="text-4xl font-black italic text-white opacity-20">VS</div>
+             
+             {/* Opponent */}
+             <div className="flex-1 space-y-3">
+               <div className="w-20 h-20 mx-auto bg-energy-red/20 rounded-2xl border-2 border-energy-red flex items-center justify-center overflow-hidden">
+                 <UserIcon className="w-10 h-10 text-energy-red" />
+               </div>
+               <div>
+                 <p className="text-xs font-black text-white italic truncate">{matchedOpponent?.name}</p>
+                 <Badge className="bg-energy-red/20 text-[8px] h-3 border-none">{matchedOpponent?.patent}</Badge>
+               </div>
+             </div>
+          </div>
+
+          <div className="glass-panel p-4 bg-white/5 border-white/5 grid grid-cols-2 gap-4">
+            <div className="text-center">
+              <p className="text-[8px] font-black text-muted-foreground uppercase">Nível</p>
+              <p className="text-lg font-black text-white">{matchedOpponent?.level}</p>
+            </div>
+            <div className="text-center">
+              <p className="text-[8px] font-black text-muted-foreground uppercase">Recorde</p>
+              <p className="text-lg font-black text-gold">{matchedOpponent?.record}</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
+function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: () => void }) {
   const [searchId, setSearchId] = useState('');
   const [foundPlayer, setFoundPlayer] = useState<any>(null);
-  const [challengeReceived, setChallengeReceived] = useState<string | null>(null);
 
   const handleSearch = () => {
-    if (searchId.trim().toUpperCase() === 'PUSH-DEMO') {
+    if (searchId.trim().toUpperCase().startsWith('PUSH-')) {
       setFoundPlayer({
-        id: 'PUSH-DEMO',
-        name: 'RICARDO BRUTO',
-        level: 18,
-        patent: 'Ouro',
-        record: 85,
+        id: searchId.toUpperCase(),
+        name: 'JOGADOR ENCONTRADO',
+        level: 12,
+        patent: 'Prata',
+        record: 45,
         avatar: null
       });
     } else {
       setFoundPlayer(null);
+      toast.error("Jogador não encontrado");
     }
-  };
-
-  const sendChallenge = () => {
-    alert(`Desafio enviado para ${foundPlayer.name}!`);
-    // Demo: auto-receive challenge back after 2s
-    setTimeout(() => {
-      setChallengeReceived(foundPlayer.name);
-    }, 2000);
   };
 
   return (
@@ -1238,10 +1334,38 @@ function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => voi
         <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
       </div>
 
-      <div className="flex flex-col gap-4 items-stretch">
+      <div className="space-y-4">
+        <Button 
+          className="game-button bg-energy-red w-full h-36 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
+          onClick={onStartMatchmaking}
+        >
+          <div className="relative flex flex-col items-center gap-2">
+            <Globe className="w-12 h-12 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">🌎 JOGAR COM ALEATÓRIOS</span>
+            <p className="text-[9px] font-black opacity-60 tracking-widest uppercase">Competição Online Real</p>
+          </div>
+        </Button>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Button 
+            className="game-button bg-blue-500/10 border-2 border-blue-500/20 h-28 flex flex-col items-center justify-center group shadow-none"
+            onClick={() => setView('friend-challenge')}
+          >
+            <UserIcon className="w-8 h-8 mb-1 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
+            <span className="text-xl tracking-tighter italic uppercase leading-none text-blue-400 text-center">Jogar com Amigos</span>
+          </Button>
+          <Button 
+            className="game-button bg-white/5 border border-white/10 h-28 flex flex-col items-center justify-center group"
+            onClick={onSelectBot}
+          >
+            <Zap className="w-8 h-8 mb-1 text-gold group-hover:scale-110 transition-transform duration-300" />
+            <span className="text-xl tracking-tighter italic uppercase leading-none">Treinar Bots</span>
+          </Button>
+        </div>
+
         <div className="glass-panel p-6 space-y-4 border-white/5">
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center flex items-center justify-center gap-2">
-            <Search className="w-3 h-3" /> PROCURAR JOGADOR POR ID
+            <Search className="w-3 h-3" /> Procurar Jogador por ID
           </p>
           <div className="flex gap-2">
             <input 
@@ -1262,64 +1386,13 @@ function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => voi
               </div>
               <div className="flex-1">
                 <p className="font-black text-xl italic text-white tracking-tight leading-none mb-1">{foundPlayer.name}</p>
-                <div className="flex items-center gap-2">
-                   <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none font-mono">{foundPlayer.id}</Badge>
-                   <Badge className="bg-gold/20 text-gold border-none text-[8px] h-4 px-1.5 uppercase font-black italic">
-                     {getPatentEmoji(foundPlayer.patent)} {foundPlayer.patent.toUpperCase()}
-                   </Badge>
-                </div>
+                <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none font-mono">{foundPlayer.id}</Badge>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-               <div className="bg-white/5 p-3 rounded-xl text-center border border-white/5">
-                  <p className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Nível</p>
-                  <p className="text-lg font-black text-white italic">{foundPlayer.level}</p>
-               </div>
-               <div className="bg-white/5 p-3 rounded-xl text-center border border-white/5">
-                  <p className="text-[8px] text-muted-foreground uppercase font-black tracking-widest mb-1">Recorde</p>
-                  <p className="text-lg font-black text-gold italic">{foundPlayer.record}</p>
-               </div>
-            </div>
-            <Button className="game-button bg-primary w-full py-4 text-sm uppercase italic" onClick={sendChallenge}>Desafiar Agora</Button>
+            <Button className="game-button bg-primary w-full py-4 text-sm uppercase italic" onClick={() => setView('friend-challenge')}>Desafiar Agora</Button>
           </motion.div>
         )}
-
-        <div className="grid grid-cols-1 gap-4">
-          <Button 
-            className="game-button bg-energy-red h-28 flex flex-col items-center justify-center relative overflow-hidden group border-none"
-            onClick={onSelectBot}
-          >
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-            <Swords className="w-8 h-8 mb-1 group-hover:scale-110 transition-transform duration-300" />
-            <span className="text-xl tracking-tighter italic uppercase leading-none">Desafio Rápido</span>
-            <p className="text-[9px] font-black opacity-60 tracking-widest uppercase mt-1">Bots Matchmaking</p>
-          </Button>
-
-          <Button 
-            className="game-button bg-blue-500/10 border-2 border-blue-500/20 h-28 flex flex-col items-center justify-center group shadow-none"
-            onClick={() => setView('friend-challenge')}
-          >
-            <UserIcon className="w-8 h-8 mb-1 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
-            <span className="text-xl tracking-tighter italic uppercase leading-none text-blue-400">Jogar com Amigos</span>
-            <p className="text-[9px] font-black text-blue-400/60 tracking-widest uppercase mt-1">Convidar via ID</p>
-          </Button>
-        </div>
       </div>
-
-      <AnimatePresence>
-        {challengeReceived && (
-          <motion.div initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }} className="fixed bottom-24 left-6 right-6 z-50 glass-panel p-6 border-gold/50 bg-gold/10 shadow-[0_0_30px_rgba(255,215,0,0.2)]">
-            <h3 className="text-lg font-black italic text-white tracking-tighter mb-4">VOCÊ RECEBEU UM DESAFIO!</h3>
-            <p className="text-sm font-medium text-white/80 mb-6 uppercase tracking-wide">
-              <span className="text-gold">{challengeReceived}</span> quer duelar com você!
-            </p>
-            <div className="flex gap-3">
-              <Button className="game-button bg-green-500 flex-1 py-4" onClick={() => { setView('select-duration'); setChallengeReceived(null); }}>✅ ACEITAR</Button>
-              <Button className="game-button bg-energy-red flex-1 py-4" onClick={() => setChallengeReceived(null)}>❌ RECUSAR</Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }
