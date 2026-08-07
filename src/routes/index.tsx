@@ -711,7 +711,8 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
   const [oppPushups, setOppPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(duration);
   const [gameState, setGameState] = useState<'countdown' | 'playing' | 'finished'>('countdown');
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(5);
+  const [lastWhoIsAhead, setLastWhoIsAhead] = useState<'player' | 'opponent' | null>(null);
 
   const handlePlayerCount = useCallback((count: number) => {
     setPlayerPushups(count);
