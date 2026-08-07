@@ -1501,38 +1501,62 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
 }
 
 function Achievements({ setView, user }: { setView: (v: View) => void, user: any }) {
-  const categories = [
+  const achievements = useMemo(() => [
     { 
-      id: 'treino', 
-      label: 'Treino', 
+      id: 'flexoes', 
+      label: 'Flexões', 
       icon: Dumbbell,
       items: [
         { title: "Primeira Flexão", desc: "Comece sua jornada", req: 1, current: user.totalPushups, reward: "XP +50", icon: Zap },
-        { title: "Cem Flexões", desc: "Mostre consistência", req: 100, current: user.totalPushups, reward: "XP +200", icon: Award },
-        { title: "Guerreiro Mil", desc: "Nível impressionante", req: 1000, current: user.totalPushups, reward: "Moldura Mil", icon: Shield },
+        { title: "10 Flexões", desc: "Aquecendo os motores", req: 10, current: user.totalPushups, reward: "XP +100", icon: Zap },
+        { title: "25 Flexões", desc: "Já é um começo", req: 25, current: user.totalPushups, reward: "XP +150", icon: Dumbbell },
+        { title: "50 Flexões", desc: "Metade de cem", req: 50, current: user.totalPushups, reward: "XP +250", icon: Dumbbell },
+        { title: "100 Flexões", desc: "Mostre consistência", req: 100, current: user.totalPushups, reward: "Medalha Bronze", icon: Award },
+        { title: "250 Flexões", desc: "Atleta em formação", req: 250, current: user.totalPushups, reward: "XP +500", icon: Award },
+        { title: "500 Flexões", desc: "Resistência pura", req: 500, current: user.totalPushups, reward: "XP +1000", icon: Target },
+        { title: "1.000 Flexões", desc: "Guerreiro Mil", req: 1000, current: user.totalPushups, reward: "Moldura Mil", icon: Shield },
+        { title: "2.500 Flexões", desc: "Força bruta", req: 2500, current: user.totalPushups, reward: "XP +2500", icon: Shield },
+        { title: "5.000 Flexões", desc: "Máquina de guerra", req: 5000, current: user.totalPushups, reward: "XP +5000", icon: Star },
+        { title: "10.000 Flexões", desc: "Lenda da Arena", req: 10000, current: user.totalPushups, reward: "Avatar Lendário", icon: Sparkles },
       ]
     },
     { 
-      id: 'competição', 
-      label: 'Competição', 
+      id: 'multiplayer', 
+      label: 'Multiplayer', 
       icon: Swords,
       items: [
-        { title: "Primeira Vitória", desc: "Vença um duelo", req: 1, current: user.wins, reward: "XP +100", icon: Trophy },
-        { title: "Dez Vitórias", desc: "Competidor Nato", req: 10, current: user.wins, reward: "Medalha Bronze", icon: Medal },
-        { title: "Cinquenta Vitórias", desc: "Elite da Arena", req: 50, current: user.wins, reward: "Título Mestre", icon: Star },
+        { title: "Primeira Partida Online", desc: "Entre no campo de batalha", req: 1, current: user.wins + user.losses, reward: "XP +100", icon: Globe },
+        { title: "Primeira Vitória", desc: "Vença um duelo real", req: 1, current: user.wins, reward: "XP +200", icon: Trophy },
+        { title: "5 Vitórias", desc: "Início promissor", req: 5, current: user.wins, reward: "XP +500", icon: Trophy },
+        { title: "10 Vitórias", desc: "Competidor Nato", req: 10, current: user.wins, reward: "Medalha Prata", icon: Medal },
+        { title: "25 Vitórias", desc: "Veterano de Combate", req: 25, current: user.wins, reward: "XP +1500", icon: Swords },
+        { title: "50 Vitórias", desc: "Elite da Arena", req: 50, current: user.wins, reward: "Título Mestre", icon: Star },
+        { title: "100 Vitórias", desc: "Imbatível", req: 100, current: user.wins, reward: "Moldura Diamante", icon: Sparkles },
       ]
     },
     { 
-      id: 'evolução', 
-      label: 'Evolução', 
+      id: 'ofensiva', 
+      label: 'Ofensiva', 
+      icon: Flame,
+      items: [
+        { title: "3 Dias Seguidos", desc: "Foco inicial", req: 3, current: user.streak, reward: "XP +150", icon: Flame },
+        { title: "7 Dias Seguidos", desc: "Uma semana de aço", req: 7, current: user.streak, reward: "XP +400", icon: Flame },
+        { title: "14 Dias Seguidos", desc: "Hábito formado", req: 14, current: user.streak, reward: "Medalha Fogo", icon: Award },
+        { title: "30 Dias Seguidos", desc: "Mês da superação", req: 30, current: user.streak, reward: "XP +2000", icon: Target },
+      ]
+    },
+    { 
+      id: 'patentes', 
+      label: 'Patentes', 
       icon: TrendingUp,
       items: [
-        { title: "Rank Prata", desc: "Evoluindo sempre", req: 250, current: user.xp, reward: "XP +500", icon: Sparkles },
-        { title: "Rank Ouro", desc: "Jogador Experiente", req: 600, current: user.xp, reward: "XP +1000", icon: Flame },
-        { title: "Rank Diamante", desc: "Elite do Fitness", req: 1200, current: user.xp, reward: "Moldura Rara", icon: Shield },
+        { title: "Alcançar Bronze", desc: "O início de tudo", req: 1, current: user.patent !== "Nenhuma" ? 1 : 0, reward: "XP +50", icon: Award },
+        { title: "Alcançar Prata", desc: "Evoluindo sempre", req: 1, current: ["Prata", "Ouro", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +500", icon: Sparkles },
+        { title: "Alcançar Ouro", desc: "Jogador Experiente", req: 1, current: ["Ouro", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +1000", icon: Flame },
+        { title: "Alcançar Lendário", desc: "O topo do mundo", req: 1, current: user.patent === "Lendário" ? 1 : 0, reward: "Avatar Divino", icon: Trophy },
       ]
     }
-  ];
+  ], [user]);
 
   const [activeCat, setActiveCat] = useState('flexoes');
 
