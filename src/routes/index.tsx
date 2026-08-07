@@ -677,7 +677,7 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
       </div>
 
       <div className="flex-1 relative flex flex-col gap-6">
-        <PushUpCounter isActive={gameState === 'playing'} onCount={setPlayerPushups} />
+        <PushUpCounter isActive={gameState === 'playing'} onCount={handlePlayerCount} />
         
         <div className="glass-panel p-4 bg-white/5 border-white/5 flex items-center justify-between">
           <div className="flex items-center gap-3">
