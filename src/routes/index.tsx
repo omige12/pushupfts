@@ -209,8 +209,8 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
         </div>
         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
           {[
-            { label: 'Recorde', val: '54', sub: 'flexões', icon: Target, color: 'text-gold' },
-            { label: 'Vitórias', val: '87', sub: 'partidas', icon: Shield, color: 'text-blue-400' },
+            { label: 'Recorde', val: stats.record, sub: 'flexões', icon: Target, color: 'text-gold' },
+            { label: 'Vitórias', val: stats.wins, sub: 'partidas', icon: Shield, color: 'text-blue-400' },
             { label: 'Sequência', val: '12', sub: 'dias', icon: Flame, color: 'text-energy-red' },
           ].map((item, i) => (
             <div key={i} className="min-w-[120px] glass-panel p-4 border-white/5 flex flex-col items-center gap-1">
