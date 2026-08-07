@@ -179,7 +179,7 @@ function App() {
     goal: "Ganhar força",
     level: 1,
     patent: "Bronze",
-    subRank: "III",
+    subRank: "I",
     xp: 350,
     maxXp: 500,
     wins: 87,
