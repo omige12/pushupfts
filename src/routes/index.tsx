@@ -160,48 +160,201 @@ function Challenge({ bot, onExit }: { bot: any, onExit: () => void }) {
 }
 
 function Profile({ setView }: { setView: (v: View) => void }) {
+  const [name, setName] = useState("Guerreiro Alpha");
+  const stats = {
+    level: 15,
+    xp: 12450,
+    maxXp: 15000,
+    wins: 87,
+    losses: 23,
+    record: 54,
+    league: "Elite",
+    rank: 124
+  };
+
   return (
-    <motion.div initial={{ opacity: 0 }} className="p-6 space-y-6">
-        <h2 className="text-2xl font-black">Perfil</h2>
-        <div className="glass-panel p-6 flex flex-col items-center gap-4">
-            <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold" />
-            <input className="bg-transparent text-center font-bold text-xl" defaultValue="Guerreiro Alpha" />
-            <div className="grid grid-cols-2 gap-4 w-full text-center">
-                <div className="bg-white/5 p-3 rounded-lg"><p className="text-muted-foreground text-xs">XP</p><p className="font-bold">12,450</p></div>
-                <div className="bg-white/5 p-3 rounded-lg"><p className="text-muted-foreground text-xs">VITÓRIAS</p><p className="font-bold">87</p></div>
-            </div>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">PERFIL</h2>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5"><Settings className="w-5 h-5" /></Button>
+      </div>
+
+      <div className="glass-panel p-8 flex flex-col items-center gap-6 relative overflow-hidden group">
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold via-purple-evolve to-energy-red" />
+        
+        <div className="relative">
+          <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:scale-105 transition-transform duration-500" />
+          <div className="absolute -bottom-2 -right-2 bg-purple-evolve p-2 rounded-full border-2 border-background shadow-lg">
+            <Star className="w-4 h-4 text-white" />
+          </div>
         </div>
+
+        <div className="text-center space-y-1">
+          <div className="flex items-center justify-center gap-2">
+            <input 
+              className="bg-transparent text-center font-black text-2xl text-white focus:outline-none w-full border-b border-transparent focus:border-white/20 pb-1" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <Badge className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold">LIGA {stats.league.toUpperCase()}</Badge>
+        </div>
+
+        <div className="w-full space-y-2">
+          <div className="flex justify-between text-xs font-black italic text-muted-foreground uppercase tracking-widest">
+            <span>Nível {stats.level}</span>
+            <span>{stats.xp} / {stats.maxXp} XP</span>
+          </div>
+          <Progress value={(stats.xp / stats.maxXp) * 100} className="h-3 bg-white/5" />
+        </div>
+
+        <div className="grid grid-cols-3 gap-3 w-full">
+          <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
+            <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Vitórias</p>
+            <p className="text-xl font-black text-white">{stats.wins}</p>
+          </div>
+          <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
+            <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Recorde</p>
+            <p className="text-xl font-black text-gold">{stats.record}</p>
+          </div>
+          <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
+            <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Rank</p>
+            <p className="text-xl font-black text-purple-evolve">#{stats.rank}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-black italic tracking-tight text-white/80">HISTÓRICO RECENTE</h3>
+        {[
+          { opp: "Bot Elite", res: "Vitória", score: "42-39", xp: "+150" },
+          { opp: "Bot Avançado", res: "Vitória", score: "38-30", xp: "+120" },
+          { opp: "Bot Lendário", res: "Derrota", score: "45-52", xp: "+45" },
+        ].map((match, i) => (
+          <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
+            <div className="flex items-center gap-3">
+              <div className={`w-2 h-2 rounded-full ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`} />
+              <div>
+                <p className="text-sm font-bold text-white">{match.opp}</p>
+                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-tighter">{match.score}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className={`text-sm font-black ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{match.res}</p>
+              <p className="text-[10px] text-gold font-black italic">{match.xp} XP</p>
+            </div>
+          </div>
+        ))}
+      </div>
     </motion.div>
   );
 }
 
 function Ranking({ setView }: { setView: (v: View) => void }) {
-    return <motion.div initial={{ opacity: 0 }} className="p-6">
-        <h2 className="text-2xl font-black mb-6">Ranking Global</h2>
-        <div className="space-y-2">
-            {[1,2,3,4,5].map(i => (
-                <div key={i} className="flex items-center gap-4 p-3 bg-white/5 rounded-xl">
-                    <span className="font-black text-gold">{i}º</span>
-                    <div className="w-10 h-10 bg-secondary rounded-full" />
-                    <span className="flex-1">Guerreiro {i}</span>
-                    <span className="font-bold">{(1000 - i * 100) * 10} Flexões</span>
-                </div>
-            ))}
+  const [tab, setTab] = useState<'global' | 'local'>('global');
+  
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6">
+      <div className="flex flex-col gap-6">
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">RANKING</h2>
+        
+        <div className="flex p-1 bg-white/5 rounded-2xl">
+          <button 
+            onClick={() => setTab('global')}
+            className={`flex-1 py-3 text-sm font-black italic rounded-xl transition-all ${tab === 'global' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+          >
+            🌎 GLOBAL
+          </button>
+          <button 
+            onClick={() => setTab('local')}
+            className={`flex-1 py-3 text-sm font-black italic rounded-xl transition-all ${tab === 'local' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+          >
+            🇧🇷 BRASIL
+          </button>
         </div>
-    </motion.div>;
+
+        <div className="space-y-3">
+          {[
+            { name: "Mega Flex", count: 12500, avatar: "MF", color: "bg-gold" },
+            { name: "Push Master", count: 11200, avatar: "PM", color: "bg-silver-400" },
+            { name: "Elite Beast", count: 10800, avatar: "EB", color: "bg-orange-600" },
+            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true },
+            { name: "Titan X", count: 9800, avatar: "TX", color: "bg-secondary" },
+            { name: "Iron Chest", count: 9500, avatar: "IC", color: "bg-secondary" },
+          ].map((player, i) => (
+            <div key={i} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${player.isUser ? 'bg-primary/20 border-primary/50 scale-[1.02] shadow-[0_0_20px_rgba(96,165,250,0.2)]' : 'bg-white/5 border-white/5'}`}>
+              <span className={`w-8 font-black text-lg italic ${i === 0 ? 'text-gold' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-orange-400' : 'text-muted-foreground'}`}>
+                {i + 1}º
+              </span>
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-white text-lg ${player.color}`}>
+                {player.avatar}
+              </div>
+              <div className="flex-1">
+                <span className="font-black text-white tracking-tight">{player.name}</span>
+                {player.isUser && <Badge className="ml-2 bg-primary text-[8px] h-4 py-0">VOCÊ</Badge>}
+                <div className="flex items-center gap-1 text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-0.5">
+                  <Flame className="w-3 h-3 text-energy-red" /> 12 dias seguidos
+                </div>
+              </div>
+              <div className="text-right">
+                <span className="font-black text-white italic">{player.count.toLocaleString()}</span>
+                <p className="text-[8px] font-black text-muted-foreground uppercase">pontos</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  );
 }
 
 function Achievements({ setView }: { setView: (v: View) => void }) {
-    return <motion.div initial={{ opacity: 0 }} className="p-6">
-        <h2 className="text-2xl font-black mb-6">Conquistas</h2>
-        <div className="grid grid-cols-2 gap-4">
-            {['Primeira Vitória', '100 Flexões', 'Semana Ativa', 'Elite Rank'].map(ach => (
-                <div key={ach} className="glass-panel p-4 flex flex-col items-center gap-2">
-                    <Medal className="w-8 h-8 text-gold" />
-                    <p className="text-xs font-bold text-center">{ach}</p>
-                </div>
-            ))}
+  const achievements = [
+    { title: "Primeiro Duelo", desc: "Vença sua primeira partida contra um bot", icon: Trophy, color: "text-gold", completed: true },
+    { title: "Monstro das Flexões", desc: "Faça 100 flexões em um único dia", icon: Flame, color: "text-energy-red", completed: true },
+    { title: "Elite Alpha", desc: "Alcance o Rank Elite na temporada", icon: Shield, color: "text-purple-evolve", completed: false },
+    { title: "Mestre da Rapidez", desc: "Vença um Bot Lendário em 30s", icon: Timer, color: "text-blue-400", completed: false },
+    { title: "Colecionador", desc: "Desbloqueie 5 molduras diferentes", icon: Medal, color: "text-orange-500", completed: true },
+    { title: "Lendário", desc: "Fique no Top 10 Global por 1 semana", icon: Star, color: "text-yellow-400", completed: false },
+  ];
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6">
+      <h2 className="text-3xl font-black italic text-white tracking-tighter mb-6">CONQUISTAS</h2>
+      
+      <div className="grid grid-cols-2 gap-4">
+        {achievements.map((ach, i) => (
+          <div key={i} className={`glass-panel p-5 flex flex-col items-center gap-3 relative transition-all duration-300 ${!ach.completed ? 'opacity-40 grayscale' : 'hover:scale-[1.05] hover:shadow-gold/20 shadow-xl'}`}>
+            <div className={`p-4 rounded-2xl bg-white/5 border border-white/10 ${ach.color}`}>
+              <ach.icon className="w-8 h-8" />
+            </div>
+            <div className="text-center">
+              <p className="text-xs font-black text-white uppercase tracking-tighter leading-tight mb-1">{ach.title}</p>
+              <p className="text-[8px] text-muted-foreground font-medium leading-tight">{ach.desc}</p>
+            </div>
+            {!ach.completed && (
+              <div className="absolute top-2 right-2">
+                <Shield className="w-4 h-4 text-white/20" />
+              </div>
+            )}
+            {ach.completed && (
+              <div className="absolute top-2 right-2 bg-green-500 w-2 h-2 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.8)]" />
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8 p-6 glass-panel relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-gold/10 blur-3xl -mr-16 -mt-16 rounded-full" />
+        <h3 className="text-sm font-black italic text-white uppercase mb-4 tracking-widest">PROGRESSO TOTAL</h3>
+        <div className="flex items-end justify-between mb-2">
+          <span className="text-3xl font-black text-gold">12 <span className="text-sm text-white/40">/ 40</span></span>
+          <span className="text-xs font-black text-muted-foreground italic mb-1">RECOMPENSAS EXCLUSIVAS</span>
         </div>
-    </motion.div>;
+        <Progress value={30} className="h-2 bg-white/5" />
+      </div>
+    </motion.div>
+  );
 }
+
 
