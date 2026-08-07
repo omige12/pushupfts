@@ -24,13 +24,13 @@ const getPatentInfo = (wins: number, totalPushups: number, record: number, xp: n
   const score = (wins * 10) + (totalPushups / 10) + (record * 2) + (xp / 100);
   
   const patents = [
-    { name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", divisions: ["III", "II", "I"] },
-    { name: "Prata", min: 1000, emoji: "🥈", color: "from-slate-400 to-slate-200", divisions: ["III", "II", "I"] },
-    { name: "Ouro", min: 3000, emoji: "🥇", color: "from-yellow-600 to-yellow-300", divisions: ["III", "II", "I"] },
-    { name: "Diamante", min: 7000, emoji: "💎", color: "from-blue-600 to-cyan-300", divisions: ["III", "II", "I"] },
-    { name: "Pro", min: 15000, emoji: "🔥", color: "from-red-600 to-orange-500", divisions: ["III", "II", "I"] },
-    { name: "Mestre", min: 30000, emoji: "👑", color: "from-purple-600 to-pink-500", divisions: ["III", "II", "I"] },
-    { name: "Lendário", min: 60000, emoji: "🌟", color: "from-gold to-white", divisions: ["III", "II", "I"] }
+    { id: "bronze", name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", divisions: ["III", "II", "I"] },
+    { id: "prata", name: "Prata", min: 1000, emoji: "🥈", color: "from-slate-400 to-slate-200", divisions: ["III", "II", "I"] },
+    { id: "ouro", name: "Ouro", min: 3000, emoji: "🥇", color: "from-yellow-600 to-yellow-300", divisions: ["III", "II", "I"] },
+    { id: "diamante", name: "Diamante", min: 7000, emoji: "💎", color: "from-blue-600 to-cyan-300", divisions: ["III", "II", "I"] },
+    { id: "pro", name: "Pro", min: 15000, emoji: "🔥", color: "from-red-600 to-orange-500", divisions: ["III", "II", "I"] },
+    { id: "mestre", name: "Mestre", min: 30000, emoji: "👑", color: "from-purple-600 to-pink-500", divisions: ["III", "II", "I"] },
+    { id: "lendario", name: "Lendário", min: 60000, emoji: "🌟", color: "from-gold to-white", divisions: ["III", "II", "I"] }
   ];
   
   let currentPatentIndex = 0;
@@ -563,6 +563,16 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
     setPlayerPushups(count);
   }, []);
 
+  const battleMessage = useMemo(() => {
+    if (gameState !== 'playing') return "";
+    const diff = playerPushups - oppPushups;
+    if (diff > 5) return "🔥 VOCÊ ESTÁ DOMINANDO!";
+    if (diff > 0) return "🔥 VOCÊ ESTÁ NA FRENTE!";
+    if (diff === 0) return "⚔️ DISPUTA ACIRRADA!";
+    if (diff > -5) return "⚠️ ELE ESTÁ TE ALCANÇANDO!";
+    return "🔥 VOCÊ PRECISA ACELERAR!";
+  }, [playerPushups, oppPushups, gameState]);
+
   useEffect(() => {
     if (gameState === 'countdown') {
       if (countdown > 0) {
@@ -613,83 +623,81 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
   }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete]);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 flex flex-col h-[calc(100vh-80px)]">
-      <div className="flex justify-between items-center mb-6 relative">
-        <div className="flex-1 glass-panel p-3 border-r-0 rounded-r-none border-primary/30 bg-primary/10 relative overflow-hidden">
-          <AnimatePresence>
-            <motion.div 
-              initial={{ scale: 1, opacity: 0 }}
-              animate={{ scale: [1, 1.2, 1], opacity: [0, 0.2, 0] }}
-              key={playerPushups}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-0 bg-primary pointer-events-none"
-            />
-          </AnimatePresence>
-          <p className="text-[10px] font-black italic text-primary uppercase tracking-widest">{user.name} ({user.id})</p>
-          <div className="flex items-center gap-2">
-            <Badge className="bg-primary/20 text-[8px] h-3 px-1 border-none">{getPatentEmoji(user.patent)} {user.patent}</Badge>
-            <motion.span 
-              key={playerPushups}
-              initial={{ scale: 0.8, y: 5 }}
-              animate={{ scale: 1, y: 0 }}
-              className="text-3xl font-black text-white italic"
-            >
-              {playerPushups}
-            </motion.span>
-            <span className="text-xs font-black text-white/40">💪</span>
-            {playerPushups > 0 && playerPushups === user.record + 1 && (
-              <motion.span 
-                initial={{ scale: 0, rotate: -20 }}
-                animate={{ scale: 1, rotate: 0 }}
-                className="absolute -top-1 right-2 text-[8px] font-black text-gold italic bg-black/40 px-1 rounded"
-              >
-                RECORD!
-              </motion.span>
-            )}
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 flex flex-col h-[calc(100vh-80px)]">
+      <div className="flex justify-between items-center mb-4 relative gap-2">
+        {/* Player Card */}
+        <div className="flex-1 glass-panel p-2 border border-primary/30 bg-primary/10 relative overflow-hidden flex items-center gap-2">
+          <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 flex-shrink-0">
+             {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-secondary flex items-center justify-center"><UserIcon className="w-4 h-4" /></div>}
+          </div>
+          <div className="min-w-0">
+            <p className="text-[9px] font-black italic text-primary uppercase truncate">{user.name}</p>
+            <div className="flex items-center gap-1">
+              <span className="text-[8px] font-black text-white/60">{getPatentEmoji(user.patent)}</span>
+              <span className="text-[14px] font-black text-white italic">{playerPushups}</span>
+            </div>
           </div>
         </div>
-        <div className="z-10 bg-card border-4 border-background w-16 h-16 rounded-full flex items-center justify-center -mx-2 shadow-xl overflow-hidden relative">
+
+        {/* Timer */}
+        <div className="z-10 bg-card border-2 border-background w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-xl overflow-hidden relative">
           <motion.div 
             animate={timeLeft <= 5 ? { scale: [1, 1.1, 1], backgroundColor: ['rgba(0,0,0,0)', 'rgba(244,63,94,0.2)', 'rgba(0,0,0,0)'] } : {}}
             transition={{ repeat: Infinity, duration: 0.5 }}
             className="absolute inset-0"
           />
-          <span className={`text-2xl font-black italic tabular-nums relative z-10 ${timeLeft <= 5 ? 'text-energy-red' : 'text-white'}`}>
+          <span className={`text-xl font-black italic tabular-nums relative z-10 ${timeLeft <= 5 ? 'text-energy-red' : 'text-white'}`}>
             {timeLeft}
           </span>
         </div>
-        <div className="flex-1 glass-panel p-3 border-l-0 rounded-l-none border-energy-red/30 bg-energy-red/10 text-right relative overflow-hidden">
-          <AnimatePresence>
-            <motion.div 
-              initial={{ scale: 1, opacity: 0 }}
-              animate={{ scale: [1, 1.2, 1], opacity: [0, 0.2, 0] }}
-              key={oppPushups}
-              transition={{ duration: 0.3 }}
-              className="absolute inset-0 bg-energy-red pointer-events-none"
-            />
-          </AnimatePresence>
-          <div className="flex items-center justify-end gap-2 mb-1">
-             <div className="w-8 h-8 rounded-lg overflow-hidden border border-white/10">
-                <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" alt="Opponent" />
-             </div>
-             <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest leading-none">{activeOpponent?.name || 'ADVERSÁRIO'}</p>
+
+        {/* Opponent Card */}
+        <div className="flex-1 glass-panel p-2 border border-energy-red/30 bg-energy-red/10 relative overflow-hidden flex items-center gap-2 flex-row-reverse text-right">
+          <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 flex-shrink-0">
+             <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
           </div>
-          <div className="flex items-center gap-2 justify-end">
-            <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">{activeOpponent?.patent ? activeOpponent.patent : activeOpponent?.level ? `LVL ${activeOpponent.level}` : 'RIVAL'}</Badge>
-            <span className="text-xs font-black text-white/40">💪</span>
-            <motion.span 
-              key={oppPushups}
-              initial={{ scale: 0.8, y: 5 }}
-              animate={{ scale: 1, y: 0 }}
-              className="text-3xl font-black text-white italic"
-            >
-              {oppPushups}
-            </motion.span>
+          <div className="min-w-0">
+            <p className="text-[9px] font-black italic text-energy-red uppercase truncate">{activeOpponent?.name || 'ADVERSÁRIO'}</p>
+            <div className="flex items-center gap-1 justify-end">
+              <span className="text-[14px] font-black text-white italic">{oppPushups}</span>
+              <span className="text-[8px] font-black text-white/60">{activeOpponent?.patent ? getPatentEmoji(activeOpponent.patent) : '🤖'}</span>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 relative flex flex-col gap-6">
+      <div className="flex-1 relative flex flex-col gap-4">
+        <PushUpCounter isActive={gameState === 'playing'} onCount={handlePlayerCount} />
+        
+        <AnimatePresence>
+          {battleMessage && (
+            <motion.div 
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
+              className="absolute top-4 left-0 right-0 flex justify-center z-20 pointer-events-none"
+            >
+              <div className="bg-black/60 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/10 shadow-lg">
+                <p className="text-[10px] font-black italic text-white uppercase tracking-wider">{battleMessage}</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="glass-panel p-3 bg-white/5 border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-8 bg-primary rounded-full" />
+            <div>
+              <p className="text-[7px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Status</p>
+              <p className="text-[10px] font-black text-white italic leading-none">
+                {playerPushups > oppPushups ? `LIDERANDO POR ${playerPushups - oppPushups}` : 
+                 oppPushups > playerPushups ? `ATRÁS POR ${oppPushups - playerPushups}` : 'EMPATE TÉCNICO'}
+              </p>
+            </div>
+          </div>
+          <Zap className="w-4 h-4 text-gold animate-pulse" />
+        </div>
+      </div>
         <PushUpCounter isActive={gameState === 'playing'} onCount={handlePlayerCount} />
         
         <div className="glass-panel p-4 bg-white/5 border-white/5 flex items-center justify-between">
