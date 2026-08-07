@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Pose, Results } from '@mediapipe/pose';
+import * as posePkg from '@mediapipe/pose';
+const { Pose } = posePkg;
+import type { Results } from '@mediapipe/pose';
 import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 import { Shield, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
