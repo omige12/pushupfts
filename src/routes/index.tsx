@@ -91,7 +91,7 @@ const getPatentEmoji = (patent: string) => {
     case "Diamante": return "💎";
     case "Pro": return "🔥";
     case "Mestre": return "👑";
-    case "Lenda": return "🌟";
+    case "Lendário": return "🌟";
     default: return "🥉";
   }
 };
