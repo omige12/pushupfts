@@ -4,7 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { 
   Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon,
-  Flame, ArrowLeft, Timer, Settings, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star
+  Flame, ArrowLeft, Timer, Settings, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
+  Copy, Check, Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,19 +17,14 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'tournaments';
+type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking';
 
 const BOTS = [
-  { id: '1', name: 'Bot Iniciante', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
-  { id: '2', name: 'Bot Nível 2', color: 'bg-green-600', level: 2, difficulty: 'Fácil', avgPushups: 10 },
-  { id: '3', name: 'Bot Competitivo', color: 'bg-yellow-500', level: 3, difficulty: 'Iniciante', avgPushups: 15 },
-  { id: '4', name: 'Bot Amador', color: 'bg-yellow-600', level: 4, difficulty: 'Médio', avgPushups: 25 },
-  { id: '5', name: 'Bot Equilibrado', color: 'bg-orange-500', level: 5, difficulty: 'Desafiante', avgPushups: 35 },
-  { id: '6', name: 'Bot Difícil', color: 'bg-orange-600', level: 6, difficulty: 'Difícil', avgPushups: 45 },
-  { id: '7', name: 'Bot Muito Difícil', color: 'bg-red-500', level: 7, difficulty: 'Muito Difícil', avgPushups: 55 },
-  { id: '8', name: 'Bot Elite', color: 'bg-red-600', level: 8, difficulty: 'Elite', avgPushups: 70 },
-  { id: '9', name: 'Bot Mestre', color: 'bg-purple-500', level: 9, difficulty: 'Mestre', avgPushups: 90 },
-  { id: '10', name: 'Bot Lendário', color: 'bg-yellow-400', level: 10, difficulty: 'Lendário', avgPushups: 120 },
+  { id: '1', name: 'Bot Nível 1', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
+  { id: '2', name: 'Bot Nível 2', color: 'bg-green-600', level: 2, difficulty: 'Fácil', avgPushups: 15 },
+  { id: '3', name: 'Bot Nível 3', color: 'bg-yellow-500', level: 3, difficulty: 'Médio', avgPushups: 30 },
+  { id: '4', name: 'Bot Nível 4', color: 'bg-orange-600', level: 4, difficulty: 'Difícil', avgPushups: 60 },
+  { id: '5', name: 'Bot Nível 5', color: 'bg-yellow-400', level: 5, difficulty: 'Lendário', avgPushups: 120 },
 ];
 
 function App() {
@@ -36,6 +32,7 @@ function App() {
   const [selectedBot, setSelectedBot] = useState<typeof BOTS[0] | null>(null);
   const [duration, setDuration] = useState(30);
   const [user, setUser] = useState({
+    id: "PUSH-" + Math.random().toString(36).substr(2, 4).toUpperCase(),
     name: "GUERREIRO ALPHA",
     age: 25,
     weight: 75,
@@ -116,8 +113,9 @@ function App() {
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
       case 'history': return <FullHistory setView={setView} user={user} />;
-      case 'friend-challenge': return <FriendChallenge setView={setView} />;
-      case 'tournaments': return <Tournaments setView={setView} />;
+      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} />;
+      case 'ranking': return <Ranking setView={setView} user={user} />;
+      default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
     }
   };
 
@@ -130,6 +128,7 @@ function App() {
         {[
           { icon: Home, label: 'Início', id: 'dashboard' },
           { icon: Swords, label: 'Multiplayer', id: 'multiplayer' },
+          { icon: TrendingUp, label: 'Ranking', id: 'ranking' },
           { icon: UserCircle, label: 'Perfil', id: 'profile' },
           { icon: Star, label: 'Conquistas', id: 'achievements' },
         ].map(item => (
@@ -210,8 +209,8 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
         </div>
         <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
           {[
-            { label: 'Recorde', val: '54', sub: 'flexões', icon: Target, color: 'text-gold' },
-            { label: 'Vitórias', val: '87', sub: 'partidas', icon: Shield, color: 'text-blue-400' },
+            { label: 'Recorde', val: stats.record, sub: 'flexões', icon: Target, color: 'text-gold' },
+            { label: 'Vitórias', val: stats.wins, sub: 'partidas', icon: Shield, color: 'text-blue-400' },
             { label: 'Sequência', val: '12', sub: 'dias', icon: Flame, color: 'text-energy-red' },
           ].map((item, i) => (
             <div key={i} className="min-w-[120px] glass-panel p-4 border-white/5 flex flex-col items-center gap-1">
@@ -353,7 +352,7 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
               className="absolute inset-0 bg-primary pointer-events-none"
             />
           </AnimatePresence>
-          <p className="text-[10px] font-black italic text-primary uppercase tracking-widest">{user.name}</p>
+          <p className="text-[10px] font-black italic text-primary uppercase tracking-widest">{user.name} ({user.id})</p>
           <div className="flex items-center gap-2">
             <Badge className="bg-primary/20 text-[8px] h-3 px-1 border-none">{user.league}</Badge>
             <motion.span 
@@ -396,9 +395,9 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
               className="absolute inset-0 bg-energy-red pointer-events-none"
             />
           </AnimatePresence>
-          <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest">{bot?.name || 'BOT'}</p>
+          <p className="text-[10px] font-black italic text-energy-red uppercase tracking-widest">{bot?.name || 'ADVERSÁRIO'}</p>
           <div className="flex items-center gap-2 justify-end">
-            <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">LVL {bot?.level}</Badge>
+            <Badge className="bg-energy-red/20 text-[8px] h-3 px-1 border-none">{bot?.id ? `LVL ${bot.level}` : 'RIVAL'}</Badge>
             <span className="text-xs font-black text-white/40">💪</span>
             <motion.span 
               key={botPushups}
@@ -598,6 +597,14 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
     );
   }
 
+  const [copied, setCopied] = useState(false);
+
+  const copyId = () => {
+    navigator.clipboard.writeText(user.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -624,8 +631,14 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
         <div className="text-center space-y-1">
           <h3 className="font-black text-2xl text-white tracking-tight">{stats.name.toUpperCase()}</h3>
           <div className="flex items-center justify-center gap-2">
+            <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg cursor-pointer hover:bg-white/10 transition-colors" onClick={copyId}>
+              <span className="text-[10px] font-mono text-muted-foreground">{stats.id}</span>
+              {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
+            </div>
             <Badge className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold">LIGA {stats.league.toUpperCase()}</Badge>
-            <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.goal.toUpperCase()}</Badge>
+          </div>
+          <div className="flex justify-center mt-1">
+             <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.age} ANOS • {stats.height}CM</Badge>
           </div>
         </div>
 
@@ -859,23 +872,32 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
 }
 
 function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => void, user: any, onSelectBot: () => void }) {
-  const [showRanking, setShowRanking] = useState(false);
+  const [searchId, setSearchId] = useState('');
+  const [foundPlayer, setFoundPlayer] = useState<any>(null);
+  const [challengeReceived, setChallengeReceived] = useState<string | null>(null);
 
-  if (showRanking) {
-    return (
-      <div className="relative">
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="fixed top-6 left-6 z-50 rounded-xl bg-white/5" 
-          onClick={() => setShowRanking(false)}
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <Ranking setView={setView} user={user} />
-      </div>
-    );
-  }
+  const handleSearch = () => {
+    if (searchId.trim().toUpperCase() === 'PUSH-DEMO') {
+      setFoundPlayer({
+        id: 'PUSH-DEMO',
+        name: 'RICARDO BRUTO',
+        level: 18,
+        league: 'Ouro',
+        record: 85,
+        avatar: null
+      });
+    } else {
+      setFoundPlayer(null);
+    }
+  };
+
+  const sendChallenge = () => {
+    alert(`Desafio enviado para ${foundPlayer.name}!`);
+    // Demo: auto-receive challenge back after 2s
+    setTimeout(() => {
+      setChallengeReceived(foundPlayer.name);
+    }, 2000);
+  };
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
@@ -884,49 +906,95 @@ function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => voi
         <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
       </div>
 
-      <div className="grid gap-4">
+      <div className="space-y-4">
+        <div className="glass-panel p-4 space-y-3">
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">🔍 PROCURAR JOGADOR POR ID</p>
+          <div className="flex gap-2">
+            <input 
+              className="flex-1 bg-white/5 border border-white/10 rounded-xl p-3 font-mono text-sm text-white focus:outline-none focus:border-primary"
+              placeholder="Ex: PUSH-DEMO"
+              value={searchId}
+              onChange={(e) => setSearchId(e.target.value.toUpperCase())}
+            />
+            <Button onClick={handleSearch} size="icon" className="game-button bg-primary"><Search className="w-5 h-5" /></Button>
+          </div>
+        </div>
+
+        {foundPlayer && (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel p-5 border-primary/30 bg-primary/5">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center border-2 border-primary/30">
+                <UserIcon className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <div className="flex-1">
+                <p className="font-black text-lg italic text-white tracking-tight">{foundPlayer.name}</p>
+                <div className="flex items-center gap-2">
+                   <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none">{foundPlayer.id}</Badge>
+                   <Badge className="bg-gold/20 text-gold border-none text-[8px] h-4 px-1.5 uppercase font-black italic">LIGA {foundPlayer.league}</Badge>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+               <div className="bg-white/5 p-2 rounded-xl text-center">
+                  <p className="text-[8px] text-muted-foreground uppercase font-black">Nível</p>
+                  <p className="text-sm font-black text-white">{foundPlayer.level}</p>
+               </div>
+               <div className="bg-white/5 p-2 rounded-xl text-center">
+                  <p className="text-[8px] text-muted-foreground uppercase font-black">Recorde</p>
+                  <p className="text-sm font-black text-gold">{foundPlayer.record}</p>
+               </div>
+            </div>
+            <Button className="game-button bg-primary w-full py-4 text-sm uppercase italic" onClick={sendChallenge}>Enviar Desafio</Button>
+          </motion.div>
+        )}
+
         <Button 
-          className="game-button bg-energy-red h-28 flex flex-col items-center justify-center relative overflow-hidden group"
+          className="game-button bg-energy-red h-24 flex flex-col items-center justify-center relative overflow-hidden group"
           onClick={onSelectBot}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-          <Swords className="w-8 h-8 mb-1 group-hover:scale-110 transition-transform" />
-          <span className="text-xl tracking-tighter italic uppercase">Desafio Rápido</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Oponentes do seu nível</p>
+          <Swords className="w-6 h-6 mb-1 group-hover:scale-110 transition-transform" />
+          <span className="text-lg tracking-tighter italic uppercase leading-none">Desafio Rápido</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase mt-1">Oponentes Reais (Bots Matchmaking)</p>
         </Button>
 
         <Button 
-          className="game-button bg-blue-500/20 border border-blue-500/30 h-28 flex flex-col items-center justify-center group"
+          className="game-button bg-blue-500/20 border border-blue-500/30 h-24 flex flex-col items-center justify-center group"
           onClick={() => setView('friend-challenge')}
         >
-          <UserIcon className="w-8 h-8 mb-1 text-blue-400 group-hover:scale-110 transition-transform" />
-          <span className="text-xl tracking-tighter italic uppercase">Jogar com Amigos</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Desafie seus contatos</p>
-        </Button>
-
-        <Button 
-          className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-28 flex flex-col items-center justify-center group"
-          onClick={() => setView('tournaments')}
-        >
-          <Trophy className="w-8 h-8 mb-1 text-purple-evolve group-hover:scale-110 transition-transform" />
-          <span className="text-xl tracking-tighter italic uppercase">Campeonatos</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Competições especiais</p>
-        </Button>
-
-        <Button 
-          className="game-button bg-gold/10 border border-gold/20 h-28 flex flex-col items-center justify-center group"
-          onClick={() => setShowRanking(true)}
-        >
-          <TrendingUp className="w-8 h-8 mb-1 text-gold group-hover:scale-110 transition-transform" />
-          <span className="text-xl tracking-tighter italic uppercase">Ranking</span>
-          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Global • Brasil • Amigos</p>
+          <UserIcon className="w-6 h-6 mb-1 text-blue-400 group-hover:scale-110 transition-transform" />
+          <span className="text-lg tracking-tighter italic uppercase leading-none">Jogar com Amigos</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase mt-1">Convidar via link</p>
         </Button>
       </div>
+
+      <AnimatePresence>
+        {challengeReceived && (
+          <motion.div initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }} className="fixed bottom-24 left-6 right-6 z-50 glass-panel p-6 border-gold/50 bg-gold/10 shadow-[0_0_30px_rgba(255,215,0,0.2)]">
+            <h3 className="text-lg font-black italic text-white tracking-tighter mb-4">VOCÊ RECEBEU UM DESAFIO!</h3>
+            <p className="text-sm font-medium text-white/80 mb-6 uppercase tracking-wide">
+              <span className="text-gold">{challengeReceived}</span> quer duelar com você!
+            </p>
+            <div className="flex gap-3">
+              <Button className="game-button bg-green-500 flex-1 py-4" onClick={() => { setView('select-duration'); setChallengeReceived(null); }}>✅ ACEITAR</Button>
+              <Button className="game-button bg-energy-red flex-1 py-4" onClick={() => setChallengeReceived(null)}>❌ RECUSAR</Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
 
-function FriendChallenge({ setView }: { setView: (v: View) => void }) {
+function FriendChallenge({ setView, user }: { setView: (v: View) => void, user: any }) {
+  const [copied, setCopied] = useState(false);
+
+  const copyId = () => {
+    navigator.clipboard.writeText(user.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
       <div className="flex items-center gap-4 mb-6">
@@ -940,11 +1008,14 @@ function FriendChallenge({ setView }: { setView: (v: View) => void }) {
         </div>
         <div>
           <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">Convidar Amigos</h3>
-          <p className="text-xs text-muted-foreground font-medium px-4">Compartilhe seu código ou link de desafio para competir contra quem você conhece.</p>
+          <p className="text-xs text-muted-foreground font-medium px-4">Compartilhe seu ID para competir contra quem você conhece.</p>
         </div>
         
-        <div className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-lg font-black text-white tracking-[0.2em]">
-          PUSH-87X2
+        <div className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-lg font-black text-white tracking-[0.2em] relative group cursor-pointer" onClick={copyId}>
+          {user.id}
+          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-xl transition-opacity">
+            {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5 text-white" />}
+          </div>
         </div>
 
         <Button className="game-button bg-blue-500 w-full py-6 text-lg tracking-tighter italic uppercase">
@@ -955,77 +1026,47 @@ function FriendChallenge({ setView }: { setView: (v: View) => void }) {
   );
 }
 
-function Tournaments({ setView }: { setView: (v: View) => void }) {
-  return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">CAMPEONATOS</h2>
-      </div>
-
-      <div className="space-y-4">
-        {[
-          { title: "Copa Push-Up Brasil", status: "Em Aberto", reward: "Moldura Dourada Rara", participants: "1,240" },
-          { title: "Desafio da Madrugada", status: "Inicia em 2h", reward: "Título: Noturno", participants: "450" },
-        ].map((t, i) => (
-          <div key={i} className="glass-panel p-6 border-purple-evolve/20 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-evolve/5 blur-2xl -mr-12 -mt-12" />
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <Badge className="bg-purple-evolve/20 text-purple-evolve border-none text-[8px] mb-2">{t.status.toUpperCase()}</Badge>
-                <h3 className="text-xl font-black text-white italic tracking-tighter uppercase">{t.title}</h3>
-              </div>
-              <Trophy className="w-6 h-6 text-gold" />
-            </div>
-            <div className="flex justify-between items-end">
-              <div className="space-y-1">
-                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Recompensa</p>
-                <p className="text-xs font-black text-gold italic">{t.reward}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{t.participants} Jogadores</p>
-                <Button className="game-button bg-purple-evolve h-8 px-4 mt-2 text-[10px] italic">ENTRAR</Button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </motion.div>
-  );
-}
 
 function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
-  const [tab, setTab] = useState<'global' | 'local'>('global');
+  const [tab, setTab] = useState<'global' | 'local' | 'friends'>('global');
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24">
       <div className="flex flex-col gap-6">
         <h2 className="text-3xl font-black italic text-white tracking-tighter">RANKING</h2>
         
         <div className="flex p-1 bg-white/5 rounded-2xl">
           <button 
             onClick={() => setTab('global')}
-            className={`flex-1 py-3 text-sm font-black italic rounded-xl transition-all ${tab === 'global' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+            className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'global' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
           >
             🌎 GLOBAL
           </button>
           <button 
             onClick={() => setTab('local')}
-            className={`flex-1 py-3 text-sm font-black italic rounded-xl transition-all ${tab === 'local' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+            className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'local' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
           >
             🇧🇷 BRASIL
+          </button>
+          <button 
+            onClick={() => setTab('friends')}
+            className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'friends' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+          >
+            👥 AMIGOS
           </button>
         </div>
 
         <div className="space-y-3">
-          {[
-            { name: "Mega Flex", count: 12500, avatar: "MF", color: "bg-gold" },
-            { name: "Push Master", count: 11200, avatar: "PM", color: "bg-silver-400" },
-            { name: "Elite Beast", count: 10800, avatar: "EB", color: "bg-orange-600" },
-            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true },
-            { name: "Titan X", count: 9800, avatar: "TX", color: "bg-secondary" },
-            { name: "Iron Chest", count: 9500, avatar: "IC", color: "bg-secondary" },
-          ].map((player, i) => (
+          {(tab === 'friends' ? [
+            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12 },
+            { name: "Amigo 1", count: 8200, avatar: "A1", color: "bg-secondary", record: 42, wins: 56, streak: 3 },
+          ] : [
+            { name: "Mega Flex", count: 12500, avatar: "MF", color: "bg-gold", record: 120, wins: 342, streak: 45 },
+            { name: "Push Master", count: 11200, avatar: "PM", color: "bg-slate-400", record: 98, wins: 287, streak: 32 },
+            { name: "Elite Beast", count: 10800, avatar: "EB", color: "bg-orange-600", record: 92, wins: 215, streak: 21 },
+            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12 },
+            { name: "Titan X", count: 9800, avatar: "TX", color: "bg-secondary", record: 88, wins: 156, streak: 15 },
+          ]).map((player: any, i) => (
             <div key={i} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${player.isUser ? 'bg-primary/20 border-primary/50 scale-[1.02] shadow-[0_0_20px_rgba(96,165,250,0.2)]' : 'bg-white/5 border-white/5'}`}>
               <span className={`w-8 font-black text-lg italic ${i === 0 ? 'text-gold' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-orange-400' : 'text-muted-foreground'}`}>
                 {i + 1}º
@@ -1036,8 +1077,10 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
               <div className="flex-1">
                 <span className="font-black text-white tracking-tight">{player.name}</span>
                 {player.isUser && <Badge className="ml-2 bg-primary text-[8px] h-4 py-0">VOCÊ</Badge>}
-                <div className="flex items-center gap-1 text-[10px] font-black text-muted-foreground uppercase tracking-widest mt-0.5">
-                  <Flame className="w-3 h-3 text-energy-red" /> 12 dias seguidos
+                <div className="flex items-center gap-3 text-[7px] font-black text-muted-foreground uppercase tracking-widest mt-1">
+                  <div className="flex items-center gap-0.5"><Target className="w-2.5 h-2.5 text-gold" /> {player.record}</div>
+                  <div className="flex items-center gap-0.5"><Shield className="w-2.5 h-2.5 text-blue-400" /> {player.wins}W</div>
+                  <div className="flex items-center gap-0.5"><Flame className="w-2.5 h-2.5 text-energy-red" /> {player.streak}D</div>
                 </div>
               </div>
               <div className="text-right">
