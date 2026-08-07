@@ -625,7 +625,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 flex flex-col h-[calc(100vh-80px)]">
       <div className="flex justify-between items-center mb-4 relative gap-2">
-        {/* Player Card */}
+        {/* Seu Perfil */}
         <div className="flex-1 glass-panel p-2 border border-primary/30 bg-primary/10 relative overflow-hidden flex items-center gap-2">
           <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 flex-shrink-0">
              {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <div className="w-full h-full bg-secondary flex items-center justify-center"><UserIcon className="w-4 h-4" /></div>}
@@ -639,7 +639,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
           </div>
         </div>
 
-        {/* Timer */}
+        {/* Cronômetro Central */}
         <div className="z-10 bg-card border-2 border-background w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 shadow-xl overflow-hidden relative">
           <motion.div 
             animate={timeLeft <= 5 ? { scale: [1, 1.1, 1], backgroundColor: ['rgba(0,0,0,0)', 'rgba(244,63,94,0.2)', 'rgba(0,0,0,0)'] } : {}}
@@ -651,7 +651,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
           </span>
         </div>
 
-        {/* Opponent Card */}
+        {/* Oponente */}
         <div className="flex-1 glass-panel p-2 border border-energy-red/30 bg-energy-red/10 relative overflow-hidden flex items-center gap-2 flex-row-reverse text-right">
           <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 flex-shrink-0">
              <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
@@ -666,7 +666,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
         </div>
       </div>
 
-      <div className="flex-1 relative flex flex-col gap-4">
+      <div className="flex-1 relative flex flex-col gap-4 overflow-hidden">
         <PushUpCounter isActive={gameState === 'playing'} onCount={handlePlayerCount} />
         
         <AnimatePresence>
@@ -696,22 +696,6 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
             </div>
           </div>
           <Zap className="w-4 h-4 text-gold animate-pulse" />
-        </div>
-      </div>
-        <PushUpCounter isActive={gameState === 'playing'} onCount={handlePlayerCount} />
-        
-        <div className="glass-panel p-4 bg-white/5 border-white/5 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-10 bg-primary rounded-full" />
-            <div>
-              <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Vantagem</p>
-              <p className="text-xs font-black text-white italic">
-                {playerPushups > oppPushups ? `+${playerPushups - oppPushups} FLEXÕES` : 
-                 oppPushups > playerPushups ? `-${oppPushups - playerPushups} FLEXÕES` : 'EMPATE'}
-              </p>
-            </div>
-          </div>
-          <Timer className="w-6 h-6 text-white/20" />
         </div>
       </div>
 
