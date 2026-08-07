@@ -370,13 +370,14 @@ function App() {
     switch (view) {
       case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
-      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
+      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} onStartMatchmaking={() => setView('matchmaking')} />;
       case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); }} onComplete={updateStats} />;
-      case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('select-duration'); }} onCancel={() => setView('multiplayer')} />;
+      case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('challenge'); }} onCancel={() => setView('select-duration')} duration={duration} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
-      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={() => setView('matchmaking')} />;
+      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={() => setView('select-duration')} />;
+
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
