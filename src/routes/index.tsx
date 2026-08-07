@@ -1887,8 +1887,9 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
               <div className="flex-1 pt-1">
                 <div className="flex justify-between items-center mb-2">
                    <h4 className="font-black text-xl italic text-white uppercase tracking-tighter">{p.name}</h4>
-                   <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{p.min} SCORE</span>
+                   <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{p.min} XP</span>
                 </div>
+
                 
                 <div className="flex flex-wrap gap-2 mb-3">
                   {p.divisions.map(div => (
