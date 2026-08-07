@@ -167,7 +167,8 @@ const BOTS = [
 
 function App() {
   const [view, setView] = useState<View>('dashboard');
-  const [selectedBot, setSelectedBot] = useState<typeof BOTS[0] | null>(null);
+  const [selectedBot, setSelectedBot] = useState<any | null>(null);
+  const [opponent, setOpponent] = useState<any | null>(null);
   const [duration, setDuration] = useState(30);
   const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
   const [user, setUser] = useState({
@@ -197,12 +198,11 @@ function App() {
     ]
   });
 
-  const updateStats = (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => {
+  const updateStats = (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => {
     setUser(prev => {
       const newRecord = Math.max(prev.record, pushups);
       const totalPushups = prev.totalPushups + pushups;
       const wins = won ? prev.wins + 1 : prev.wins;
-      const newXpTotal = (prev.wins * 100) + (prev.totalPushups) + xpGained; // Arbitrary total XP for patent calculation
       
       const oldPatentData = getPatentInfo(prev.wins, prev.totalPushups, prev.record, prev.xp);
       const newPatentData = getPatentInfo(wins, totalPushups, newRecord, prev.xp + xpGained);
@@ -224,9 +224,9 @@ function App() {
 
       const newMatch = {
         id: Math.random().toString(36).substr(2, 9),
-        opp: botName,
+        opp: oppName,
         res: won ? "Vitória" : "Derrota",
-        score: `${pushups}-${botPushups}`,
+        score: `${pushups}-${oppPushups}`,
         xp: `+${xpGained}`,
         date: new Date().toISOString().split('T')[0]
       };
@@ -260,18 +260,19 @@ function App() {
   const renderView = () => {
     switch (view) {
       case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
-      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
+      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setDuration(60); setView('challenge'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
-      case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
+      case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); }} onComplete={updateStats} />;
+      case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp) => { setOpponent(opp); setDuration(60); setView('challenge'); }} onCancel={() => setView('multiplayer')} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
-      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} />;
+      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={() => setView('matchmaking')} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
       case 'history': return <FullHistory setView={setView} user={user} />;
-      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} />;
+      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp) => { setOpponent(opp); setDuration(60); setView('challenge'); }} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'patents-list': return <PatentsList setView={setView} user={user} />;
       default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
