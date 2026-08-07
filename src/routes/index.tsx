@@ -1122,9 +1122,9 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
       if (lower.includes('duelo')) response = "Nos duelos, você compete contra bots de diferentes níveis. Escolha a duração e tente fazer mais flexões que o adversário!";
       else if (lower.includes('treino')) response = "No modo treino, você pode praticar sozinho. Nossa IA analisa sua postura e conta suas repetições em tempo real.";
       else if (lower.includes('patente') || lower.includes('liga')) response = "Existem 7 patentes: Bronze, Prata, Ouro, Diamante, Pro, Mestre e Lenda. Evolua seu nível e recorde para subir de patente!";
-      else if (lower.includes('bot')) response = "Temos 10 níveis de bots, do Iniciante ao Lendário. Cada nível aumenta a velocidade e quantidade de flexões do oponente.";
+      else if (lower.includes('bot')) response = "Temos 5 níveis de bots, do Iniciante ao David Goggins 'Lendário'. Cada nível aumenta a velocidade e quantidade de flexões do oponente.";
       else if (lower.includes('ranking')) response = "O ranking mostra os melhores jogadores do Brasil e seus amigos. Acumule vitórias para subir nas tabelas!";
-      else if (lower.includes('perfil') || lower.includes('configuração')) response = "Você pode editar seu nome, peso, altura e foto diretamente na tela de Configurações dentro do seu Perfil.";
+      else if (lower.includes('perfil') || lower.includes('configuração') || lower.includes('erro') || lower.includes('mudar')) response = "Se você está tendo problemas para editar seu perfil, certifique-se de preencher todos os campos corretamente (Nome, Idade, Peso e Altura) e clicar em 'Salvar Alterações'. Se o erro persistir, tente carregar uma foto menor ou reiniciar o app.";
 
       setMessages(prev => [...prev, { role: 'ai', text: response }]);
     }, 600);
