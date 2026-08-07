@@ -299,17 +299,27 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
         </div>
       </header>
 
-      {/* Evolution Info Section */}
-      <div className="glass-panel p-5 relative overflow-hidden">
-        <div className="flex justify-between items-end mb-3">
-          <span className="text-[10px] font-black italic text-muted-foreground uppercase tracking-widest">{getPatentEmoji(stats.patent)} {stats.patent} {stats.subRank}</span>
+      <div className="glass-panel p-5 relative overflow-hidden group border-primary/20">
+        <div className="absolute top-0 left-0 w-full h-1 bg-primary/30" />
+        <div className="flex justify-between items-end mb-2">
+          <div className="flex flex-col">
+            <span className="text-[10px] font-black italic text-muted-foreground uppercase tracking-widest">{getPatentEmoji(stats.patent)} {stats.patent} {stats.subRank}</span>
+            <span className="text-[8px] font-black text-primary/80 uppercase tracking-tighter">Próxima Patente: {getPatentInfo(stats.wins + 50, stats.totalPushups, stats.record, stats.xp).name}</span>
+          </div>
           <span className="text-[10px] font-black italic text-white tracking-tighter">{stats.xp} / {stats.maxXp} XP</span>
         </div>
-        <Progress value={(stats.xp / stats.maxXp) * 100} className="h-3 bg-white/10" />
-        <p className="text-[10px] font-bold text-center mt-3 text-muted-foreground uppercase tracking-wider italic">
-          Faltam {stats.maxXp - stats.xp} XP para subir de patente
-        </p>
+        <Progress value={(stats.xp / stats.maxXp) * 100} className="h-2.5 bg-white/5" />
+        <div className="mt-3 flex justify-between items-center">
+          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-wider italic">
+            Faltam {stats.maxXp - stats.xp} XP para subir de nível
+          </p>
+          <div className="flex items-center gap-1">
+             <Star className="w-3 h-3 text-gold fill-gold" />
+             <span className="text-[8px] font-black text-gold uppercase tracking-widest">Moldura Rara</span>
+          </div>
+        </div>
       </div>
+
 
       <div className="grid grid-cols-2 gap-4">
         <Button 
