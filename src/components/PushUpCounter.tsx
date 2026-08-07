@@ -25,7 +25,7 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
   useEffect(() => {
     if (!isActive) return;
 
-    let pose: Pose | null = null;
+    let pose: any = null;
     let camera: any = null;
 
     const setupPose = async () => {
