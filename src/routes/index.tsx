@@ -20,6 +20,30 @@ export const Route = createFileRoute("/")({
 
 type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking';
 
+const getPatent = (wins: number, totalPushups: number, record: number, xp: number) => {
+  const score = (wins * 10) + (totalPushups / 10) + (record * 2) + (xp / 100);
+  if (score >= 5000) return "Lenda";
+  if (score >= 3000) return "Mestre";
+  if (score >= 2000) return "Pro";
+  if (score >= 1200) return "Diamante";
+  if (score >= 600) return "Ouro";
+  if (score >= 250) return "Prata";
+  return "Bronze";
+};
+
+const getPatentEmoji = (patent: string) => {
+  switch (patent) {
+    case "Bronze": return "🥉";
+    case "Prata": return "🥈";
+    case "Ouro": return "🥇";
+    case "Diamante": return "💎";
+    case "Pro": return "🔥";
+    case "Mestre": return "👑";
+    case "Lenda": return "🌟";
+    default: return "🥉";
+  }
+};
+
 const BOTS = [
   { id: '1', name: 'Bot Nível 1', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
   { id: '2', name: 'Bot Nível 2', color: 'bg-green-600', level: 2, difficulty: 'Fácil', avgPushups: 15 },
