@@ -587,7 +587,7 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   );
 }
 
-function Achievements({ setView }: { setView: (v: View) => void }) {
+function Achievements({ setView, user }: { setView: (v: View) => void, user: any }) {
   const achievements = [
     { title: "Primeiro Duelo", desc: "Vença sua primeira partida contra um bot", icon: Trophy, color: "text-gold", completed: true },
     { title: "Monstro das Flexões", desc: "Faça 100 flexões em um único dia", icon: Flame, color: "text-energy-red", completed: true },
