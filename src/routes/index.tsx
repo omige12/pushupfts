@@ -109,7 +109,7 @@ function App() {
       case 'dashboard': return <Dashboard setView={setView} user={user} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} />;
-      case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => setView('dashboard')} onComplete={updateStats} />;
+      case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
@@ -189,7 +189,7 @@ function Dashboard({ setView, user }: { setView: (v: View) => void, user: any })
             <p className="text-[10px] font-bold opacity-80 tracking-widest">BATALHA DE FLEXÕES</p>
           </div>
         </Button>
-        <Button className="game-button bg-primary/20 border border-primary/30 h-32 flex flex-col gap-2" onClick={() => setView('select-bot')}>
+        <Button className="game-button bg-primary/20 border border-primary/30 h-32 flex flex-col gap-2" onClick={() => { setSelectedBot(null); setView('select-duration'); }}>
           <Dumbbell className="w-6 h-6 text-primary" />
           <span className="text-lg tracking-tighter italic">TREINAR</span>
         </Button>
@@ -271,7 +271,7 @@ function SelectDuration({ setView, onSelect }: { setView: (v: View) => void, onS
   return (
     <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6">
       <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('select-bot')}><ArrowLeft className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView(selectedBot ? 'select-bot' : 'dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">DURAÇÃO</h2>
       </div>
 
@@ -458,13 +458,21 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/5 p-4 rounded-2xl">
-                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">XP Ganho</p>
-                  <p className="text-xl font-black text-gold">+{playerPushups >= botPushups ? 150 : 45}</p>
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Total Flexões</p>
+                  <p className="text-xl font-black text-white">{playerPushups}</p>
                 </div>
-                <div className="bg-white/5 p-4 rounded-2xl">
-                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Bônus</p>
-                  <p className="text-xl font-black text-purple-evolve">+12</p>
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Recorde</p>
+                  <p className="text-xl font-black text-gold">{user.record}</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Média/Min</p>
+                  <p className="text-xl font-black text-blue-400">{(playerPushups / (duration / 60)).toFixed(1)}</p>
+                </div>
+                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">XP Total</p>
+                  <p className="text-xl font-black text-purple-evolve">+{playerPushups >= botPushups ? 150 + playerPushups : 45 + playerPushups}</p>
                 </div>
               </div>
 
