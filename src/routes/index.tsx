@@ -998,9 +998,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           onClick={() => setEditing(true)}
         >
           <div className="flex items-center gap-4">
-            <UserCircle className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+            <Pencil className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
             <div className="text-left">
-              <p className="font-black text-white italic text-xl">✏️ EDITAR PERFIL</p>
+              <p className="font-black text-white italic text-xl uppercase tracking-tighter">✏️ Editar Perfil</p>
               <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Alterar foto e dados</p>
             </div>
           </div>
