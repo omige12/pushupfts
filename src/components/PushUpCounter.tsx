@@ -2,7 +2,8 @@ import React, { useRef, useEffect, useState } from 'react';
 import { Pose, Results } from '@mediapipe/pose';
 import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
-import { Shield, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Shield, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PushUpCounterProps {
   onCount: (count: number) => void;
@@ -232,15 +233,56 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
             <span className="text-sm font-black italic uppercase tracking-tight">{feedback}</span>
           </div>
           
-          <div className="bg-black/60 backdrop-blur-xl px-10 py-4 rounded-3xl border border-white/10 shadow-2xl">
-            <motion.span 
-              key={count}
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="text-8xl font-black italic text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)] block"
-            >
-              {count}
-            </motion.span>
+          <div className="bg-black/60 backdrop-blur-xl px-12 py-6 rounded-[3rem] border-2 border-primary/30 shadow-[0_0_50px_rgba(59,130,246,0.3)] relative group">
+            <AnimatePresence mode="popLayout">
+              <motion.div
+                key={count}
+                initial={{ y: 20, scale: 0.5, opacity: 0 }}
+                animate={{ y: 0, scale: 1, opacity: 1 }}
+                exit={{ y: -20, scale: 1.2, opacity: 0 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
+                className="relative"
+              >
+                <span className="text-8xl font-black italic text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)]">
+                  {count}
+                </span>
+                {count > 0 && (
+                  <motion.div
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: [1, 2], opacity: [1, 0] }}
+                    className="absolute -top-4 -right-4 text-primary"
+                  >
+                    <Zap className="w-8 h-8 fill-primary" />
+                  </motion.div>
+                )}
+                {count > 0 && (
+                   <motion.span
+                    initial={{ y: 0, opacity: 1 }}
+                    animate={{ y: -50, opacity: 0 }}
+                    className="absolute -top-10 left-1/2 -translate-x-1/2 text-primary font-black text-2xl"
+                   >
+                     💥 +1
+                   </motion.span>
+                )}
+              </motion.div>
+            </AnimatePresence>
+            
+            {/* Energy Particles */}
+            <div className="absolute inset-0 pointer-events-none">
+               {[...Array(6)].map((_, i) => (
+                 <motion.div
+                   key={`${count}-${i}`}
+                   initial={{ scale: 0, x: 0, y: 0 }}
+                   animate={{ 
+                     scale: [0, 1, 0], 
+                     x: (Math.random() - 0.5) * 100, 
+                     y: (Math.random() - 0.5) * 100 
+                   }}
+                   transition={{ duration: 0.6 }}
+                   className="absolute left-1/2 top-1/2 w-2 h-2 bg-primary rounded-full"
+                 />
+               ))}
+            </div>
           </div>
         </div>
       </div>
