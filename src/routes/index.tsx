@@ -529,7 +529,7 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
   );
 }
 
-function Ranking({ setView }: { setView: (v: View) => void }) {
+function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   const [tab, setTab] = useState<'global' | 'local'>('global');
   
   return (
