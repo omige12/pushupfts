@@ -106,9 +106,9 @@ function App() {
 
   const renderView = () => {
     switch (view) {
-      case 'dashboard': return <Dashboard setView={setView} user={user} />;
+      case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
-      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} />;
+      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
@@ -139,7 +139,7 @@ function App() {
   );
 }
 
-function Dashboard({ setView, user }: { setView: (v: View) => void, user: any }) {
+function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void }) {
   const stats = user;
 
   return (
