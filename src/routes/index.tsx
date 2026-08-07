@@ -3,9 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { 
-  Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon,
-  Flame, ArrowLeft, Timer, Settings, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
-  Copy, Check, Search, Zap, Award, Sparkles, LogOut, Info
+  Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon, Flame, ArrowLeft, Timer, Settings, Shield, Target, ChevronRight, Home, UserCircle, Star, Copy, Check, Search, Zap, Award, Sparkles, LogOut, Info
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { PushUpCounter } from "@/components/PushUpCounter";
 import { toast } from "sonner";
+import { Toaster } from "sonner";
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -49,21 +48,10 @@ const getPatentInfo = (wins: number, totalPushups: number, record: number, xp: n
   return { name: currentPatent.name, subRank, emoji: currentPatent.emoji, score, nextThreshold: nextPatent.min };
 };
 
-const BOTS = [
-  { id: '1', name: 'Bot Nível 1', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
-  { id: '2', name: 'Bot Nível 2', color: 'bg-green-600', level: 2, difficulty: 'Fácil', avgPushups: 15 },
-  { id: '3', name: 'Bot Nível 3', color: 'bg-yellow-500', level: 3, difficulty: 'Médio', avgPushups: 30 },
-  { id: '4', name: 'Bot Nível 4', color: 'bg-orange-600', level: 4, difficulty: 'Difícil', avgPushups: 60 },
-  { id: '5', name: 'Bot Nível 5', color: 'bg-yellow-400', level: 5, difficulty: 'Lendário', avgPushups: 120 },
-];
-
 function App() {
   const [view, setView] = useState<View>('dashboard');
-  const [selectedBot, setSelectedBot] = useState<typeof BOTS[0] | null>(null);
-  const [duration, setDuration] = useState(30);
-  const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
   const [user, setUser] = useState({
-    id: "PUSH-" + Math.random().toString(36).substr(2, 4).toUpperCase(),
+    id: "PUSH-1234",
     name: "GUERREIRO ALPHA",
     age: 25,
     weight: 75,
@@ -75,51 +63,119 @@ function App() {
     xp: 350,
     maxXp: 500,
     wins: 87,
-    losses: 23,
     record: 54,
     totalPushups: 10450,
     streak: 12,
     avatar: null,
-    achievements: ["1", "2"],
     history: []
   });
 
-  const updateStats = (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => {
+  const updateStats = (won: boolean, pushups: number, xpGained: number) => {
     setUser(prev => {
-      const newRecord = Math.max(prev.record, pushups);
-      const totalPushups = prev.totalPushups + pushups;
-      const wins = won ? prev.wins + 1 : prev.wins;
-      const oldPatentData = getPatentInfo(prev.wins, prev.totalPushups, prev.record, prev.xp);
-      const newPatentData = getPatentInfo(wins, totalPushups, newRecord, prev.xp + xpGained);
-      if (newPatentData.name !== oldPatentData.name || newPatentData.subRank !== oldPatentData.subRank) {
-         if (newPatentData.score > oldPatentData.score) {
-          setLevelUpData({ old: `${oldPatentData.name} ${oldPatentData.subRank}`, new: `${newPatentData.name} ${newPatentData.subRank}` });
-          confetti({ particleCount: 200, spread: 70, origin: { y: 0.6 }, colors: ['#FFD700', '#FFFFFF', '#60A5FA'] });
-        }
-      }
-      return { ...prev, wins, record: newRecord, totalPushups, xp: prev.xp + xpGained, patent: newPatentData.name, subRank: newPatentData.subRank };
+      const newXp = prev.xp + xpGained;
+      const patentData = getPatentInfo(prev.wins + (won ? 1 : 0), prev.totalPushups + pushups, Math.max(prev.record, pushups), newXp);
+      return { ...prev, xp: newXp % prev.maxXp, patent: patentData.name, subRank: patentData.subRank };
     });
   };
 
-  const renderView = () => {
-    switch (view) {
-      case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
-      case 'profile': return <Profile setView={setView} user={user} />;
-      case 'settings': return <SettingsView setView={setView} />;
-      case 'edit-profile': return <EditProfile setView={setView} user={user} setUser={setUser} />;
-      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} />;
-      case 'achievements': return <Achievements setView={setView} user={user} />;
-      // ... assume other components exist
-      default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
-    }
+  const views: Record<View, React.ReactNode> = {
+    'dashboard': <Dashboard setView={setView} user={user} />,
+    'profile': <Profile setView={setView} user={user} />,
+    'settings': <SettingsView setView={setView} />,
+    'edit-profile': <EditProfile setView={setView} user={user} setUser={setUser} />,
+    'multiplayer': <div />,
+    'achievements': <Achievements setView={setView} user={user} />,
+    'challenge': <div />,
+    'select-bot': <div />,
+    'select-duration': <div />,
+    'support': <div />,
+    'support-chat': <div />,
+    'history': <div />,
+    'friend-challenge': <div />,
+    'ranking': <div />,
   };
-  
-  return <div className="min-h-screen bg-background">{renderView()}</div>;
+
+  return (
+    <div className="min-h-screen bg-background text-foreground pb-20">
+      <Toaster />
+      <AnimatePresence mode="wait">
+        {views[view]}
+      </AnimatePresence>
+    </div>
+  );
 }
 
-function Dashboard({ setView, user, setSelectedBot }: any) { /* Implementation */ return <div />; }
-function Profile({ setView, user }: any) { /* Implementation */ return <div />; }
-function SettingsView({ setView }: any) { /* Implementation */ return <div />; }
-function EditProfile({ setView, user, setUser }: any) { /* Implementation */ return <div />; }
-function Multiplayer({ setView, user, onSelectBot }: any) { /* Implementation */ return <div />; }
-function Achievements({ setView, user }: any) { /* Implementation */ return <div />; }
+function Dashboard({ setView, user }: any) {
+  const patent = getPatentInfo(user.wins, user.totalPushups, user.record, user.xp);
+  return (
+    <motion.div className="p-6 space-y-6">
+      <header className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-black italic">{user.name.toUpperCase()}</h1>
+          <Badge className="bg-purple-evolve">{patent.emoji} {patent.name} {patent.subRank}</Badge>
+        </div>
+      </header>
+      <div className="glass-panel p-5 space-y-2">
+        <p className="text-[10px] font-black uppercase">Faltam {user.maxXp - user.xp} XP para nível {user.level + 1}</p>
+        <Progress value={(user.xp / user.maxXp) * 100} />
+      </div>
+      <Button className="w-full h-32" onClick={() => setView('multiplayer')}><Swords className="mr-2" /> MULTIPLAYER</Button>
+      <div className="grid grid-cols-2 gap-4">
+        <Button onClick={() => setView('profile')}>PERFIL</Button>
+      </div>
+    </motion.div>
+  );
+}
+
+function Profile({ setView }: any) {
+  return (
+    <motion.div className="p-6 space-y-4">
+      <Button onClick={() => setView('dashboard')}><ArrowLeft /></Button>
+      <h2 className="text-2xl font-black italic">PERFIL</h2>
+      <Button onClick={() => setView('settings')} className="w-full">CONFIGURAÇÕES</Button>
+    </motion.div>
+  );
+}
+
+function SettingsView({ setView }: any) {
+  return (
+    <motion.div className="p-6 space-y-4">
+      <Button onClick={() => setView('profile')}><ArrowLeft /></Button>
+      <h2 className="text-2xl font-black italic">CONFIGURAÇÕES</h2>
+      <Button onClick={() => setView('edit-profile')} className="w-full">EDITAR PERFIL</Button>
+    </motion.div>
+  );
+}
+
+function EditProfile({ setView, user, setUser }: any) {
+  const [formData, setFormData] = useState(user);
+  const handleSave = () => {
+    setUser(formData);
+    toast.success("✅ Perfil atualizado com sucesso");
+    setView('profile');
+  };
+  return (
+    <motion.div className="p-6 space-y-4">
+      <Button onClick={() => setView('settings')}><ArrowLeft /></Button>
+      <h2 className="text-2xl font-black italic">EDITAR PERFIL</h2>
+      <input className="w-full p-3 bg-white/5" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+      <Button onClick={handleSave} className="w-full">SALVAR</Button>
+    </motion.div>
+  );
+}
+
+function Achievements({ setView, user }: any) {
+  const achievements = [
+    { title: "Primeira Flexão", req: 1 },
+    { title: "100 Flexões", req: 100 },
+    { title: "Primeira Vitória", req: 1 },
+  ];
+  return (
+    <motion.div className="p-6 space-y-4">
+       <Button onClick={() => setView('dashboard')}><ArrowLeft /></Button>
+       {achievements.map((a, i) => (
+         <Card key={i} className="p-4">{a.title} - {user.totalPushups >= a.req ? "OK" : "PENDENTE"}</Card>
+       ))}
+    </motion.div>
+  );
+}
