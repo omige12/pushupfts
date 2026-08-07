@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'ranking' | 'achievements' | 'support' | 'support-chat' | 'history';
+type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'tournaments';
 
 const BOTS = [
   { id: '1', name: 'Bot Iniciante', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
@@ -111,11 +111,13 @@ function App() {
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
-      case 'ranking': return <Ranking setView={setView} user={user} />;
+      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
       case 'history': return <FullHistory setView={setView} user={user} />;
+      case 'friend-challenge': return <FriendChallenge setView={setView} />;
+      case 'tournaments': return <Tournaments setView={setView} />;
     }
   };
 
@@ -127,8 +129,7 @@ function App() {
       <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around p-3 z-50">
         {[
           { icon: Home, label: 'Início', id: 'dashboard' },
-          { icon: Swords, label: 'Lutar', id: 'select-bot' },
-          { icon: Trophy, label: 'Rank', id: 'ranking' },
+          { icon: Swords, label: 'Multiplayer', id: 'multiplayer' },
           { icon: UserCircle, label: 'Perfil', id: 'profile' },
           { icon: Star, label: 'Conquistas', id: 'achievements' },
         ].map(item => (
@@ -182,23 +183,23 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <Button className="game-button bg-energy-red col-span-2 h-36 relative overflow-hidden group" onClick={() => setView('select-bot')}>
+        <Button className="game-button bg-energy-red col-span-2 h-36 relative overflow-hidden group" onClick={() => setView('multiplayer')}>
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           <div className="relative flex flex-col items-center gap-2">
             <div className="flex items-center gap-2">
               <Swords className="w-8 h-8 group-hover:scale-110 transition-transform" />
-              <span className="text-2xl tracking-tighter italic">DESAFIAR</span>
+              <span className="text-2xl tracking-tighter italic uppercase">Multiplayer</span>
             </div>
-            <p className="text-[10px] font-bold opacity-80 tracking-widest">BATALHA DE FLEXÕES</p>
+            <p className="text-[10px] font-bold opacity-80 tracking-widest">BATALHA ONLINE</p>
           </div>
         </Button>
         <Button className="game-button bg-primary/20 border border-primary/30 h-32 flex flex-col gap-2" onClick={() => { setSelectedBot(null); setView('select-duration'); }}>
           <Dumbbell className="w-6 h-6 text-primary" />
           <span className="text-lg tracking-tighter italic">TREINAR</span>
         </Button>
-        <Button className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-32 flex flex-col gap-2" onClick={() => setView('ranking')}>
-          <Trophy className="w-6 h-6 text-purple-evolve" />
-          <span className="text-lg tracking-tighter italic">RANKING</span>
+        <Button className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-32 flex flex-col gap-2" onClick={() => setView('profile')}>
+          <UserCircle className="w-6 h-6 text-purple-evolve" />
+          <span className="text-lg tracking-tighter italic">PERFIL</span>
         </Button>
       </div>
 
@@ -852,6 +853,142 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
         <Button onClick={handleSend} className="game-button bg-primary px-6 h-[58px]">
           <Target className="w-6 h-6 rotate-90" />
         </Button>
+      </div>
+    </motion.div>
+  );
+}
+
+function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => void, user: any, onSelectBot: () => void }) {
+  const [showRanking, setShowRanking] = useState(false);
+
+  if (showRanking) {
+    return (
+      <div className="relative">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="fixed top-6 left-6 z-50 rounded-xl bg-white/5" 
+          onClick={() => setShowRanking(false)}
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <Ranking setView={setView} user={user} />
+      </div>
+    );
+  }
+
+  return (
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">MULTIJOGADOR</h2>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+      </div>
+
+      <div className="grid gap-4">
+        <Button 
+          className="game-button bg-energy-red h-28 flex flex-col items-center justify-center relative overflow-hidden group"
+          onClick={onSelectBot}
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          <Swords className="w-8 h-8 mb-1 group-hover:scale-110 transition-transform" />
+          <span className="text-xl tracking-tighter italic uppercase">Desafio Rápido</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Oponentes do seu nível</p>
+        </Button>
+
+        <Button 
+          className="game-button bg-blue-500/20 border border-blue-500/30 h-28 flex flex-col items-center justify-center group"
+          onClick={() => setView('friend-challenge')}
+        >
+          <UserIcon className="w-8 h-8 mb-1 text-blue-400 group-hover:scale-110 transition-transform" />
+          <span className="text-xl tracking-tighter italic uppercase">Jogar com Amigos</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Desafie seus contatos</p>
+        </Button>
+
+        <Button 
+          className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-28 flex flex-col items-center justify-center group"
+          onClick={() => setView('tournaments')}
+        >
+          <Trophy className="w-8 h-8 mb-1 text-purple-evolve group-hover:scale-110 transition-transform" />
+          <span className="text-xl tracking-tighter italic uppercase">Campeonatos</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Competições especiais</p>
+        </Button>
+
+        <Button 
+          className="game-button bg-gold/10 border border-gold/20 h-28 flex flex-col items-center justify-center group"
+          onClick={() => setShowRanking(true)}
+        >
+          <TrendingUp className="w-8 h-8 mb-1 text-gold group-hover:scale-110 transition-transform" />
+          <span className="text-xl tracking-tighter italic uppercase">Ranking</span>
+          <p className="text-[8px] font-black opacity-60 tracking-widest uppercase">Global • Brasil • Amigos</p>
+        </Button>
+      </div>
+    </motion.div>
+  );
+}
+
+function FriendChallenge({ setView }: { setView: (v: View) => void }) {
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">AMIGOS</h2>
+      </div>
+
+      <div className="glass-panel p-8 text-center space-y-6 border-blue-500/20">
+        <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto border-2 border-blue-500/30">
+          <UserIcon className="w-10 h-10 text-blue-400" />
+        </div>
+        <div>
+          <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">Convidar Amigos</h3>
+          <p className="text-xs text-muted-foreground font-medium px-4">Compartilhe seu código ou link de desafio para competir contra quem você conhece.</p>
+        </div>
+        
+        <div className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-lg font-black text-white tracking-[0.2em]">
+          PUSH-87X2
+        </div>
+
+        <Button className="game-button bg-blue-500 w-full py-6 text-lg tracking-tighter italic uppercase">
+          Compartilhar Link
+        </Button>
+      </div>
+    </motion.div>
+  );
+}
+
+function Tournaments({ setView }: { setView: (v: View) => void }) {
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">CAMPEONATOS</h2>
+      </div>
+
+      <div className="space-y-4">
+        {[
+          { title: "Copa Push-Up Brasil", status: "Em Aberto", reward: "Moldura Dourada Rara", participants: "1,240" },
+          { title: "Desafio da Madrugada", status: "Inicia em 2h", reward: "Título: Noturno", participants: "450" },
+        ].map((t, i) => (
+          <div key={i} className="glass-panel p-6 border-purple-evolve/20 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-purple-evolve/5 blur-2xl -mr-12 -mt-12" />
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <Badge className="bg-purple-evolve/20 text-purple-evolve border-none text-[8px] mb-2">{t.status.toUpperCase()}</Badge>
+                <h3 className="text-xl font-black text-white italic tracking-tighter uppercase">{t.title}</h3>
+              </div>
+              <Trophy className="w-6 h-6 text-gold" />
+            </div>
+            <div className="flex justify-between items-end">
+              <div className="space-y-1">
+                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">Recompensa</p>
+                <p className="text-xs font-black text-gold italic">{t.reward}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{t.participants} Jogadores</p>
+                <Button className="game-button bg-purple-evolve h-8 px-4 mt-2 text-[10px] italic">ENTRAR</Button>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </motion.div>
   );
