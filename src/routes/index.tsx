@@ -183,7 +183,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
           <div>
             <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{stats.name.toUpperCase()}</h1>
             <div className="flex items-center gap-1.5">
-              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">LIGA {stats.league.toUpperCase()}</Badge>
+              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(stats.patent)} {stats.patent.toUpperCase()}</Badge>
               <div className="flex items-center gap-0.5 text-gold">
                 <Flame className="w-3 h-3 fill-gold" />
                 <span className="text-[10px] font-black">{stats.streak}</span>
