@@ -85,11 +85,19 @@
 
 @layer utilities {
   .game-button {
-    @apply relative inline-flex items-center justify-center px-8 py-4 font-black text-white transition-all duration-200 transform rounded-2xl shadow-[0_6px_0_0_rgba(0,0,0,0.4)] hover:translate-y-[2px] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.4)] active:translate-y-[6px] active:shadow-none uppercase tracking-wider text-shadow-sm;
+    @apply relative inline-flex items-center justify-center px-8 py-4 font-black text-white transition-all duration-200 transform rounded-2xl shadow-[0_6px_0_0_rgba(0,0,0,0.4)] hover:translate-y-[2px] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.4)] active:translate-y-[6px] active:shadow-none active:scale-95 uppercase tracking-wider text-shadow-sm overflow-hidden;
+  }
+
+  .game-button::after {
+    @apply content-[''] absolute top-0 -left-[100%] w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-[-25deg] transition-all duration-500;
+  }
+
+  .game-button:hover::after {
+    @apply left-[100%];
   }
 
   .glass-panel {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl;
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-300;
   }
 
   .text-shadow-sm {
