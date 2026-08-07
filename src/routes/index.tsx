@@ -18,17 +18,52 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking';
+type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking';
 
-const getPatent = (wins: number, totalPushups: number, record: number, xp: number) => {
+const getPatentInfo = (wins: number, totalPushups: number, record: number, xp: number) => {
   const score = (wins * 10) + (totalPushups / 10) + (record * 2) + (xp / 100);
-  if (score >= 5000) return "Lenda";
-  if (score >= 3000) return "Mestre";
-  if (score >= 2000) return "Pro";
-  if (score >= 1200) return "Diamante";
-  if (score >= 600) return "Ouro";
-  if (score >= 250) return "Prata";
-  return "Bronze";
+  
+  const patents = [
+    { name: "Bronze", min: 0, emoji: "🥉" },
+    { name: "Prata", min: 500, emoji: "🥈" },
+    { name: "Ouro", min: 1500, emoji: "🥇" },
+    { name: "Diamante", min: 3000, emoji: "💎" },
+    { name: "Pro", min: 6000, emoji: "🔥" },
+    { name: "Mestre", min: 10000, emoji: "👑" },
+    { name: "Lenda", min: 20000, emoji: "🌟" }
+  ];
+  
+  let currentPatent = patents[0];
+  let nextPatent = patents[1];
+  
+  for (let i = 0; i < patents.length; i++) {
+    if (score >= patents[i].min) {
+      currentPatent = patents[i];
+      nextPatent = patents[i+1] || null;
+    } else {
+      break;
+    }
+  }
+  
+  if (currentPatent.name === "Lenda") {
+    return { name: "Lenda", subRank: "", emoji: "🌟", score, nextThreshold: null };
+  }
+
+  const range = nextPatent.min - currentPatent.min;
+  const progress = score - currentPatent.min;
+  const subRankSize = range / 3;
+  
+  let subRank = "III";
+  if (progress >= subRankSize * 2) subRank = "I";
+  else if (progress >= subRankSize) subRank = "II";
+
+  return {
+    name: currentPatent.name,
+    subRank,
+    emoji: currentPatent.emoji,
+    score,
+    nextThreshold: nextPatent.min
+  };
 };
 
 const getPatentEmoji = (patent: string) => {
@@ -43,6 +78,7 @@ const getPatentEmoji = (patent: string) => {
     default: return "🥉";
   }
 };
+
 
 const BOTS = [
   { id: '1', name: 'Bot Nível 1', color: 'bg-green-500', level: 1, difficulty: 'Muito Fácil', avgPushups: 5 },
