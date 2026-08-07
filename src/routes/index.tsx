@@ -183,23 +183,23 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        <Button className="game-button bg-energy-red col-span-2 h-36 relative overflow-hidden group" onClick={() => setView('select-bot')}>
+        <Button className="game-button bg-energy-red col-span-2 h-36 relative overflow-hidden group" onClick={() => setView('multiplayer')}>
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           <div className="relative flex flex-col items-center gap-2">
             <div className="flex items-center gap-2">
               <Swords className="w-8 h-8 group-hover:scale-110 transition-transform" />
-              <span className="text-2xl tracking-tighter italic">DESAFIAR</span>
+              <span className="text-2xl tracking-tighter italic uppercase">Multiplayer</span>
             </div>
-            <p className="text-[10px] font-bold opacity-80 tracking-widest">BATALHA DE FLEXÕES</p>
+            <p className="text-[10px] font-bold opacity-80 tracking-widest">BATALHA ONLINE</p>
           </div>
         </Button>
         <Button className="game-button bg-primary/20 border border-primary/30 h-32 flex flex-col gap-2" onClick={() => { setSelectedBot(null); setView('select-duration'); }}>
           <Dumbbell className="w-6 h-6 text-primary" />
           <span className="text-lg tracking-tighter italic">TREINAR</span>
         </Button>
-        <Button className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-32 flex flex-col gap-2" onClick={() => setView('ranking')}>
-          <Trophy className="w-6 h-6 text-purple-evolve" />
-          <span className="text-lg tracking-tighter italic">RANKING</span>
+        <Button className="game-button bg-purple-evolve/20 border border-purple-evolve/30 h-32 flex flex-col gap-2" onClick={() => setView('profile')}>
+          <UserCircle className="w-6 h-6 text-purple-evolve" />
+          <span className="text-lg tracking-tighter italic">PERFIL</span>
         </Button>
       </div>
 
