@@ -824,13 +824,20 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           </div>
         </div>
 
-        <div className="w-full space-y-2">
+        <div 
+          className="w-full space-y-2 cursor-pointer active:scale-[0.98] transition-all"
+          onClick={() => setView('patents-list')}
+        >
           <div className="flex justify-between text-xs font-black italic text-muted-foreground uppercase tracking-widest">
             <span>Nível {stats.level}</span>
             <span>{stats.xp} / {stats.maxXp} XP</span>
           </div>
           <Progress value={(stats.xp / stats.maxXp) * 100} className="h-3 bg-white/5" />
+          <div className="flex justify-center">
+             <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">Toque para ver patentes</span>
+          </div>
         </div>
+
 
         <div className="grid grid-cols-3 gap-3 w-full">
           <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
