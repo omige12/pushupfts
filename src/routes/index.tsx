@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState } from "react";
 import { 
   Trophy, 
   Dumbbell, 
@@ -6,13 +7,15 @@ import {
   Medal, 
   TrendingUp,
   User as UserIcon,
-  ChevronRight,
-  Flame
+  Flame,
+  ArrowLeft,
+  Timer
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { PushUpCounter } from "@/components/PushUpCounter";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,10 +29,70 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&q=80&w=1200" },
     ],
   }),
-  component: Dashboard,
+  component: App,
 });
 
-function Dashboard() {
+function App() {
+  const [view, setView] = useState<'dashboard' | 'challenge'>('dashboard');
+  const [currentPushups, setCurrentPushups] = useState(0);
+
+  if (view === 'challenge') {
+    return (
+      <div className="min-h-screen bg-background p-6">
+        <header className="flex items-center gap-4 mb-8">
+          <Button variant="ghost" size="icon" onClick={() => setView('dashboard')}>
+            <ArrowLeft className="w-6 h-6" />
+          </Button>
+          <h2 className="text-xl font-black italic uppercase tracking-tighter text-energy-red">
+            Duelo em Andamento
+          </h2>
+        </header>
+
+        <div className="space-y-6">
+          <div className="flex justify-between items-end">
+            <div className="flex flex-col gap-1">
+              <span className="text-[10px] font-bold uppercase text-muted-foreground">Tempo Restante</span>
+              <div className="flex items-center gap-2 text-2xl font-black italic">
+                <Timer className="w-6 h-6 text-primary" />
+                00:58
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-[10px] font-bold uppercase text-muted-foreground">Suas Flexões</span>
+              <div className="text-5xl font-black italic text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                {currentPushups}
+              </div>
+            </div>
+          </div>
+
+          <PushUpCounter isActive={true} onCount={setCurrentPushups} />
+
+          <div className="glass-panel p-6 border-energy-red/20 bg-energy-red/5">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full border border-white/20 overflow-hidden bg-secondary">
+                  <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=rival" alt="Rival" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold">Rival_Master</p>
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Liga Elite</p>
+                </div>
+              </div>
+              <div className="text-3xl font-black italic opacity-50">
+                12
+              </div>
+            </div>
+            <Progress value={45} className="h-2 bg-white/5" indicatorClassName="bg-energy-red" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return <Dashboard onChallenge={() => setView('challenge')} />;
+}
+
+function Dashboard({ onChallenge }: { onChallenge: () => void }) {
   const user = {
     name: "Guerreiro Lovable",
     level: 12,
@@ -93,7 +156,7 @@ function Dashboard() {
         <div className="grid grid-cols-2 gap-4 mb-8">
           <Button 
             className="game-button bg-energy-red hover:bg-energy-red/90 h-32 flex-col gap-2 col-span-2"
-            onClick={() => console.log('Desafiar')}
+            onClick={onChallenge}
           >
             <Swords className="w-10 h-10 mb-1" />
             <span className="text-xl">Desafiar</span>
