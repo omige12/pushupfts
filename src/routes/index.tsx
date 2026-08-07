@@ -519,6 +519,10 @@ function Profile({ setView, user, setUser }: { setView: (v: View) => void, user:
   const handleSave = () => {
     setUser(formData);
     setEditing(false);
+    toast.success("Perfil atualizado com sucesso", {
+      icon: "✅",
+      className: "font-black italic text-xs uppercase tracking-widest bg-card border-green-500/50 text-white shadow-[0_0_20px_rgba(34,197,94,0.2)]"
+    });
   };
 
   if (editing) {
