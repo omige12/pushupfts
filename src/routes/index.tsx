@@ -1395,4 +1395,103 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
   );
 }
 
+function PatentsList({ setView, user }: { setView: (v: View) => void, user: any }) {
+  const patents = [
+    { name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", rewards: ["Moldura Básica", "XP Base"] },
+    { name: "Prata", min: 500, emoji: "🥈", color: "from-slate-400 to-slate-200", rewards: ["Moldura Prateada", "XP +10%"] },
+    { name: "Ouro", min: 1500, emoji: "🥇", color: "from-yellow-600 to-yellow-300", rewards: ["Moldura Dourada", "XP +25%"] },
+    { name: "Diamante", min: 3000, emoji: "💎", color: "from-blue-600 to-cyan-300", rewards: ["Moldura Diamante", "XP +50%"] },
+    { name: "Pro", min: 6000, emoji: "🔥", color: "from-red-600 to-orange-500", rewards: ["Efeito de Fogo", "XP +100%"] },
+    { name: "Mestre", min: 10000, emoji: "👑", color: "from-purple-600 to-pink-500", rewards: ["Coroa Especial", "XP +150%"] },
+    { name: "Lenda", min: 20000, emoji: "🌟", color: "from-gold to-white", rewards: ["Aura Lendária", "XP +200%"] }
+  ];
+
+  const currentInfo = getPatentInfo(user.wins, user.totalPushups, user.record, user.xp);
+  
+  return (
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24 space-y-6">
+      <div className="flex items-center gap-4 mb-2">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">TRILHA DE PATENTES</h2>
+      </div>
+
+      <div className="glass-panel p-6 bg-gradient-to-br from-primary/20 to-transparent border-primary/30">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="text-4xl">{currentInfo.emoji}</div>
+          <div>
+            <h3 className="font-black text-xl italic text-white uppercase tracking-tighter">Sua Patente Atual</h3>
+            <p className="text-primary font-bold">{currentInfo.name} {currentInfo.subRank}</p>
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <span>Progresso</span>
+            <span>{user.xp} / {user.maxXp} XP</span>
+          </div>
+          <Progress value={(user.xp / user.maxXp) * 100} className="h-2 bg-white/5" />
+          {currentInfo.nextThreshold && (
+             <p className="text-[10px] font-bold text-gold italic mt-2">
+               Faltam {Math.max(0, currentInfo.nextThreshold - Math.floor(currentInfo.score))} pontos de score para {patents.find(p => p.min === currentInfo.nextThreshold)?.name}
+             </p>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4 relative">
+        <div className="absolute left-8 top-8 bottom-8 w-1 bg-white/5 z-0" />
+        
+        {patents.map((p, i) => {
+          const isUnlocked = currentInfo.score >= p.min;
+          const isCurrent = currentInfo.name === p.name;
+          const isNext = !isUnlocked && (i === 0 || currentInfo.score >= patents[i-1].min);
+
+          return (
+            <motion.div 
+              key={p.name}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`relative z-10 flex items-center gap-6 p-4 rounded-2xl border transition-all ${
+                isCurrent ? 'bg-white/10 border-gold shadow-[0_0_20px_rgba(255,215,0,0.2)] scale-[1.05]' : 
+                isUnlocked ? 'bg-white/5 border-white/10' : 
+                'bg-black/20 border-white/5 grayscale opacity-50'
+              }`}
+            >
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center text-2xl shadow-lg shrink-0`}>
+                {p.emoji}
+              </div>
+              
+              <div className="flex-1">
+                <div className="flex justify-between items-center mb-1">
+                   <h4 className="font-black text-lg italic text-white uppercase tracking-tighter">{p.name}</h4>
+                   <span className="text-[8px] font-black text-muted-foreground uppercase">{p.min} SCORE</span>
+                </div>
+                <div className="flex gap-2">
+                  {p.rewards.map((r, idx) => (
+                    <Badge key={idx} variant="outline" className="text-[7px] font-black border-white/10 text-white/60 py-0 uppercase">
+                      {r}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {isCurrent && (
+                <div className="absolute -right-1 -top-1">
+                  <Badge className="bg-gold text-black font-black italic text-[8px] animate-pulse">ATUAL</Badge>
+                </div>
+              )}
+              {isNext && (
+                 <div className="absolute -right-1 -top-1">
+                  <Badge className="bg-primary text-white font-black italic text-[8px]">PRÓXIMA</Badge>
+                </div>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
+
 
