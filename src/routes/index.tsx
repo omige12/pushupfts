@@ -378,14 +378,14 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
       </header>
 
       <div 
-        className={`glass-panel p-5 relative overflow-hidden group border-2 cursor-pointer active:scale-[0.98] transition-all bg-gradient-to-br ${getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).color} border-white/10`}
+        className={`glass-panel p-5 relative overflow-hidden group border-2 cursor-pointer active:scale-[0.98] transition-all bg-gradient-to-br ${getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).color || 'from-primary/20 to-transparent'} border-white/10`}
         onClick={() => setView('patents-list')}
       >
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
         <div className="relative z-10">
           <div className="flex justify-between items-end mb-3">
             <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).color} flex items-center justify-center text-3xl shadow-lg border border-white/20`}>
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).color || 'from-primary/20 to-transparent'} flex items-center justify-center text-3xl shadow-lg border border-white/20`}>
                 {getPatentEmoji(stats.patent)}
               </div>
               <div className="flex flex-col">
@@ -397,7 +397,7 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
               <span className="text-xs font-black italic text-white tracking-tighter">{Math.floor(getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score)} / {getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold || 'MAX'} XP</span>
             </div>
           </div>
-          <Progress value={getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold ? ((getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score - (user.wins * 10 + user.totalPushups/10 + user.record*2)) / (getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold - (user.wins * 10 + user.totalPushups/10 + user.record*2))) * 100 : 100} className="h-3 bg-white/10 border border-white/5" />
+          <Progress value={getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold ? (Math.min(100, (getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score % 1000) / 10)) : 100} className="h-3 bg-white/10 border border-white/5" />
           <div className="mt-3 flex justify-between items-center">
             <p className="text-[9px] font-black text-muted-foreground uppercase tracking-wider italic">
               {getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold ? `Faltam ${Math.max(0, Math.floor(getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).nextThreshold - getPatentInfo(user.wins, user.totalPushups, user.record, user.xp).score))} pontos para o próximo nível` : 'Nível Máximo Atingido'}
