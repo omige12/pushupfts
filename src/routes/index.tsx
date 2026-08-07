@@ -895,7 +895,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         <Button 
           variant="ghost" 
-          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10"
+          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10 w-full"
           onClick={() => setEditing(true)}
         >
           <div className="flex items-center gap-4">
