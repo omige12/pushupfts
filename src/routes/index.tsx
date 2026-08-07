@@ -907,7 +907,7 @@ function Multiplayer({ setView, user, onSelectBot }: { setView: (v: View) => voi
         id: 'PUSH-DEMO',
         name: 'RICARDO BRUTO',
         level: 18,
-        league: 'Ouro',
+        patent: 'Ouro',
         record: 85,
         avatar: null
       });
