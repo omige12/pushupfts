@@ -38,14 +38,15 @@ function App() {
     weight: 75,
     height: 175,
     goal: "Ganhar força",
-    level: 15,
-    xp: 12450,
-    maxXp: 15000,
+    level: 1,
+    patent: "Bronze",
+    xp: 250,
+    maxXp: 1000,
     wins: 87,
     losses: 23,
     record: 54,
     totalPushups: 10450,
-    league: "Bronze",
+    streak: 12,
     avatar: null,
     frame: "basic",
     achievements: ["1", "2"],
@@ -56,13 +57,30 @@ function App() {
     ]
   });
 
-  const getLeague = (record: number) => {
-    if (record >= 1500) return "Lenda";
-    if (record >= 1000) return "Mestre";
-    if (record >= 800) return "Diamante";
-    if (record >= 500) return "Ouro";
-    if (record >= 300) return "Prata";
+  const getPatent = (wins: number, totalPushups: number, record: number, xp: number) => {
+    // Patentes baseadas em uma combinação de progresso
+    const score = (wins * 10) + (totalPushups / 10) + (record * 2) + (xp / 100);
+    
+    if (score >= 5000) return "Lenda";
+    if (score >= 3000) return "Mestre";
+    if (score >= 2000) return "Pro";
+    if (score >= 1200) return "Diamante";
+    if (score >= 600) return "Ouro";
+    if (score >= 250) return "Prata";
     return "Bronze";
+  };
+
+  const getPatentEmoji = (patent: string) => {
+    switch (patent) {
+      case "Bronze": return "🥉";
+      case "Prata": return "🥈";
+      case "Ouro": return "🥇";
+      case "Diamante": return "💎";
+      case "Pro": return "🔥";
+      case "Mestre": return "👑";
+      case "Lenda": return "🌟";
+      default: return "🥉";
+    }
   };
 
   const updateStats = (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => {
