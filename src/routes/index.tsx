@@ -1089,14 +1089,14 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
 
         <div className="space-y-3">
           {(tab === 'friends' ? [
-            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12 },
-            { name: "Amigo 1", count: 8200, avatar: "A1", color: "bg-secondary", record: 42, wins: 56, streak: 3 },
+            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12, patent: user.patent },
+            { name: "Amigo 1", count: 8200, avatar: "A1", color: "bg-secondary", record: 42, wins: 56, streak: 3, patent: "Prata" },
           ] : [
-            { name: "Mega Flex", count: 12500, avatar: "MF", color: "bg-gold", record: 120, wins: 342, streak: 45 },
-            { name: "Push Master", count: 11200, avatar: "PM", color: "bg-slate-400", record: 98, wins: 287, streak: 32 },
-            { name: "Elite Beast", count: 10800, avatar: "EB", color: "bg-orange-600", record: 92, wins: 215, streak: 21 },
-            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12 },
-            { name: "Titan X", count: 9800, avatar: "TX", color: "bg-secondary", record: 88, wins: 156, streak: 15 },
+            { name: "Mega Flex", count: 12500, avatar: "MF", color: "bg-gold", record: 120, wins: 342, streak: 45, patent: "Lenda" },
+            { name: "Push Master", count: 11200, avatar: "PM", color: "bg-slate-400", record: 98, wins: 287, streak: 32, patent: "Mestre" },
+            { name: "Elite Beast", count: 10800, avatar: "EB", color: "bg-orange-600", record: 92, wins: 215, streak: 21, patent: "Pro" },
+            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12, patent: user.patent },
+            { name: "Titan X", count: 9800, avatar: "TX", color: "bg-secondary", record: 88, wins: 156, streak: 15, patent: "Diamante" },
           ]).map((player: any, i) => (
             <div key={i} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${player.isUser ? 'bg-primary/20 border-primary/50 scale-[1.02] shadow-[0_0_20px_rgba(96,165,250,0.2)]' : 'bg-white/5 border-white/5'}`}>
               <span className={`w-8 font-black text-lg italic ${i === 0 ? 'text-gold' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-orange-400' : 'text-muted-foreground'}`}>
