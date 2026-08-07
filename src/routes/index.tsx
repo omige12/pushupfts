@@ -58,30 +58,27 @@ function App() {
     ]
   });
 
-  const getPatent = (wins: number, totalPushups: number, record: number, xp: number) => {
-    // Patentes baseadas em uma combinação de progresso
-    const score = (wins * 10) + (totalPushups / 10) + (record * 2) + (xp / 100);
-    
-    if (score >= 5000) return "Lenda";
-    if (score >= 3000) return "Mestre";
-    if (score >= 2000) return "Pro";
-    if (score >= 1200) return "Diamante";
-    if (score >= 600) return "Ouro";
-    if (score >= 250) return "Prata";
-    return "Bronze";
+  const handleSearch = () => {
+    if (searchId.trim().toUpperCase() === 'PUSH-DEMO') {
+      setFoundPlayer({
+        id: 'PUSH-DEMO',
+        name: 'RICARDO BRUTO',
+        level: 18,
+        patent: 'Ouro',
+        record: 85,
+        avatar: null
+      });
+    } else {
+      setFoundPlayer(null);
+    }
   };
 
-  const getPatentEmoji = (patent: string) => {
-    switch (patent) {
-      case "Bronze": return "🥉";
-      case "Prata": return "🥈";
-      case "Ouro": return "🥇";
-      case "Diamante": return "💎";
-      case "Pro": return "🔥";
-      case "Mestre": return "👑";
-      case "Lenda": return "🌟";
-      default: return "🥉";
-    }
+  const sendChallenge = () => {
+    alert(`Desafio enviado para ${foundPlayer.name}!`);
+    // Demo: auto-receive challenge back after 2s
+    setTimeout(() => {
+      setChallengeReceived(foundPlayer.name);
+    }, 2000);
   };
 
   const updateStats = (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => {
