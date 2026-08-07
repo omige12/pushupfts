@@ -111,11 +111,13 @@ function App() {
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} selectedBot={selectedBot} />;
       case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); }} onComplete={updateStats} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
-      case 'ranking': return <Ranking setView={setView} user={user} />;
+      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
       case 'history': return <FullHistory setView={setView} user={user} />;
+      case 'friend-challenge': return <FriendChallenge setView={setView} />;
+      case 'tournaments': return <Tournaments setView={setView} />;
     }
   };
 
