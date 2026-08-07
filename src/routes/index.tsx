@@ -109,7 +109,7 @@ function App() {
       case 'dashboard': return <Dashboard setView={setView} user={user} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => { setDuration(d); setView('challenge'); }} />;
-      case 'challenge': return <Challenge bot={selectedBot} duration={duration} onExit={() => setView('dashboard')} onComplete={updateStats} />;
+      case 'challenge': return <Challenge bot={selectedBot} duration={duration} user={user} onExit={() => setView('dashboard')} onComplete={updateStats} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
@@ -291,7 +291,7 @@ function SelectDuration({ setView, onSelect }: { setView: (v: View) => void, onS
 }
 
 
-function Challenge({ bot, duration, onExit, onComplete }: { bot: any, duration: number, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => void }) {
+function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => void }) {
   const [playerPushups, setPlayerPushups] = useState(0);
   const [botPushups, setBotPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(duration);
