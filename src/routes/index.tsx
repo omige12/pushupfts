@@ -440,8 +440,18 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
               <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{item.sub}</span>
             </div>
           ))}
-        </div>
-      </div>
+                  <div className="flex gap-2 mt-2">
+                    {Object.entries(bot.stats).map(([key, val]: [string, any]) => (
+                      <div key={key} className="flex flex-col">
+                        <span className="text-[7px] font-black text-white/30 uppercase tracking-tighter">{key === 'strength' ? 'FOR' : key === 'stamina' ? 'RES' : 'VEL'}</span>
+                        <div className="h-1 w-8 bg-white/5 rounded-full overflow-hidden">
+                          <div className="h-full bg-primary/60" style={{ width: `${val}%` }} />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
     </motion.div>
   );
 }
