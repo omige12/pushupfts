@@ -152,9 +152,10 @@ function App() {
         xp: newXp % prev.maxXp,
         level: newLevel,
         maxXp: nextMaxXp,
-        patent: getPatent(wins, totalPushups, newRecord, newXp),
+        patent: getPatentInfo(wins, totalPushups, newRecord, newXp).name,
         history: [newMatch, ...prev.history].slice(0, 10)
       };
+
     });
   };
 
