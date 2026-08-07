@@ -233,9 +233,14 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
           </div>
           
           <div className="bg-black/60 backdrop-blur-xl px-10 py-4 rounded-3xl border border-white/10 shadow-2xl">
-            <span className="text-7xl font-black italic text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+            <motion.span 
+              key={count}
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="text-8xl font-black italic text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)] block"
+            >
               {count}
-            </span>
+            </motion.span>
           </div>
         </div>
       </div>
