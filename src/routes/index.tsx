@@ -1757,14 +1757,14 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
         </div>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
+      <div className="flex justify-center gap-4 pb-2">
         {achievements.map((cat: any) => (
           <Button 
             key={cat.id} 
             onClick={() => setActiveCat(cat.id)}
-            className={`game-button h-12 w-12 flex items-center justify-center p-0 border-none shadow-none ${activeCat === cat.id ? 'bg-primary' : 'bg-white/5 opacity-50'}`}
+            className={`game-button h-14 w-14 flex items-center justify-center p-0 border-none shadow-none rounded-2xl transition-all ${activeCat === cat.id ? 'bg-primary scale-110 shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'bg-white/5 opacity-50 hover:opacity-80'}`}
           >
-            <cat.icon className="w-5 h-5" />
+            <cat.icon className="w-6 h-6" />
           </Button>
         ))}
       </div>
