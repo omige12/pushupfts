@@ -551,9 +551,10 @@ function SelectDuration({ setView, onSelect, selectedBot }: { setView: (v: View)
 }
 
 
-function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, botName: string, botPushups: number) => void }) {
+function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot: any, opponent?: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void }) {
+  const activeOpponent = bot || opponent;
   const [playerPushups, setPlayerPushups] = useState(0);
-  const [botPushups, setBotPushups] = useState(0);
+  const [oppPushups, setOppPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(duration);
   const [gameState, setGameState] = useState<'countdown' | 'playing' | 'finished'>('countdown');
   const [countdown, setCountdown] = useState(3);
@@ -575,40 +576,41 @@ function Challenge({ bot, duration, user, onExit, onComplete }: { bot: any, dura
     if (gameState === 'playing' && timeLeft > 0) {
       const timer = setInterval(() => {
         setTimeLeft(t => t - 1);
+        
+        // Pushup logic for opponent
+        let increment = 0;
         if (bot) {
-          // New difficulty logic based on pushupRate
-          // pushupRate is the chance to add a pushup every second.
-          // For David Goggins (1.5), it means 1 guaranteed pushup + 50% chance for a second one.
           const rate = bot.pushupRate || 0.1;
           const guaranteed = Math.floor(rate);
           const chance = rate - guaranteed;
-          
-          let increment = guaranteed;
-          if (Math.random() < chance) {
-            increment += 1;
-          }
-          
-          if (increment > 0) {
-            setBotPushups(b => b + increment);
-          }
+          increment = guaranteed + (Math.random() < chance ? 1 : 0);
+        } else if (opponent) {
+          // Simple real-time simulation for "human" opponent
+          const baseRate = (opponent.record / 60) * 0.9; 
+          increment = Math.random() < baseRate ? 1 : 0;
+        }
+
+        if (increment > 0) {
+          setOppPushups(b => b + increment);
         }
       }, 1000);
       return () => clearInterval(timer);
     } else if (gameState === 'playing' && timeLeft === 0) {
       setGameState('finished');
-      if (playerPushups >= botPushups) {
+      const won = playerPushups >= oppPushups;
+      if (won) {
         confetti({ 
           particleCount: 250, 
           spread: 80, 
           origin: { y: 0.6 },
           colors: ['#FFD700', '#60A5FA', '#F43F5E']
         });
-        onComplete(true, playerPushups, 150 + playerPushups, bot.name, botPushups);
+        onComplete(true, playerPushups, 150 + playerPushups, activeOpponent.name, oppPushups);
       } else {
-        onComplete(false, playerPushups, 45 + playerPushups, bot.name, botPushups);
+        onComplete(false, playerPushups, 45 + playerPushups, activeOpponent.name, oppPushups);
       }
     }
-  }, [timeLeft, bot, gameState, countdown, playerPushups, botPushups, onComplete]);
+  }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete]);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 flex flex-col h-[calc(100vh-80px)]">
