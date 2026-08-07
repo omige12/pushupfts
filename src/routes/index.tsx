@@ -994,17 +994,17 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         <Button 
           variant="ghost" 
-          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10 w-full"
+          className="game-button bg-primary/20 w-full p-6 h-auto flex justify-between items-center border-primary/20 hover:bg-primary/30 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.2)]"
           onClick={() => setEditing(true)}
         >
           <div className="flex items-center gap-4">
-            <Settings className="w-6 h-6 text-white/40" />
+            <UserCircle className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
             <div className="text-left">
-              <p className="font-black text-white italic">CONFIGURAÇÕES</p>
-              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Editar seu personagem</p>
+              <p className="font-black text-white italic text-xl">✏️ EDITAR PERFIL</p>
+              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Alterar foto e dados</p>
             </div>
           </div>
-          <ChevronRight className="w-5 h-5 text-white/20" />
+          <ChevronRight className="w-6 h-6 text-primary" />
         </Button>
       </div>
     </motion.div>
