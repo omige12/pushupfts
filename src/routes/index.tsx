@@ -307,9 +307,11 @@ function App() {
             
             setView('dashboard');
           } else {
+            console.log("Profile not found, staying in onboarding");
             setView('onboarding-start');
           }
         } else {
+          console.log("No active session");
           setView('onboarding-start');
         }
       } catch (err) {
@@ -2245,30 +2247,44 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
 
 const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   const [loading, setLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
 
-  const handleSignUp = async () => {
-    if (!email || !password || !name) {
-      toast.error("Preencha todos os campos");
+  const handleAuth = async () => {
+    if (!email || !password || (!isLogin && !name)) {
+      toast.error("⚠️ Preencha todos os campos corretamente.");
       return;
     }
+    
     setLoading(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { name }
-        }
-      });
-      if (error) throw error;
-      toast.success("Conta criada!");
-      console.log("AuthView: SignUp success, moving to photo-upload...");
-      setView('photo-upload');
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        toast.success("✅ Login realizado com sucesso!");
+        // window.location.reload() or let fetchProfile pick it up
+        setTimeout(() => window.location.reload(), 1000);
+      } else {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { name }
+          }
+        });
+        if (error) throw error;
+        toast.success("✅ Conta criada! Verifique seu e-mail se necessário.");
+        console.log("AuthView: SignUp success, moving to photo-upload...");
+        setView('photo-upload');
+      }
     } catch (err: any) {
-      toast.error(err.message || "Erro ao criar conta");
+      console.error("Erro na autenticação:", err);
+      toast.error(err.message || "❌ Erro ao processar autenticação.");
     } finally {
       setLoading(false);
     }
@@ -2276,22 +2292,27 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
 
   return (
     <div className="p-6 space-y-6 pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
-      <h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">👤 CRIE SUA CONTA</h2>
+      <h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">
+        {isLogin ? "👤 ACESSAR CONTA" : "👤 CRIE SUA CONTA"}
+      </h2>
       <div className="space-y-4">
+        {!isLogin && (
+          <input 
+            className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all font-bold" 
+            placeholder="Nome de usuário" 
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        )}
         <input 
-          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all" 
-          placeholder="Nome de usuário" 
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <input 
-          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all" 
+          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all font-bold" 
           placeholder="E-mail" 
+          type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input 
-          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all" 
+          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all font-bold" 
           type="password" 
           placeholder="Senha" 
           value={password}
@@ -2299,13 +2320,19 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
         />
       </div>
       <Button 
-        className="game-button w-full py-8 text-xl italic uppercase" 
-        onClick={handleSignUp}
+        className="game-button w-full py-8 text-xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none" 
+        onClick={handleAuth}
         disabled={loading}
       >
-        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "🔥 CRIAR CONTA"}
+        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (isLogin ? "🔥 ENTRAR" : "🔥 CRIAR CONTA")}
       </Button>
-      <Button variant="ghost" className="w-full text-muted-foreground uppercase text-[10px] font-black tracking-widest">Já possui conta? Entrar</Button>
+      <Button 
+        variant="ghost" 
+        className="w-full text-muted-foreground uppercase text-[10px] font-black tracking-widest hover:text-white"
+        onClick={() => setIsLogin(!isLogin)}
+      >
+        {isLogin ? "Ainda não tem conta? Criar" : "Já possui conta? Entrar"}
+      </Button>
     </div>
   );
 };
@@ -2417,12 +2444,12 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
         .from('profiles')
         .upsert({
           id: session.user.id,
-          player_id: `PLAYER-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+          player_id: `PLAYER-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
           name: updatedUser.name,
           age: updatedUser.age,
           weight: updatedUser.weight,
           avatar_url: user.avatar,
-          goal: (user.goal || 'Bater recordes') as any,
+          goal: (user.goal || 'Bater recordes'),
           level: 1,
           xp: 0,
           total_pushups: 0,
@@ -2431,7 +2458,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           record: 0,
           streak: 0,
           updated_at: new Date().toISOString()
-        });
+        }, { onConflict: 'id' });
 
 
       if (error) throw error;
