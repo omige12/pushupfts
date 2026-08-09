@@ -2519,11 +2519,14 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
   };
 
   return (
-    <div className="p-6 space-y-8 text-center pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
-      <div className="space-y-2">
-        <h2 className="text-3xl font-black italic uppercase text-white tracking-tighter">📸 SUA FOTO DE ATLETA</h2>
-        <p className="text-muted-foreground text-sm uppercase font-bold tracking-widest">Identidade no campo de batalha</p>
-      </div>
+    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
+      
+      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+        <div className="text-center space-y-2">
+          <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">📸 FOTO DE ATLETA</h2>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">IDENTIDADE DE GUERRA</p>
+        </div>
 
       <div className="relative mx-auto group">
         <div className="w-48 h-48 rounded-full bg-white/5 border-4 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5">
