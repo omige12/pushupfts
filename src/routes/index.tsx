@@ -170,7 +170,7 @@ function App() {
   const [duration, setDuration] = useState(60);
   const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [isStandalone, setIsStandalone] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
 
 
@@ -224,23 +224,25 @@ function App() {
     const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      if (!window.matchMedia('(display-mode: standalone)').matches && !localStorage.getItem('pwa-installed')) {
+      // Only show banner if not in standalone and not dismissed recently
+      const isDismissed = localStorage.getItem('pwa-banner-dismissed');
+      if (!window.matchMedia('(display-mode: standalone)').matches && !isDismissed) {
         setShowInstallBanner(true);
       }
     };
 
     const handleAppInstalled = () => {
-      setIsInstalled(true);
+      setIsStandalone(true);
       setShowInstallBanner(false);
       localStorage.setItem('pwa-installed', 'true');
-      toast.success("PushUp Arena instalado com sucesso!");
+      toast.success("✅ PushUp Arena instalado com sucesso!");
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
     if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true);
+      setIsStandalone(true);
       setShowInstallBanner(false);
     }
 
@@ -249,6 +251,22 @@ function App() {
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+    } else {
+      console.log('User dismissed the install prompt');
+    }
+    
+    setDeferredPrompt(null);
+    setShowInstallBanner(false);
+  };
 
   // Load user data from Supabase
   useEffect(() => {
@@ -458,44 +476,36 @@ function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {showInstallBanner && !isInstalled && (
+        {showInstallBanner && !isStandalone && (
           <motion.div 
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-24 left-4 right-4 z-[60] glass-panel p-4 border-gold/30 bg-[#0B0E14]/90 backdrop-blur-xl shadow-2xl rounded-3xl"
+            className="fixed bottom-24 left-4 right-4 z-[60] glass-panel p-5 border-gold/30 bg-[#0B0E14]/95 backdrop-blur-xl shadow-2xl rounded-3xl"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30">
-                <Dumbbell className="w-6 h-6 text-primary" />
+              <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-inner">
+                <Dumbbell className="w-8 h-8 text-primary" />
               </div>
               <div className="flex-1">
-                <h3 className="text-sm font-black italic text-white uppercase tracking-tight">📱 INSTALE O APLICATIVO</h3>
-                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Acesso rápido às suas batalhas</p>
+                <h3 className="text-sm font-black italic text-white uppercase tracking-tight">📱 BAIXE O APLICATIVO</h3>
+                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">Instale no seu celular e tenha acesso rápido às suas batalhas.</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2">
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="rounded-full w-8 h-8 text-muted-foreground hover:text-white"
-                  onClick={() => setShowInstallBanner(false)}
+                  className="absolute top-2 right-2 rounded-full w-8 h-8 text-muted-foreground hover:text-white"
+                  onClick={() => {
+                    setShowInstallBanner(false);
+                    localStorage.setItem('pwa-banner-dismissed', 'true');
+                  }}
                 >
                   <X className="w-4 h-4" />
                 </Button>
                 <Button 
-                  className="game-button bg-primary h-10 px-6 text-[10px] italic uppercase shadow-[0_4px_0_0_rgba(29,78,216,0.5)] active:translate-y-[4px] active:shadow-none"
-                  onClick={async () => {
-                    if (deferredPrompt) {
-                      deferredPrompt.prompt();
-                      const { outcome } = await deferredPrompt.userChoice;
-                      if (outcome === 'accepted') {
-                        setDeferredPrompt(null);
-                        setShowInstallBanner(false);
-                      }
-                    } else {
-                      toast.info("📱 Instalação disponível pelo menu do navegador");
-                    }
-                  }}
+                  className="game-button bg-primary px-6 py-4 text-xs italic font-black uppercase tracking-tighter"
+                  onClick={handleInstallClick}
                 >
                   🔥 INSTALAR
                 </Button>
