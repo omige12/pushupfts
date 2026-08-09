@@ -878,14 +878,14 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
                className={`flex flex-col items-center ${isTraining ? 'w-full' : ''}`}
              >
                <span className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-1">VOCÊ</span>
-               <span className="text-[120px] font-black italic text-white drop-shadow-[0_0_30px_rgba(59,130,246,0.6)] leading-none">{playerPushups}</span>
+               <span className="text-[140px] font-black italic text-white drop-shadow-[0_0_30px_rgba(59,130,246,0.6)] leading-none tabular-nums tracking-tighter">{playerPushups}</span>
              </motion.div>
 
              {!isTraining && (
                <>
-                 <div className="flex flex-col items-center">
-                    <span className="text-2xl font-black italic text-white/30 tracking-tighter mb-2">VS</span>
-                    <div className="h-20 w-[2px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+                 <div className="flex flex-col items-center mx-4">
+                    <span className="text-4xl font-black italic text-white/20 tracking-tighter mb-2">VS</span>
+                    <div className="h-24 w-[2px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
                  </div>
 
                  <motion.div 
@@ -894,11 +894,12 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
                    animate={{ scale: 1 }}
                    className="flex flex-col items-center"
                  >
-                   <span className="text-[120px] font-black italic text-white drop-shadow-[0_0_30px_rgba(244,63,94,0.6)] leading-none">{oppPushups}</span>
+                   <span className="text-[140px] font-black italic text-white drop-shadow-[0_0_30px_rgba(244,63,94,0.6)] leading-none tabular-nums tracking-tighter">{oppPushups}</span>
                    <span className="text-energy-red text-[10px] font-black uppercase tracking-[0.2em] mt-1">ADVERSÁRIO</span>
                  </motion.div>
                </>
              )}
+
 
            </div>
         </div>
