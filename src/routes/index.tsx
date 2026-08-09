@@ -2234,16 +2234,99 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
   );
 };
 
-const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => (
-  <div className="p-6 space-y-4 pt-20">
-    <h2 className="text-3xl font-black uppercase text-white">👤 SEU PERFIL</h2>
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Nome de usuário" />
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Idade" />
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Peso (kg)" />
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Altura (cm)" />
-    <Button className="game-button w-full" onClick={() => setView('profile-ready')}>🔥 SALVAR PERFIL</Button>
-  </div>
-);
+const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
+  const [formData, setFormData] = useState({
+    name: user.name || '',
+    age: user.age || '',
+    weight: user.weight || ''
+  });
+
+  const save = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const updatedUser = {
+          ...user,
+          name: formData.name.toUpperCase(),
+          age: parseInt(formData.age as string),
+          weight: parseInt(formData.weight as string)
+        };
+        
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            name: updatedUser.name,
+            age: updatedUser.age,
+            weight: updatedUser.weight,
+            avatar_url: user.avatar,
+            goal: user.goal
+          })
+          .eq('id', session.user.id);
+
+        if (!error) {
+          setUser(updatedUser);
+          setView('profile-ready');
+        } else {
+          toast.error("Erro ao salvar perfil");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro de conexão");
+    }
+  };
+
+  return (
+    <div className="p-6 space-y-6 pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
+      <h2 className="text-3xl font-black italic uppercase text-white tracking-tighter">💪 INFORMAÇÕES FINAIS</h2>
+      
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nome de Atleta</label>
+          <input 
+            className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-lg uppercase tracking-tight"
+            placeholder="EX: GUERREIRO"
+            value={formData.name}
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Idade</label>
+            <input 
+              type="number"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
+              placeholder="00"
+              value={formData.age}
+              onChange={(e) => setFormData({...formData, age: e.target.value})}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Peso (kg)</label>
+            <input 
+              type="number"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
+              placeholder="00"
+              value={formData.weight}
+              onChange={(e) => setFormData({...formData, weight: e.target.value})}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1" />
+      
+      <Button 
+        className="game-button w-full py-8 text-xl italic uppercase" 
+        onClick={save}
+        disabled={!formData.name || !formData.age || !formData.weight}
+      >
+        SALVAR PERFIL COMPLETO →
+      </Button>
+    </div>
+  );
+};
 
 const ProfileReady = ({ setView, user }: { setView: (v: View) => void, user: any }) => (
   <div className="p-6 text-center space-y-8 flex flex-col items-center justify-center min-h-screen">
