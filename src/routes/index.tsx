@@ -221,12 +221,15 @@ function App() {
 
 
   useEffect(() => {
+    const isDismissed = localStorage.getItem('pwa-banner-dismissed');
+    const isInstalled = window.matchMedia('(display-mode: standalone)').matches || localStorage.getItem('pwa-installed') === 'true';
+
     const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      // Only show banner if not in standalone and not dismissed recently
-      const isDismissed = localStorage.getItem('pwa-banner-dismissed');
-      if (!window.matchMedia('(display-mode: standalone)').matches && !isDismissed) {
+      
+      // Se não estiver instalado e não foi dispensado, mostrar banner imediatamente
+      if (!isInstalled && !isDismissed) {
         setShowInstallBanner(true);
       }
     };
@@ -241,7 +244,7 @@ function App() {
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (isInstalled) {
       setIsStandalone(true);
       setShowInstallBanner(false);
     }
