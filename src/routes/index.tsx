@@ -681,16 +681,16 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       <div className="space-y-4 pt-2">
         <Button 
           className="game-button bg-energy-red w-full h-40 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
-          onClick={() => setView('multiplayer')}
+          onClick={() => setView('treino')}
         >
           <div className="relative z-10 flex flex-col items-center gap-3">
             <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
-              <Swords className="w-10 h-10 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+              <Dumbbell className="w-10 h-10 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
             </div>
-            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Multijogador</span>
+            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Modo Treino</span>
           </div>
           <div className="absolute top-0 right-0 p-3">
-            <Badge className="bg-yellow-400 text-black font-black italic text-[10px] animate-pulse px-3 py-1">NOVO MODO</Badge>
+            <Badge className="bg-yellow-400 text-black font-black italic text-[10px] animate-pulse px-3 py-1">EVOLUÇÃO</Badge>
           </div>
           {/* Decorative background element */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
