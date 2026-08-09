@@ -486,35 +486,35 @@ function App() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-24 left-4 right-4 z-[60] glass-panel p-5 border-gold/30 bg-[#0B0E14]/95 backdrop-blur-xl shadow-2xl rounded-3xl"
+            className="fixed bottom-6 left-4 right-4 z-[100] glass-panel p-4 border-gold/30 bg-[#0B0E14]/95 backdrop-blur-xl shadow-2xl rounded-2xl flex items-center justify-between gap-4"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-inner">
-                <Dumbbell className="w-8 h-8 text-primary" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/10">
+                <img src={logoAsset.url} className="w-full h-full object-cover" alt="Logo" />
               </div>
-              <div className="flex-1">
-                <h3 className="text-sm font-black italic text-white uppercase tracking-tight">📱 BAIXE O APLICATIVO</h3>
-                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">Instale no seu celular e tenha acesso rápido às suas batalhas.</p>
+              <div className="flex flex-col">
+                <h4 className="text-[11px] font-black text-white italic tracking-tighter uppercase leading-tight">📱 BAIXE O FLEX BATTLE</h4>
+                <p className="text-[9px] text-white/50 font-bold uppercase tracking-wider">Instale o app no seu celular.</p>
               </div>
-              <div className="flex flex-col gap-2">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="absolute top-2 right-2 rounded-full w-8 h-8 text-muted-foreground hover:text-white"
-                  onClick={() => {
-                    setShowInstallBanner(false);
-                    localStorage.setItem('pwa-banner-dismissed', 'true');
-                  }}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-                <Button 
-                  className="game-button bg-primary px-6 py-4 text-xs italic font-black uppercase tracking-tighter"
-                  onClick={handleInstallClick}
-                >
-                  🔥 INSTALAR
-                </Button>
-              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button 
+                onClick={handleInstallClick}
+                className="bg-primary hover:bg-primary/90 text-[10px] font-black italic uppercase px-4 h-8 rounded-lg shadow-[0_3px_0_0_rgba(29,78,216,0.5)] active:translate-y-[2px] active:shadow-none transition-all shrink-0"
+              >
+                INSTALAR AGORA
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 text-white/30 hover:text-white"
+                onClick={() => {
+                  setShowInstallBanner(false);
+                  localStorage.setItem('pwa-banner-dismissed', 'true');
+                }}
+              >
+                <X className="w-4 h-4" />
+              </Button>
             </div>
           </motion.div>
         )}
