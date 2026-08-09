@@ -2456,7 +2456,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           age: updatedUser.age,
           weight: updatedUser.weight,
           avatar_url: user.avatar,
-          goal: (user.goal || 'Bater recordes'),
+          goal: (user.goal && ['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(user.goal) ? user.goal : 'Bater recordes'),
           level: user.level || 1,
           xp: user.xp || 0,
           total_pushups: user.totalPushups || 0,
@@ -2549,7 +2549,12 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
               className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
               placeholder="00"
               value={formData.age}
-              onChange={(e) => setFormData({...formData, age: e.target.value})}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 120)) {
+                  setFormData({...formData, age: val});
+                }
+              }}
             />
           </div>
           <div className="space-y-2">
@@ -2559,7 +2564,12 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
               className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
               placeholder="00"
               value={formData.weight}
-              onChange={(e) => setFormData({...formData, weight: e.target.value})}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 500)) {
+                  setFormData({...formData, weight: val});
+                }
+              }}
             />
           </div>
         </div>
