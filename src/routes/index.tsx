@@ -61,6 +61,7 @@ const getRankInfo = (totalXp: number) => {
     "Bronze": "🥉",
     "Prata": "🥈",
     "Ouro": "🥇",
+    "Platina": "💠",
     "Diamante": "💎",
     "Pro": "🔥",
     "Mestre": "👑",
