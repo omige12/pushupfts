@@ -660,12 +660,12 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       <div className="grid grid-cols-2 gap-4">
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
-          onClick={() => setView('edit-profile')}
+          onClick={() => setView('multiplayer')}
         >
           <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-            <UserCircle className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+            <Swords className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
           </div>
-          <span className="text-[10px] font-black italic tracking-tighter uppercase">Meu Perfil</span>
+          <span className="text-[10px] font-black italic tracking-tighter uppercase">Multijogador</span>
         </Button>
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
