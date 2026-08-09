@@ -840,32 +840,33 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
 
       <div className="flex-1 relative flex flex-col">
         {/* Battle Area - Counts */}
-        <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-center gap-8">
-           <motion.div 
-             key={playerPushups}
-             initial={{ scale: 0.8 }}
-             animate={{ scale: 1 }}
-             className="flex flex-col items-center"
-           >
-             <span className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-1">VOCÊ</span>
-             <span className="text-8xl font-black italic text-white drop-shadow-[0_0_20px_rgba(59,130,246,0.5)] leading-none">{playerPushups}</span>
-           </motion.div>
+        <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-between p-12">
+           <div className="flex w-full justify-between items-center mt-20">
+             <motion.div 
+               key={playerPushups}
+               initial={{ scale: 0.8 }}
+               animate={{ scale: 1 }}
+               className="flex flex-col items-center"
+             >
+               <span className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-1">VOCÊ</span>
+               <span className="text-[120px] font-black italic text-white drop-shadow-[0_0_30px_rgba(59,130,246,0.6)] leading-none">{playerPushups}</span>
+             </motion.div>
 
-           <div className="flex items-center gap-8">
-              <div className="h-[2px] w-12 bg-gradient-to-r from-transparent to-white/20" />
-              <span className="text-4xl font-black italic text-white/20 tracking-tighter">VS</span>
-              <div className="h-[2px] w-12 bg-gradient-to-l from-transparent to-white/20" />
+             <div className="flex flex-col items-center">
+                <span className="text-2xl font-black italic text-white/30 tracking-tighter mb-2">VS</span>
+                <div className="h-20 w-[2px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+             </div>
+
+             <motion.div 
+               key={oppPushups}
+               initial={{ scale: 0.8 }}
+               animate={{ scale: 1 }}
+               className="flex flex-col items-center"
+             >
+               <span className="text-[120px] font-black italic text-white drop-shadow-[0_0_30px_rgba(244,63,94,0.6)] leading-none">{oppPushups}</span>
+               <span className="text-energy-red text-[10px] font-black uppercase tracking-[0.2em] mt-1">ADVERSÁRIO</span>
+             </motion.div>
            </div>
-
-           <motion.div 
-             key={oppPushups}
-             initial={{ scale: 0.8 }}
-             animate={{ scale: 1 }}
-             className="flex flex-col items-center"
-           >
-             <span className="text-8xl font-black italic text-white drop-shadow-[0_0_20px_rgba(244,63,94,0.5)] leading-none">{oppPushups}</span>
-             <span className="text-energy-red text-[10px] font-black uppercase tracking-[0.2em] mt-1">ADVERSÁRIO</span>
-           </motion.div>
         </div>
 
         <div className="flex-1 relative">
