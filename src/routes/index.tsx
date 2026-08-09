@@ -514,27 +514,6 @@ function App() {
           </motion.div>
         )}
       </AnimatePresence>
-                  className="game-button bg-primary h-10 px-6 text-[10px] italic uppercase shadow-[0_4px_0_0_rgba(29,78,216,0.5)] active:translate-y-[4px] active:shadow-none"
-                  onClick={async () => {
-                    if (deferredPrompt) {
-                      deferredPrompt.prompt();
-                      const { outcome } = await deferredPrompt.userChoice;
-                      if (outcome === 'accepted') {
-                        setDeferredPrompt(null);
-                        setShowInstallBanner(false);
-                      }
-                    } else {
-                      toast.info("📱 Instalação disponível pelo menu do navegador");
-                    }
-                  }}
-                >
-                  🔥 INSTALAR
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
 
       <AnimatePresence>
