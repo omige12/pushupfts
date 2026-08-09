@@ -379,7 +379,7 @@ function App() {
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
-      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={() => { setIsTraining(false); setView('select-duration'); }} />;
+      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={(training) => { setIsTraining(training); setView('select-duration'); }} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
@@ -1589,7 +1589,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
   );
 }
 
-function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: () => void }) {
+function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void }) {
   const [searchId, setSearchId] = useState('');
   const [foundPlayer, setFoundPlayer] = useState<any>(null);
 
