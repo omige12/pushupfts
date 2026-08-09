@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle';
+type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle' | 'training-setup';
 
 const RANKS = [
   "Bronze III", "Bronze II", "Bronze I",
@@ -166,8 +166,10 @@ function App() {
   const [view, setView] = useState<View>('dashboard');
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
   const [opponent, setOpponent] = useState<any | null>(null);
+  const [isTraining, setIsTraining] = useState(false);
   const [duration, setDuration] = useState(60);
   const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{
     id: string;
@@ -390,7 +392,7 @@ function App() {
   };
 
 
-  const isBattleActive = view === 'challenge' && (selectedBot || opponent);
+  const isBattleActive = view === 'challenge' && (selectedBot || opponent || isTraining);
   
   useEffect(() => {
     if (isBattleActive) {
