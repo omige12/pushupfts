@@ -662,39 +662,48 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
           onClick={() => setView('edit-profile')}
         >
-          <UserCircle className="w-10 h-10 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-          <span className="text-[10px] font-black italic tracking-tighter uppercase">Editar Perfil</span>
+          <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+            <UserCircle className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          </div>
+          <span className="text-[10px] font-black italic tracking-tighter uppercase">Meu Perfil</span>
         </Button>
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
           onClick={() => setView('achievements')}
         >
-          <Medal className="w-10 h-10 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+            <Medal className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          </div>
           <span className="text-[10px] font-black italic tracking-tighter uppercase">Conquistas</span>
         </Button>
       </div>
 
       <div className="space-y-4 pt-2">
         <Button 
-          className="game-button bg-energy-red w-full h-36 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
+          className="game-button bg-energy-red w-full h-40 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
           onClick={() => setView('multiplayer')}
         >
-          <div className="relative flex flex-col items-center gap-2">
-            <Swords className="w-16 h-16 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+          <div className="relative z-10 flex flex-col items-center gap-3">
+            <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
+              <Swords className="w-10 h-10 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+            </div>
             <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Multijogador</span>
           </div>
-          <div className="absolute top-0 right-0 p-2">
-            <Badge className="bg-yellow-400 text-black font-black italic text-[8px] animate-pulse">RANKED</Badge>
+          <div className="absolute top-0 right-0 p-3">
+            <Badge className="bg-yellow-400 text-black font-black italic text-[10px] animate-pulse px-3 py-1">NOVO MODO</Badge>
           </div>
+          {/* Decorative background element */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         </Button>
 
         <Button 
-          className="game-button bg-white/10 w-full h-20 flex justify-center items-center border-white/10 shadow-[0_6px_0_0_rgba(0,0,0,0.2)] active:scale-95 active:translate-y-[6px] active:shadow-none" 
+          className="game-button bg-white/10 w-full h-24 flex justify-center items-center border-white/10 shadow-[0_6px_0_0_rgba(0,0,0,0.2)] active:scale-95 active:translate-y-[6px] active:shadow-none" 
           onClick={() => { setIsTraining(true); setView('training-setup'); }}
         >
-
-          <Dumbbell className="w-10 h-10 text-white opacity-80" />
-          <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Treinar</span>
+          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+            <Dumbbell className="w-7 h-7 text-white opacity-80" />
+          </div>
+          <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Modo Treino</span>
         </Button>
       </div>
 
