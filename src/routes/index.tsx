@@ -1037,10 +1037,6 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               input.click();
             }}>
 
-
-
-              input.click();
-            }}>
               <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold flex items-center justify-center overflow-hidden shadow-2xl">
                 {formData.avatar ? (
                   <img src={formData.avatar} className="w-full h-full object-cover" alt="Preview" />
