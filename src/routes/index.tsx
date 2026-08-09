@@ -379,56 +379,63 @@ function App() {
       });
     }
 
-    const { data: { user: authUser } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
 
     // Save match to database
-    if (authUser) {
+    if (session?.user) {
+      const matchResult = won ? 'win' : (pushups === oppPushups ? 'draw' : 'loss');
+      
       await supabase.from('matches').insert({
-        player_id: authUser.id,
+        player_id: session.user.id,
         opponent_name: oppName,
         duration: duration,
         player_score: pushups,
         opponent_score: oppPushups,
         status: 'completed',
-        result: won ? 'win' : (pushups === oppPushups ? 'draw' : 'loss'),
+        result: matchResult,
         xp_gained: xpGained
       });
 
       // Update profile
+      const newWins = won ? user.wins + 1 : user.wins;
+      const newLosses = matchResult === 'loss' ? user.losses + 1 : user.losses;
+      const newRecord = Math.max(user.record, pushups);
+      const newTotalPushups = user.totalPushups + pushups;
+
       await supabase.from('profiles').update({
         xp: newTotalXp,
-        wins: won ? user.wins + 1 : user.wins,
-        losses: !won && pushups !== oppPushups ? user.losses + 1 : user.losses,
-        record: Math.max(user.record, pushups),
-        total_pushups: user.totalPushups + pushups,
+        wins: newWins,
+        losses: newLosses,
+        record: newRecord,
+        total_pushups: newTotalPushups,
         updated_at: new Date().toISOString()
-      }).eq('id', authUser.id);
+      }).eq('id', session.user.id);
+
+      // Update local state to match DB
+      setUser(prev => {
+        const newMatch = {
+          id: Math.random().toString(36).substr(2, 9),
+          opp: oppName,
+          res: won ? "Vitória" : (pushups === oppPushups ? "Empate" : "Derrota"),
+          score: `${pushups}-${oppPushups}`,
+          xp: `+${xpGained}`,
+          date: new Date().toISOString().split('T')[0]
+        };
+
+        return {
+          ...prev,
+          wins: newWins,
+          losses: newLosses,
+          record: newRecord,
+          totalPushups: newTotalPushups,
+          xp: newTotalXp,
+          patent: newRank.patentName,
+          subRank: newRank.subRank,
+          level: newRank.level,
+          history: [newMatch, ...prev.history].slice(0, 15)
+        };
+      });
     }
-
-    setUser(prev => {
-      const newMatch = {
-        id: Math.random().toString(36).substr(2, 9),
-        opp: oppName,
-        res: won ? "Vitória" : (pushups === oppPushups ? "Empate" : "Derrota"),
-        score: `${pushups}-${oppPushups}`,
-        xp: `+${xpGained}`,
-        date: new Date().toISOString().split('T')[0]
-      };
-
-      return {
-        ...prev,
-        wins: won ? prev.wins + 1 : prev.wins,
-        losses: !won && pushups !== oppPushups ? prev.losses + 1 : prev.losses,
-        record: Math.max(prev.record, pushups),
-        totalPushups: prev.totalPushups + pushups,
-        xp: newTotalXp,
-        patent: newRank.patentName,
-        subRank: newRank.subRank,
-        level: newRank.level,
-        history: [newMatch, ...prev.history].slice(0, 15)
-
-      };
-    });
   };
 
   const renderView = () => {
