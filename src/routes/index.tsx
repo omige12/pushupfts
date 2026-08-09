@@ -2236,7 +2236,10 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
   <div className="p-6 space-y-8 text-center flex flex-col items-center justify-center min-h-screen">
     <h2 className="text-4xl font-black italic text-white uppercase">🔥 SEU DESAFIO FOI CRIADO!</h2>
     <p>Agora crie seu perfil para começar.</p>
-    <Button className="game-button w-full" onClick={() => setView('auth')}>CONTINUAR →</Button>
+    <Button className="game-button w-full" onClick={() => {
+      console.log("QuizResult: Moving to auth...");
+      setView('auth');
+    }}>CONTINUAR →</Button>
   </div>
 );
 
