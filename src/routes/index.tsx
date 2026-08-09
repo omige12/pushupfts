@@ -1147,12 +1147,6 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
     </motion.div>
   );
 }
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
 
 
 function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
