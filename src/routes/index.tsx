@@ -1095,13 +1095,12 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
             <div className="glass-panel p-8 w-full max-w-sm text-center space-y-8 border-primary/20">
               <div className="space-y-2">
                 <Trophy className={`w-20 h-20 mx-auto ${isTraining || playerPushups >= oppPushups ? 'text-gold' : 'text-muted-foreground opacity-50'}`} />
-                <h2 className="text-5xl font-black italic text-white tracking-tighter">
-                  {isTraining ? "TREINO CONCLUÍDO!" : (playerPushups >= oppPushups ? "VITÓRIA!" : "DERROTA!")}
+                <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase">
+                  {isTraining ? "CONCLUÍDO!" : (playerPushups >= oppPushups ? "VITÓRIA!" : "DERROTA!")}
                 </h2>
                 <p className="text-xs font-black text-muted-foreground uppercase tracking-widest italic">
                   {isTraining ? `TOTAL DE FLEXÕES: ${playerPushups}` : `RESULTADO FINAL: ${playerPushups} vs ${oppPushups}`}
                 </p>
-
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1123,11 +1122,31 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
                     <p className="text-xl font-black text-energy-red">{oppPushups}</p>
                   </div>
                 )}
-
               </div>
 
               <Button onClick={onExit} className="game-button bg-primary w-full py-8 text-xl italic uppercase">SAIR DO DUELO</Button>
             </div>
+          </motion.div>
+        )}
+
+        {gameState === 'loading' && (
+          <motion.div 
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex flex-col items-center justify-center z-[120] bg-[#0B0E14]"
+          >
+            <div className="relative">
+              <div className="w-24 h-24 border-4 border-primary/20 rounded-full" />
+              <div className="absolute inset-0 w-24 h-24 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              <Camera className="absolute inset-0 m-auto w-8 h-8 text-primary animate-pulse" />
+            </div>
+            <p className="font-black italic text-white tracking-[0.3em] text-[10px] mt-8 uppercase tracking-widest">📷 PREPARANDO CAMERAS...</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
           </motion.div>
         )}
       </AnimatePresence>
