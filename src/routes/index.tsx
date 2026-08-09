@@ -331,15 +331,21 @@ function App() {
               }));
             }
             
-            setView('dashboard');
+            // Check if there's a view in the URL (from PWA shortcuts)
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialView = urlParams.get('view') as View;
+            
+            if (initialView && ['dashboard', 'multiplayer', 'treino', 'profile', 'ranking'].includes(initialView)) {
+              setView(initialView);
+            } else {
+              setView('dashboard');
+            }
           } else {
             console.log("Profile not found, staying in onboarding");
             setView('onboarding-start');
           }
         } else {
           console.log("No active session, checking if we should show auth first");
-          // Optionally, if the user explicitly wants to "login", we could have a way to start at 'auth'
-          // but usually onboarding-start is the entry point for guest users.
           setView('onboarding-start');
         }
       } catch (err) {
