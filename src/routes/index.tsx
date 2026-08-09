@@ -2415,9 +2415,14 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           age: updatedUser.age,
           weight: updatedUser.weight,
           avatar_url: user.avatar,
-          goal: user.goal,
+          goal: (user.goal || 'Bater recordes') as any,
           level: 1,
           xp: 0,
+          total_pushups: 0,
+          wins: 0,
+          losses: 0,
+          record: 0,
+          streak: 0,
           updated_at: new Date().toISOString()
         });
 
