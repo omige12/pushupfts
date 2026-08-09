@@ -1090,13 +1090,40 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
   const stats = user;
   
-  const handleSave = () => {
-    setUser(formData);
-    setEditing(false);
-    toast.success("Perfil atualizado com sucesso", {
-      icon: "✅",
-      className: "font-black italic text-xs uppercase tracking-widest bg-card border-green-500/50 text-white shadow-[0_0_20px_rgba(34,197,94,0.2)]"
-    });
+  const handleSave = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        toast.error("⚠️ Sessão não encontrada. Faça login novamente.");
+        return;
+      }
+
+      // Prepare data for Supabase
+      const updateData = {
+        name: formData.name.toUpperCase().trim(),
+        age: parseInt(String(formData.age)) || 0,
+        weight: parseInt(String(formData.weight)) || 0,
+        avatar_url: formData.avatar,
+        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking', 'Resistência', 'Hipertrofia', 'Perda de peso'].includes(formData.goal) ? formData.goal : 'Bater recordes'),
+        updated_at: new Date().toISOString()
+      };
+
+      const { error } = await supabase
+        .from('profiles')
+        .update(updateData)
+        .eq('id', session.user.id);
+
+      if (error) throw error;
+
+      setUser(formData);
+      setEditing(false);
+      toast.success("✅ Perfil atualizado com sucesso!", {
+        className: "font-black italic text-xs uppercase tracking-widest bg-card border-green-500/50 text-white shadow-[0_0_20px_rgba(34,197,94,0.2)]"
+      });
+    } catch (err: any) {
+      console.error("Error updating profile:", err);
+      toast.error("❌ Erro ao atualizar perfil: " + (err.message || "Tente novamente"));
+    }
   };
 
   if (editing) {
