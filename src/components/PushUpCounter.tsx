@@ -5,6 +5,8 @@ import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
 import { Shield, AlertCircle, CheckCircle2, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Badge } from '@/components/ui/badge';
+
 
 interface PushUpCounterProps {
   onCount: (count: number) => void;
@@ -211,7 +213,8 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
         ];
 
         joints.forEach(pt => {
-          if (!pt || pt.visibility < 0.5) return;
+          if (!pt || (pt.visibility !== undefined && pt.visibility < 0.5)) return;
+
           
           // Joint Outer Glow
           ctx.beginPath();
