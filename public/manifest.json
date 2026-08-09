@@ -1,7 +1,7 @@
 {
-  "name": "PushUp Arena",
-  "short_name": "PushUpArena",
-  "description": "Competição de flexões competitiva com IA",
+  "name": "Flex Battle",
+  "short_name": "Flex Battle",
+  "description": "Desafie seus limites na competição de flexões competitiva com IA",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
@@ -9,15 +9,15 @@
   "theme_color": "#0B0E14",
   "icons": [
     {
-      "src": "/vite.svg",
+      "src": "/favicon.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/vite.svg",
+      "src": "/favicon.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],
