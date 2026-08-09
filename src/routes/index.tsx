@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle' | 'training-setup';
+type View = 'onboarding-start' | 'quiz' | 'quiz-result' | 'auth' | 'photo-upload' | 'profile-setup' | 'profile-ready' | 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle' | 'training-setup';
 
 const RANKS = [
   "Bronze III", "Bronze II", "Bronze I",
@@ -163,7 +163,7 @@ const BOTS = [
 ];
 
 function App() {
-  const [view, setView] = useState<View>('dashboard');
+  const [view, setView] = useState<View>('onboarding-start');
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
   const [opponent, setOpponent] = useState<any | null>(null);
   const [isTraining, setIsTraining] = useState(false);
@@ -270,21 +270,16 @@ function App() {
               }))
             }));
           }
-
+          
+          // If profile exists, skip onboarding
+          setView('dashboard');
         } else {
-          // Create profile if it doesn't exist
-          const newPlayerId = "PUSH-" + Math.random().toString(36).substr(2, 4).toUpperCase();
-          const { error: insertError } = await supabase.from('profiles').insert({
-            id: authUser.id,
-            player_id: newPlayerId,
-            name: user.name,
-            xp: 0,
-            level: 1
-          });
-          if (!insertError) {
-            setUser(prev => ({ ...prev, id: newPlayerId }));
-          }
+          // No profile, keep onboarding view
+          setView('onboarding-start');
         }
+      } else {
+        // No auth, keep onboarding view
+        setView('onboarding-start');
       }
       setLoading(false);
     };
@@ -370,6 +365,13 @@ function App() {
     );
 
     switch (view) {
+      case 'onboarding-start': return <OnboardingStart setView={setView} />;
+      case 'quiz': return <Quiz setView={setView} user={user} setUser={setUser} />;
+      case 'quiz-result': return <QuizResult setView={setView} user={user} />;
+      case 'auth': return <AuthView setView={setView} />;
+      case 'photo-upload': return <PhotoUpload setView={setView} user={user} setUser={setUser} />;
+      case 'profile-setup': return <ProfileSetup setView={setView} user={user} setUser={setUser} />;
+      case 'profile-ready': return <ProfileReady setView={setView} user={user} />;
       case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
@@ -387,7 +389,7 @@ function App() {
       case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'patents-list': return <PatentsList setView={setView} user={user} />;
-      default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
+      default: return <OnboardingStart setView={setView} />;
     }
 
   };
