@@ -224,23 +224,25 @@ function App() {
     const handleBeforeInstallPrompt = (e: any) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      if (!window.matchMedia('(display-mode: standalone)').matches && !localStorage.getItem('pwa-installed')) {
+      // Only show banner if not in standalone and not dismissed recently
+      const isDismissed = localStorage.getItem('pwa-banner-dismissed');
+      if (!window.matchMedia('(display-mode: standalone)').matches && !isDismissed) {
         setShowInstallBanner(true);
       }
     };
 
     const handleAppInstalled = () => {
-      setIsInstalled(true);
+      setIsStandalone(true);
       setShowInstallBanner(false);
       localStorage.setItem('pwa-installed', 'true');
-      toast.success("PushUp Arena instalado com sucesso!");
+      toast.success("✅ PushUp Arena instalado com sucesso!");
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
     if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true);
+      setIsStandalone(true);
       setShowInstallBanner(false);
     }
 
@@ -249,6 +251,22 @@ function App() {
       window.removeEventListener('appinstalled', handleAppInstalled);
     };
   }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+    } else {
+      console.log('User dismissed the install prompt');
+    }
+    
+    setDeferredPrompt(null);
+    setShowInstallBanner(false);
+  };
 
   // Load user data from Supabase
   useEffect(() => {
