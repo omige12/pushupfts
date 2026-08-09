@@ -2692,76 +2692,83 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
 
   return (
-    <div className="p-6 space-y-6 pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
-      <h2 className="text-3xl font-black italic uppercase text-white tracking-tighter">💪 INFORMAÇÕES FINAIS</h2>
+    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
+      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
       
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nome de Atleta</label>
-          <input 
-            className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-lg uppercase tracking-tight"
-            placeholder="EX: GUERREIRO"
-            value={formData.name}
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
-          />
+      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+        <div className="text-center space-y-2">
+          <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">💪 INFORMAÇÕES FINAIS</h2>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">QUASE LÁ, ATLETA</p>
+        </div>
+        
+        <div className="w-full space-y-6">
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4">Nome de Atleta</label>
+            <input 
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-xl uppercase tracking-tight"
+              placeholder="EX: GUERREIRO"
+              value={formData.name}
+              onChange={(e) => setFormData({...formData, name: e.target.value.toUpperCase()})}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 text-center block">Idade</label>
+              <input 
+                type="number"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center text-xl"
+                placeholder="00"
+                value={formData.age}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 120)) {
+                    setFormData({...formData, age: val});
+                  }
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 text-center block">Peso (kg)</label>
+              <input 
+                type="number"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center text-xl"
+                placeholder="00"
+                value={formData.weight}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 500)) {
+                    setFormData({...formData, weight: val});
+                  }
+                }}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Idade</label>
-            <input 
-              type="number"
-              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
-              placeholder="00"
-              value={formData.age}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 120)) {
-                  setFormData({...formData, age: val});
-                }
-              }}
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Peso (kg)</label>
-            <input 
-              type="number"
-              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
-              placeholder="00"
-              value={formData.weight}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 500)) {
-                  setFormData({...formData, weight: val});
-                }
-              }}
-            />
-          </div>
-        </div>
+        <div className="flex-1" />
+        
+        <Button 
+          className={`game-button w-full py-8 text-2xl italic uppercase transition-all shadow-[0_8px_0_0_rgba(0,0,0,0.3)] active:translate-y-[8px] active:shadow-none ${
+            status === 'success' ? 'bg-green-600' : 
+            status === 'error' ? 'bg-red-600' : 'bg-primary shadow-[0_8px_0_0_rgba(29,78,216,0.5)]'
+          }`} 
+          onClick={save}
+          disabled={isSaving || status === 'success'}
+        >
+          {status === 'saving' ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO CONTA...
+            </span>
+          ) : status === 'success' ? (
+            "✅ CONTA CRIADA!"
+          ) : status === 'error' ? (
+            "❌ TENTAR NOVAMENTE"
+          ) : (
+            "CRIAR CONTA →"
+          )}
+        </Button>
       </div>
-
-      <div className="flex-1" />
-      
-      <Button 
-        className={`game-button w-full py-8 text-xl italic uppercase transition-all ${
-          status === 'success' ? 'bg-green-600' : 
-          status === 'error' ? 'bg-red-600' : 'bg-primary'
-        }`} 
-        onClick={save}
-        disabled={isSaving || status === 'success'}
-      >
-        {status === 'saving' ? (
-          <span className="flex items-center gap-2">
-            <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO SEU PERFIL...
-          </span>
-        ) : status === 'success' ? (
-          "✅ PERFIL CRIADO!"
-        ) : status === 'error' ? (
-          "Tentar novamente"
-        ) : (
-          "SALVAR E CRIAR PERFIL COMPLETO →"
-        )}
-      </Button>
     </div>
   );
 };
