@@ -28,6 +28,7 @@ const RANKS = [
   "Bronze III", "Bronze II", "Bronze I",
   "Prata III", "Prata II", "Prata I",
   "Ouro III", "Ouro II", "Ouro I",
+  "Platina III", "Platina II", "Platina I",
   "Diamante III", "Diamante II", "Diamante I",
   "Pro III", "Pro II", "Pro I",
   "Mestre III", "Mestre II", "Mestre I",
