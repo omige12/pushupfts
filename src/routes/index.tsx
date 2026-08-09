@@ -1003,7 +1003,6 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
               )}
             </div>
           </div>
-        </div>
 
           {/* Battle Bar */}
           {!isTraining && (
