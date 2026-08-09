@@ -311,7 +311,9 @@ function App() {
             setView('onboarding-start');
           }
         } else {
-          console.log("No active session");
+          console.log("No active session, checking if we should show auth first");
+          // Optionally, if the user explicitly wants to "login", we could have a way to start at 'auth'
+          // but usually onboarding-start is the entry point for guest users.
           setView('onboarding-start');
         }
       } catch (err) {
@@ -2147,9 +2149,24 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
 
 const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-screen p-8 text-center space-y-8 bg-gradient-to-b from-primary/20 to-background">
-    <h1 className="text-5xl font-black italic text-white tracking-tighter">💪 PRONTO PARA O DESAFIO?</h1>
-    <p className="text-xl text-muted-foreground font-medium">Descubra seu nível e comece sua evolução.</p>
-    <Button className="game-button bg-primary w-full py-8 text-2xl italic uppercase animate-pulse" onClick={() => setView('quiz')}>🔥 COMEÇAR DESAFIO</Button>
+    <div className="space-y-4">
+      <h1 className="text-5xl font-black italic text-white tracking-tighter">💪 PRONTO PARA O DESAFIO?</h1>
+      <p className="text-xl text-muted-foreground font-medium">Descubra seu nível e comece sua evolução.</p>
+    </div>
+    
+    <div className="w-full space-y-4">
+      <Button className="game-button bg-primary w-full py-8 text-2xl italic uppercase animate-pulse shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" onClick={() => setView('quiz')}>
+        🔥 COMEÇAR DESAFIO
+      </Button>
+      
+      <Button 
+        variant="ghost" 
+        className="w-full text-muted-foreground uppercase text-xs font-black tracking-[0.2em] hover:text-white mt-4"
+        onClick={() => setView('auth')}
+      >
+        JÁ TENHO UMA CONTA • ENTRAR
+      </Button>
+    </div>
   </motion.div>
 );
 
@@ -2272,7 +2289,9 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
     <h2 className="text-4xl font-black italic text-white uppercase">🔥 SEU DESAFIO FOI CRIADO!</h2>
     <p>Agora crie seu perfil para começar.</p>
     <Button className="game-button w-full" onClick={() => {
-      console.log("QuizResult: Moving to auth...");
+      console.log("QuizResult: Moving to auth for registration...");
+      // For new users after quiz, we force them to the registration flow
+      localStorage.setItem('onboarding_registration', 'true');
       setView('auth');
     }}>CONTINUAR →</Button>
   </div>
@@ -2280,7 +2299,12 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
 
 const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  // Default to login, but switch to signup if coming from the quiz
+  const [isLogin, setIsLogin] = useState(() => {
+    const isReg = localStorage.getItem('onboarding_registration') === 'true';
+    if (isReg) localStorage.removeItem('onboarding_registration');
+    return !isReg;
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -2294,14 +2318,31 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
     setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
-        toast.success("✅ Login realizado com sucesso!");
-        // window.location.reload() or let fetchProfile pick it up
-        setTimeout(() => window.location.reload(), 1000);
+        
+        if (data.user) {
+          toast.success("✅ Login realizado com sucesso!");
+          
+          // Check if profile exists
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', data.user.id)
+            .maybeSingle();
+            
+          if (profile) {
+            // Direct reload if profile exists to jump to dashboard
+            window.location.reload();
+          } else {
+            // If they have a user account but no profile record yet, 
+            // maybe they dropped out during photo upload/setup
+            setView('photo-upload');
+          }
+        }
       } else {
         const { error } = await supabase.auth.signUp({
           email,
@@ -2311,8 +2352,7 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
           }
         });
         if (error) throw error;
-        toast.success("✅ Conta criada! Verifique seu e-mail se necessário.");
-        console.log("AuthView: SignUp success, moving to photo-upload...");
+        toast.success("✅ Conta criada!");
         setView('photo-upload');
       }
     } catch (err: any) {
