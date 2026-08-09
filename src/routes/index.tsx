@@ -169,6 +169,10 @@ function App() {
   const [isTraining, setIsTraining] = useState(false);
   const [duration, setDuration] = useState(60);
   const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstalled, setIsInstalled] = useState(false);
+  const [showInstallBanner, setShowInstallBanner] = useState(false);
+
 
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{
@@ -215,6 +219,36 @@ function App() {
     history: []
   });
 
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      if (!window.matchMedia('(display-mode: standalone)').matches && !localStorage.getItem('pwa-installed')) {
+        setShowInstallBanner(true);
+      }
+    };
+
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setShowInstallBanner(false);
+      localStorage.setItem('pwa-installed', 'true');
+      toast.success("PushUp Arena instalado com sucesso!");
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsInstalled(true);
+      setShowInstallBanner(false);
+    }
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
 
   // Load user data from Supabase
   useEffect(() => {
@@ -288,6 +322,7 @@ function App() {
 
     fetchProfile();
   }, []);
+
 
 
   const updateStats = async (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => {
@@ -417,6 +452,55 @@ function App() {
       <AnimatePresence mode="wait">
         {renderView()}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {showInstallBanner && !isInstalled && (
+          <motion.div 
+            initial={{ y: 100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 100, opacity: 0 }}
+            className="fixed bottom-24 left-4 right-4 z-[60] glass-panel p-4 border-gold/30 bg-[#0B0E14]/90 backdrop-blur-xl shadow-2xl rounded-3xl"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30">
+                <Dumbbell className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-black italic text-white uppercase tracking-tight">📱 INSTALE O APLICATIVO</h3>
+                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Acesso rápido às suas batalhas</p>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="rounded-full w-8 h-8 text-muted-foreground hover:text-white"
+                  onClick={() => setShowInstallBanner(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+                <Button 
+                  className="game-button bg-primary h-10 px-6 text-[10px] italic uppercase shadow-[0_4px_0_0_rgba(29,78,216,0.5)] active:translate-y-[4px] active:shadow-none"
+                  onClick={async () => {
+                    if (deferredPrompt) {
+                      deferredPrompt.prompt();
+                      const { outcome } = await deferredPrompt.userChoice;
+                      if (outcome === 'accepted') {
+                        setDeferredPrompt(null);
+                        setShowInstallBanner(false);
+                      }
+                    } else {
+                      toast.info("📱 Instalação disponível pelo menu do navegador");
+                    }
+                  }}
+                >
+                  🔥 INSTALAR
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
 
       <AnimatePresence>
         {levelUpData && (
@@ -2156,16 +2240,72 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
   </div>
 );
 
-const AuthView = ({ setView }: { setView: (v: View) => void }) => (
-  <div className="p-6 space-y-6 pt-20">
-    <h2 className="text-3xl font-black italic text-white uppercase">👤 CRIE SUA CONTA</h2>
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Nome de usuário" />
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="E-mail" />
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" type="password" placeholder="Senha" />
-    <Button className="game-button w-full" onClick={() => setView('photo-upload')}>🔥 CRIAR CONTA</Button>
-    <Button variant="ghost" className="w-full text-muted-foreground">Já possui conta? Entrar</Button>
-  </div>
-);
+const AuthView = ({ setView }: { setView: (v: View) => void }) => {
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+
+  const handleSignUp = async () => {
+    if (!email || !password || !name) {
+      toast.error("Preencha todos os campos");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name }
+        }
+      });
+      if (error) throw error;
+      toast.success("Conta criada! Confirme seu e-mail ou continue.");
+      setView('photo-upload');
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao criar conta");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="p-6 space-y-6 pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
+      <h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">👤 CRIE SUA CONTA</h2>
+      <div className="space-y-4">
+        <input 
+          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all" 
+          placeholder="Nome de usuário" 
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input 
+          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all" 
+          placeholder="E-mail" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input 
+          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all" 
+          type="password" 
+          placeholder="Senha" 
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+      <Button 
+        className="game-button w-full py-8 text-xl italic uppercase" 
+        onClick={handleSignUp}
+        disabled={loading}
+      >
+        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "🔥 CRIAR CONTA"}
+      </Button>
+      <Button variant="ghost" className="w-full text-muted-foreground uppercase text-[10px] font-black tracking-widest">Já possui conta? Entrar</Button>
+    </div>
+  );
+};
+
 
 const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
   const [preview, setPreview] = useState<string | null>(user.avatar);
@@ -2240,41 +2380,76 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
     age: user.age || '',
     weight: user.weight || ''
   });
+  const [isSaving, setIsSaving] = useState(false);
+  const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
 
   const save = async () => {
+    // Validação
+    if (!formData.name.trim() || !formData.age || !formData.weight) {
+      toast.error("⚠️ Complete seu perfil antes de continuar.", {
+        description: "Preencha nome, idade e peso corretamente."
+      });
+      return;
+    }
+
+    setIsSaving(true);
+    setStatus('saving');
+
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const updatedUser = {
-          ...user,
-          name: formData.name.toUpperCase(),
-          age: parseInt(formData.age as string),
-          weight: parseInt(formData.weight as string)
-        };
-        
-        const { error } = await supabase
-          .from('profiles')
-          .update({
-            name: updatedUser.name,
-            age: updatedUser.age,
-            weight: updatedUser.weight,
-            avatar_url: user.avatar,
-            goal: user.goal
-          })
-          .eq('id', session.user.id);
+      if (!session?.user) throw new Error("Sessão não encontrada");
 
-        if (!error) {
-          setUser(updatedUser);
-          setView('profile-ready');
-        } else {
-          toast.error("Erro ao salvar perfil");
-        }
-      }
+      const updatedUser = {
+        ...user,
+        name: formData.name.toUpperCase(),
+        age: parseInt(formData.age as string),
+        weight: parseInt(formData.weight as string)
+      };
+      
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: session.user.id,
+          player_id: `PLAYER-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+          name: updatedUser.name,
+          age: updatedUser.age,
+          weight: updatedUser.weight,
+          avatar_url: user.avatar,
+          goal: user.goal,
+          level: 1,
+          xp: 0,
+          updated_at: new Date().toISOString()
+        });
+
+
+      if (error) throw error;
+
+      // Verificação dupla
+      const { data: verify, error: verifyError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', session.user.id)
+        .maybeSingle();
+
+      if (verifyError || !verify) throw new Error("Erro na verificação do perfil");
+
+      setUser(updatedUser);
+      setStatus('success');
+      
+      setTimeout(() => {
+        setView('profile-ready');
+      }, 1500);
+
     } catch (err) {
-      console.error(err);
-      toast.error("Erro de conexão");
+      console.error("Erro ao salvar perfil:", err);
+      setStatus('error');
+      setIsSaving(false);
+      toast.error("❌ Não conseguimos salvar seu perfil.", {
+        description: "Tente novamente em instantes."
+      });
     }
   };
+
 
   return (
     <div className="p-6 space-y-6 pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
@@ -2293,7 +2468,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Idade</label>
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Idade</label>
             <input 
               type="number"
               className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
@@ -2303,7 +2478,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Peso (kg)</label>
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Peso (kg)</label>
             <input 
               type="number"
               className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
@@ -2318,11 +2493,24 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
       <div className="flex-1" />
       
       <Button 
-        className="game-button w-full py-8 text-xl italic uppercase" 
+        className={`game-button w-full py-8 text-xl italic uppercase transition-all ${
+          status === 'success' ? 'bg-green-600' : 
+          status === 'error' ? 'bg-red-600' : 'bg-primary'
+        }`} 
         onClick={save}
-        disabled={!formData.name || !formData.age || !formData.weight}
+        disabled={isSaving || status === 'success'}
       >
-        SALVAR PERFIL COMPLETO →
+        {status === 'saving' ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO SEU PERFIL...
+          </span>
+        ) : status === 'success' ? (
+          "✅ PERFIL CRIADO!"
+        ) : status === 'error' ? (
+          "Tentar novamente"
+        ) : (
+          "SALVAR E CRIAR PERFIL COMPLETO →"
+        )}
       </Button>
     </div>
   );
@@ -2335,5 +2523,6 @@ const ProfileReady = ({ setView, user }: { setView: (v: View) => void, user: any
     <Button className="game-button w-full" onClick={() => setView('dashboard')}>🔥 COMEÇAR</Button>
   </div>
 );
+
 
 
