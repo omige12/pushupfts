@@ -2045,34 +2045,105 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
   const [answers, setAnswers] = useState<any>({});
   
   const questions = [
-    { q: "Quantas flexões você consegue fazer?", opts: ["1–10", "11–25", "26–50", "51–75", "76–100", "100+"] },
-    { q: "Qual é seu objetivo?", opts: ["Melhorar minhas flexões", "Bater recordes", "Vencer outras pessoas", "Chegar ao topo do ranking"] },
-    { q: "Quanto tempo você prefere competir?", opts: ["30 segundos", "1 minuto", "2 minutos", "3 minutos", "5 minutos"] },
-    { q: "Como você se considera?", opts: ["Iniciante", "Intermediário", "Avançado", "Muito avançado"] },
-    { q: "O que mais te motiva?", opts: ["Superar meus limites", "Ganhar", "Evoluir", "Competir"] },
-    { q: "Está pronto para começar?", opts: ["Sim"] }
+    { 
+      id: 'age',
+      q: "🎂 QUAL É A SUA IDADE?", 
+      opts: ["-18", "18–25", "26–35", "36–45", "46–55", "55+"] 
+    },
+    { 
+      id: 'weight',
+      q: "⚖️ QUAL É O SEU PESO?", 
+      opts: ["-60kg", "61–75kg", "76–90kg", "91–105kg", "105kg+"] 
+    },
+    { 
+      id: 'level',
+      q: "💪 QUAL O SEU NÍVEL ATUAL?", 
+      opts: ["Iniciante (0-10)", "Intermediário (11-30)", "Avançado (31-50)", "Elite (50+)"] 
+    },
+    { 
+      id: 'objective',
+      q: "🎯 QUAL É O SEU OBJETIVO?", 
+      opts: ["Ganhar Massa", "Perder Peso", "Resistência", "Competir no Topo"] 
+    },
+    { 
+      id: 'time',
+      q: "⏱️ QUANTO TEMPO POR DIA?", 
+      opts: ["15 min", "30 min", "1 hora", "Mais de 1 hora"] 
+    },
+    { 
+      id: 'motivation',
+      q: "🔥 O QUE MAIS TE MOTIVA?", 
+      opts: ["Saúde", "Estética", "Disciplina", "Vencer Outros"] 
+    }
   ];
 
   const current = questions[step - 1];
 
   const select = (opt: string) => {
-    setAnswers({...answers, [step]: opt});
-    if (step < 6) setStep(s => s + 1);
-    else setView('quiz-result');
+    setAnswers({...answers, [current.id]: opt});
+    if (step < questions.length) {
+      setStep(s => s + 1);
+    } else {
+      // Salvar progresso inicial no user state
+      setUser({
+        ...user,
+        age: parseInt(answers.age) || 25,
+        weight: parseInt(answers.weight) || 75,
+        goal: answers.objective || 'Competir'
+      });
+      setView('quiz-result');
+    }
   };
 
   return (
-    <div className="p-6 space-y-8 h-screen flex flex-col pt-12">
-      <div className="space-y-2">
-        <p className="text-[10px] font-black uppercase text-muted-foreground">{step} / 6</p>
-        <Progress value={(step / 6) * 100} className="h-2" />
+    <div className="p-6 space-y-8 h-screen flex flex-col pt-12 bg-[#0B0E14]">
+      <div className="space-y-4">
+        <div className="flex justify-between items-end">
+          <p className="text-[10px] font-black uppercase text-primary tracking-[0.2em]">ETAPA {step} / {questions.length}</p>
+          <p className="text-[10px] font-black uppercase text-muted-foreground">{Math.round((step/questions.length)*100)}%</p>
+        </div>
+        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+          <motion.div 
+            className="h-full bg-primary" 
+            initial={{ width: 0 }}
+            animate={{ width: `${(step / questions.length) * 100}%` }}
+          />
+        </div>
       </div>
-      <h2 className="text-3xl font-black italic text-white uppercase">{current.q}</h2>
-      <div className="grid gap-3 flex-1">
-        {current.opts.map(opt => (
-          <Button key={opt} variant="outline" className="h-20 text-lg font-black uppercase" onClick={() => select(opt)}>{opt}</Button>
-        ))}
-      </div>
+
+      <motion.div 
+        key={step}
+        initial={{ x: 20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: -20, opacity: 0 }}
+        className="space-y-8 flex-1 flex flex-col"
+      >
+        <h2 className="text-4xl font-black italic text-white uppercase leading-none tracking-tighter">
+          {current.q}
+        </h2>
+
+        <div className="grid gap-3">
+          {current.opts.map((opt, i) => (
+            <motion.div
+              key={opt}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+            >
+              <Button 
+                variant="outline" 
+                className="w-full h-16 text-sm font-black uppercase border-white/5 bg-white/5 hover:bg-primary/20 hover:border-primary/50 transition-all justify-start px-6 rounded-2xl group" 
+                onClick={() => select(opt)}
+              >
+                <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center mr-4 group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors">
+                  {String.fromCharCode(65 + i)}
+                </span>
+                {opt}
+              </Button>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 };
