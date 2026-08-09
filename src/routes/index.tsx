@@ -50,6 +50,7 @@ const getRankInfo = (totalXp: number) => {
     "Bronze": "from-orange-700 to-orange-400",
     "Prata": "from-slate-400 to-slate-200",
     "Ouro": "from-yellow-600 to-yellow-300",
+    "Platina": "from-cyan-600 to-blue-400",
     "Diamante": "from-blue-600 to-cyan-300",
     "Pro": "from-red-600 to-orange-500",
     "Mestre": "from-purple-600 to-pink-500",
