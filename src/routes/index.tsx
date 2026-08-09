@@ -2369,7 +2369,10 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
       
       <Button 
         className="game-button w-full py-8 text-xl italic uppercase" 
-        onClick={() => setView('profile-setup')}
+        onClick={() => {
+          console.log("PhotoUpload: Moving to profile-setup...");
+          setView('profile-setup');
+        }}
         disabled={!preview}
       >
         PRÓXIMO PASSO →
