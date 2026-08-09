@@ -2264,7 +2264,8 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
         }
       });
       if (error) throw error;
-      toast.success("Conta criada! Confirme seu e-mail ou continue.");
+      toast.success("Conta criada!");
+      console.log("AuthView: SignUp success, moving to photo-upload...");
       setView('photo-upload');
     } catch (err: any) {
       toast.error(err.message || "Erro ao criar conta");
