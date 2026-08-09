@@ -2433,14 +2433,15 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="w-32 h-32 relative mb-2"
+          className="w-32 h-32 relative mb-0"
         >
           <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]" alt="Logo" />
         </motion.div>
 
-        <div className="w-full space-y-2 text-center">
-          <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter leading-none">
-            {isLogin ? "BEM-VINDO" : "CRIAR CONTA"}
+        <div className="w-full space-y-1 text-center">
+          <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter leading-none flex flex-col items-center">
+            <span className="text-primary">FLEX</span>
+            <span>BATTLE</span>
           </h2>
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">
             {isLogin ? "DE VOLTA À ARENA" : "INICIE SUA JORNADA"}
