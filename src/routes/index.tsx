@@ -307,9 +307,11 @@ function App() {
             
             setView('dashboard');
           } else {
+            console.log("Profile not found, staying in onboarding");
             setView('onboarding-start');
           }
         } else {
+          console.log("No active session");
           setView('onboarding-start');
         }
       } catch (err) {
