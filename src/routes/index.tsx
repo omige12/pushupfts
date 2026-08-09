@@ -1032,8 +1032,11 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                     setFormData({ ...formData, avatar: re.target?.result as string });
                   };
                   reader.readAsDataURL(file);
-    }
-  };
+                }
+              };
+              input.click();
+            }}>
+
 
   const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-screen p-8 text-center space-y-8 bg-gradient-to-b from-primary/20 to-background">
