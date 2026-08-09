@@ -700,15 +700,6 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         </Button>
 
-        <Button 
-          className="game-button bg-white/10 w-full h-24 flex justify-center items-center border-white/10 shadow-[0_6px_0_0_rgba(0,0,0,0.2)] active:scale-95 active:translate-y-[6px] active:shadow-none" 
-          onClick={() => { setIsTraining(true); setView('training-setup'); }}
-        >
-          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-            <Dumbbell className="w-7 h-7 text-white opacity-80" />
-          </div>
-          <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Modo Treino</span>
-        </Button>
       </div>
 
 
