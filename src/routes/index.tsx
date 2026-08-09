@@ -2170,12 +2170,17 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
     if (step < questions.length) {
       setStep(s => s + 1);
     } else {
-      // Salvar progresso inicial no user state
+      // Mapear opções do quiz para os enums do banco
+      const goalMap: Record<string, string> = {
+        "Ganhar Massa": "Ganhar força",
+        "Perder Peso": "Perder peso",
+        "Resistência": "Condicionamento",
+        "Competir no Topo": "Chegar ao topo do ranking"
+      };
+      
       setUser({
         ...user,
-        age: parseInt(answers.age) || 25,
-        weight: parseInt(answers.weight) || 75,
-        goal: answers.objective || 'Competir'
+        goal: goalMap[answers.objective] || 'Bater recordes'
       });
       setView('quiz-result');
     }
