@@ -2348,7 +2348,6 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
 
 const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   const [loading, setLoading] = useState(false);
-  // Default to login, but switch to signup if coming from the quiz
   const [isLogin, setIsLogin] = useState(() => {
     const isReg = localStorage.getItem('onboarding_registration') === 'true';
     if (isReg) localStorage.removeItem('onboarding_registration');
@@ -2375,8 +2374,6 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
         
         if (data.user) {
           toast.success("✅ Login realizado com sucesso!");
-          
-          // Check if profile exists
           const { data: profile } = await supabase
             .from('profiles')
             .select('id')
@@ -2384,11 +2381,8 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
             .maybeSingle();
             
           if (profile) {
-            // Direct reload if profile exists to jump to dashboard
             window.location.reload();
           } else {
-            // If they have a user account but no profile record yet, 
-            // maybe they dropped out during photo upload/setup
             setView('photo-upload');
           }
         }
@@ -2413,48 +2407,96 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   };
 
   return (
-    <div className="p-6 space-y-6 pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
-      <h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">
-        {isLogin ? "👤 ACESSAR CONTA" : "👤 CRIE SUA CONTA"}
-      </h2>
-      <div className="space-y-4">
-        {!isLogin && (
-          <input 
-            className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all font-bold" 
-            placeholder="Nome de usuário" 
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        )}
-        <input 
-          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all font-bold" 
-          placeholder="E-mail" 
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input 
-          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all font-bold" 
-          type="password" 
-          placeholder="Senha" 
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
+      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-primary/10 blur-[100px] rounded-full" />
+      
+      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="w-32 h-32 relative mb-2"
+        >
+          <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]" alt="Logo" />
+        </motion.div>
+
+        <div className="w-full space-y-2 text-center">
+          <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter leading-none">
+            {isLogin ? "BEM-VINDO" : "CRIAR CONTA"}
+          </h2>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">
+            {isLogin ? "DE VOLTA À ARENA" : "INICIE SUA JORNADA"}
+          </p>
+        </div>
+
+        <div className="w-full space-y-4">
+          {!isLogin && (
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 flex items-center gap-2">
+                <UserIcon className="w-3 h-3" /> NOME DE USUÁRIO
+              </label>
+              <input 
+                className="w-full bg-white/5 p-5 rounded-2xl text-white border border-white/10 focus:border-primary focus:bg-primary/5 outline-none transition-all font-bold italic tracking-tight" 
+                placeholder="Ex: GUERREIRO" 
+                value={name}
+                onChange={(e) => setName(e.target.value.toUpperCase())}
+              />
+            </div>
+          )}
+          
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 flex items-center gap-2">
+              <Mail className="w-3 h-3" /> E-MAIL
+            </label>
+            <input 
+              className="w-full bg-white/5 p-5 rounded-2xl text-white border border-white/10 focus:border-primary focus:bg-primary/5 outline-none transition-all font-bold italic tracking-tight" 
+              placeholder="seu@email.com" 
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 flex items-center gap-2">
+              <Lock className="w-3 h-3" /> SENHA
+            </label>
+            <input 
+              className="w-full bg-white/5 p-5 rounded-2xl text-white border border-white/10 focus:border-primary focus:bg-primary/5 outline-none transition-all font-bold italic tracking-tight" 
+              type="password" 
+              placeholder="••••••••" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          
+          {isLogin && (
+            <button className="text-[10px] font-black text-primary uppercase tracking-widest ml-4 hover:text-white transition-colors">
+              ESQUECI MINHA SENHA
+            </button>
+          )}
+        </div>
+
+        <Button 
+          className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all mt-4" 
+          onClick={handleAuth}
+          disabled={loading}
+        >
+          {loading ? (
+            <div className="flex items-center gap-3">
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <span>{isLogin ? "ENTRANDO..." : "CRIANDO CONTA..."}</span>
+            </div>
+          ) : (isLogin ? "ENTRAR" : "CRIAR CONTA")}
+        </Button>
+
+        <Button 
+          variant="ghost" 
+          className="w-full text-white/40 uppercase text-[10px] font-black tracking-[0.2em] hover:text-white"
+          onClick={() => setIsLogin(!isLogin)}
+        >
+          {isLogin ? "Ainda não possui uma conta? Criar conta" : "Já possui uma conta? Entrar"}
+        </Button>
       </div>
-      <Button 
-        className="game-button w-full py-8 text-xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none" 
-        onClick={handleAuth}
-        disabled={loading}
-      >
-        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (isLogin ? "🔥 ENTRAR" : "🔥 CRIAR CONTA")}
-      </Button>
-      <Button 
-        variant="ghost" 
-        className="w-full text-muted-foreground uppercase text-[10px] font-black tracking-widest hover:text-white"
-        onClick={() => setIsLogin(!isLogin)}
-      >
-        {isLogin ? "Ainda não tem conta? Criar" : "Já possui conta? Entrar"}
-      </Button>
     </div>
   );
 };
