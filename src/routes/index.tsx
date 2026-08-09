@@ -894,7 +894,6 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
       {/* 📷 ÁREA DA CÂMERA */}
       <div className="flex-1 relative bg-black">
         <PushUpCounter isActive={gameState === 'playing'} onCount={handlePlayerCount} />
-      </div>
         
         <AnimatePresence>
           {battleMessage && (
