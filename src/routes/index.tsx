@@ -700,15 +700,6 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         </Button>
 
-        <Button 
-          className="game-button bg-white/10 w-full h-24 flex justify-center items-center border-white/10 shadow-[0_6px_0_0_rgba(0,0,0,0.2)] active:scale-95 active:translate-y-[6px] active:shadow-none" 
-          onClick={() => { setIsTraining(true); setView('training-setup'); }}
-        >
-          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
-            <Dumbbell className="w-7 h-7 text-white opacity-80" />
-          </div>
-          <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Modo Treino</span>
-        </Button>
       </div>
 
 
@@ -839,33 +830,37 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   const [playerPushups, setPlayerPushups] = useState(0);
   const [oppPushups, setOppPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(duration);
-  const [gameState, setGameState] = useState<'countdown' | 'playing' | 'finished'>('countdown');
+  const [gameState, setGameState] = useState<'loading' | 'countdown' | 'playing' | 'finished'>('loading');
   const [countdown, setCountdown] = useState(5);
+  const [isCameraReady, setIsCameraReady] = useState(false);
   const [lastWhoIsAhead, setLastWhoIsAhead] = useState<'player' | 'opponent' | null>(null);
 
   const handlePlayerCount = useCallback((count: number) => {
     setPlayerPushups(count);
   }, []);
 
+  const handleCameraReady = () => {
+    setIsCameraReady(true);
+    setGameState('countdown');
+  };
+
   const battleMessage = useMemo(() => {
-    if (gameState !== 'playing') return "";
+    if (gameState !== 'playing' || isTraining) return "";
     const diff = playerPushups - oppPushups;
-    if (diff > 0 && lastWhoIsAhead !== 'player') {
+    if (diff > 5 && lastWhoIsAhead !== 'player') {
       setLastWhoIsAhead('player');
-      return "🔥 VOCÊ ESTÁ NA FRENTE!";
+      return "🔥 VOCÊ ESTÁ DOMINANDO!";
     }
-    if (diff < 0 && lastWhoIsAhead !== 'opponent') {
+    if (diff < -5 && lastWhoIsAhead !== 'opponent') {
       setLastWhoIsAhead('opponent');
-      return `⚠️ ${activeOpponent?.name || 'ADVERSÁRIO'} ESTÁ NA FRENTE!`;
+      return `⚠️ ${activeOpponent?.name || 'ADVERSÁRIO'} ACELEROU!`;
     }
-    if (isTraining) return "";
-    if (diff === 0 && lastWhoIsAhead !== null) {
+    if (Math.abs(diff) <= 2 && lastWhoIsAhead !== null) {
       setLastWhoIsAhead(null);
       return "⚔️ DISPUTA ACIRRADA!";
     }
     return "";
   }, [playerPushups, oppPushups, gameState, lastWhoIsAhead, activeOpponent, isTraining]);
-
 
   useEffect(() => {
     if (gameState === 'countdown') {
@@ -881,13 +876,11 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
       const timer = setInterval(() => {
         setTimeLeft(t => t - 1);
         
-        // Pushup logic for opponent
-        let increment = 0;
         if (!isTraining) {
+          let increment = 0;
           if (bot) {
-            // Adaptive bot behavior
             const baseRate = bot.pushupRate || 0.1;
-            const adaptiveFactor = playerPushups > oppPushups ? 1.2 : 0.8;
+            const adaptiveFactor = playerPushups > oppPushups ? 1.3 : 0.7;
             const rate = baseRate * adaptiveFactor;
             
             const guaranteed = Math.floor(rate);
@@ -902,12 +895,12 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
             setOppPushups(b => b + increment);
           }
         }
-
       }, 1000);
       return () => clearInterval(timer);
     } else if (gameState === 'playing' && timeLeft === 0) {
       setGameState('finished');
       const won = isTraining ? true : playerPushups >= oppPushups;
+      
       if (won) {
         confetti({ 
           particleCount: 250, 
@@ -919,102 +912,115 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
       } else {
         onComplete(false, playerPushups, 45 + playerPushups, activeOpponent?.name || 'BOT', oppPushups);
       }
-
     }
-  }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete]);
+  }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete, isTraining]);
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-[#0A0F1E] flex flex-col overflow-hidden">
-      {/* HUD Superior — PLACAR */}
-      <div className="relative pt-6 px-4 pb-8 bg-gradient-to-b from-black/60 to-transparent z-20">
-        <div className="max-w-md mx-auto flex justify-between items-start gap-2">
-          
-          {/* LADO ESQUERDO — JOGADOR */}
-          <div className="flex flex-col items-center flex-1">
-            <div className="relative">
-              <div className="w-16 h-16 clip-path-hexagon bg-gradient-to-br from-blue-500 to-blue-700 p-1 shadow-lg">
-                <div className="w-full h-full clip-path-hexagon bg-slate-900 overflow-hidden flex items-center justify-center border border-white/10">
-                  {user.avatar ? (
-                    <img src={user.avatar} className="w-full h-full object-cover" />
-                  ) : (
-                    <UserIcon className="w-8 h-8 text-blue-400" />
-                  )}
+      {/* HUD Superior — Mobile Optimized */}
+      <div className="relative pt-8 px-4 pb-4 bg-gradient-to-b from-black/80 to-transparent z-20">
+        <div className="max-w-md mx-auto">
+          {/* Side-by-side Profiles */}
+          <div className="flex justify-between items-center px-6">
+            <div className="flex flex-col items-center">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-600 p-0.5 shadow-lg border border-white/20">
+                <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-900 flex items-center justify-center">
+                  {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-6 h-6 text-primary" />}
                 </div>
               </div>
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-600 rounded-full border-2 border-slate-900 flex items-center justify-center text-[10px] shadow-lg">
-                {getRankInfo(user.xp).emoji}
+              <span className="text-[9px] font-black italic text-white uppercase mt-1 tracking-tighter truncate max-w-[70px]">{user.name}</span>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.3em] mb-0.5">TEMPO</span>
+              <div className="bg-black/60 backdrop-blur-xl px-5 py-2 rounded-2xl border border-white/10 shadow-2xl">
+                <span className={`text-3xl font-black italic tabular-nums leading-none tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+                  {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                </span>
               </div>
             </div>
-            <p className="text-[11px] font-black italic text-white uppercase mt-2 tracking-tighter truncate w-full text-center">{user.name}</p>
-            <p className="text-[8px] font-bold text-blue-400 uppercase tracking-widest">{getRankInfo(user.xp).rankName}</p>
-          </div>
 
-          {/* CENTRO — TEMPO */}
-          <div className="flex flex-col items-center justify-center pt-2">
-            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-1 italic">TIME</span>
-            <div className="bg-black/40 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10">
-              <span className={`text-4xl font-black italic tabular-nums leading-none tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
-                {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
-              </span>
-            </div>
-          </div>
-
-          {/* LADO DIREITO — ADVERSÁRIO */}
-          <div className="flex flex-col items-center flex-1">
-            <div className="relative">
-              <div className="w-16 h-16 clip-path-hexagon bg-gradient-to-br from-red-500 to-red-700 p-1 shadow-lg">
-                <div className="w-full h-full clip-path-hexagon bg-slate-900 overflow-hidden flex items-center justify-center border border-white/10">
-                  <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
+            {!isTraining ? (
+              <div className="flex flex-col items-center">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-energy-red to-red-800 p-0.5 shadow-lg border border-white/20">
+                  <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-900 flex items-center justify-center">
+                    <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
+                  </div>
                 </div>
+                <span className="text-[9px] font-black italic text-white uppercase mt-1 tracking-tighter truncate max-w-[70px]">{activeOpponent?.name || 'ADVERSÁRIO'}</span>
               </div>
-              <div className="absolute -bottom-1 -left-1 w-6 h-6 bg-red-600 rounded-full border-2 border-slate-900 flex items-center justify-center text-[10px] shadow-lg">
-                {activeOpponent?.patent ? getPatentEmoji(activeOpponent.patent) : '🤖'}
+            ) : (
+              <div className="flex flex-col items-center">
+                <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 p-0.5 shadow-lg border border-dashed border-yellow-500/40 flex items-center justify-center">
+                  <Trophy className="w-6 h-6 text-gold" />
+                </div>
+                <span className="text-[9px] font-black italic text-gold uppercase mt-1 tracking-tighter">RECORDE</span>
+              </div>
+            )}
+          </div>
+
+          {/* Large Flexões Label and Counters */}
+          <div className="mt-6 text-center">
+            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em] italic">FLEXÕES</span>
+            <div className={`flex ${isTraining ? 'justify-center gap-12' : 'justify-between px-10'} items-center mt-2`}>
+              <div className="flex flex-col items-center">
+                <motion.span 
+                  key={playerPushups}
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_20px_rgba(59,130,246,0.6)]"
+                >
+                  {playerPushups}
+                </motion.span>
+                {isTraining && <span className="text-[8px] font-black text-primary/60 uppercase tracking-widest mt-1">ATUAIS</span>}
+              </div>
+
+              {!isTraining && (
+                <motion.span 
+                  key={oppPushups}
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]"
+                >
+                  {oppPushups}
+                </motion.span>
+              )}
+
+              {isTraining && (
+                <div className="flex flex-col items-center">
+                  <span className="text-4xl font-black italic text-gold/60 leading-none mt-4">{user.record}</span>
+                  <span className="text-[8px] font-black text-gold/40 uppercase tracking-widest mt-1">MELHOR</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Battle Bar */}
+          {!isTraining && (
+            <div className="px-6">
+              <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden border border-white/10 flex p-[1.5px] shadow-inner">
+                <motion.div 
+                  className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full"
+                  initial={{ width: '50%' }}
+                  animate={{ 
+                    width: `${(playerPushups / (playerPushups + oppPushups || 1)) * 100}%` 
+                  }}
+                  transition={{ type: 'spring', stiffness: 100, damping: 20 }}
+                />
               </div>
             </div>
-            <p className="text-[11px] font-black italic text-white uppercase mt-2 tracking-tighter truncate w-full text-center">{activeOpponent?.name || 'ADVERSÁRIO'}</p>
-            <p className="text-[8px] font-bold text-red-400 uppercase tracking-widest">{activeOpponent?.patent || 'BOT'}</p>
-          </div>
-        </div>
-
-        {/* 💪 CONTADORES */}
-        <div className="max-w-md mx-auto flex justify-between items-center px-4 mt-8">
-          <motion.span 
-            key={playerPushups}
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_20px_rgba(59,130,246,0.4)]"
-          >
-            {playerPushups}
-          </motion.span>
-          <motion.span 
-            key={oppPushups}
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_20px_rgba(239,68,68,0.4)]"
-          >
-            {oppPushups}
-          </motion.span>
-        </div>
-
-        {/* 📊 BARRA CENTRAL */}
-        <div className="max-w-md mx-auto px-6 mt-6">
-          <div className="h-3 w-full bg-slate-800 rounded-full overflow-hidden border border-white/5 flex p-[2px]">
-            <motion.div 
-              className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full"
-              initial={{ width: '50%' }}
-              animate={{ 
-                width: isTraining ? '100%' : `${(playerPushups / (playerPushups + oppPushups || 1)) * 100}%` 
-              }}
-              transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-            />
-            <div className="flex-1" />
-          </div>
+          )}
         </div>
       </div>
 
-      {/* 📷 ÁREA DA CÂMERA */}
+      {/* Main Camera View */}
       <div className="flex-1 relative bg-black">
-        <PushUpCounter isActive={true} onCount={handlePlayerCount} />
+        <PushUpCounter 
+          isActive={true} 
+          onCount={handlePlayerCount} 
+          onReady={handleCameraReady}
+          soundEnabled={true}
+        />
         
         <AnimatePresence>
           {battleMessage && (
@@ -1022,14 +1028,21 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -50, opacity: 0 }}
-              className="absolute bottom-8 left-0 right-0 flex justify-center z-20 pointer-events-none"
+              className="absolute bottom-12 left-0 right-0 flex justify-center z-20 pointer-events-none"
             >
-              <div className={`backdrop-blur-xl px-8 py-3 rounded-2xl border-2 shadow-2xl transition-colors duration-500 ${lastWhoIsAhead === 'player' ? 'bg-primary/20 border-primary/50' : lastWhoIsAhead === 'opponent' ? 'bg-energy-red/20 border-energy-red/50' : 'bg-black/60 border-white/10'}`}>
-                <p className="text-lg font-black italic text-white uppercase tracking-wider">{battleMessage}</p>
+              <div className={`backdrop-blur-3xl px-10 py-4 rounded-3xl border-2 shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-colors duration-500 ${lastWhoIsAhead === 'player' ? 'bg-primary/20 border-primary/50 text-primary' : lastWhoIsAhead === 'opponent' ? 'bg-energy-red/20 border-energy-red/50 text-energy-red' : 'bg-black/60 border-white/10 text-white'}`}>
+                <p className="text-xl font-black italic uppercase tracking-tighter">{battleMessage}</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Action Buttons Overlay */}
+        <div className="absolute top-4 right-4 z-30">
+          <Button variant="ghost" size="icon" className="w-12 h-12 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 text-white/50" onClick={onExit}>
+             <X className="w-6 h-6" />
+          </Button>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -1038,14 +1051,14 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex items-center justify-center z-[110] bg-black/60 backdrop-blur-sm pointer-events-none"
+            className="fixed inset-0 flex items-center justify-center z-[110] bg-black/60 backdrop-blur-xl pointer-events-none"
           >
             <motion.div
               key={countdown}
-              initial={{ scale: 0, rotate: -20, opacity: 0 }}
-              animate={{ scale: 1.2, rotate: 0, opacity: 1 }}
-              exit={{ scale: 3, opacity: 0 }}
-              transition={{ type: "spring", damping: 10 }}
+              initial={{ scale: 0.5, rotate: -30, opacity: 0 }}
+              animate={{ scale: 1.5, rotate: 0, opacity: 1 }}
+              exit={{ scale: 4, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
               className="flex flex-col items-center"
             >
               <span className="text-[180px] font-black italic text-white drop-shadow-[0_0_60px_rgba(255,255,255,0.8)] leading-none">
@@ -1069,13 +1082,12 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
             <div className="glass-panel p-8 w-full max-w-sm text-center space-y-8 border-primary/20">
               <div className="space-y-2">
                 <Trophy className={`w-20 h-20 mx-auto ${isTraining || playerPushups >= oppPushups ? 'text-gold' : 'text-muted-foreground opacity-50'}`} />
-                <h2 className="text-5xl font-black italic text-white tracking-tighter">
-                  {isTraining ? "TREINO CONCLUÍDO!" : (playerPushups >= oppPushups ? "VITÓRIA!" : "DERROTA!")}
+                <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase">
+                  {isTraining ? "CONCLUÍDO!" : (playerPushups >= oppPushups ? "VITÓRIA!" : "DERROTA!")}
                 </h2>
                 <p className="text-xs font-black text-muted-foreground uppercase tracking-widest italic">
                   {isTraining ? `TOTAL DE FLEXÕES: ${playerPushups}` : `RESULTADO FINAL: ${playerPushups} vs ${oppPushups}`}
                 </p>
-
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -1097,11 +1109,25 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
                     <p className="text-xl font-black text-energy-red">{oppPushups}</p>
                   </div>
                 )}
-
               </div>
 
               <Button onClick={onExit} className="game-button bg-primary w-full py-8 text-xl italic uppercase">SAIR DO DUELO</Button>
             </div>
+          </motion.div>
+        )}
+
+        {gameState === 'loading' && (
+          <motion.div 
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 flex flex-col items-center justify-center z-[120] bg-[#0B0E14]"
+          >
+            <div className="relative">
+              <div className="w-24 h-24 border-4 border-primary/20 rounded-full" />
+              <div className="absolute inset-0 w-24 h-24 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              <Camera className="absolute inset-0 m-auto w-8 h-8 text-primary animate-pulse" />
+            </div>
+            <p className="font-black italic text-white tracking-[0.3em] text-[10px] mt-8 uppercase tracking-widest">📷 PREPARANDO CAMERAS...</p>
           </motion.div>
         )}
       </AnimatePresence>
