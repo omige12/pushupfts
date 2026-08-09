@@ -1279,10 +1279,10 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   value={formData.goal}
                   onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
                 >
-                  <option value="Ganhar força" className="bg-[#1A1F2C] text-white">GANHAR FORÇA</option>
-                  <option value="Resistência" className="bg-[#1A1F2C] text-white">RESISTÊNCIA</option>
-                  <option value="Hipertrofia" className="bg-[#1A1F2C] text-white">HIPERTROFIA</option>
-                  <option value="Perda de peso" className="bg-[#1A1F2C] text-white">PERDA DE PESO</option>
+                  <option value="Ganhar massa" className="bg-[#1A1F2C] text-white uppercase">GANHAR MASSA</option>
+                  <option value="Perder peso" className="bg-[#1A1F2C] text-white uppercase">PERDER PESO</option>
+                  <option value="Resistência" className="bg-[#1A1F2C] text-white uppercase">RESISTÊNCIA</option>
+                  <option value="Competir" className="bg-[#1A1F2C] text-white uppercase">COMPETIR</option>
                 </select>
                 <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 rotate-90 pointer-events-none" />
               </div>
