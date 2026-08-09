@@ -311,7 +311,9 @@ function App() {
             setView('onboarding-start');
           }
         } else {
-          console.log("No active session");
+          console.log("No active session, checking if we should show auth first");
+          // Optionally, if the user explicitly wants to "login", we could have a way to start at 'auth'
+          // but usually onboarding-start is the entry point for guest users.
           setView('onboarding-start');
         }
       } catch (err) {
