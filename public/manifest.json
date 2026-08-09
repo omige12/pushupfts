@@ -1,9 +1,10 @@
 {
   "name": "Flex Battle",
   "short_name": "Flex Battle",
-  "description": "Desafie seus limites na competição de flexões competitiva com IA",
+  "description": "Desafie seus limites na arena de flexões com IA",
   "start_url": "/",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen"],
   "orientation": "portrait",
   "background_color": "#0B0E14",
   "theme_color": "#0B0E14",
@@ -12,15 +13,39 @@
       "src": "/favicon.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/favicon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "categories": ["fitness", "games"],
-  "screenshots": []
+  "categories": ["fitness", "games", "sports"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Modo Treino",
+      "url": "/?view=treino",
+      "description": "Começar um treino rápido"
+    },
+    {
+      "name": "Duelo Online",
+      "url": "/?view=multiplayer",
+      "description": "Enfrentar outros jogadores"
+    }
+  ]
 }
