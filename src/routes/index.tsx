@@ -476,31 +476,44 @@ function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {showInstallBanner && !isInstalled && (
+        {showInstallBanner && !isStandalone && (
           <motion.div 
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-24 left-4 right-4 z-[60] glass-panel p-4 border-gold/30 bg-[#0B0E14]/90 backdrop-blur-xl shadow-2xl rounded-3xl"
+            className="fixed bottom-24 left-4 right-4 z-[60] glass-panel p-5 border-gold/30 bg-[#0B0E14]/95 backdrop-blur-xl shadow-2xl rounded-3xl"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30">
-                <Dumbbell className="w-6 h-6 text-primary" />
+              <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-inner">
+                <Dumbbell className="w-8 h-8 text-primary" />
               </div>
               <div className="flex-1">
-                <h3 className="text-sm font-black italic text-white uppercase tracking-tight">📱 INSTALE O APLICATIVO</h3>
-                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Acesso rápido às suas batalhas</p>
+                <h3 className="text-sm font-black italic text-white uppercase tracking-tight">📱 BAIXE O APLICATIVO</h3>
+                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">Instale no seu celular e tenha acesso rápido às suas batalhas.</p>
               </div>
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2">
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="rounded-full w-8 h-8 text-muted-foreground hover:text-white"
-                  onClick={() => setShowInstallBanner(false)}
+                  className="absolute top-2 right-2 rounded-full w-8 h-8 text-muted-foreground hover:text-white"
+                  onClick={() => {
+                    setShowInstallBanner(false);
+                    localStorage.setItem('pwa-banner-dismissed', 'true');
+                  }}
                 >
                   <X className="w-4 h-4" />
                 </Button>
                 <Button 
+                  className="game-button bg-primary px-6 py-4 text-xs italic font-black uppercase tracking-tighter"
+                  onClick={handleInstallClick}
+                >
+                  🔥 INSTALAR
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
                   className="game-button bg-primary h-10 px-6 text-[10px] italic uppercase shadow-[0_4px_0_0_rgba(29,78,216,0.5)] active:translate-y-[4px] active:shadow-none"
                   onClick={async () => {
                     if (deferredPrompt) {
