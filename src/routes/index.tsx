@@ -900,16 +900,17 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
             <motion.div
               key={countdown}
               initial={{ scale: 0, rotate: -20, opacity: 0 }}
-              animate={{ scale: 1.5, rotate: 0, opacity: 1 }}
+              animate={{ scale: 1.2, rotate: 0, opacity: 1 }}
               exit={{ scale: 3, opacity: 0 }}
+              transition={{ type: "spring", damping: 10 }}
               className="flex flex-col items-center"
             >
-              <span className="text-9xl font-black italic text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.6)] leading-none">
-                {countdown === 0 ? "🔥 VAI!" : countdown}
+              <span className="text-[180px] font-black italic text-white drop-shadow-[0_0_60px_rgba(255,255,255,0.8)] leading-none">
+                {countdown === 0 ? "VAI!" : countdown}
               </span>
-              {countdown > 0 && (
-                <span className="text-xl font-black text-primary uppercase tracking-[0.5em] mt-4 animate-pulse">Prepare-se</span>
-              )}
+              <p className="text-white/40 font-black italic tracking-[0.5em] mt-8 uppercase animate-pulse">
+                PREPARE-SE
+              </p>
             </motion.div>
           </motion.div>
         )}
