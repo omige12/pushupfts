@@ -2299,7 +2299,12 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
 
 const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+  // Default to login, but switch to signup if coming from the quiz
+  const [isLogin, setIsLogin] = useState(() => {
+    const isReg = localStorage.getItem('onboarding_registration') === 'true';
+    if (isReg) localStorage.removeItem('onboarding_registration');
+    return !isReg;
+  });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
