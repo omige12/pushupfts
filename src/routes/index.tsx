@@ -22,12 +22,13 @@ export const Route = createFileRoute("/")({
 });
 
 
-type View = 'onboarding-start' | 'quiz' | 'quiz-result' | 'auth' | 'photo-upload' | 'profile-setup' | 'profile-ready' | 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle' | 'training-setup';
+type View = 'onboarding-start' | 'quiz' | 'quiz-result' | 'auth' | 'photo-upload' | 'profile-setup' | 'profile-ready' | 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle' | 'training-setup' | 'treino';
 
 const RANKS = [
   "Bronze III", "Bronze II", "Bronze I",
   "Prata III", "Prata II", "Prata I",
   "Ouro III", "Ouro II", "Ouro I",
+  "Platina III", "Platina II", "Platina I",
   "Diamante III", "Diamante II", "Diamante I",
   "Pro III", "Pro II", "Pro I",
   "Mestre III", "Mestre II", "Mestre I",
@@ -49,6 +50,7 @@ const getRankInfo = (totalXp: number) => {
     "Bronze": "from-orange-700 to-orange-400",
     "Prata": "from-slate-400 to-slate-200",
     "Ouro": "from-yellow-600 to-yellow-300",
+    "Platina": "from-cyan-600 to-blue-400",
     "Diamante": "from-blue-600 to-cyan-300",
     "Pro": "from-red-600 to-orange-500",
     "Mestre": "from-purple-600 to-pink-500",
@@ -59,6 +61,7 @@ const getRankInfo = (totalXp: number) => {
     "Bronze": "🥉",
     "Prata": "🥈",
     "Ouro": "🥇",
+    "Platina": "💠",
     "Diamante": "💎",
     "Pro": "🔥",
     "Mestre": "👑",
@@ -438,6 +441,7 @@ function App() {
       case 'profile-setup': return <ProfileSetup setView={setView} user={user} setUser={setUser} />;
       case 'profile-ready': return <ProfileReady setView={setView} user={user} />;
       case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
+      case 'treino': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
       case 'training-setup': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
@@ -486,35 +490,35 @@ function App() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-24 left-4 right-4 z-[60] glass-panel p-5 border-gold/30 bg-[#0B0E14]/95 backdrop-blur-xl shadow-2xl rounded-3xl"
+            className="fixed bottom-6 left-4 right-4 z-[100] glass-panel p-4 border-gold/30 bg-[#0B0E14]/95 backdrop-blur-xl shadow-2xl rounded-2xl flex items-center justify-between gap-4"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center border border-primary/30 shadow-inner">
-                <Dumbbell className="w-8 h-8 text-primary" />
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/10">
+                <img src={logoAsset.url} className="w-full h-full object-cover" alt="Logo" />
               </div>
-              <div className="flex-1">
-                <h3 className="text-sm font-black italic text-white uppercase tracking-tight">📱 BAIXE O APLICATIVO</h3>
-                <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">Instale no seu celular e tenha acesso rápido às suas batalhas.</p>
+              <div className="flex flex-col">
+                <h4 className="text-[11px] font-black text-white italic tracking-tighter uppercase leading-tight">📱 BAIXE O FLEX BATTLE</h4>
+                <p className="text-[9px] text-white/50 font-bold uppercase tracking-wider">Instale o app no seu celular.</p>
               </div>
-              <div className="flex flex-col gap-2">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="absolute top-2 right-2 rounded-full w-8 h-8 text-muted-foreground hover:text-white"
-                  onClick={() => {
-                    setShowInstallBanner(false);
-                    localStorage.setItem('pwa-banner-dismissed', 'true');
-                  }}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-                <Button 
-                  className="game-button bg-primary px-6 py-4 text-xs italic font-black uppercase tracking-tighter"
-                  onClick={handleInstallClick}
-                >
-                  🔥 INSTALAR
-                </Button>
-              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button 
+                onClick={handleInstallClick}
+                className="bg-primary hover:bg-primary/90 text-[10px] font-black italic uppercase px-4 h-8 rounded-lg shadow-[0_3px_0_0_rgba(29,78,216,0.5)] active:translate-y-[2px] active:shadow-none transition-all shrink-0"
+              >
+                INSTALAR AGORA
+              </Button>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8 text-white/30 hover:text-white"
+                onClick={() => {
+                  setShowInstallBanner(false);
+                  localStorage.setItem('pwa-banner-dismissed', 'true');
+                }}
+              >
+                <X className="w-4 h-4" />
+              </Button>
             </div>
           </motion.div>
         )}
@@ -660,12 +664,12 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       <div className="grid grid-cols-2 gap-4">
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
-          onClick={() => setView('edit-profile')}
+          onClick={() => setView('multiplayer')}
         >
           <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-            <UserCircle className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+            <Swords className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
           </div>
-          <span className="text-[10px] font-black italic tracking-tighter uppercase">Meu Perfil</span>
+          <span className="text-[10px] font-black italic tracking-tighter uppercase">Multijogador</span>
         </Button>
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
@@ -681,16 +685,16 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       <div className="space-y-4 pt-2">
         <Button 
           className="game-button bg-energy-red w-full h-40 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
-          onClick={() => setView('multiplayer')}
+          onClick={() => setView('treino')}
         >
           <div className="relative z-10 flex flex-col items-center gap-3">
             <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
-              <Swords className="w-10 h-10 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+              <Dumbbell className="w-10 h-10 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
             </div>
-            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Multijogador</span>
+            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Modo Treino</span>
           </div>
           <div className="absolute top-0 right-0 p-3">
-            <Badge className="bg-yellow-400 text-black font-black italic text-[10px] animate-pulse px-3 py-1">NOVO MODO</Badge>
+            <Badge className="bg-yellow-400 text-black font-black italic text-[10px] animate-pulse px-3 py-1">EVOLUÇÃO</Badge>
           </div>
           {/* Decorative background element */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
@@ -1245,7 +1249,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Idade</label>
                 <input 
@@ -1264,7 +1268,6 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 0 })}
                 />
               </div>
-                {/* Altura removida como solicitado */}
             </div>
 
             <div className="space-y-2">
@@ -1275,10 +1278,10 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   value={formData.goal}
                   onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
                 >
-                  <option value="Ganhar força" className="bg-[#1A1F2C] text-white">GANHAR FORÇA</option>
-                  <option value="Resistência" className="bg-[#1A1F2C] text-white">RESISTÊNCIA</option>
-                  <option value="Hipertrofia" className="bg-[#1A1F2C] text-white">HIPERTROFIA</option>
-                  <option value="Perda de peso" className="bg-[#1A1F2C] text-white">PERDA DE PESO</option>
+                  <option value="Ganhar massa" className="bg-[#1A1F2C] text-white uppercase">GANHAR MASSA</option>
+                  <option value="Perder peso" className="bg-[#1A1F2C] text-white uppercase">PERDER PESO</option>
+                  <option value="Resistência" className="bg-[#1A1F2C] text-white uppercase">RESISTÊNCIA</option>
+                  <option value="Competir" className="bg-[#1A1F2C] text-white uppercase">COMPETIR</option>
                 </select>
                 <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 rotate-90 pointer-events-none" />
               </div>
@@ -2173,46 +2176,47 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
 }
 
 const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-between min-h-screen p-8 bg-[#0B0E14] relative overflow-hidden">
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#0B0E14] relative overflow-hidden">
     {/* Background Glows */}
     <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/20 blur-[100px] rounded-full" />
     <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-red-600/20 blur-[100px] rounded-full" />
     
-    <div className="flex-1 flex flex-col items-center justify-center space-y-12 z-10 w-full max-w-md">
+    <div className="flex flex-col items-center justify-center z-10 w-full max-w-md">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="w-full aspect-square max-w-[280px] relative"
+        className="w-48 h-48 mb-2"
       >
         <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]" alt="Flex Battle Logo" />
       </motion.div>
 
-      <div className="space-y-4 text-center">
-        <h1 className="text-4xl font-black italic text-white tracking-tighter leading-tight uppercase text-shadow-lg">
-          💪 PRONTO PARA<br />O DESAFIO?
+      <div className="space-y-1 text-center mb-8">
+        <h1 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none text-shadow-lg flex flex-col items-center">
+          <span className="text-primary">FLEX</span>
+          <span>BATTLE</span>
         </h1>
-        <p className="text-lg text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">
-          DESCUBRA SEU NÍVEL E<br />COMECE SUA EVOLUÇÃO
+        <p className="text-xs text-muted-foreground font-bold uppercase tracking-[0.3em] leading-relaxed">
+          "Desafie seus limites."
         </p>
       </div>
-    </div>
-    
-    <div className="w-full space-y-4 z-10 max-w-md pb-8">
-      <Button 
-        className="game-button bg-primary w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" 
-        onClick={() => setView('quiz')}
-      >
-        🔥 COMEÇAR DESAFIO
-      </Button>
-      
-      <Button 
-        variant="ghost" 
-        className="w-full text-white/40 uppercase text-[10px] font-black tracking-[0.2em] hover:text-white mt-4"
-        onClick={() => setView('auth')}
-      >
-        JÁ TENHO UMA CONTA • ENTRAR
-      </Button>
+
+      <div className="w-full space-y-4 max-w-[280px]">
+        <Button 
+          className="game-button bg-primary w-full py-7 text-xl italic uppercase shadow-[0_6px_0_0_rgba(29,78,216,0.5)] active:translate-y-[6px] active:shadow-none transition-all" 
+          onClick={() => setView('quiz')}
+        >
+          🔥 COMEÇAR
+        </Button>
+        
+        <Button 
+          variant="ghost" 
+          className="w-full text-white/30 uppercase text-[9px] font-black tracking-[0.2em] hover:text-white"
+          onClick={() => setView('auth')}
+        >
+          JÁ TENHO UMA CONTA
+        </Button>
+      </div>
     </div>
   </motion.div>
 );
@@ -2264,10 +2268,10 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
     } else {
       // Mapear opções do quiz para os enums do banco
       const goalMap: Record<string, string> = {
-        "Ganhar Massa": "Ganhar força",
+        "Ganhar Massa": "Ganhar massa",
         "Perder Peso": "Perder peso",
-        "Resistência": "Condicionamento",
-        "Competir no Topo": "Chegar ao topo do ranking"
+        "Resistência": "Resistência",
+        "Competir no Topo": "Competir"
       };
       
       setUser({
@@ -2295,20 +2299,20 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col px-6 justify-center z-10">
+      <div className="flex-1 flex flex-col px-6 justify-center z-10 w-full max-w-md mx-auto">
         <AnimatePresence mode="wait">
           <motion.div 
             key={step}
             initial={{ x: 40, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -40, opacity: 0 }}
-            className="space-y-10"
+            className="space-y-8"
           >
-            <h2 className="text-4xl font-black italic text-white uppercase leading-none tracking-tighter">
+            <h2 className="text-3xl font-black italic text-white uppercase leading-tight tracking-tighter text-center">
               {current.q}
             </h2>
 
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {current.opts.map((opt, i) => (
                 <motion.div
                   key={opt}
@@ -2318,16 +2322,24 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
                 >
                   <Button 
                     variant="outline" 
-                    className="w-full h-20 text-base font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-start px-8 rounded-3xl group shadow-lg active:scale-95" 
+                    className="w-full h-16 text-sm font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-between px-6 rounded-2xl group shadow-lg active:scale-[0.98] relative overflow-hidden" 
                     onClick={() => select(opt)}
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mr-6 group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono">
-                      {String.fromCharCode(65 + i)}
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono text-xs">
+                        {String.fromCharCode(65 + i)}
+                      </div>
+                      <span className="flex-1 text-left">{opt}</span>
                     </div>
-                    <span className="flex-1">{opt}</span>
+                    
                     <div className="w-6 h-6 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary transition-all">
                       <Check className="w-4 h-4 text-white opacity-0 group-hover:opacity-100" />
                     </div>
+
+                    {/* Selection Flash Effect */}
+                    <motion.div 
+                      className="absolute inset-0 bg-primary/20 opacity-0 group-active:opacity-100 transition-opacity"
+                    />
                   </Button>
                 </motion.div>
               ))}
@@ -2424,14 +2436,15 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="w-32 h-32 relative mb-2"
+          className="w-32 h-32 relative mb-0"
         >
           <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]" alt="Logo" />
         </motion.div>
 
-        <div className="w-full space-y-2 text-center">
-          <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter leading-none">
-            {isLogin ? "BEM-VINDO" : "CRIAR CONTA"}
+        <div className="w-full space-y-1 text-center">
+          <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter leading-none flex flex-col items-center">
+            <span className="text-primary">FLEX</span>
+            <span>BATTLE</span>
           </h2>
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">
             {isLogin ? "DE VOLTA À ARENA" : "INICIE SUA JORNADA"}
@@ -2513,7 +2526,7 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
 
 
 const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
-  const [preview, setPreview] = useState<string | null>(user.avatar);
+  const [preview, setPreview] = useState<string | null>(user.avatar || null);
   
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
