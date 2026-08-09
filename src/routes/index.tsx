@@ -2045,9 +2045,10 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       label: 'Patentes', 
       icon: TrendingUp,
       items: [
-        { title: "Alcançar Bronze", desc: "O início de tudo", req: 1, current: user.patent !== "Nenhuma" ? 1 : 0, reward: "XP +50", icon: Award },
-        { title: "Alcançar Prata", desc: "Evoluindo sempre", req: 1, current: ["Prata", "Ouro", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +500", icon: Sparkles },
-        { title: "Alcançar Ouro", desc: "Jogador Experiente", req: 1, current: ["Ouro", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +1000", icon: Flame },
+        { title: "Alcançar Bronze", desc: "O início de tudo", req: 1, current: user.patent && user.patent !== "Nenhuma" ? 1 : 0, reward: "XP +50", icon: Award },
+        { title: "Alcançar Prata", desc: "Evoluindo sempre", req: 1, current: ["Prata", "Ouro", "Platina", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +500", icon: Sparkles },
+        { title: "Alcançar Ouro", desc: "Jogador Experiente", req: 1, current: ["Ouro", "Platina", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +1000", icon: Flame },
+        { title: "Alcançar Platina", desc: "Nível Superior", req: 1, current: ["Platina", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +2000", icon: Zap },
         { title: "Alcançar Lendário", desc: "O topo do mundo", req: 1, current: user.patent === "Lendário" ? 1 : 0, reward: "Avatar Divino", icon: Trophy },
       ]
     }
