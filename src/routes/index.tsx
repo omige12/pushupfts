@@ -2166,7 +2166,8 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
   const current = questions[step - 1];
 
   const select = (opt: string) => {
-    setAnswers({...answers, [current.id]: opt});
+    const newAnswers = {...answers, [current.id]: opt};
+    setAnswers(newAnswers);
     if (step < questions.length) {
       setStep(s => s + 1);
     } else {
@@ -2180,7 +2181,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
       
       setUser({
         ...user,
-        goal: goalMap[answers.objective] || 'Bater recordes'
+        goal: goalMap[newAnswers.objective] || 'Bater recordes'
       });
       setView('quiz-result');
     }
