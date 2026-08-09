@@ -2444,12 +2444,12 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
         .from('profiles')
         .upsert({
           id: session.user.id,
-          player_id: `PLAYER-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+          player_id: `PLAYER-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
           name: updatedUser.name,
           age: updatedUser.age,
           weight: updatedUser.weight,
           avatar_url: user.avatar,
-          goal: (user.goal || 'Bater recordes') as any,
+          goal: (user.goal || 'Bater recordes'),
           level: 1,
           xp: 0,
           total_pushups: 0,
@@ -2458,7 +2458,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           record: 0,
           streak: 0,
           updated_at: new Date().toISOString()
-        });
+        }, { onConflict: 'id' });
 
 
       if (error) throw error;
