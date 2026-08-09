@@ -370,25 +370,26 @@ function App() {
     );
 
     switch (view) {
-      case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
-      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
-      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} onStartMatchmaking={() => setView('matchmaking')} />;
-      case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); }} onComplete={updateStats} />;
+      case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
+      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
+      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
+      case 'training-setup': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
+      case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} isTraining={isTraining} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); setIsTraining(false); }} onComplete={updateStats} />;
       case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('challenge'); }} onCancel={() => setView('select-duration')} duration={duration} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
-      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={() => setView('select-duration')} />;
-
+      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={() => { setIsTraining(false); setView('select-duration'); }} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
       case 'history': return <FullHistory setView={setView} user={user} />;
-      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setView('select-duration'); }} />;
+      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'patents-list': return <PatentsList setView={setView} user={user} />;
-      default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
+      default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
     }
+
   };
 
 
@@ -479,7 +480,7 @@ function App() {
 
 
 
-function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void }) {
+function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void, setIsTraining: (t: boolean) => void }) {
   const stats = user;
   const rank = getRankInfo(user.xp);
 
@@ -581,8 +582,9 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
 
         <Button 
           className="game-button bg-white/10 w-full h-20 flex justify-center items-center border-white/10 shadow-[0_6px_0_0_rgba(0,0,0,0.2)] active:scale-95 active:translate-y-[6px] active:shadow-none" 
-          onClick={() => { setSelectedBot(null); setView('select-duration'); }}
+          onClick={() => { setIsTraining(true); setView('training-setup'); }}
         >
+
           <Dumbbell className="w-10 h-10 text-white opacity-80" />
           <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Treinar</span>
         </Button>
@@ -651,7 +653,7 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
   );
 }
 
-function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot: any, onStartMatchmaking?: () => void }) {
+function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, isTraining, onStartTraining }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot?: any, onStartMatchmaking?: () => void, isTraining?: boolean, onStartTraining?: () => void }) {
   const [localDuration, setLocalDuration] = useState(60);
   const durations = [
     { label: '30 seg', value: 30 },
@@ -664,9 +666,10 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking }: 
   return (
     <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6 flex flex-col min-h-screen pb-24">
       <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView(selectedBot ? 'select-bot' : 'multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">⚔️ ESCOLHA A DURAÇÃO</h2>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView(isTraining ? 'dashboard' : (selectedBot ? 'select-bot' : 'multiplayer'))}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">{isTraining ? '⏱️ ESCOLHA O TEMPO' : '⚔️ ESCOLHA A DURAÇÃO'}</h2>
       </div>
+
 
       <div className="grid gap-4 flex-1">
         {durations.map(d => (
@@ -693,15 +696,18 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking }: 
       <Button 
         className="game-button bg-primary w-full py-8 text-xl italic uppercase mt-8 shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all"
         onClick={() => {
-          if (selectedBot) {
+          if (isTraining && onStartTraining) {
+            onStartTraining();
+          } else if (selectedBot) {
             setView('challenge');
           } else if (onStartMatchmaking) {
             onStartMatchmaking();
           }
         }}
       >
-        {selectedBot ? "⚔️ INICIAR DESAFIO" : "⚔️ ENCONTRAR ADVERSÁRIO"}
+        {isTraining ? "💪 COMEÇAR TREINO" : (selectedBot ? "⚔️ INICIAR DESAFIO" : "⚔️ ENCONTRAR ADVERSÁRIO")}
       </Button>
+
     </motion.div>
   );
 }
