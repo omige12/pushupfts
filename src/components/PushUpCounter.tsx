@@ -6,6 +6,7 @@ import '@tensorflow/tfjs-backend-webgl';
 import { Shield, AlertCircle, CheckCircle2, Zap, Camera } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 interface PushUpCounterProps {
   onCount: (count: number) => void;
