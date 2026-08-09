@@ -2410,6 +2410,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
         .from('profiles')
         .upsert({
           id: session.user.id,
+          player_id: `PLAYER-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
           name: updatedUser.name,
           age: updatedUser.age,
           weight: updatedUser.weight,
@@ -2419,6 +2420,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           xp: 0,
           updated_at: new Date().toISOString()
         });
+
 
       if (error) throw error;
 
