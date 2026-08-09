@@ -2167,15 +2167,72 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => (
   </div>
 );
 
-const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => (
-  <div className="p-6 space-y-8 text-center pt-20">
-    <h2 className="text-3xl font-black uppercase text-white">📸 AGORA CRIE SEU PERFIL</h2>
-    <div className="w-48 h-48 mx-auto rounded-full bg-secondary flex items-center justify-center text-4xl border-4 border-dashed border-muted-foreground text-muted-foreground">
-      <Plus className="w-12 h-12" />
+const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
+  const [preview, setPreview] = useState<string | null>(user.avatar);
+  
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        const result = re.target?.result as string;
+        setPreview(result);
+        setUser({ ...user, avatar: result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  return (
+    <div className="p-6 space-y-8 text-center pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
+      <div className="space-y-2">
+        <h2 className="text-3xl font-black italic uppercase text-white tracking-tighter">📸 SUA FOTO DE ATLETA</h2>
+        <p className="text-muted-foreground text-sm uppercase font-bold tracking-widest">Identidade no campo de batalha</p>
+      </div>
+
+      <div className="relative mx-auto group">
+        <div className="w-48 h-48 rounded-full bg-white/5 border-4 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5">
+          {preview ? (
+            <img src={preview} className="w-full h-full object-cover" alt="Profile" />
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+              <Plus className="w-12 h-12" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Adicionar</span>
+            </div>
+          )}
+        </div>
+        
+        <input 
+          type="file" 
+          accept="image/*" 
+          className="absolute inset-0 opacity-0 cursor-pointer" 
+          onChange={handleFile}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <Button variant="outline" className="h-14 border-white/5 bg-white/5 uppercase font-black relative overflow-hidden">
+          <Camera className="w-4 h-4 mr-2" /> Câmera
+          <input type="file" accept="image/*" capture="user" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
+        </Button>
+        <Button variant="outline" className="h-14 border-white/5 bg-white/5 uppercase font-black relative overflow-hidden">
+          <ImageIcon className="w-4 h-4 mr-2" /> Galeria
+          <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
+        </Button>
+      </div>
+
+      <div className="flex-1" />
+      
+      <Button 
+        className="game-button w-full py-8 text-xl italic uppercase" 
+        onClick={() => setView('profile-setup')}
+        disabled={!preview}
+      >
+        PRÓXIMO PASSO →
+      </Button>
     </div>
-    <Button className="game-button w-full" onClick={() => setView('profile-setup')}>✓ Usar esta foto</Button>
-  </div>
-);
+  );
+};
 
 const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => (
   <div className="p-6 space-y-4 pt-20">
