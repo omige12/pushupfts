@@ -2289,7 +2289,9 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
     <h2 className="text-4xl font-black italic text-white uppercase">🔥 SEU DESAFIO FOI CRIADO!</h2>
     <p>Agora crie seu perfil para começar.</p>
     <Button className="game-button w-full" onClick={() => {
-      console.log("QuizResult: Moving to auth...");
+      console.log("QuizResult: Moving to auth for registration...");
+      // For new users after quiz, we force them to the registration flow
+      localStorage.setItem('onboarding_registration', 'true');
       setView('auth');
     }}>CONTINUAR →</Button>
   </div>
