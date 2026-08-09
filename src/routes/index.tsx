@@ -5,7 +5,7 @@ import confetti from "canvas-confetti";
 import { 
   Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon,
   Flame, ArrowLeft, Timer, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
-  Copy, Check, Search, Zap, Award, Sparkles, Pencil, Camera, Image as ImageIcon, Globe, Loader2, X
+  Copy, Check, Search, Zap, Award, Sparkles, Pencil, Camera, Image as ImageIcon, Globe, Loader2, X, Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -15,12 +15,12 @@ import { PushUpCounter } from "@/components/PushUpCounter";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-
 export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle' | 'training-setup';
+
+type View = 'onboarding-start' | 'quiz' | 'quiz-result' | 'auth' | 'photo-upload' | 'profile-setup' | 'profile-ready' | 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle' | 'training-setup';
 
 const RANKS = [
   "Bronze III", "Bronze II", "Bronze I",
@@ -163,7 +163,7 @@ const BOTS = [
 ];
 
 function App() {
-  const [view, setView] = useState<View>('dashboard');
+  const [view, setView] = useState<View>('onboarding-start');
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
   const [opponent, setOpponent] = useState<any | null>(null);
   const [isTraining, setIsTraining] = useState(false);
@@ -219,78 +219,76 @@ function App() {
   // Load user data from Supabase
   useEffect(() => {
     const fetchProfile = async () => {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
-      if (authUser) {
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authUser.id)
-          .single();
-
-        if (profile) {
-          const rankInfo = getRankInfo(Number(profile.xp));
-          setUser(prev => ({
-            ...prev,
-            id: profile.player_id,
-            name: profile.name,
-            age: profile.age || prev.age,
-            weight: profile.weight || prev.weight,
-            height: profile.height || prev.height,
-            goal: profile.goal || prev.goal,
-            level: profile.level,
-            xp: Number(profile.xp),
-            wins: profile.wins,
-            losses: profile.losses,
-            record: profile.record,
-            totalPushups: profile.total_pushups,
-            streak: profile.streak,
-            avatar: profile.avatar_url,
-            achievements: profile.achievements || [],
-          }));
-
-          // Fetch match history
-          const { data: matches } = await supabase
-            .from('matches')
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          const { data: profile, error } = await supabase
+            .from('profiles')
             .select('*')
-            .eq('player_id', authUser.id)
-            .order('created_at', { ascending: false })
-            .limit(15);
-          
-          if (matches) {
+            .eq('id', session.user.id)
+            .maybeSingle();
+
+          if (profile) {
             setUser(prev => ({
               ...prev,
-              history: matches.map(m => ({
-                id: m.id,
-                opp: m.opponent_name,
-                res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
-                score: `${m.player_score}-${m.opponent_score}`,
-                xp: `+${m.xp_gained}`,
-                date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
-              }))
+              id: profile.player_id,
+              name: profile.name,
+              age: profile.age || prev.age,
+              weight: profile.weight || prev.weight,
+              height: profile.height || prev.height,
+              goal: profile.goal || prev.goal,
+              level: profile.level,
+              xp: Number(profile.xp),
+              wins: profile.wins,
+              losses: profile.losses,
+              record: profile.record,
+              totalPushups: profile.total_pushups,
+              streak: profile.streak,
+              avatar: profile.avatar_url,
+              achievements: profile.achievements || [],
             }));
-          }
 
-        } else {
-          // Create profile if it doesn't exist
-          const newPlayerId = "PUSH-" + Math.random().toString(36).substr(2, 4).toUpperCase();
-          const { error: insertError } = await supabase.from('profiles').insert({
-            id: authUser.id,
-            player_id: newPlayerId,
-            name: user.name,
-            xp: 0,
-            level: 1
-          });
-          if (!insertError) {
-            setUser(prev => ({ ...prev, id: newPlayerId }));
+            // Fetch match history
+            const { data: matches } = await supabase
+              .from('matches')
+              .select('*')
+              .eq('player_id', session.user.id)
+              .order('created_at', { ascending: false })
+              .limit(15);
+            
+            if (matches) {
+              setUser(prev => ({
+                ...prev,
+                history: matches.map(m => ({
+                  id: m.id,
+                  opp: m.opponent_name,
+                  res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
+                  score: `${m.player_score}-${m.opponent_score}`,
+                  xp: `+${m.xp_gained}`,
+                  date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
+                }))
+              }));
+            }
+            
+            setView('dashboard');
+          } else {
+            setView('onboarding-start');
           }
+        } else {
+          setView('onboarding-start');
         }
+      } catch (err) {
+        console.error("Error fetching profile:", err);
+        setView('onboarding-start');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchProfile();
   }, []);
+
 
   const updateStats = async (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => {
     const newTotalXp = user.xp + xpGained;
@@ -370,6 +368,13 @@ function App() {
     );
 
     switch (view) {
+      case 'onboarding-start': return <OnboardingStart setView={setView} />;
+      case 'quiz': return <Quiz setView={setView} user={user} setUser={setUser} />;
+      case 'quiz-result': return <QuizResult setView={setView} user={user} />;
+      case 'auth': return <AuthView setView={setView} />;
+      case 'photo-upload': return <PhotoUpload setView={setView} user={user} setUser={setUser} />;
+      case 'profile-setup': return <ProfileSetup setView={setView} user={user} setUser={setUser} />;
+      case 'profile-ready': return <ProfileReady setView={setView} user={user} />;
       case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
       case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
@@ -387,7 +392,7 @@ function App() {
       case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'patents-list': return <PatentsList setView={setView} user={user} />;
-      default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
+      default: return <OnboardingStart setView={setView} />;
     }
 
   };
@@ -450,7 +455,7 @@ function App() {
         )}
       </AnimatePresence>
 
-      {!isBattleActive && (
+      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready'].includes(view) && (
         <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around items-center p-3 z-50">
           <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
             <Home className="w-6 h-6" />
@@ -1034,6 +1039,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               };
               input.click();
             }}>
+
               <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold flex items-center justify-center overflow-hidden shadow-2xl">
                 {formData.avatar ? (
                   <img src={formData.avatar} className="w-full h-full object-cover" alt="Preview" />
@@ -2034,5 +2040,97 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
   );
 }
 
+const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-screen p-8 text-center space-y-8 bg-gradient-to-b from-primary/20 to-background">
+    <h1 className="text-5xl font-black italic text-white tracking-tighter">💪 PRONTO PARA O DESAFIO?</h1>
+    <p className="text-xl text-muted-foreground font-medium">Descubra seu nível e comece sua evolução.</p>
+    <Button className="game-button bg-primary w-full py-8 text-2xl italic uppercase animate-pulse" onClick={() => setView('quiz')}>🔥 COMEÇAR DESAFIO</Button>
+  </motion.div>
+);
+
+const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
+  const [step, setStep] = useState(1);
+  const [answers, setAnswers] = useState<any>({});
+  
+  const questions = [
+    { q: "Quantas flexões você consegue fazer?", opts: ["1–10", "11–25", "26–50", "51–75", "76–100", "100+"] },
+    { q: "Qual é seu objetivo?", opts: ["Melhorar minhas flexões", "Bater recordes", "Vencer outras pessoas", "Chegar ao topo do ranking"] },
+    { q: "Quanto tempo você prefere competir?", opts: ["30 segundos", "1 minuto", "2 minutos", "3 minutos", "5 minutos"] },
+    { q: "Como você se considera?", opts: ["Iniciante", "Intermediário", "Avançado", "Muito avançado"] },
+    { q: "O que mais te motiva?", opts: ["Superar meus limites", "Ganhar", "Evoluir", "Competir"] },
+    { q: "Está pronto para começar?", opts: ["Sim"] }
+  ];
+
+  const current = questions[step - 1];
+
+  const select = (opt: string) => {
+    setAnswers({...answers, [step]: opt});
+    if (step < 6) setStep(s => s + 1);
+    else setView('quiz-result');
+  };
+
+  return (
+    <div className="p-6 space-y-8 h-screen flex flex-col pt-12">
+      <div className="space-y-2">
+        <p className="text-[10px] font-black uppercase text-muted-foreground">{step} / 6</p>
+        <Progress value={(step / 6) * 100} className="h-2" />
+      </div>
+      <h2 className="text-3xl font-black italic text-white uppercase">{current.q}</h2>
+      <div className="grid gap-3 flex-1">
+        {current.opts.map(opt => (
+          <Button key={opt} variant="outline" className="h-20 text-lg font-black uppercase" onClick={() => select(opt)}>{opt}</Button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }) => (
+  <div className="p-6 space-y-8 text-center flex flex-col items-center justify-center min-h-screen">
+    <h2 className="text-4xl font-black italic text-white uppercase">🔥 SEU DESAFIO FOI CRIADO!</h2>
+    <p>Agora crie seu perfil para começar.</p>
+    <Button className="game-button w-full" onClick={() => setView('auth')}>CONTINUAR →</Button>
+  </div>
+);
+
+const AuthView = ({ setView }: { setView: (v: View) => void }) => (
+  <div className="p-6 space-y-6 pt-20">
+    <h2 className="text-3xl font-black italic text-white uppercase">👤 CRIE SUA CONTA</h2>
+    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Nome de usuário" />
+    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="E-mail" />
+    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" type="password" placeholder="Senha" />
+    <Button className="game-button w-full" onClick={() => setView('photo-upload')}>🔥 CRIAR CONTA</Button>
+    <Button variant="ghost" className="w-full text-muted-foreground">Já possui conta? Entrar</Button>
+  </div>
+);
+
+const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => (
+  <div className="p-6 space-y-8 text-center pt-20">
+    <h2 className="text-3xl font-black uppercase text-white">📸 AGORA CRIE SEU PERFIL</h2>
+    <div className="w-48 h-48 mx-auto rounded-full bg-secondary flex items-center justify-center text-4xl border-4 border-dashed border-muted-foreground text-muted-foreground">
+      <Plus className="w-12 h-12" />
+    </div>
+    <Button className="game-button w-full" onClick={() => setView('profile-setup')}>✓ Usar esta foto</Button>
+  </div>
+);
+
+const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => (
+  <div className="p-6 space-y-4 pt-20">
+    <h2 className="text-3xl font-black uppercase text-white">👤 SEU PERFIL</h2>
+    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Nome de usuário" />
+    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Idade" />
+    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Peso (kg)" />
+    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Altura (cm)" />
+    <Button className="game-button w-full" onClick={() => setView('profile-ready')}>🔥 SALVAR PERFIL</Button>
+  </div>
+);
+
+const ProfileReady = ({ setView, user }: { setView: (v: View) => void, user: any }) => (
+  <div className="p-6 text-center space-y-8 flex flex-col items-center justify-center min-h-screen">
+    <h2 className="text-4xl font-black italic text-primary">🎉 PERFIL CRIADO!</h2>
+    <p className="text-muted-foreground">"Agora sua jornada começa."</p>
+    <Button className="game-button w-full" onClick={() => setView('dashboard')}>🔥 COMEÇAR</Button>
+  </div>
+);
 
 

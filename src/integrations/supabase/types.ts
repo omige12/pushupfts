@@ -77,8 +77,11 @@ export type Database = {
           id: string
           level: number
           losses: number
+          motivation: string | null
           name: string
           player_id: string
+          preferred_duration: number | null
+          quiz_responses: Json | null
           record: number
           streak: number
           total_pushups: number
@@ -96,8 +99,11 @@ export type Database = {
           id: string
           level?: number
           losses?: number
+          motivation?: string | null
           name: string
           player_id: string
+          preferred_duration?: number | null
+          quiz_responses?: Json | null
           record?: number
           streak?: number
           total_pushups?: number
@@ -115,8 +121,11 @@ export type Database = {
           id?: string
           level?: number
           losses?: number
+          motivation?: string | null
           name?: string
           player_id?: string
+          preferred_duration?: number | null
+          quiz_responses?: Json | null
           record?: number
           streak?: number
           total_pushups?: number
@@ -140,6 +149,10 @@ export type Database = {
         | "Perder peso"
         | "Condicionamento"
         | "Massa muscular"
+        | "Melhorar minhas flexões"
+        | "Bater recordes"
+        | "Vencer outras pessoas"
+        | "Chegar ao topo do ranking"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -272,6 +285,10 @@ export const Constants = {
         "Perder peso",
         "Condicionamento",
         "Massa muscular",
+        "Melhorar minhas flexões",
+        "Bater recordes",
+        "Vencer outras pessoas",
+        "Chegar ao topo do ranking",
       ],
     },
   },
