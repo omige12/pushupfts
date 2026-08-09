@@ -2296,20 +2296,20 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col px-6 justify-center z-10">
+      <div className="flex-1 flex flex-col px-6 justify-center z-10 w-full max-w-md mx-auto">
         <AnimatePresence mode="wait">
           <motion.div 
             key={step}
             initial={{ x: 40, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -40, opacity: 0 }}
-            className="space-y-10"
+            className="space-y-8"
           >
-            <h2 className="text-4xl font-black italic text-white uppercase leading-none tracking-tighter">
+            <h2 className="text-3xl font-black italic text-white uppercase leading-tight tracking-tighter text-center">
               {current.q}
             </h2>
 
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {current.opts.map((opt, i) => (
                 <motion.div
                   key={opt}
@@ -2319,16 +2319,24 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
                 >
                   <Button 
                     variant="outline" 
-                    className="w-full h-20 text-base font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-start px-8 rounded-3xl group shadow-lg active:scale-95" 
+                    className="w-full h-16 text-sm font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-between px-6 rounded-2xl group shadow-lg active:scale-[0.98] relative overflow-hidden" 
                     onClick={() => select(opt)}
                   >
-                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mr-6 group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono">
-                      {String.fromCharCode(65 + i)}
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono text-xs">
+                        {String.fromCharCode(65 + i)}
+                      </div>
+                      <span className="flex-1 text-left">{opt}</span>
                     </div>
-                    <span className="flex-1">{opt}</span>
+                    
                     <div className="w-6 h-6 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary transition-all">
                       <Check className="w-4 h-4 text-white opacity-0 group-hover:opacity-100" />
                     </div>
+
+                    {/* Selection Flash Effect */}
+                    <motion.div 
+                      className="absolute inset-0 bg-primary/20 opacity-0 group-active:opacity-100 transition-opacity"
+                    />
                   </Button>
                 </motion.div>
               ))}
