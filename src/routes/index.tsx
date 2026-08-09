@@ -5,7 +5,7 @@ import confetti from "canvas-confetti";
 import { 
   Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon,
   Flame, ArrowLeft, Timer, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
-  Copy, Check, Search, Zap, Award, Sparkles, Pencil, Camera, Image as ImageIcon, Globe, Loader2, X
+  Copy, Check, Search, Zap, Award, Sparkles, Pencil, Camera, Image as ImageIcon, Globe, Loader2, X, Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -15,10 +15,10 @@ import { PushUpCounter } from "@/components/PushUpCounter";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-
 export const Route = createFileRoute("/")({
   component: App,
 });
+
 
 type View = 'onboarding-start' | 'quiz' | 'quiz-result' | 'auth' | 'photo-upload' | 'profile-setup' | 'profile-ready' | 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle' | 'training-setup';
 
