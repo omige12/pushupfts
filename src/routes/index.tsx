@@ -1619,8 +1619,9 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
       <div className="space-y-4">
         <Button 
           className="game-button bg-energy-red w-full h-36 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
-          onClick={() => setView('select-duration')}
+          onClick={() => onStartMatchmaking(false)}
         >
+
           <div className="relative flex flex-col items-center gap-2">
             <Globe className="w-12 h-12 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
             <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">🌎 JOGAR COM ALEATÓRIOS</span>
