@@ -2149,9 +2149,24 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
 
 const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-screen p-8 text-center space-y-8 bg-gradient-to-b from-primary/20 to-background">
-    <h1 className="text-5xl font-black italic text-white tracking-tighter">💪 PRONTO PARA O DESAFIO?</h1>
-    <p className="text-xl text-muted-foreground font-medium">Descubra seu nível e comece sua evolução.</p>
-    <Button className="game-button bg-primary w-full py-8 text-2xl italic uppercase animate-pulse" onClick={() => setView('quiz')}>🔥 COMEÇAR DESAFIO</Button>
+    <div className="space-y-4">
+      <h1 className="text-5xl font-black italic text-white tracking-tighter">💪 PRONTO PARA O DESAFIO?</h1>
+      <p className="text-xl text-muted-foreground font-medium">Descubra seu nível e comece sua evolução.</p>
+    </div>
+    
+    <div className="w-full space-y-4">
+      <Button className="game-button bg-primary w-full py-8 text-2xl italic uppercase animate-pulse shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" onClick={() => setView('quiz')}>
+        🔥 COMEÇAR DESAFIO
+      </Button>
+      
+      <Button 
+        variant="ghost" 
+        className="w-full text-muted-foreground uppercase text-xs font-black tracking-[0.2em] hover:text-white mt-4"
+        onClick={() => setView('auth')}
+      >
+        JÁ TENHO UMA CONTA • ENTRAR
+      </Button>
+    </div>
   </motion.div>
 );
 
