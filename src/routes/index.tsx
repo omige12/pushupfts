@@ -2173,46 +2173,47 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
 }
 
 const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-between min-h-screen p-8 bg-[#0B0E14] relative overflow-hidden">
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#0B0E14] relative overflow-hidden">
     {/* Background Glows */}
     <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/20 blur-[100px] rounded-full" />
     <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-red-600/20 blur-[100px] rounded-full" />
     
-    <div className="flex-1 flex flex-col items-center justify-center space-y-12 z-10 w-full max-w-md">
+    <div className="flex flex-col items-center justify-center z-10 w-full max-w-md">
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="w-full aspect-square max-w-[280px] relative"
+        className="w-48 h-48 mb-2"
       >
         <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]" alt="Flex Battle Logo" />
       </motion.div>
 
-      <div className="space-y-4 text-center">
-        <h1 className="text-4xl font-black italic text-white tracking-tighter leading-tight uppercase text-shadow-lg">
-          💪 PRONTO PARA<br />O DESAFIO?
+      <div className="space-y-1 text-center mb-8">
+        <h1 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none text-shadow-lg flex flex-col items-center">
+          <span className="text-primary">FLEX</span>
+          <span>BATTLE</span>
         </h1>
-        <p className="text-lg text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">
-          DESCUBRA SEU NÍVEL E<br />COMECE SUA EVOLUÇÃO
+        <p className="text-xs text-muted-foreground font-bold uppercase tracking-[0.3em] leading-relaxed">
+          "Desafie seus limites."
         </p>
       </div>
-    </div>
-    
-    <div className="w-full space-y-4 z-10 max-w-md pb-8">
-      <Button 
-        className="game-button bg-primary w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" 
-        onClick={() => setView('quiz')}
-      >
-        🔥 COMEÇAR DESAFIO
-      </Button>
-      
-      <Button 
-        variant="ghost" 
-        className="w-full text-white/40 uppercase text-[10px] font-black tracking-[0.2em] hover:text-white mt-4"
-        onClick={() => setView('auth')}
-      >
-        JÁ TENHO UMA CONTA • ENTRAR
-      </Button>
+
+      <div className="w-full space-y-4 max-w-[280px]">
+        <Button 
+          className="game-button bg-primary w-full py-7 text-xl italic uppercase shadow-[0_6px_0_0_rgba(29,78,216,0.5)] active:translate-y-[6px] active:shadow-none transition-all" 
+          onClick={() => setView('quiz')}
+        >
+          🔥 COMEÇAR
+        </Button>
+        
+        <Button 
+          variant="ghost" 
+          className="w-full text-white/30 uppercase text-[9px] font-black tracking-[0.2em] hover:text-white"
+          onClick={() => setView('auth')}
+        >
+          JÁ TENHO UMA CONTA
+        </Button>
+      </div>
     </div>
   </motion.div>
 );
