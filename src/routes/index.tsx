@@ -2527,7 +2527,7 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
 
 
 const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
-  const [preview, setPreview] = useState<string | null>(user.avatar);
+  const [preview, setPreview] = useState<string | null>(user.avatar || null);
   
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
