@@ -1125,15 +1125,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 0 })}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Altura (cm)</label>
-                <input 
-                  type="number"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
-                  value={formData.height}
-                  onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) || 0 })}
-                />
-              </div>
+                {/* Altura removida como solicitado */}
             </div>
 
             <div className="space-y-2">
@@ -2053,34 +2045,105 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
   const [answers, setAnswers] = useState<any>({});
   
   const questions = [
-    { q: "Quantas flexões você consegue fazer?", opts: ["1–10", "11–25", "26–50", "51–75", "76–100", "100+"] },
-    { q: "Qual é seu objetivo?", opts: ["Melhorar minhas flexões", "Bater recordes", "Vencer outras pessoas", "Chegar ao topo do ranking"] },
-    { q: "Quanto tempo você prefere competir?", opts: ["30 segundos", "1 minuto", "2 minutos", "3 minutos", "5 minutos"] },
-    { q: "Como você se considera?", opts: ["Iniciante", "Intermediário", "Avançado", "Muito avançado"] },
-    { q: "O que mais te motiva?", opts: ["Superar meus limites", "Ganhar", "Evoluir", "Competir"] },
-    { q: "Está pronto para começar?", opts: ["Sim"] }
+    { 
+      id: 'age',
+      q: "🎂 QUAL É A SUA IDADE?", 
+      opts: ["-18", "18–25", "26–35", "36–45", "46–55", "55+"] 
+    },
+    { 
+      id: 'weight',
+      q: "⚖️ QUAL É O SEU PESO?", 
+      opts: ["-60kg", "61–75kg", "76–90kg", "91–105kg", "105kg+"] 
+    },
+    { 
+      id: 'level',
+      q: "💪 QUAL O SEU NÍVEL ATUAL?", 
+      opts: ["Iniciante (0-10)", "Intermediário (11-30)", "Avançado (31-50)", "Elite (50+)"] 
+    },
+    { 
+      id: 'objective',
+      q: "🎯 QUAL É O SEU OBJETIVO?", 
+      opts: ["Ganhar Massa", "Perder Peso", "Resistência", "Competir no Topo"] 
+    },
+    { 
+      id: 'time',
+      q: "⏱️ QUANTO TEMPO POR DIA?", 
+      opts: ["15 min", "30 min", "1 hora", "Mais de 1 hora"] 
+    },
+    { 
+      id: 'motivation',
+      q: "🔥 O QUE MAIS TE MOTIVA?", 
+      opts: ["Saúde", "Estética", "Disciplina", "Vencer Outros"] 
+    }
   ];
 
   const current = questions[step - 1];
 
   const select = (opt: string) => {
-    setAnswers({...answers, [step]: opt});
-    if (step < 6) setStep(s => s + 1);
-    else setView('quiz-result');
+    setAnswers({...answers, [current.id]: opt});
+    if (step < questions.length) {
+      setStep(s => s + 1);
+    } else {
+      // Salvar progresso inicial no user state
+      setUser({
+        ...user,
+        age: parseInt(answers.age) || 25,
+        weight: parseInt(answers.weight) || 75,
+        goal: answers.objective || 'Competir'
+      });
+      setView('quiz-result');
+    }
   };
 
   return (
-    <div className="p-6 space-y-8 h-screen flex flex-col pt-12">
-      <div className="space-y-2">
-        <p className="text-[10px] font-black uppercase text-muted-foreground">{step} / 6</p>
-        <Progress value={(step / 6) * 100} className="h-2" />
+    <div className="p-6 space-y-8 h-screen flex flex-col pt-12 bg-[#0B0E14]">
+      <div className="space-y-4">
+        <div className="flex justify-between items-end">
+          <p className="text-[10px] font-black uppercase text-primary tracking-[0.2em]">ETAPA {step} / {questions.length}</p>
+          <p className="text-[10px] font-black uppercase text-muted-foreground">{Math.round((step/questions.length)*100)}%</p>
+        </div>
+        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+          <motion.div 
+            className="h-full bg-primary" 
+            initial={{ width: 0 }}
+            animate={{ width: `${(step / questions.length) * 100}%` }}
+          />
+        </div>
       </div>
-      <h2 className="text-3xl font-black italic text-white uppercase">{current.q}</h2>
-      <div className="grid gap-3 flex-1">
-        {current.opts.map(opt => (
-          <Button key={opt} variant="outline" className="h-20 text-lg font-black uppercase" onClick={() => select(opt)}>{opt}</Button>
-        ))}
-      </div>
+
+      <motion.div 
+        key={step}
+        initial={{ x: 20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ x: -20, opacity: 0 }}
+        className="space-y-8 flex-1 flex flex-col"
+      >
+        <h2 className="text-4xl font-black italic text-white uppercase leading-none tracking-tighter">
+          {current.q}
+        </h2>
+
+        <div className="grid gap-3">
+          {current.opts.map((opt, i) => (
+            <motion.div
+              key={opt}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05 }}
+            >
+              <Button 
+                variant="outline" 
+                className="w-full h-16 text-sm font-black uppercase border-white/5 bg-white/5 hover:bg-primary/20 hover:border-primary/50 transition-all justify-start px-6 rounded-2xl group" 
+                onClick={() => select(opt)}
+              >
+                <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center mr-4 group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors">
+                  {String.fromCharCode(65 + i)}
+                </span>
+                {opt}
+              </Button>
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
     </div>
   );
 };
@@ -2104,26 +2167,166 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => (
   </div>
 );
 
-const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => (
-  <div className="p-6 space-y-8 text-center pt-20">
-    <h2 className="text-3xl font-black uppercase text-white">📸 AGORA CRIE SEU PERFIL</h2>
-    <div className="w-48 h-48 mx-auto rounded-full bg-secondary flex items-center justify-center text-4xl border-4 border-dashed border-muted-foreground text-muted-foreground">
-      <Plus className="w-12 h-12" />
-    </div>
-    <Button className="game-button w-full" onClick={() => setView('profile-setup')}>✓ Usar esta foto</Button>
-  </div>
-);
+const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
+  const [preview, setPreview] = useState<string | null>(user.avatar);
+  
+  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        const result = re.target?.result as string;
+        setPreview(result);
+        setUser({ ...user, avatar: result });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
-const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => (
-  <div className="p-6 space-y-4 pt-20">
-    <h2 className="text-3xl font-black uppercase text-white">👤 SEU PERFIL</h2>
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Nome de usuário" />
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Idade" />
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Peso (kg)" />
-    <input className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10" placeholder="Altura (cm)" />
-    <Button className="game-button w-full" onClick={() => setView('profile-ready')}>🔥 SALVAR PERFIL</Button>
-  </div>
-);
+  return (
+    <div className="p-6 space-y-8 text-center pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
+      <div className="space-y-2">
+        <h2 className="text-3xl font-black italic uppercase text-white tracking-tighter">📸 SUA FOTO DE ATLETA</h2>
+        <p className="text-muted-foreground text-sm uppercase font-bold tracking-widest">Identidade no campo de batalha</p>
+      </div>
+
+      <div className="relative mx-auto group">
+        <div className="w-48 h-48 rounded-full bg-white/5 border-4 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5">
+          {preview ? (
+            <img src={preview} className="w-full h-full object-cover" alt="Profile" />
+          ) : (
+            <div className="flex flex-col items-center gap-2 text-muted-foreground">
+              <Plus className="w-12 h-12" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Adicionar</span>
+            </div>
+          )}
+        </div>
+        
+        <input 
+          type="file" 
+          accept="image/*" 
+          className="absolute inset-0 opacity-0 cursor-pointer" 
+          onChange={handleFile}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <Button variant="outline" className="h-14 border-white/5 bg-white/5 uppercase font-black relative overflow-hidden">
+          <Camera className="w-4 h-4 mr-2" /> Câmera
+          <input type="file" accept="image/*" capture="user" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
+        </Button>
+        <Button variant="outline" className="h-14 border-white/5 bg-white/5 uppercase font-black relative overflow-hidden">
+          <ImageIcon className="w-4 h-4 mr-2" /> Galeria
+          <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
+        </Button>
+      </div>
+
+      <div className="flex-1" />
+      
+      <Button 
+        className="game-button w-full py-8 text-xl italic uppercase" 
+        onClick={() => setView('profile-setup')}
+        disabled={!preview}
+      >
+        PRÓXIMO PASSO →
+      </Button>
+    </div>
+  );
+};
+
+const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
+  const [formData, setFormData] = useState({
+    name: user.name || '',
+    age: user.age || '',
+    weight: user.weight || ''
+  });
+
+  const save = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const updatedUser = {
+          ...user,
+          name: formData.name.toUpperCase(),
+          age: parseInt(formData.age as string),
+          weight: parseInt(formData.weight as string)
+        };
+        
+        const { error } = await supabase
+          .from('profiles')
+          .update({
+            name: updatedUser.name,
+            age: updatedUser.age,
+            weight: updatedUser.weight,
+            avatar_url: user.avatar,
+            goal: user.goal
+          })
+          .eq('id', session.user.id);
+
+        if (!error) {
+          setUser(updatedUser);
+          setView('profile-ready');
+        } else {
+          toast.error("Erro ao salvar perfil");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro de conexão");
+    }
+  };
+
+  return (
+    <div className="p-6 space-y-6 pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
+      <h2 className="text-3xl font-black italic uppercase text-white tracking-tighter">💪 INFORMAÇÕES FINAIS</h2>
+      
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nome de Atleta</label>
+          <input 
+            className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-lg uppercase tracking-tight"
+            placeholder="EX: GUERREIRO"
+            value={formData.name}
+            onChange={(e) => setFormData({...formData, name: e.target.value})}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Idade</label>
+            <input 
+              type="number"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
+              placeholder="00"
+              value={formData.age}
+              onChange={(e) => setFormData({...formData, age: e.target.value})}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Peso (kg)</label>
+            <input 
+              type="number"
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
+              placeholder="00"
+              value={formData.weight}
+              onChange={(e) => setFormData({...formData, weight: e.target.value})}
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex-1" />
+      
+      <Button 
+        className="game-button w-full py-8 text-xl italic uppercase" 
+        onClick={save}
+        disabled={!formData.name || !formData.age || !formData.weight}
+      >
+        SALVAR PERFIL COMPLETO →
+      </Button>
+    </div>
+  );
+};
 
 const ProfileReady = ({ setView, user }: { setView: (v: View) => void, user: any }) => (
   <div className="p-6 text-center space-y-8 flex flex-col items-center justify-center min-h-screen">
