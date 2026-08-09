@@ -2528,49 +2528,47 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">IDENTIDADE DE GUERRA</p>
         </div>
 
-      <div className="relative mx-auto group">
-        <div className="w-48 h-48 rounded-full bg-white/5 border-4 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5">
-          {preview ? (
-            <img src={preview} className="w-full h-full object-cover" alt="Profile" />
-          ) : (
-            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-              <Plus className="w-12 h-12" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Adicionar</span>
-            </div>
-          )}
+        <div className="relative mx-auto group">
+          <div className="w-48 h-48 rounded-full bg-white/5 border-4 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5 shadow-2xl">
+            {preview ? (
+              <img src={preview} className="w-full h-full object-cover" alt="Profile" />
+            ) : (
+              <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                <Plus className="w-12 h-12" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Adicionar</span>
+              </div>
+            )}
+          </div>
+          
+          <input 
+            type="file" 
+            accept="image/*" 
+            className="absolute inset-0 opacity-0 cursor-pointer" 
+            onChange={handleFile}
+          />
         </div>
+
+        <div className="grid grid-cols-2 gap-4 w-full">
+          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95">
+            <Camera className="w-4 h-4 mr-2" /> Câmera
+            <input type="file" accept="image/*" capture="user" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
+          </Button>
+          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95">
+            <ImageIcon className="w-4 h-4 mr-2" /> Galeria
+            <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
+          </Button>
+        </div>
+
+        <div className="flex-1" />
         
-        <input 
-          type="file" 
-          accept="image/*" 
-          className="absolute inset-0 opacity-0 cursor-pointer" 
-          onChange={handleFile}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline" className="h-14 border-white/5 bg-white/5 uppercase font-black relative overflow-hidden">
-          <Camera className="w-4 h-4 mr-2" /> Câmera
-          <input type="file" accept="image/*" capture="user" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
-        </Button>
-        <Button variant="outline" className="h-14 border-white/5 bg-white/5 uppercase font-black relative overflow-hidden">
-          <ImageIcon className="w-4 h-4 mr-2" /> Galeria
-          <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
+        <Button 
+          className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" 
+          onClick={() => setView('profile-setup')}
+          disabled={!preview}
+        >
+          PRÓXIMO PASSO →
         </Button>
       </div>
-
-      <div className="flex-1" />
-      
-      <Button 
-        className="game-button w-full py-8 text-xl italic uppercase" 
-        onClick={() => {
-          console.log("PhotoUpload: Moving to profile-setup...");
-          setView('profile-setup');
-        }}
-        disabled={!preview}
-      >
-        PRÓXIMO PASSO →
-      </Button>
     </div>
   );
 };
