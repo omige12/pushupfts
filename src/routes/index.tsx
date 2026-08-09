@@ -2236,7 +2236,10 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
   <div className="p-6 space-y-8 text-center flex flex-col items-center justify-center min-h-screen">
     <h2 className="text-4xl font-black italic text-white uppercase">🔥 SEU DESAFIO FOI CRIADO!</h2>
     <p>Agora crie seu perfil para começar.</p>
-    <Button className="game-button w-full" onClick={() => setView('auth')}>CONTINUAR →</Button>
+    <Button className="game-button w-full" onClick={() => {
+      console.log("QuizResult: Moving to auth...");
+      setView('auth');
+    }}>CONTINUAR →</Button>
   </div>
 );
 
@@ -2261,7 +2264,8 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
         }
       });
       if (error) throw error;
-      toast.success("Conta criada! Confirme seu e-mail ou continue.");
+      toast.success("Conta criada!");
+      console.log("AuthView: SignUp success, moving to photo-upload...");
       setView('photo-upload');
     } catch (err: any) {
       toast.error(err.message || "Erro ao criar conta");
@@ -2365,7 +2369,10 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
       
       <Button 
         className="game-button w-full py-8 text-xl italic uppercase" 
-        onClick={() => setView('profile-setup')}
+        onClick={() => {
+          console.log("PhotoUpload: Moving to profile-setup...");
+          setView('profile-setup');
+        }}
         disabled={!preview}
       >
         PRÓXIMO PASSO →
@@ -2415,9 +2422,14 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           age: updatedUser.age,
           weight: updatedUser.weight,
           avatar_url: user.avatar,
-          goal: user.goal,
+          goal: (user.goal || 'Bater recordes') as any,
           level: 1,
           xp: 0,
+          total_pushups: 0,
+          wins: 0,
+          losses: 0,
+          record: 0,
+          streak: 0,
           updated_at: new Date().toISOString()
         });
 
