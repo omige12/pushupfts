@@ -1249,7 +1249,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Idade</label>
                 <input 
@@ -1268,7 +1268,6 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 0 })}
                 />
               </div>
-                {/* Altura removida como solicitado */}
             </div>
 
             <div className="space-y-2">
