@@ -11,17 +11,20 @@ import { Badge } from '@/components/ui/badge';
 interface PushUpCounterProps {
   onCount: (count: number) => void;
   isActive: boolean;
+  showSkeleton?: boolean;
+  soundEnabled?: boolean;
 }
 
 // Sound effect generator using Web Audio API
-const playBeep = () => {
+const playPushUpSound = (enabled: boolean = true) => {
+  if (!enabled) return;
   try {
     const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
     const oscillator = audioCtx.createOscillator();
     const gainNode = audioCtx.createGain();
 
     oscillator.type = 'sine';
-    oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // High pitch A5
+    oscillator.frequency.setValueAtTime(660, audioCtx.currentTime); // Professional beep
     gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
 
