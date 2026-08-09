@@ -928,43 +928,39 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-[#0A0F1E] flex flex-col overflow-hidden">
       {/* HUD Superior — Mobile Optimized */}
       <div className="relative pt-8 px-4 pb-4 bg-gradient-to-b from-black/80 to-transparent z-20">
-        <div className="max-w-md mx-auto space-y-4">
-          
-          {/* Profiles Side-by-Side */}
-          <div className="flex justify-between items-center px-4">
-            {/* Player Profile */}
+        <div className="max-w-md mx-auto">
+          {/* Side-by-side Profiles */}
+          <div className="flex justify-between items-center px-6">
             <div className="flex flex-col items-center">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-600 p-0.5 shadow-lg border border-white/10 overflow-hidden">
-                {user.avatar ? (
-                  <img src={user.avatar} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full bg-slate-900 flex items-center justify-center">
-                    <UserIcon className="w-6 h-6 text-primary" />
-                  </div>
-                )}
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-600 p-0.5 shadow-lg border border-white/20">
+                <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-900 flex items-center justify-center">
+                  {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-6 h-6 text-primary" />}
+                </div>
               </div>
-              <span className="text-[9px] font-black italic text-white uppercase mt-1 tracking-tighter truncate max-w-[60px]">{user.name}</span>
+              <span className="text-[9px] font-black italic text-white uppercase mt-1 tracking-tighter truncate max-w-[70px]">{user.name}</span>
             </div>
 
-            {/* Timer Center */}
-            <div className="flex flex-col items-center justify-center bg-black/60 backdrop-blur-xl px-6 py-2 rounded-2xl border border-white/10 shadow-2xl">
-              <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] mb-0.5">TIME</span>
-              <span className={`text-4xl font-black italic tabular-nums leading-none tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
-                {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
-              </span>
+            <div className="flex flex-col items-center">
+              <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.3em] mb-0.5">TEMPO</span>
+              <div className="bg-black/60 backdrop-blur-xl px-5 py-2 rounded-2xl border border-white/10 shadow-2xl">
+                <span className={`text-3xl font-black italic tabular-nums leading-none tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+                  {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                </span>
+              </div>
             </div>
 
-            {/* Opponent Profile (Hidden in Training) */}
             {!isTraining ? (
               <div className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-energy-red to-red-800 p-0.5 shadow-lg border border-white/10 overflow-hidden">
-                  <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-energy-red to-red-800 p-0.5 shadow-lg border border-white/20">
+                  <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-900 flex items-center justify-center">
+                    <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
+                  </div>
                 </div>
-                <span className="text-[9px] font-black italic text-white uppercase mt-1 tracking-tighter truncate max-w-[60px]">{activeOpponent?.name || 'OPONENTE'}</span>
+                <span className="text-[9px] font-black italic text-white uppercase mt-1 tracking-tighter truncate max-w-[70px]">{activeOpponent?.name || 'ADVERSÁRIO'}</span>
               </div>
             ) : (
               <div className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-2xl bg-white/5 p-0.5 shadow-lg border border-dashed border-white/20 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 p-0.5 shadow-lg border border-dashed border-yellow-500/40 flex items-center justify-center">
                   <Trophy className="w-6 h-6 text-gold" />
                 </div>
                 <span className="text-[9px] font-black italic text-gold uppercase mt-1 tracking-tighter">RECORDE</span>
@@ -972,41 +968,42 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
             )}
           </div>
 
-          {/* Large Counters */}
-          <div className={`flex ${isTraining ? 'justify-center' : 'justify-between'} items-center px-8 pt-2`}>
-            <div className="flex flex-col items-center">
-              <span className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">SUAS</span>
-              <motion.span 
-                key={playerPushups}
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1.2 }}
-                className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_25px_rgba(59,130,246,0.6)]"
-              >
-                {playerPushups}
-              </motion.span>
-            </div>
-
-            {!isTraining && (
+          {/* Large Flexões Label and Counters */}
+          <div className="mt-6 text-center">
+            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em] italic">FLEXÕES</span>
+            <div className={`flex ${isTraining ? 'justify-center gap-12' : 'justify-between px-10'} items-center mt-2`}>
               <div className="flex flex-col items-center">
-                <span className="text-[10px] font-black text-energy-red uppercase tracking-widest mb-1">DELE</span>
+                <motion.span 
+                  key={playerPushups}
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_20px_rgba(59,130,246,0.6)]"
+                >
+                  {playerPushups}
+                </motion.span>
+                {isTraining && <span className="text-[8px] font-black text-primary/60 uppercase tracking-widest mt-1">ATUAIS</span>}
+              </div>
+
+              {!isTraining && (
                 <motion.span 
                   key={oppPushups}
                   initial={{ scale: 0.8 }}
-                  animate={{ scale: 1.2 }}
-                  className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_25px_rgba(239,68,68,0.6)]"
+                  animate={{ scale: 1 }}
+                  className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]"
                 >
                   {oppPushups}
                 </motion.span>
-              </div>
-            )}
-            
-            {isTraining && (
-              <div className="flex flex-col items-center ml-8 opacity-40">
-                <span className="text-[10px] font-black text-gold uppercase tracking-widest mb-1">META</span>
-                <span className="text-4xl font-black italic text-white leading-none">{user.record}</span>
-              </div>
-            )}
+              )}
+
+              {isTraining && (
+                <div className="flex flex-col items-center">
+                  <span className="text-4xl font-black italic text-gold/60 leading-none mt-4">{user.record}</span>
+                  <span className="text-[8px] font-black text-gold/40 uppercase tracking-widest mt-1">MELHOR</span>
+                </div>
+              )}
+            </div>
           </div>
+        </div>
 
           {/* Battle Bar */}
           {!isTraining && (
