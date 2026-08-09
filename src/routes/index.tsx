@@ -2468,7 +2468,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Idade</label>
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Idade</label>
             <input 
               type="number"
               className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
@@ -2478,7 +2478,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Peso (kg)</label>
+            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Peso (kg)</label>
             <input 
               type="number"
               className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
@@ -2493,11 +2493,24 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
       <div className="flex-1" />
       
       <Button 
-        className="game-button w-full py-8 text-xl italic uppercase" 
+        className={`game-button w-full py-8 text-xl italic uppercase transition-all ${
+          status === 'success' ? 'bg-green-600' : 
+          status === 'error' ? 'bg-red-600' : 'bg-primary'
+        }`} 
         onClick={save}
-        disabled={!formData.name || !formData.age || !formData.weight}
+        disabled={isSaving || status === 'success'}
       >
-        SALVAR PERFIL COMPLETO →
+        {status === 'saving' ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO SEU PERFIL...
+          </span>
+        ) : status === 'success' ? (
+          "✅ PERFIL CRIADO!"
+        ) : status === 'error' ? (
+          "Tentar novamente"
+        ) : (
+          "SALVAR E CRIAR PERFIL COMPLETO →"
+        )}
       </Button>
     </div>
   );
@@ -2510,5 +2523,6 @@ const ProfileReady = ({ setView, user }: { setView: (v: View) => void, user: any
     <Button className="game-button w-full" onClick={() => setView('dashboard')}>🔥 COMEÇAR</Button>
   </div>
 );
+
 
 
