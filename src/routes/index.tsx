@@ -1125,15 +1125,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 0 })}
                 />
               </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Altura (cm)</label>
-                <input 
-                  type="number"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
-                  value={formData.height}
-                  onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) || 0 })}
-                />
-              </div>
+                {/* Altura removida como solicitado */}
             </div>
 
             <div className="space-y-2">
