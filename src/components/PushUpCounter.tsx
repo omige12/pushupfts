@@ -185,28 +185,26 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
           ctx.stroke();
         };
 
-        const skeletonColor = status === 'correct' ? '#3B82F6' : status === 'warning' ? '#FBBF24' : '#EF4444';
-        const jointColor = '#FFFFFF';
+        const skeletonColor = '#FFFFFF';
+        const jointColor = '#EAB308'; // Yellow-600/Gold
 
-        // Left Side Connections
+        // Connections (White lines)
         drawLine(leftShoulder, leftElbow, skeletonColor);
         drawLine(leftElbow, leftWrist, skeletonColor);
         drawLine(leftShoulder, leftHip, skeletonColor);
         drawLine(leftHip, leftKnee, skeletonColor);
         drawLine(leftKnee, leftAnkle, skeletonColor);
 
-        // Right Side Connections
         drawLine(rightShoulder, rightElbow, skeletonColor);
         drawLine(rightElbow, rightWrist, skeletonColor);
         drawLine(rightShoulder, rightHip, skeletonColor);
         drawLine(rightHip, rightKnee, skeletonColor);
         drawLine(rightKnee, rightAnkle, skeletonColor);
 
-        // Torso/Shoulder/Hip bridge
         drawLine(leftShoulder, rightShoulder, skeletonColor);
         drawLine(leftHip, rightHip, skeletonColor);
 
-        // Draw Joints/Points
+        // Draw Joints (Large Yellow Points)
         const joints = [
           leftShoulder, leftElbow, leftWrist, leftHip, leftKnee, leftAnkle,
           rightShoulder, rightElbow, rightWrist, rightHip, rightKnee, rightAnkle
@@ -214,17 +212,16 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
 
         joints.forEach(pt => {
           if (!pt || (pt.visibility !== undefined && pt.visibility < 0.5)) return;
-
           
-          // Joint Outer Glow
+          // Joint Outer Glow (Yellow)
           ctx.beginPath();
-          ctx.arc(pt.x * canvasRef.current!.width, pt.y * canvasRef.current!.height, 8, 0, 2 * Math.PI);
-          ctx.fillStyle = skeletonColor + '44';
+          ctx.arc(pt.x * canvasRef.current!.width, pt.y * canvasRef.current!.height, 12, 0, 2 * Math.PI);
+          ctx.fillStyle = jointColor + '33';
           ctx.fill();
 
-          // Joint Core
+          // Joint Core (Yellow)
           ctx.beginPath();
-          ctx.arc(pt.x * canvasRef.current!.width, pt.y * canvasRef.current!.height, 4, 0, 2 * Math.PI);
+          ctx.arc(pt.x * canvasRef.current!.width, pt.y * canvasRef.current!.height, 8, 0, 2 * Math.PI);
           ctx.fillStyle = jointColor;
           ctx.fill();
         });
@@ -293,25 +290,26 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
             <span className="text-sm font-black italic uppercase tracking-tight">{feedback}</span>
           </div>
           
-          <div className="bg-black/80 backdrop-blur-2xl px-14 py-8 rounded-[4rem] border-4 border-primary/50 shadow-[0_0_80px_rgba(59,130,246,0.5)] relative group overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
+          <div className="bg-yellow-500/90 backdrop-blur-2xl w-40 h-40 rounded-full border-[6px] border-yellow-300 shadow-[0_0_60px_rgba(234,179,8,0.6)] relative flex items-center justify-center">
+            {/* Impact Ring Animation */}
+            <motion.div
+              key={count + '-ring'}
+              initial={{ scale: 1, opacity: 0.5 }}
+              animate={{ scale: 1.5, opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0 border-4 border-yellow-200 rounded-full"
+            />
+            
             <motion.div
               key={count}
-              initial={{ scale: 0.7, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ 
-                type: "spring",
-                stiffness: 400,
-                damping: 10
-              }}
-              className="relative flex flex-col items-center"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 500, damping: 15 }}
+              className="flex flex-col items-center"
             >
-              <span className="text-9xl font-black italic text-white drop-shadow-[0_0_30px_rgba(59,130,246,0.8)] tracking-tighter">
+              <span className="text-7xl font-black italic text-black tracking-tighter">
                 {count}
               </span>
-              <div className="absolute -bottom-2">
-                <Badge className="bg-primary text-[8px] font-black italic tracking-widest px-2 py-0 border-none animate-bounce">PUSH-UP</Badge>
-              </div>
             </motion.div>
           </div>
         </div>
