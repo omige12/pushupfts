@@ -2318,14 +2318,31 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
     setLoading(true);
     try {
       if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
           email,
           password,
         });
         if (error) throw error;
-        toast.success("✅ Login realizado com sucesso!");
-        // window.location.reload() or let fetchProfile pick it up
-        setTimeout(() => window.location.reload(), 1000);
+        
+        if (data.user) {
+          toast.success("✅ Login realizado com sucesso!");
+          
+          // Check if profile exists
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', data.user.id)
+            .maybeSingle();
+            
+          if (profile) {
+            // Direct reload if profile exists to jump to dashboard
+            window.location.reload();
+          } else {
+            // If they have a user account but no profile record yet, 
+            // maybe they dropped out during photo upload/setup
+            setView('photo-upload');
+          }
+        }
       } else {
         const { error } = await supabase.auth.signUp({
           email,
@@ -2335,8 +2352,7 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
           }
         });
         if (error) throw error;
-        toast.success("✅ Conta criada! Verifique seu e-mail se necessário.");
-        console.log("AuthView: SignUp success, moving to photo-upload...");
+        toast.success("✅ Conta criada!");
         setView('photo-upload');
       }
     } catch (err: any) {
