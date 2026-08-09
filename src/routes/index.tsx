@@ -379,56 +379,63 @@ function App() {
       });
     }
 
-    const { data: { user: authUser } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
 
     // Save match to database
-    if (authUser) {
+    if (session?.user) {
+      const matchResult = won ? 'win' : (pushups === oppPushups ? 'draw' : 'loss');
+      
       await supabase.from('matches').insert({
-        player_id: authUser.id,
+        player_id: session.user.id,
         opponent_name: oppName,
         duration: duration,
         player_score: pushups,
         opponent_score: oppPushups,
         status: 'completed',
-        result: won ? 'win' : (pushups === oppPushups ? 'draw' : 'loss'),
+        result: matchResult,
         xp_gained: xpGained
       });
 
       // Update profile
+      const newWins = won ? user.wins + 1 : user.wins;
+      const newLosses = matchResult === 'loss' ? user.losses + 1 : user.losses;
+      const newRecord = Math.max(user.record, pushups);
+      const newTotalPushups = user.totalPushups + pushups;
+
       await supabase.from('profiles').update({
         xp: newTotalXp,
-        wins: won ? user.wins + 1 : user.wins,
-        losses: !won && pushups !== oppPushups ? user.losses + 1 : user.losses,
-        record: Math.max(user.record, pushups),
-        total_pushups: user.totalPushups + pushups,
+        wins: newWins,
+        losses: newLosses,
+        record: newRecord,
+        total_pushups: newTotalPushups,
         updated_at: new Date().toISOString()
-      }).eq('id', authUser.id);
+      }).eq('id', session.user.id);
+
+      // Update local state to match DB
+      setUser(prev => {
+        const newMatch = {
+          id: Math.random().toString(36).substr(2, 9),
+          opp: oppName,
+          res: won ? "Vitória" : (pushups === oppPushups ? "Empate" : "Derrota"),
+          score: `${pushups}-${oppPushups}`,
+          xp: `+${xpGained}`,
+          date: new Date().toISOString().split('T')[0]
+        };
+
+        return {
+          ...prev,
+          wins: newWins,
+          losses: newLosses,
+          record: newRecord,
+          totalPushups: newTotalPushups,
+          xp: newTotalXp,
+          patent: newRank.patentName,
+          subRank: newRank.subRank,
+          level: newRank.level,
+          history: [newMatch, ...prev.history].slice(0, 15)
+        };
+      });
     }
-
-    setUser(prev => {
-      const newMatch = {
-        id: Math.random().toString(36).substr(2, 9),
-        opp: oppName,
-        res: won ? "Vitória" : (pushups === oppPushups ? "Empate" : "Derrota"),
-        score: `${pushups}-${oppPushups}`,
-        xp: `+${xpGained}`,
-        date: new Date().toISOString().split('T')[0]
-      };
-
-      return {
-        ...prev,
-        wins: won ? prev.wins + 1 : prev.wins,
-        losses: !won && pushups !== oppPushups ? prev.losses + 1 : prev.losses,
-        record: Math.max(prev.record, pushups),
-        totalPushups: prev.totalPushups + pushups,
-        xp: newTotalXp,
-        patent: newRank.patentName,
-        subRank: newRank.subRank,
-        level: newRank.level,
-        history: [newMatch, ...prev.history].slice(0, 15)
-
-      };
-    });
   };
 
   const renderView = () => {
@@ -1883,6 +1890,44 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
 
 function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   const [tab, setTab] = useState<'local' | 'friends'>('local');
+  const [rankingData, setRankingData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRanking = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('id, name, xp, record, wins, streak, avatar_url, player_id')
+          .order('xp', { ascending: false })
+          .limit(50);
+
+        if (error) throw error;
+
+        if (data) {
+          setRankingData(data.map(p => ({
+            id: p.id,
+            name: p.name,
+            count: Number(p.xp),
+            avatar: p.name.substring(0, 2).toUpperCase(),
+            avatarUrl: p.avatar_url,
+            isUser: p.player_id === user.id,
+            record: p.record,
+            wins: p.wins,
+            streak: p.streak,
+            patent: getRankInfo(Number(p.xp)).patentName
+          })));
+        }
+      } catch (err) {
+        console.error("Error fetching ranking:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRanking();
+  }, [user.id, tab]);
   
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24">
@@ -1904,40 +1949,47 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
           </button>
         </div>
 
-        <div className="space-y-3">
-          {(tab === 'friends' ? [
-            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12, patent: user.patent },
-            { name: "Amigo 1", count: 8200, avatar: "A1", color: "bg-secondary", record: 42, wins: 56, streak: 3, patent: "Prata" },
-          ] : [
-            { name: "Mega Flex", count: 12500, avatar: "MF", color: "bg-gold", record: 120, wins: 342, streak: 45, patent: "Lenda" },
-            { name: "Push Master", count: 11200, avatar: "PM", color: "bg-slate-400", record: 98, wins: 287, streak: 32, patent: "Mestre" },
-            { name: "Elite Beast", count: 10800, avatar: "EB", color: "bg-orange-600", record: 92, wins: 215, streak: 21, patent: "Pro" },
-            { name: "Guerreiro Alpha", count: 10450, avatar: "GA", color: "bg-primary", isUser: true, record: 54, wins: 87, streak: 12, patent: user.patent },
-            { name: "Titan X", count: 9800, avatar: "TX", color: "bg-secondary", record: 88, wins: 156, streak: 15, patent: "Diamante" },
-          ]).map((player: any, i) => (
-            <div key={i} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${player.isUser ? 'bg-primary/20 border-primary/50 scale-[1.02] shadow-[0_0_20px_rgba(96,165,250,0.2)]' : 'bg-white/5 border-white/5'}`}>
-              <span className={`w-8 font-black text-lg italic ${i === 0 ? 'text-gold' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-orange-400' : 'text-muted-foreground'}`}>
-                {i + 1}º
-              </span>
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-white text-lg ${player.color}`}>
-                {player.avatar}
-              </div>
-              <div className="flex-1">
-                <span className="font-black text-white tracking-tight">{getPatentEmoji(player.patent || "Bronze")} {player.name}</span>
-                {player.isUser && <Badge className="ml-2 bg-primary text-[8px] h-4 py-0">VOCÊ</Badge>}
-                <div className="flex items-center gap-3 text-[7px] font-black text-muted-foreground uppercase tracking-widest mt-1">
-                  <div className="flex items-center gap-0.5"><Target className="w-2.5 h-2.5 text-gold" /> {player.record}</div>
-                  <div className="flex items-center gap-0.5"><Shield className="w-2.5 h-2.5 text-blue-400" /> {player.wins}W</div>
-                  <div className="flex items-center gap-0.5"><Flame className="w-2.5 h-2.5 text-energy-red" /> {player.streak}D</div>
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          </div>
+        ) : rankingData.length === 0 ? (
+          <div className="text-center py-10 glass-panel p-8 border-white/5">
+            <Trophy className="w-12 h-12 text-white/20 mx-auto mb-4" />
+            <p className="text-sm font-black text-muted-foreground uppercase italic">O Ranking está vazio.</p>
+            <p className="text-[10px] text-muted-foreground/60 mt-1 uppercase">Seja o primeiro a pontuar!</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {rankingData.map((player: any, i) => (
+              <div key={player.id} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${player.isUser ? 'bg-primary/20 border-primary/50 scale-[1.02] shadow-[0_0_20px_rgba(96,165,250,0.2)]' : 'bg-white/5 border-white/5'}`}>
+                <span className={`w-8 font-black text-lg italic ${i === 0 ? 'text-gold' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-orange-400' : 'text-muted-foreground'}`}>
+                  {i + 1}º
+                </span>
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-white text-lg overflow-hidden ${player.avatarUrl ? 'bg-black' : 'bg-secondary'}`}>
+                  {player.avatarUrl ? (
+                    <img src={player.avatarUrl} className="w-full h-full object-cover" />
+                  ) : player.avatar}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1 overflow-hidden">
+                    <span className="font-black text-white tracking-tight truncate">{getPatentEmoji(player.patent)} {player.name}</span>
+                    {player.isUser && <Badge className="shrink-0 bg-primary text-[8px] h-4 py-0">VOCÊ</Badge>}
+                  </div>
+                  <div className="flex items-center gap-3 text-[7px] font-black text-muted-foreground uppercase tracking-widest mt-1">
+                    <div className="flex items-center gap-0.5"><Target className="w-2.5 h-2.5 text-gold" /> {player.record}</div>
+                    <div className="flex items-center gap-0.5"><Shield className="w-2.5 h-2.5 text-blue-400" /> {player.wins}W</div>
+                    <div className="flex items-center gap-0.5"><Flame className="w-2.5 h-2.5 text-energy-red" /> {player.streak}D</div>
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <span className="font-black text-white italic">{player.count.toLocaleString()}</span>
+                  <p className="text-[8px] font-black text-muted-foreground uppercase">pontos</p>
                 </div>
               </div>
-              <div className="text-right">
-                <span className="font-black text-white italic">{player.count.toLocaleString()}</span>
-                <p className="text-[8px] font-black text-muted-foreground uppercase">pontos</p>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -1993,9 +2045,10 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       label: 'Patentes', 
       icon: TrendingUp,
       items: [
-        { title: "Alcançar Bronze", desc: "O início de tudo", req: 1, current: user.patent !== "Nenhuma" ? 1 : 0, reward: "XP +50", icon: Award },
-        { title: "Alcançar Prata", desc: "Evoluindo sempre", req: 1, current: ["Prata", "Ouro", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +500", icon: Sparkles },
-        { title: "Alcançar Ouro", desc: "Jogador Experiente", req: 1, current: ["Ouro", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +1000", icon: Flame },
+        { title: "Alcançar Bronze", desc: "O início de tudo", req: 1, current: user.patent && user.patent !== "Nenhuma" ? 1 : 0, reward: "XP +50", icon: Award },
+        { title: "Alcançar Prata", desc: "Evoluindo sempre", req: 1, current: ["Prata", "Ouro", "Platina", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +500", icon: Sparkles },
+        { title: "Alcançar Ouro", desc: "Jogador Experiente", req: 1, current: ["Ouro", "Platina", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +1000", icon: Flame },
+        { title: "Alcançar Platina", desc: "Nível Superior", req: 1, current: ["Platina", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +2000", icon: Zap },
         { title: "Alcançar Lendário", desc: "O topo do mundo", req: 1, current: user.patent === "Lendário" ? 1 : 0, reward: "Avatar Divino", icon: Trophy },
       ]
     }
