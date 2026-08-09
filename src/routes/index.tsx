@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
   component: App,
 });
 
-type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle';
+type View = 'dashboard' | 'challenge' | 'select-bot' | 'select-duration' | 'profile' | 'settings' | 'edit-profile' | 'multiplayer' | 'achievements' | 'support' | 'support-chat' | 'history' | 'friend-challenge' | 'ranking' | 'patents-list' | 'matchmaking' | 'pvp-battle' | 'training-setup';
 
 const RANKS = [
   "Bronze III", "Bronze II", "Bronze I",
@@ -166,8 +166,10 @@ function App() {
   const [view, setView] = useState<View>('dashboard');
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
   const [opponent, setOpponent] = useState<any | null>(null);
+  const [isTraining, setIsTraining] = useState(false);
   const [duration, setDuration] = useState(60);
   const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{
     id: string;
@@ -368,29 +370,30 @@ function App() {
     );
 
     switch (view) {
-      case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
-      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setView('select-duration'); }} />;
-      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} onStartMatchmaking={() => setView('matchmaking')} />;
-      case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); }} onComplete={updateStats} />;
+      case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
+      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
+      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
+      case 'training-setup': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
+      case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} isTraining={isTraining} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); setIsTraining(false); }} onComplete={updateStats} />;
       case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('challenge'); }} onCancel={() => setView('select-duration')} duration={duration} />;
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
-      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={() => setView('select-duration')} />;
-
+      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={(training) => { setIsTraining(training); setView('select-duration'); }} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
       case 'history': return <FullHistory setView={setView} user={user} />;
-      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setView('select-duration'); }} />;
+      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
       case 'patents-list': return <PatentsList setView={setView} user={user} />;
-      default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} />;
+      default: return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
     }
+
   };
 
 
-  const isBattleActive = view === 'challenge' && (selectedBot || opponent);
+  const isBattleActive = view === 'challenge' && (selectedBot || opponent || isTraining);
   
   useEffect(() => {
     if (isBattleActive) {
@@ -477,7 +480,7 @@ function App() {
 
 
 
-function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void }) {
+function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void, setIsTraining: (t: boolean) => void }) {
   const stats = user;
   const rank = getRankInfo(user.xp);
 
@@ -579,8 +582,9 @@ function Dashboard({ setView, user, setSelectedBot }: { setView: (v: View) => vo
 
         <Button 
           className="game-button bg-white/10 w-full h-20 flex justify-center items-center border-white/10 shadow-[0_6px_0_0_rgba(0,0,0,0.2)] active:scale-95 active:translate-y-[6px] active:shadow-none" 
-          onClick={() => { setSelectedBot(null); setView('select-duration'); }}
+          onClick={() => { setIsTraining(true); setView('training-setup'); }}
         >
+
           <Dumbbell className="w-10 h-10 text-white opacity-80" />
           <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Treinar</span>
         </Button>
@@ -649,7 +653,7 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
   );
 }
 
-function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot: any, onStartMatchmaking?: () => void }) {
+function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, isTraining, onStartTraining }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot?: any, onStartMatchmaking?: () => void, isTraining?: boolean, onStartTraining?: () => void }) {
   const [localDuration, setLocalDuration] = useState(60);
   const durations = [
     { label: '30 seg', value: 30 },
@@ -662,9 +666,10 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking }: 
   return (
     <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6 flex flex-col min-h-screen pb-24">
       <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView(selectedBot ? 'select-bot' : 'multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">⚔️ ESCOLHA A DURAÇÃO</h2>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView(isTraining ? 'dashboard' : (selectedBot ? 'select-bot' : 'multiplayer'))}><ArrowLeft className="w-5 h-5" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">{isTraining ? '⏱️ ESCOLHA O TEMPO' : '⚔️ ESCOLHA A DURAÇÃO'}</h2>
       </div>
+
 
       <div className="grid gap-4 flex-1">
         {durations.map(d => (
@@ -691,21 +696,24 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking }: 
       <Button 
         className="game-button bg-primary w-full py-8 text-xl italic uppercase mt-8 shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all"
         onClick={() => {
-          if (selectedBot) {
+          if (isTraining && onStartTraining) {
+            onStartTraining();
+          } else if (selectedBot) {
             setView('challenge');
           } else if (onStartMatchmaking) {
             onStartMatchmaking();
           }
         }}
       >
-        {selectedBot ? "⚔️ INICIAR DESAFIO" : "⚔️ ENCONTRAR ADVERSÁRIO"}
+        {isTraining ? "💪 COMEÇAR TREINO" : (selectedBot ? "⚔️ INICIAR DESAFIO" : "⚔️ ENCONTRAR ADVERSÁRIO")}
       </Button>
+
     </motion.div>
   );
 }
 
 
-function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot: any, opponent?: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void }) {
+function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraining }: { bot: any, opponent?: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void, isTraining?: boolean }) {
   const activeOpponent = bot || opponent;
   const [playerPushups, setPlayerPushups] = useState(0);
   const [oppPushups, setOppPushups] = useState(0);
@@ -729,12 +737,14 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
       setLastWhoIsAhead('opponent');
       return `⚠️ ${activeOpponent?.name || 'ADVERSÁRIO'} ESTÁ NA FRENTE!`;
     }
+    if (isTraining) return "";
     if (diff === 0 && lastWhoIsAhead !== null) {
       setLastWhoIsAhead(null);
       return "⚔️ DISPUTA ACIRRADA!";
     }
     return "";
-  }, [playerPushups, oppPushups, gameState, lastWhoIsAhead, activeOpponent]);
+  }, [playerPushups, oppPushups, gameState, lastWhoIsAhead, activeOpponent, isTraining]);
+
 
   useEffect(() => {
     if (gameState === 'countdown') {
@@ -752,25 +762,31 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
         
         // Pushup logic for opponent
         let increment = 0;
-        if (bot) {
-          const rate = bot.pushupRate || 0.1;
-          const guaranteed = Math.floor(rate);
-          const chance = rate - guaranteed;
-          increment = guaranteed + (Math.random() < chance ? 1 : 0);
-        } else if (opponent) {
-          // Simple real-time simulation for "human" opponent
-          const baseRate = (opponent.record / 60) * 0.9; 
-          increment = Math.random() < baseRate ? 1 : 0;
+        if (!isTraining) {
+          if (bot) {
+            // Adaptive bot behavior
+            const baseRate = bot.pushupRate || 0.1;
+            const adaptiveFactor = playerPushups > oppPushups ? 1.2 : 0.8;
+            const rate = baseRate * adaptiveFactor;
+            
+            const guaranteed = Math.floor(rate);
+            const chance = rate - guaranteed;
+            increment = guaranteed + (Math.random() < chance ? 1 : 0);
+          } else if (opponent) {
+            const baseRate = (opponent.record / 60) * 0.9; 
+            increment = Math.random() < baseRate ? 1 : 0;
+          }
+
+          if (increment > 0) {
+            setOppPushups(b => b + increment);
+          }
         }
 
-        if (increment > 0) {
-          setOppPushups(b => b + increment);
-        }
       }, 1000);
       return () => clearInterval(timer);
     } else if (gameState === 'playing' && timeLeft === 0) {
       setGameState('finished');
-      const won = playerPushups >= oppPushups;
+      const won = isTraining ? true : playerPushups >= oppPushups;
       if (won) {
         confetti({ 
           particleCount: 250, 
@@ -778,10 +794,11 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
           origin: { y: 0.6 },
           colors: ['#FFD700', '#60A5FA', '#F43F5E']
         });
-        onComplete(true, playerPushups, 150 + playerPushups, activeOpponent.name, oppPushups);
+        onComplete(true, playerPushups, isTraining ? playerPushups * 2 : 150 + playerPushups, activeOpponent?.name || 'TREINO', oppPushups);
       } else {
-        onComplete(false, playerPushups, 45 + playerPushups, activeOpponent.name, oppPushups);
+        onComplete(false, playerPushups, 45 + playerPushups, activeOpponent?.name || 'BOT', oppPushups);
       }
+
     }
   }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete]);
 
@@ -789,7 +806,9 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-background flex flex-col overflow-hidden">
       {/* HUD Superior */}
       <div className="flex justify-between items-center p-4 bg-black/40 backdrop-blur-md border-b border-white/10 z-20">
-        <motion.div 
+        {!isTraining ? (
+          <motion.div 
+
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           className={`flex-1 glass-panel p-3 border-2 transition-colors duration-500 ${playerPushups > oppPushups ? 'border-primary shadow-[0_0_15px_rgba(59,130,246,0.3)] bg-primary/20' : 'border-white/10 bg-white/5'}`}
@@ -806,7 +825,11 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
               </div>
             </div>
           </div>
-        </motion.div>
+          </motion.div>
+        ) : (
+          <div className="flex-1" />
+        )}
+
 
         <div className="flex flex-col items-center px-4">
            <div className="bg-card border-2 border-white/10 w-14 h-14 rounded-full flex flex-col items-center justify-center shadow-xl mb-1">
@@ -814,11 +837,13 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
              <span className="text-[8px] font-black text-white/40 uppercase">seg</span>
            </div>
            <div className="bg-white/10 px-2 py-0.5 rounded-full border border-white/10">
-              <span className="text-[8px] font-black text-white/60 uppercase tracking-tighter">BATTLE</span>
+              <span className="text-[8px] font-black text-white/60 uppercase tracking-tighter">{isTraining ? 'TREINO' : 'BATTLE'}</span>
            </div>
         </div>
 
-        <motion.div 
+        {!isTraining ? (
+          <motion.div 
+
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           className={`flex-1 glass-panel p-3 border-2 transition-colors duration-500 text-right ${oppPushups > playerPushups ? 'border-energy-red shadow-[0_0_15px_rgba(244,63,94,0.3)] bg-energy-red/20' : 'border-white/10 bg-white/5'}`}
@@ -835,8 +860,12 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
               <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
             </div>
           </div>
-        </motion.div>
+          </motion.div>
+        ) : (
+          <div className="flex-1" />
+        )}
       </div>
+
 
       <div className="flex-1 relative flex flex-col">
         {/* Battle Area - Counts */}
@@ -846,26 +875,32 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
                key={playerPushups}
                initial={{ scale: 0.8 }}
                animate={{ scale: 1 }}
-               className="flex flex-col items-center"
+               className={`flex flex-col items-center ${isTraining ? 'w-full' : ''}`}
              >
                <span className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-1">VOCÊ</span>
-               <span className="text-[120px] font-black italic text-white drop-shadow-[0_0_30px_rgba(59,130,246,0.6)] leading-none">{playerPushups}</span>
+               <span className="text-[140px] font-black italic text-white drop-shadow-[0_0_30px_rgba(59,130,246,0.6)] leading-none tabular-nums tracking-tighter">{playerPushups}</span>
              </motion.div>
 
-             <div className="flex flex-col items-center">
-                <span className="text-2xl font-black italic text-white/30 tracking-tighter mb-2">VS</span>
-                <div className="h-20 w-[2px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
-             </div>
+             {!isTraining && (
+               <>
+                 <div className="flex flex-col items-center mx-4">
+                    <span className="text-4xl font-black italic text-white/20 tracking-tighter mb-2">VS</span>
+                    <div className="h-24 w-[2px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+                 </div>
 
-             <motion.div 
-               key={oppPushups}
-               initial={{ scale: 0.8 }}
-               animate={{ scale: 1 }}
-               className="flex flex-col items-center"
-             >
-               <span className="text-[120px] font-black italic text-white drop-shadow-[0_0_30px_rgba(244,63,94,0.6)] leading-none">{oppPushups}</span>
-               <span className="text-energy-red text-[10px] font-black uppercase tracking-[0.2em] mt-1">ADVERSÁRIO</span>
-             </motion.div>
+                 <motion.div 
+                   key={oppPushups}
+                   initial={{ scale: 0.8 }}
+                   animate={{ scale: 1 }}
+                   className="flex flex-col items-center"
+                 >
+                   <span className="text-[140px] font-black italic text-white drop-shadow-[0_0_30px_rgba(244,63,94,0.6)] leading-none tabular-nums tracking-tighter">{oppPushups}</span>
+                   <span className="text-energy-red text-[10px] font-black uppercase tracking-[0.2em] mt-1">ADVERSÁRIO</span>
+                 </motion.div>
+               </>
+             )}
+
+
            </div>
         </div>
 
@@ -906,8 +941,9 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
               className="flex flex-col items-center"
             >
               <span className="text-[180px] font-black italic text-white drop-shadow-[0_0_60px_rgba(255,255,255,0.8)] leading-none">
-                {countdown === 0 ? "VAI!" : countdown}
+                {countdown === 0 ? "🔥 VAI!" : countdown}
               </span>
+
               <p className="text-white/40 font-black italic tracking-[0.5em] mt-8 uppercase animate-pulse">
                 PREPARE-SE
               </p>
@@ -924,13 +960,14 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
           >
             <div className="glass-panel p-8 w-full max-w-sm text-center space-y-8 border-primary/20">
               <div className="space-y-2">
-                <Trophy className={`w-20 h-20 mx-auto ${playerPushups >= oppPushups ? 'text-gold' : 'text-muted-foreground opacity-50'}`} />
+                <Trophy className={`w-20 h-20 mx-auto ${isTraining || playerPushups >= oppPushups ? 'text-gold' : 'text-muted-foreground opacity-50'}`} />
                 <h2 className="text-5xl font-black italic text-white tracking-tighter">
-                  {playerPushups >= oppPushups ? "VITÓRIA!" : "DERROTA!"}
+                  {isTraining ? "TREINO CONCLUÍDO!" : (playerPushups >= oppPushups ? "VITÓRIA!" : "DERROTA!")}
                 </h2>
                 <p className="text-xs font-black text-muted-foreground uppercase tracking-widest italic">
-                  RESULTADO FINAL: {playerPushups} vs {oppPushups}
+                  {isTraining ? `TOTAL DE FLEXÕES: ${playerPushups}` : `RESULTADO FINAL: ${playerPushups} vs ${oppPushups}`}
                 </p>
+
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -944,12 +981,15 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
                 </div>
                 <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
                   <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">XP Ganho</p>
-                  <p className="text-xl font-black text-primary">+{playerPushups >= oppPushups ? 150 + playerPushups : 45 + playerPushups}</p>
+                  <p className="text-xl font-black text-primary">+{isTraining ? playerPushups * 2 : (playerPushups >= oppPushups ? 150 + playerPushups : 45 + playerPushups)}</p>
                 </div>
-                <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
-                  <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Rival</p>
-                  <p className="text-xl font-black text-energy-red">{oppPushups}</p>
-                </div>
+                {!isTraining && (
+                  <div className="bg-white/5 p-4 rounded-2xl border border-white/5">
+                    <p className="text-[8px] font-black text-muted-foreground uppercase tracking-widest mb-1">Rival</p>
+                    <p className="text-xl font-black text-energy-red">{oppPushups}</p>
+                  </div>
+                )}
+
               </div>
 
               <Button onClick={onExit} className="game-button bg-primary w-full py-8 text-xl italic uppercase">SAIR DO DUELO</Button>
@@ -1550,7 +1590,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
   );
 }
 
-function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: () => void }) {
+function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void }) {
   const [searchId, setSearchId] = useState('');
   const [foundPlayer, setFoundPlayer] = useState<any>(null);
 
@@ -1580,8 +1620,9 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
       <div className="space-y-4">
         <Button 
           className="game-button bg-energy-red w-full h-36 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
-          onClick={() => setView('select-duration')}
+          onClick={() => onStartMatchmaking(false)}
         >
+
           <div className="relative flex flex-col items-center gap-2">
             <Globe className="w-12 h-12 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
             <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">🌎 JOGAR COM ALEATÓRIOS</span>
