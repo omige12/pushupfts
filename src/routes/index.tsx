@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 import { 
   Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon,
   Flame, ArrowLeft, Timer, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
-  Copy, Check, Search, Zap, Award, Sparkles, Pencil, Camera, Image as ImageIcon, Globe, Loader2, X, Plus
+  Copy, Check, Search, Zap, Award, Sparkles, Pencil, Camera, Image as ImageIcon, Globe, Loader2, X, Plus,
+  Mail, Lock, HelpCircle
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -14,6 +15,7 @@ import { Progress } from "@/components/ui/progress";
 import { PushUpCounter } from "@/components/PushUpCounter";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import logoAsset from "@/assets/logo.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -660,39 +662,48 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
           onClick={() => setView('edit-profile')}
         >
-          <UserCircle className="w-10 h-10 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-          <span className="text-[10px] font-black italic tracking-tighter uppercase">Editar Perfil</span>
+          <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+            <UserCircle className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          </div>
+          <span className="text-[10px] font-black italic tracking-tighter uppercase">Meu Perfil</span>
         </Button>
         <Button 
           className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
           onClick={() => setView('achievements')}
         >
-          <Medal className="w-10 h-10 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+            <Medal className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          </div>
           <span className="text-[10px] font-black italic tracking-tighter uppercase">Conquistas</span>
         </Button>
       </div>
 
       <div className="space-y-4 pt-2">
         <Button 
-          className="game-button bg-energy-red w-full h-36 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
+          className="game-button bg-energy-red w-full h-40 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
           onClick={() => setView('multiplayer')}
         >
-          <div className="relative flex flex-col items-center gap-2">
-            <Swords className="w-16 h-16 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+          <div className="relative z-10 flex flex-col items-center gap-3">
+            <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
+              <Swords className="w-10 h-10 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
+            </div>
             <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Multijogador</span>
           </div>
-          <div className="absolute top-0 right-0 p-2">
-            <Badge className="bg-yellow-400 text-black font-black italic text-[8px] animate-pulse">RANKED</Badge>
+          <div className="absolute top-0 right-0 p-3">
+            <Badge className="bg-yellow-400 text-black font-black italic text-[10px] animate-pulse px-3 py-1">NOVO MODO</Badge>
           </div>
+          {/* Decorative background element */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
         </Button>
 
         <Button 
-          className="game-button bg-white/10 w-full h-20 flex justify-center items-center border-white/10 shadow-[0_6px_0_0_rgba(0,0,0,0.2)] active:scale-95 active:translate-y-[6px] active:shadow-none" 
+          className="game-button bg-white/10 w-full h-24 flex justify-center items-center border-white/10 shadow-[0_6px_0_0_rgba(0,0,0,0.2)] active:scale-95 active:translate-y-[6px] active:shadow-none" 
           onClick={() => { setIsTraining(true); setView('training-setup'); }}
         >
-
-          <Dumbbell className="w-10 h-10 text-white opacity-80" />
-          <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Treinar</span>
+          <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center">
+            <Dumbbell className="w-7 h-7 text-white opacity-80" />
+          </div>
+          <span className="text-2xl tracking-tighter italic font-black uppercase ml-4">Modo Treino</span>
         </Button>
       </div>
 
@@ -2051,10 +2062,11 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
     { name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", rewards: ["Moldura Básica", "XP Base"], divisions: ["III", "II", "I"] },
     { name: "Prata", min: 1500, emoji: "🥈", color: "from-slate-400 to-slate-200", rewards: ["Moldura Prateada", "XP +10%"], divisions: ["III", "II", "I"] },
     { name: "Ouro", min: 3000, emoji: "🥇", color: "from-yellow-600 to-yellow-300", rewards: ["Moldura Dourada", "XP +25%"], divisions: ["III", "II", "I"] },
-    { name: "Diamante", min: 4500, emoji: "💎", color: "from-blue-600 to-cyan-300", rewards: ["Moldura Diamante", "XP +50%"], divisions: ["III", "II", "I"] },
-    { name: "Pro", min: 6000, emoji: "🔥", color: "from-red-600 to-orange-500", rewards: ["Efeito de Fogo", "XP +100%"], divisions: ["III", "II", "I"] },
-    { name: "Mestre", min: 7500, emoji: "👑", color: "from-purple-600 to-pink-500", rewards: ["Coroa Especial", "XP +150%"], divisions: ["III", "II", "I"] },
-    { name: "Lendário", min: 9000, emoji: "🌟", color: "from-gold to-white", rewards: ["Aura Lendária", "XP +200%"], divisions: ["III", "II", "I"] }
+    { name: "Platina", min: 4500, emoji: "💠", color: "from-cyan-600 to-blue-400", rewards: ["Efeito Ciano", "XP +40%"], divisions: ["III", "II", "I"] },
+    { name: "Diamante", min: 6000, emoji: "💎", color: "from-blue-600 to-cyan-300", rewards: ["Moldura Diamante", "XP +60%"], divisions: ["III", "II", "I"] },
+    { name: "Pro", min: 7500, emoji: "🔥", color: "from-red-600 to-orange-500", rewards: ["Efeito de Fogo", "XP +100%"], divisions: ["III", "II", "I"] },
+    { name: "Mestre", min: 9000, emoji: "👑", color: "from-purple-600 to-pink-500", rewards: ["Coroa Especial", "XP +150%"], divisions: ["III", "II", "I"] },
+    { name: "Lendário", min: 10500, emoji: "🌟", color: "from-gold to-white", rewards: ["Aura Lendária", "XP +200%"], divisions: ["III", "II", "I"] }
 
   ];
 
@@ -2161,20 +2173,42 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
 }
 
 const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-screen p-8 text-center space-y-8 bg-gradient-to-b from-primary/20 to-background">
-    <div className="space-y-4">
-      <h1 className="text-5xl font-black italic text-white tracking-tighter">💪 PRONTO PARA O DESAFIO?</h1>
-      <p className="text-xl text-muted-foreground font-medium">Descubra seu nível e comece sua evolução.</p>
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-between min-h-screen p-8 bg-[#0B0E14] relative overflow-hidden">
+    {/* Background Glows */}
+    <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/20 blur-[100px] rounded-full" />
+    <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-red-600/20 blur-[100px] rounded-full" />
+    
+    <div className="flex-1 flex flex-col items-center justify-center space-y-12 z-10 w-full max-w-md">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="w-full aspect-square max-w-[280px] relative"
+      >
+        <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]" alt="Flex Battle Logo" />
+      </motion.div>
+
+      <div className="space-y-4 text-center">
+        <h1 className="text-4xl font-black italic text-white tracking-tighter leading-tight uppercase text-shadow-lg">
+          💪 PRONTO PARA<br />O DESAFIO?
+        </h1>
+        <p className="text-lg text-muted-foreground font-bold uppercase tracking-widest leading-relaxed">
+          DESCUBRA SEU NÍVEL E<br />COMECE SUA EVOLUÇÃO
+        </p>
+      </div>
     </div>
     
-    <div className="w-full space-y-4">
-      <Button className="game-button bg-primary w-full py-8 text-2xl italic uppercase animate-pulse shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" onClick={() => setView('quiz')}>
+    <div className="w-full space-y-4 z-10 max-w-md pb-8">
+      <Button 
+        className="game-button bg-primary w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" 
+        onClick={() => setView('quiz')}
+      >
         🔥 COMEÇAR DESAFIO
       </Button>
       
       <Button 
         variant="ghost" 
-        className="w-full text-muted-foreground uppercase text-xs font-black tracking-[0.2em] hover:text-white mt-4"
+        className="w-full text-white/40 uppercase text-[10px] font-black tracking-[0.2em] hover:text-white mt-4"
         onClick={() => setView('auth')}
       >
         JÁ TENHO UMA CONTA • ENTRAR
@@ -2245,54 +2279,66 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
   };
 
   return (
-    <div className="p-6 space-y-8 h-screen flex flex-col pt-12 bg-[#0B0E14]">
-      <div className="space-y-4">
+    <div className="flex flex-col min-h-screen bg-[#0B0E14] relative overflow-hidden">
+      {/* Progress Bar at the top */}
+      <div className="pt-12 px-6 space-y-4 z-20">
         <div className="flex justify-between items-end">
           <p className="text-[10px] font-black uppercase text-primary tracking-[0.2em]">ETAPA {step} / {questions.length}</p>
           <p className="text-[10px] font-black uppercase text-muted-foreground">{Math.round((step/questions.length)*100)}%</p>
         </div>
-        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
           <motion.div 
-            className="h-full bg-primary" 
+            className="h-full bg-primary shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
             initial={{ width: 0 }}
             animate={{ width: `${(step / questions.length) * 100}%` }}
           />
         </div>
       </div>
 
-      <motion.div 
-        key={step}
-        initial={{ x: 20, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ x: -20, opacity: 0 }}
-        className="space-y-8 flex-1 flex flex-col"
-      >
-        <h2 className="text-4xl font-black italic text-white uppercase leading-none tracking-tighter">
-          {current.q}
-        </h2>
+      <div className="flex-1 flex flex-col px-6 justify-center z-10">
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={step}
+            initial={{ x: 40, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -40, opacity: 0 }}
+            className="space-y-10"
+          >
+            <h2 className="text-4xl font-black italic text-white uppercase leading-none tracking-tighter">
+              {current.q}
+            </h2>
 
-        <div className="grid gap-3">
-          {current.opts.map((opt, i) => (
-            <motion.div
-              key={opt}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-            >
-              <Button 
-                variant="outline" 
-                className="w-full h-16 text-sm font-black uppercase border-white/5 bg-white/5 hover:bg-primary/20 hover:border-primary/50 transition-all justify-start px-6 rounded-2xl group" 
-                onClick={() => select(opt)}
-              >
-                <span className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center mr-4 group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors">
-                  {String.fromCharCode(65 + i)}
-                </span>
-                {opt}
-              </Button>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+            <div className="grid gap-4">
+              {current.opts.map((opt, i) => (
+                <motion.div
+                  key={opt}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Button 
+                    variant="outline" 
+                    className="w-full h-20 text-base font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-start px-8 rounded-3xl group shadow-lg active:scale-95" 
+                    onClick={() => select(opt)}
+                  >
+                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mr-6 group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono">
+                      {String.fromCharCode(65 + i)}
+                    </div>
+                    <span className="flex-1">{opt}</span>
+                    <div className="w-6 h-6 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary transition-all">
+                      <Check className="w-4 h-4 text-white opacity-0 group-hover:opacity-100" />
+                    </div>
+                  </Button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+      
+      {/* Visual Decoration */}
+      <div className="absolute top-1/2 left-[-20%] w-[60%] h-[40%] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-[-10%] w-[40%] h-[30%] bg-energy-red/5 blur-[100px] rounded-full pointer-events-none" />
     </div>
   );
 };
@@ -2312,7 +2358,6 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
 
 const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   const [loading, setLoading] = useState(false);
-  // Default to login, but switch to signup if coming from the quiz
   const [isLogin, setIsLogin] = useState(() => {
     const isReg = localStorage.getItem('onboarding_registration') === 'true';
     if (isReg) localStorage.removeItem('onboarding_registration');
@@ -2339,8 +2384,6 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
         
         if (data.user) {
           toast.success("✅ Login realizado com sucesso!");
-          
-          // Check if profile exists
           const { data: profile } = await supabase
             .from('profiles')
             .select('id')
@@ -2348,11 +2391,8 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
             .maybeSingle();
             
           if (profile) {
-            // Direct reload if profile exists to jump to dashboard
             window.location.reload();
           } else {
-            // If they have a user account but no profile record yet, 
-            // maybe they dropped out during photo upload/setup
             setView('photo-upload');
           }
         }
@@ -2377,48 +2417,96 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   };
 
   return (
-    <div className="p-6 space-y-6 pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
-      <h2 className="text-3xl font-black italic text-white uppercase tracking-tighter">
-        {isLogin ? "👤 ACESSAR CONTA" : "👤 CRIE SUA CONTA"}
-      </h2>
-      <div className="space-y-4">
-        {!isLogin && (
-          <input 
-            className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all font-bold" 
-            placeholder="Nome de usuário" 
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        )}
-        <input 
-          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all font-bold" 
-          placeholder="E-mail" 
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input 
-          className="w-full bg-white/5 p-4 rounded-xl text-white border border-white/10 focus:border-primary outline-none transition-all font-bold" 
-          type="password" 
-          placeholder="Senha" 
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
+      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-primary/10 blur-[100px] rounded-full" />
+      
+      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+        <motion.div
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="w-32 h-32 relative mb-2"
+        >
+          <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]" alt="Logo" />
+        </motion.div>
+
+        <div className="w-full space-y-2 text-center">
+          <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter leading-none">
+            {isLogin ? "BEM-VINDO" : "CRIAR CONTA"}
+          </h2>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">
+            {isLogin ? "DE VOLTA À ARENA" : "INICIE SUA JORNADA"}
+          </p>
+        </div>
+
+        <div className="w-full space-y-4">
+          {!isLogin && (
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 flex items-center gap-2">
+                <UserIcon className="w-3 h-3" /> NOME DE USUÁRIO
+              </label>
+              <input 
+                className="w-full bg-white/5 p-5 rounded-2xl text-white border border-white/10 focus:border-primary focus:bg-primary/5 outline-none transition-all font-bold italic tracking-tight" 
+                placeholder="Ex: GUERREIRO" 
+                value={name}
+                onChange={(e) => setName(e.target.value.toUpperCase())}
+              />
+            </div>
+          )}
+          
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 flex items-center gap-2">
+              <Mail className="w-3 h-3" /> E-MAIL
+            </label>
+            <input 
+              className="w-full bg-white/5 p-5 rounded-2xl text-white border border-white/10 focus:border-primary focus:bg-primary/5 outline-none transition-all font-bold italic tracking-tight" 
+              placeholder="seu@email.com" 
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 flex items-center gap-2">
+              <Lock className="w-3 h-3" /> SENHA
+            </label>
+            <input 
+              className="w-full bg-white/5 p-5 rounded-2xl text-white border border-white/10 focus:border-primary focus:bg-primary/5 outline-none transition-all font-bold italic tracking-tight" 
+              type="password" 
+              placeholder="••••••••" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          
+          {isLogin && (
+            <button className="text-[10px] font-black text-primary uppercase tracking-widest ml-4 hover:text-white transition-colors">
+              ESQUECI MINHA SENHA
+            </button>
+          )}
+        </div>
+
+        <Button 
+          className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all mt-4" 
+          onClick={handleAuth}
+          disabled={loading}
+        >
+          {loading ? (
+            <div className="flex items-center gap-3">
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <span>{isLogin ? "ENTRANDO..." : "CRIANDO CONTA..."}</span>
+            </div>
+          ) : (isLogin ? "ENTRAR" : "CRIAR CONTA")}
+        </Button>
+
+        <Button 
+          variant="ghost" 
+          className="w-full text-white/40 uppercase text-[10px] font-black tracking-[0.2em] hover:text-white"
+          onClick={() => setIsLogin(!isLogin)}
+        >
+          {isLogin ? "Ainda não possui uma conta? Criar conta" : "Já possui uma conta? Entrar"}
+        </Button>
       </div>
-      <Button 
-        className="game-button w-full py-8 text-xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none" 
-        onClick={handleAuth}
-        disabled={loading}
-      >
-        {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : (isLogin ? "🔥 ENTRAR" : "🔥 CRIAR CONTA")}
-      </Button>
-      <Button 
-        variant="ghost" 
-        className="w-full text-muted-foreground uppercase text-[10px] font-black tracking-widest hover:text-white"
-        onClick={() => setIsLogin(!isLogin)}
-      >
-        {isLogin ? "Ainda não tem conta? Criar" : "Já possui conta? Entrar"}
-      </Button>
     </div>
   );
 };
@@ -2441,55 +2529,56 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
   };
 
   return (
-    <div className="p-6 space-y-8 text-center pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
-      <div className="space-y-2">
-        <h2 className="text-3xl font-black italic uppercase text-white tracking-tighter">📸 SUA FOTO DE ATLETA</h2>
-        <p className="text-muted-foreground text-sm uppercase font-bold tracking-widest">Identidade no campo de batalha</p>
-      </div>
-
-      <div className="relative mx-auto group">
-        <div className="w-48 h-48 rounded-full bg-white/5 border-4 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5">
-          {preview ? (
-            <img src={preview} className="w-full h-full object-cover" alt="Profile" />
-          ) : (
-            <div className="flex flex-col items-center gap-2 text-muted-foreground">
-              <Plus className="w-12 h-12" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Adicionar</span>
-            </div>
-          )}
-        </div>
-        
-        <input 
-          type="file" 
-          accept="image/*" 
-          className="absolute inset-0 opacity-0 cursor-pointer" 
-          onChange={handleFile}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <Button variant="outline" className="h-14 border-white/5 bg-white/5 uppercase font-black relative overflow-hidden">
-          <Camera className="w-4 h-4 mr-2" /> Câmera
-          <input type="file" accept="image/*" capture="user" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
-        </Button>
-        <Button variant="outline" className="h-14 border-white/5 bg-white/5 uppercase font-black relative overflow-hidden">
-          <ImageIcon className="w-4 h-4 mr-2" /> Galeria
-          <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
-        </Button>
-      </div>
-
-      <div className="flex-1" />
+    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
       
-      <Button 
-        className="game-button w-full py-8 text-xl italic uppercase" 
-        onClick={() => {
-          console.log("PhotoUpload: Moving to profile-setup...");
-          setView('profile-setup');
-        }}
-        disabled={!preview}
-      >
-        PRÓXIMO PASSO →
-      </Button>
+      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+        <div className="text-center space-y-2">
+          <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">📸 FOTO DE ATLETA</h2>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">IDENTIDADE DE GUERRA</p>
+        </div>
+
+        <div className="relative mx-auto group">
+          <div className="w-48 h-48 rounded-full bg-white/5 border-4 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5 shadow-2xl">
+            {preview ? (
+              <img src={preview} className="w-full h-full object-cover" alt="Profile" />
+            ) : (
+              <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                <Plus className="w-12 h-12" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Adicionar</span>
+              </div>
+            )}
+          </div>
+          
+          <input 
+            type="file" 
+            accept="image/*" 
+            className="absolute inset-0 opacity-0 cursor-pointer" 
+            onChange={handleFile}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 w-full">
+          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95">
+            <Camera className="w-4 h-4 mr-2" /> Câmera
+            <input type="file" accept="image/*" capture="user" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
+          </Button>
+          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95">
+            <ImageIcon className="w-4 h-4 mr-2" /> Galeria
+            <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
+          </Button>
+        </div>
+
+        <div className="flex-1" />
+        
+        <Button 
+          className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" 
+          onClick={() => setView('profile-setup')}
+          disabled={!preview}
+        >
+          PRÓXIMO PASSO →
+        </Button>
+      </div>
     </div>
   );
 };
@@ -2613,76 +2702,83 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
 
   return (
-    <div className="p-6 space-y-6 pt-20 flex flex-col min-h-screen bg-[#0B0E14]">
-      <h2 className="text-3xl font-black italic uppercase text-white tracking-tighter">💪 INFORMAÇÕES FINAIS</h2>
+    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
+      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
       
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nome de Atleta</label>
-          <input 
-            className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-lg uppercase tracking-tight"
-            placeholder="EX: GUERREIRO"
-            value={formData.name}
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
-          />
+      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+        <div className="text-center space-y-2">
+          <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">💪 INFORMAÇÕES FINAIS</h2>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">QUASE LÁ, ATLETA</p>
+        </div>
+        
+        <div className="w-full space-y-6">
+          <div className="space-y-1.5">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4">Nome de Atleta</label>
+            <input 
+              className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-xl uppercase tracking-tight"
+              placeholder="EX: GUERREIRO"
+              value={formData.name}
+              onChange={(e) => setFormData({...formData, name: e.target.value.toUpperCase()})}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 text-center block">Idade</label>
+              <input 
+                type="number"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center text-xl"
+                placeholder="00"
+                value={formData.age}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 120)) {
+                    setFormData({...formData, age: val});
+                  }
+                }}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 text-center block">Peso (kg)</label>
+              <input 
+                type="number"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center text-xl"
+                placeholder="00"
+                value={formData.weight}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 500)) {
+                    setFormData({...formData, weight: val});
+                  }
+                }}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Idade</label>
-            <input 
-              type="number"
-              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
-              placeholder="00"
-              value={formData.age}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 120)) {
-                  setFormData({...formData, age: val});
-                }
-              }}
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Peso (kg)</label>
-            <input 
-              type="number"
-              className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
-              placeholder="00"
-              value={formData.weight}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === '' || (parseInt(val) >= 0 && parseInt(val) <= 500)) {
-                  setFormData({...formData, weight: val});
-                }
-              }}
-            />
-          </div>
-        </div>
+        <div className="flex-1" />
+        
+        <Button 
+          className={`game-button w-full py-8 text-2xl italic uppercase transition-all shadow-[0_8px_0_0_rgba(0,0,0,0.3)] active:translate-y-[8px] active:shadow-none ${
+            status === 'success' ? 'bg-green-600' : 
+            status === 'error' ? 'bg-red-600' : 'bg-primary shadow-[0_8px_0_0_rgba(29,78,216,0.5)]'
+          }`} 
+          onClick={save}
+          disabled={isSaving || status === 'success'}
+        >
+          {status === 'saving' ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO CONTA...
+            </span>
+          ) : status === 'success' ? (
+            "✅ CONTA CRIADA!"
+          ) : status === 'error' ? (
+            "❌ TENTAR NOVAMENTE"
+          ) : (
+            "CRIAR CONTA →"
+          )}
+        </Button>
       </div>
-
-      <div className="flex-1" />
-      
-      <Button 
-        className={`game-button w-full py-8 text-xl italic uppercase transition-all ${
-          status === 'success' ? 'bg-green-600' : 
-          status === 'error' ? 'bg-red-600' : 'bg-primary'
-        }`} 
-        onClick={save}
-        disabled={isSaving || status === 'success'}
-      >
-        {status === 'saving' ? (
-          <span className="flex items-center gap-2">
-            <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO SEU PERFIL...
-          </span>
-        ) : status === 'success' ? (
-          "✅ PERFIL CRIADO!"
-        ) : status === 'error' ? (
-          "Tentar novamente"
-        ) : (
-          "SALVAR E CRIAR PERFIL COMPLETO →"
-        )}
-      </Button>
     </div>
   );
 };
