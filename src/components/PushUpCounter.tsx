@@ -287,7 +287,7 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({ onCount, isActive 
             {postureStatus === 'correct' ? <CheckCircle2 className="w-5 h-5" /> : 
              postureStatus === 'warning' ? <AlertCircle className="w-5 h-5" /> : 
              <Shield className="w-5 h-5" />}
-            <span className="text-sm font-black italic uppercase tracking-tight">{feedback}</span>
+            <span className="text-sm font-black italic uppercase tracking-tight">{isActive ? feedback : "Aguardando duelo..."}</span>
           </div>
           
           <div className="bg-yellow-500/90 backdrop-blur-2xl w-40 h-40 rounded-full border-[6px] border-yellow-300 shadow-[0_0_60px_rgba(234,179,8,0.6)] relative flex items-center justify-center">
