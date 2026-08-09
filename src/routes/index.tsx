@@ -219,73 +219,76 @@ function App() {
   // Load user data from Supabase
   useEffect(() => {
     const fetchProfile = async () => {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
-      if (authUser) {
-        const { data: profile, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', authUser.id)
-          .single();
-
-        if (profile) {
-          const rankInfo = getRankInfo(Number(profile.xp));
-          setUser(prev => ({
-            ...prev,
-            id: profile.player_id,
-            name: profile.name,
-            age: profile.age || prev.age,
-            weight: profile.weight || prev.weight,
-            height: profile.height || prev.height,
-            goal: profile.goal || prev.goal,
-            level: profile.level,
-            xp: Number(profile.xp),
-            wins: profile.wins,
-            losses: profile.losses,
-            record: profile.record,
-            totalPushups: profile.total_pushups,
-            streak: profile.streak,
-            avatar: profile.avatar_url,
-            achievements: profile.achievements || [],
-          }));
-
-          // Fetch match history
-          const { data: matches } = await supabase
-            .from('matches')
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          const { data: profile, error } = await supabase
+            .from('profiles')
             .select('*')
-            .eq('player_id', authUser.id)
-            .order('created_at', { ascending: false })
-            .limit(15);
-          
-          if (matches) {
+            .eq('id', session.user.id)
+            .maybeSingle();
+
+          if (profile) {
             setUser(prev => ({
               ...prev,
-              history: matches.map(m => ({
-                id: m.id,
-                opp: m.opponent_name,
-                res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
-                score: `${m.player_score}-${m.opponent_score}`,
-                xp: `+${m.xp_gained}`,
-                date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
-              }))
+              id: profile.player_id,
+              name: profile.name,
+              age: profile.age || prev.age,
+              weight: profile.weight || prev.weight,
+              height: profile.height || prev.height,
+              goal: profile.goal || prev.goal,
+              level: profile.level,
+              xp: Number(profile.xp),
+              wins: profile.wins,
+              losses: profile.losses,
+              record: profile.record,
+              totalPushups: profile.total_pushups,
+              streak: profile.streak,
+              avatar: profile.avatar_url,
+              achievements: profile.achievements || [],
             }));
+
+            // Fetch match history
+            const { data: matches } = await supabase
+              .from('matches')
+              .select('*')
+              .eq('player_id', session.user.id)
+              .order('created_at', { ascending: false })
+              .limit(15);
+            
+            if (matches) {
+              setUser(prev => ({
+                ...prev,
+                history: matches.map(m => ({
+                  id: m.id,
+                  opp: m.opponent_name,
+                  res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
+                  score: `${m.player_score}-${m.opponent_score}`,
+                  xp: `+${m.xp_gained}`,
+                  date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
+                }))
+              }));
+            }
+            
+            setView('dashboard');
+          } else {
+            setView('onboarding-start');
           }
-          
-          // If profile exists, skip onboarding
-          setView('dashboard');
         } else {
-          // No profile, keep onboarding view
           setView('onboarding-start');
         }
-      } else {
-        // No auth, keep onboarding view
+      } catch (err) {
+        console.error("Error fetching profile:", err);
         setView('onboarding-start');
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     fetchProfile();
   }, []);
+
 
   const updateStats = async (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => {
     const newTotalXp = user.xp + xpGained;
