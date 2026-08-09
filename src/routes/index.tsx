@@ -840,32 +840,33 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
 
       <div className="flex-1 relative flex flex-col">
         {/* Battle Area - Counts */}
-        <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-center gap-8">
-           <motion.div 
-             key={playerPushups}
-             initial={{ scale: 0.8 }}
-             animate={{ scale: 1 }}
-             className="flex flex-col items-center"
-           >
-             <span className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-1">VOCÊ</span>
-             <span className="text-8xl font-black italic text-white drop-shadow-[0_0_20px_rgba(59,130,246,0.5)] leading-none">{playerPushups}</span>
-           </motion.div>
+        <div className="absolute inset-0 z-10 pointer-events-none flex flex-col items-center justify-between p-12">
+           <div className="flex w-full justify-between items-center mt-20">
+             <motion.div 
+               key={playerPushups}
+               initial={{ scale: 0.8 }}
+               animate={{ scale: 1 }}
+               className="flex flex-col items-center"
+             >
+               <span className="text-primary text-[10px] font-black uppercase tracking-[0.2em] mb-1">VOCÊ</span>
+               <span className="text-[120px] font-black italic text-white drop-shadow-[0_0_30px_rgba(59,130,246,0.6)] leading-none">{playerPushups}</span>
+             </motion.div>
 
-           <div className="flex items-center gap-8">
-              <div className="h-[2px] w-12 bg-gradient-to-r from-transparent to-white/20" />
-              <span className="text-4xl font-black italic text-white/20 tracking-tighter">VS</span>
-              <div className="h-[2px] w-12 bg-gradient-to-l from-transparent to-white/20" />
+             <div className="flex flex-col items-center">
+                <span className="text-2xl font-black italic text-white/30 tracking-tighter mb-2">VS</span>
+                <div className="h-20 w-[2px] bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+             </div>
+
+             <motion.div 
+               key={oppPushups}
+               initial={{ scale: 0.8 }}
+               animate={{ scale: 1 }}
+               className="flex flex-col items-center"
+             >
+               <span className="text-[120px] font-black italic text-white drop-shadow-[0_0_30px_rgba(244,63,94,0.6)] leading-none">{oppPushups}</span>
+               <span className="text-energy-red text-[10px] font-black uppercase tracking-[0.2em] mt-1">ADVERSÁRIO</span>
+             </motion.div>
            </div>
-
-           <motion.div 
-             key={oppPushups}
-             initial={{ scale: 0.8 }}
-             animate={{ scale: 1 }}
-             className="flex flex-col items-center"
-           >
-             <span className="text-8xl font-black italic text-white drop-shadow-[0_0_20px_rgba(244,63,94,0.5)] leading-none">{oppPushups}</span>
-             <span className="text-energy-red text-[10px] font-black uppercase tracking-[0.2em] mt-1">ADVERSÁRIO</span>
-           </motion.div>
         </div>
 
         <div className="flex-1 relative">
@@ -899,16 +900,17 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete }: { bot:
             <motion.div
               key={countdown}
               initial={{ scale: 0, rotate: -20, opacity: 0 }}
-              animate={{ scale: 1.5, rotate: 0, opacity: 1 }}
+              animate={{ scale: 1.2, rotate: 0, opacity: 1 }}
               exit={{ scale: 3, opacity: 0 }}
+              transition={{ type: "spring", damping: 10 }}
               className="flex flex-col items-center"
             >
-              <span className="text-9xl font-black italic text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.6)] leading-none">
-                {countdown === 0 ? "🔥 VAI!" : countdown}
+              <span className="text-[180px] font-black italic text-white drop-shadow-[0_0_60px_rgba(255,255,255,0.8)] leading-none">
+                {countdown === 0 ? "VAI!" : countdown}
               </span>
-              {countdown > 0 && (
-                <span className="text-xl font-black text-primary uppercase tracking-[0.5em] mt-4 animate-pulse">Prepare-se</span>
-              )}
+              <p className="text-white/40 font-black italic tracking-[0.5em] mt-8 uppercase animate-pulse">
+                PREPARE-SE
+              </p>
             </motion.div>
           </motion.div>
         )}
