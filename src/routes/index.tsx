@@ -2435,56 +2435,92 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
       const updatedUser = {
         ...user,
-        name: formData.name.toUpperCase(),
+        name: formData.name.toUpperCase().trim(),
         age: parseInt(formData.age as string),
         weight: parseInt(formData.weight as string)
       };
+
+      // Garantir que temos um player_id válido
+      const playerId = user.id && user.id.startsWith('PLAYER-') 
+        ? user.id 
+        : `PLAYER-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
       
+      console.log("Saving profile for user:", session.user.id, "with player_id:", playerId);
+
       const { error } = await supabase
         .from('profiles')
         .upsert({
           id: session.user.id,
-          player_id: `PLAYER-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+          player_id: playerId,
           name: updatedUser.name,
           age: updatedUser.age,
           weight: updatedUser.weight,
           avatar_url: user.avatar,
           goal: (user.goal || 'Bater recordes'),
-          level: 1,
-          xp: 0,
-          total_pushups: 0,
-          wins: 0,
-          losses: 0,
-          record: 0,
-          streak: 0,
+          level: user.level || 1,
+          xp: user.xp || 0,
+          total_pushups: user.totalPushups || 0,
+          wins: user.wins || 0,
+          losses: user.losses || 0,
+          record: user.record || 0,
+          streak: user.streak || 0,
           updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
+        }, { 
+          onConflict: 'id',
+          ignoreDuplicates: false 
+        });
 
+      if (error) {
+        console.error("Supabase upsert error:", error);
+        throw error;
+      }
 
-      if (error) throw error;
-
-      // Verificação dupla
+      // Verificação dupla com delay curto para garantir propagação
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       const { data: verify, error: verifyError } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
         .maybeSingle();
 
-      if (verifyError || !verify) throw new Error("Erro na verificação do perfil");
+      if (verifyError) {
+        console.error("Verification error:", verifyError);
+        throw verifyError;
+      }
+      
+      if (!verify) {
+        console.error("Profile not found after save");
+        throw new Error("Erro na verificação do perfil: não encontrado após salvar");
+      }
 
-      setUser(updatedUser);
+      console.log("Profile saved and verified successfully:", verify);
+
+      setUser({
+        ...updatedUser,
+        id: verify.player_id,
+        xp: Number(verify.xp),
+        level: verify.level,
+        wins: verify.wins,
+        losses: verify.losses,
+        record: verify.record,
+        totalPushups: verify.total_pushups,
+        streak: verify.streak,
+        avatar: verify.avatar_url
+      });
+      
       setStatus('success');
       
       setTimeout(() => {
-        setView('profile-ready');
+        setView('dashboard');
       }, 1500);
 
-    } catch (err) {
-      console.error("Erro ao salvar perfil:", err);
+    } catch (err: any) {
+      console.error("Erro fatal ao salvar perfil:", err);
       setStatus('error');
       setIsSaving(false);
       toast.error("❌ Não conseguimos salvar seu perfil.", {
-        description: "Tente novamente em instantes."
+        description: err.message || "Tente novamente em instantes."
       });
     }
   };
