@@ -692,9 +692,9 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             )}
           </div>
           <div className="cursor-pointer" onClick={() => setView('profile')}>
-            <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{stats.name.toUpperCase()}</h1>
+            <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{(stats.name || 'ATLETA').toUpperCase()}</h1>
             <div className="flex items-center gap-1.5">
-              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(rank.patentName)} {rank.patentName.toUpperCase()}</Badge>
+              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(rank.patentName)} {(rank.patentName || '').toUpperCase()}</Badge>
               <div className="flex items-center gap-0.5 text-gold">
                 <Flame className="w-3 h-3 fill-gold" />
                 <span className="text-[10px] font-black">{stats.streak}</span>
@@ -807,7 +807,7 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
-                  <p className="font-black text-lg italic text-white tracking-tight leading-tight">{bot.name.toUpperCase()}</p>
+                  <p className="font-black text-lg italic text-white tracking-tight leading-tight">{(bot.name || '').toUpperCase()}</p>
                   <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none font-black italic">LVL {bot.level}</Badge>
                 </div>
                 <div className="flex flex-col gap-1">
@@ -876,7 +876,7 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, is
             <div className="flex items-center justify-between w-full px-4">
               <span className="flex items-center gap-3">
                 <Timer className={`w-6 h-6 ${localDuration === d.value ? 'text-primary' : 'text-white/40'}`} />
-                {d.label.toUpperCase()}
+                {(d.label || '').toUpperCase()}
               </span>
               {localDuration === d.value && <Check className="w-6 h-6" />}
             </div>
@@ -1631,12 +1631,12 @@ function FullHistory({ setView, user }: { setView: (v: View) => void, user: any 
                 )}
               </div>
               <div>
-                <p className="font-black text-lg italic text-white tracking-tight">{match.opp.toUpperCase()}</p>
+                <p className="font-black text-lg italic text-white tracking-tight">{(match.opp || '').toUpperCase()}</p>
                 <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{match.score} • {match.date}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className={`text-lg font-black italic ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{match.res.toUpperCase()}</p>
+              <p className={`text-lg font-black italic ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{(match.res || '').toUpperCase()}</p>
               <p className="text-[10px] text-gold font-black italic">{match.xp} XP</p>
             </div>
           </div>
@@ -2267,7 +2267,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-1">
                     <div>
-                      <h4 className={`font-black text-sm italic tracking-tight ${isCompleted ? 'text-white' : 'text-white/60'}`}>{ach.title.toUpperCase()}</h4>
+                      <h4 className={`font-black text-sm italic tracking-tight ${isCompleted ? 'text-white' : 'text-white/60'}`}>{(ach.title || '').toUpperCase()}</h4>
                       <p className="text-[9px] font-medium text-muted-foreground uppercase">{ach.desc}</p>
                     </div>
                     {isCompleted && (
@@ -2965,7 +2965,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
               className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-xl uppercase tracking-tight"
               placeholder="EX: GUERREIRO"
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value.toUpperCase()})}
+              onChange={(e) => setFormData({...formData, name: (e.target.value || '').toUpperCase()})}
             />
           </div>
 
