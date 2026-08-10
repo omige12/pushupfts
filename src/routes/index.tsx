@@ -2450,7 +2450,8 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
       
       setUser({
         ...user,
-        goal: goalMap[newAnswers.objective] || 'Bater recordes'
+        goal: goalMap[newAnswers.objective] || 'Bater recordes',
+        height: parseInt(String(newAnswers.height)) || 0
       });
       setView('quiz-result');
     }
@@ -2817,6 +2818,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           name: updatedUser.name,
           age: updatedUser.age,
           weight: updatedUser.weight,
+          height: user.height || 0,
           avatar_url: user.avatar,
           goal: (user.goal && ['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(user.goal) ? user.goal : 'Bater recordes'),
           level: user.level || 1,
@@ -2828,8 +2830,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           streak: user.streak || 0,
           updated_at: new Date().toISOString()
         }, { 
-          onConflict: 'id',
-          ignoreDuplicates: false 
+          onConflict: 'id'
         });
 
       if (error) {
