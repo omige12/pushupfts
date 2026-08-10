@@ -1243,17 +1243,26 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
   const stats = user;
   
+  const [isSaving, setIsSaving] = useState(false);
+  
   const handleSave = async () => {
+    if (!formData.name.trim()) {
+      toast.error("⚠️ O nome do atleta não pode estar vazio.");
+      return;
+    }
+
+    setIsSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
         toast.error("⚠️ Sessão não encontrada. Faça login novamente.");
+        setIsSaving(false);
         return;
       }
 
       // Prepare data for Supabase
       const updateData = {
-        name: formData.name ? formData.name.toUpperCase().trim() : user.name,
+        name: formData.name.toUpperCase().trim(),
         age: parseInt(String(formData.age)) || 0,
         weight: parseInt(String(formData.weight)) || 0,
         height: parseInt(String(formData.height)) || 0,
@@ -1262,21 +1271,43 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         updated_at: new Date().toISOString()
       };
 
+      console.log("Updating profile for user:", session.user.id, updateData);
+
       const { error } = await supabase
         .from('profiles')
         .update(updateData)
         .eq('id', session.user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase update error:", error);
+        throw error;
+      }
 
-      setUser(formData);
+      // Update global state
+      setUser(prev => ({
+        ...prev,
+        ...formData,
+        name: updateData.name,
+        age: updateData.age,
+        weight: updateData.weight,
+        height: updateData.height,
+        goal: updateData.goal,
+        avatar: updateData.avatar_url
+      }));
+
       setEditing(false);
+      setView('profile'); // Force view back to profile just in case
+
       toast.success("✅ Perfil atualizado com sucesso!", {
         className: "font-black italic text-xs uppercase tracking-widest bg-card border-green-500/50 text-white shadow-[0_0_20px_rgba(34,197,94,0.2)]"
       });
     } catch (err: any) {
       console.error("Error updating profile:", err);
-      toast.error("❌ Erro ao atualizar perfil: " + (err.message || "Tente novamente"));
+      toast.error("❌ Erro ao atualizar perfil", {
+        description: err.message || "Verifique sua conexão e tente novamente."
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
