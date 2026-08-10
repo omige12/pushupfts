@@ -1503,7 +1503,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         </div>
 
         <div className="text-center space-y-1">
-          <h3 className="font-black text-2xl text-white tracking-tight">{(stats.name || 'ATLETA').toUpperCase()}</h3>
+          <h3 className="font-black text-2xl text-white tracking-tight">{(stats?.name || 'ATLETA').toUpperCase()}</h3>
           <div className="flex items-center justify-center gap-2">
             <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg cursor-pointer hover:bg-white/10 transition-colors" onClick={copyId}>
               <span className="text-[10px] font-mono text-muted-foreground">{stats.id}</span>
