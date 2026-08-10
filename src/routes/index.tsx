@@ -1518,7 +1518,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
           </div>
           <div className="flex justify-center mt-1">
-             <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.age} ANOS • {stats.height}CM</Badge>
+             <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats?.weight || 0}KG • {stats?.age || 0} ANOS • {stats?.height || 0}CM</Badge>
           </div>
         </div>
 
