@@ -692,9 +692,9 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             )}
           </div>
           <div className="cursor-pointer" onClick={() => setView('profile')}>
-            <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{stats.name.toUpperCase()}</h1>
+            <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{(stats.name || 'ATLETA').toUpperCase()}</h1>
             <div className="flex items-center gap-1.5">
-              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(rank.patentName)} {rank.patentName.toUpperCase()}</Badge>
+              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(rank.patentName)} {(rank.patentName || '').toUpperCase()}</Badge>
               <div className="flex items-center gap-0.5 text-gold">
                 <Flame className="w-3 h-3 fill-gold" />
                 <span className="text-[10px] font-black">{stats.streak}</span>
@@ -807,7 +807,7 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
               </div>
               <div>
                 <div className="flex items-center gap-2 mb-0.5">
-                  <p className="font-black text-lg italic text-white tracking-tight leading-tight">{bot.name.toUpperCase()}</p>
+                  <p className="font-black text-lg italic text-white tracking-tight leading-tight">{(bot.name || '').toUpperCase()}</p>
                   <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none font-black italic">LVL {bot.level}</Badge>
                 </div>
                 <div className="flex flex-col gap-1">
@@ -876,7 +876,7 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, is
             <div className="flex items-center justify-between w-full px-4">
               <span className="flex items-center gap-3">
                 <Timer className={`w-6 h-6 ${localDuration === d.value ? 'text-primary' : 'text-white/40'}`} />
-                {d.label.toUpperCase()}
+                {(d.label || '').toUpperCase()}
               </span>
               {localDuration === d.value && <Check className="w-6 h-6" />}
             </div>
@@ -1217,19 +1217,46 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
 function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
   const [editing, setEditing] = useState(initialEditing);
-  const [formData, setFormData] = useState({ ...user });
+  const [formData, setFormData] = useState({ 
+    ...user,
+    name: user.name || '',
+    age: user.age || 0,
+    weight: user.weight || 0,
+    height: user.height || 0,
+    goal: user.goal || 'Bater recordes'
+  });
 
   useEffect(() => {
-    if (initialEditing) setEditing(true);
-  }, [initialEditing]);
+    if (initialEditing) {
+      setEditing(true);
+      // Sync formData when entering edit mode to ensure we have latest data
+      setFormData({ 
+        ...user,
+        name: user.name || '',
+        age: user.age || 0,
+        weight: user.weight || 0,
+        height: user.height || 0,
+        goal: user.goal || 'Bater recordes'
+      });
+    }
+  }, [initialEditing, user]);
 
   const stats = user;
   
+  const [isSaving, setIsSaving] = useState(false);
+  
   const handleSave = async () => {
+    if (!formData.name.trim()) {
+      toast.error("⚠️ O nome do atleta não pode estar vazio.");
+      return;
+    }
+
+    setIsSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) {
         toast.error("⚠️ Sessão não encontrada. Faça login novamente.");
+        setIsSaving(false);
         return;
       }
 
@@ -1244,21 +1271,43 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         updated_at: new Date().toISOString()
       };
 
+      console.log("Updating profile for user:", session.user.id, updateData);
+
       const { error } = await supabase
         .from('profiles')
         .update(updateData)
         .eq('id', session.user.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase update error:", error);
+        throw error;
+      }
 
-      setUser(formData);
+      // Update global state
+      setUser((prev: any) => ({
+        ...prev,
+        ...formData,
+        name: updateData.name,
+        age: updateData.age,
+        weight: updateData.weight,
+        height: updateData.height,
+        goal: updateData.goal,
+        avatar: updateData.avatar_url
+      }));
+
       setEditing(false);
+      setView('profile'); // Force view back to profile just in case
+
       toast.success("✅ Perfil atualizado com sucesso!", {
         className: "font-black italic text-xs uppercase tracking-widest bg-card border-green-500/50 text-white shadow-[0_0_20px_rgba(34,197,94,0.2)]"
       });
     } catch (err: any) {
       console.error("Error updating profile:", err);
-      toast.error("❌ Erro ao atualizar perfil: " + (err.message || "Tente novamente"));
+      toast.error("❌ Erro ao atualizar perfil", {
+        description: err.message || "Verifique sua conexão e tente novamente."
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -1408,8 +1457,8 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
             </div>
           </div>
 
-          <Button onClick={handleSave} className="game-button bg-primary w-full py-8 mt-4 text-xl italic uppercase tracking-tighter shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all">
-            Salvar
+          <Button onClick={handleSave} disabled={isSaving} className="game-button bg-primary w-full py-8 mt-4 text-xl italic uppercase tracking-tighter shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all">
+            {isSaving ? <Loader2 className="w-6 h-6 animate-spin" /> : "Salvar"}
           </Button>
         </div>
 
@@ -1455,7 +1504,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         </div>
 
         <div className="text-center space-y-1">
-          <h3 className="font-black text-2xl text-white tracking-tight">{stats.name.toUpperCase()}</h3>
+          <h3 className="font-black text-2xl text-white tracking-tight">{(stats.name || 'ATLETA').toUpperCase()}</h3>
           <div className="flex items-center justify-center gap-2">
             <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg cursor-pointer hover:bg-white/10 transition-colors" onClick={copyId}>
               <span className="text-[10px] font-mono text-muted-foreground">{stats.id}</span>
@@ -1510,7 +1559,17 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         <Button 
           className="game-button bg-primary w-full py-6 text-sm uppercase italic flex items-center justify-center gap-2"
-          onClick={() => setView('edit-profile')}
+          onClick={() => {
+            setFormData({ 
+              ...user,
+              name: user.name || '',
+              age: user.age || 0,
+              weight: user.weight || 0,
+              height: user.height || 0,
+              goal: user.goal || 'Bater recordes'
+            });
+            setEditing(true);
+          }}
         >
           <Pencil className="w-4 h-4" /> Editar Perfil
         </Button>
@@ -1572,12 +1631,12 @@ function FullHistory({ setView, user }: { setView: (v: View) => void, user: any 
                 )}
               </div>
               <div>
-                <p className="font-black text-lg italic text-white tracking-tight">{match.opp.toUpperCase()}</p>
+                <p className="font-black text-lg italic text-white tracking-tight">{(match.opp || '').toUpperCase()}</p>
                 <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{match.score} • {match.date}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className={`text-lg font-black italic ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{match.res.toUpperCase()}</p>
+              <p className={`text-lg font-black italic ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{(match.res || '').toUpperCase()}</p>
               <p className="text-[10px] text-gold font-black italic">{match.xp} XP</p>
             </div>
           </div>
@@ -2208,7 +2267,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
                 <div className="flex-1">
                   <div className="flex justify-between items-start mb-1">
                     <div>
-                      <h4 className={`font-black text-sm italic tracking-tight ${isCompleted ? 'text-white' : 'text-white/60'}`}>{ach.title.toUpperCase()}</h4>
+                      <h4 className={`font-black text-sm italic tracking-tight ${isCompleted ? 'text-white' : 'text-white/60'}`}>{(ach.title || '').toUpperCase()}</h4>
                       <p className="text-[9px] font-medium text-muted-foreground uppercase">{ach.desc}</p>
                     </div>
                     {isCompleted && (
@@ -2798,9 +2857,9 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
       const updatedUser = {
         ...user,
-        name: formData.name.toUpperCase().trim(),
-        age: parseInt(formData.age as string),
-        weight: parseInt(formData.weight as string)
+        name: (formData.name || '').toUpperCase().trim(),
+        age: parseInt(String(formData.age)) || 0,
+        weight: parseInt(String(formData.weight)) || 0
       };
 
       // Garantir que temos um player_id válido
@@ -2815,10 +2874,10 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
         .upsert({
           id: session.user.id,
           player_id: playerId,
-          name: updatedUser.name,
-          age: updatedUser.age,
-          weight: updatedUser.weight,
-          height: user.height || 0,
+          name: updatedUser.name || user.name,
+          age: parseInt(String(updatedUser.age)) || 0,
+          weight: parseInt(String(updatedUser.weight)) || 0,
+          height: parseInt(String(user.height)) || 0,
           avatar_url: user.avatar,
           goal: (user.goal && ['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(user.goal) ? user.goal : 'Bater recordes'),
           level: user.level || 1,
@@ -2906,7 +2965,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
               className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-xl uppercase tracking-tight"
               placeholder="EX: GUERREIRO"
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value.toUpperCase()})}
+              onChange={(e) => setFormData({...formData, name: (e.target.value || '').toUpperCase()})}
             />
           </div>
 
