@@ -1284,7 +1284,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       }
 
       // Update global state
-      setUser(prev => ({
+      setUser((prev: any) => ({
         ...prev,
         ...formData,
         name: updateData.name,
