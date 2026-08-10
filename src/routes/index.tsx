@@ -263,19 +263,20 @@ function App() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
+    if (deferredPrompt) {
+      console.log('PWA: Prompting user with deferredPrompt');
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`PWA: User choice outcome: ${outcome}`);
+      setDeferredPrompt(null);
+      setShowInstallBanner(false);
     } else {
-      console.log('User dismissed the install prompt');
+      console.log('PWA: No deferredPrompt available, providing instructions');
+      toast.info("📱 COMO INSTALAR", {
+        description: "No Android: Clique nos 3 pontos ⋮ e em 'Instalar Aplicativo'. No iOS: Clique em 'Compartilhar' e 'Adicionar à Tela de Início'.",
+        duration: 8000,
+      });
     }
-    
-    setDeferredPrompt(null);
-    setShowInstallBanner(false);
   };
 
   // Load user data from Supabase
