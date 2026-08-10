@@ -567,45 +567,7 @@ function App() {
         {renderView()}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {showInstallBanner && !isStandalone && (
-          <motion.div 
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-6 left-4 right-4 z-[100] glass-panel p-4 border-gold/30 bg-[#0B0E14]/95 backdrop-blur-xl shadow-2xl rounded-2xl flex items-center justify-between gap-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/10">
-                <img src={logoAsset.url} className="w-full h-full object-cover" alt="Logo" />
-              </div>
-              <div className="flex flex-col">
-                <h4 className="text-[11px] font-black text-white italic tracking-tighter uppercase leading-tight">📱 BAIXAR FLEX BATTLE</h4>
-                <p className="text-[9px] text-white/50 font-bold uppercase tracking-wider">Clique para baixar o app agora.</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button 
-                onClick={handleInstallClick}
-                className="bg-primary hover:bg-primary/90 text-[10px] font-black italic uppercase px-4 h-8 rounded-lg shadow-[0_3px_0_0_rgba(29,78,216,0.5)] active:translate-y-[2px] active:shadow-none transition-all shrink-0"
-              >
-                {deferredPrompt ? "BAIXAR AGORA" : "BAIXAR APP"}
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-white/30 hover:text-white"
-                onClick={() => {
-                  setShowInstallBanner(false);
-
-                }}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* PWA Banner removido a pedido do usuário */}
 
 
       <AnimatePresence>
