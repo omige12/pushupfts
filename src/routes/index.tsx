@@ -1267,7 +1267,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         weight: parseInt(String(formData.weight)) || 0,
         height: parseInt(String(formData.height)) || 0,
         avatar_url: formData.avatar,
-        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Bater recordes'),
+        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Bater recordes') as any,
         updated_at: new Date().toISOString()
       };
 
@@ -2896,7 +2896,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           weight: parseInt(String(updatedUser.weight)) || 0,
           height: parseInt(String(user.height)) || 0,
           avatar_url: user.avatar,
-          goal: (user.goal && ['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(user.goal) ? user.goal : 'Bater recordes'),
+          goal: (user.goal && ['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(user.goal) ? user.goal : 'Bater recordes') as any,
           level: user.level || 1,
           xp: user.xp || 0,
           total_pushups: user.totalPushups || 0,
