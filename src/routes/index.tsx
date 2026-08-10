@@ -1267,7 +1267,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         weight: parseInt(String(formData.weight)) || 0,
         height: parseInt(String(formData.height)) || 0,
         avatar_url: formData.avatar,
-        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Bater recordes') as any,
+        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Bater recordes'),
         updated_at: new Date().toISOString()
       };
 
