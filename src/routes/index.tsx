@@ -1238,8 +1238,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         name: formData.name.toUpperCase().trim(),
         age: parseInt(String(formData.age)) || 0,
         weight: parseInt(String(formData.weight)) || 0,
+        height: parseInt(String(formData.height)) || 0,
         avatar_url: formData.avatar,
-        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking', 'Resistência', 'Hipertrofia', 'Perda de peso'].includes(formData.goal) ? formData.goal : 'Bater recordes'),
+        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Bater recordes'),
         updated_at: new Date().toISOString()
       };
 
@@ -1374,6 +1375,16 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                 />
               </div>
             </div>
+            
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Altura (cm)</label>
+              <input 
+                type="number"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
+                value={formData.height}
+                onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) || 0 })}
+              />
+            </div>
 
             <div className="space-y-2">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Objetivo Fitness</label>
@@ -1383,10 +1394,14 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   value={formData.goal}
                   onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
                 >
-                  <option value="Ganhar massa" className="bg-[#1A1F2C] text-white uppercase">GANHAR MASSA</option>
+                  <option value="Ganhar força" className="bg-[#1A1F2C] text-white uppercase">GANHAR FORÇA</option>
                   <option value="Perder peso" className="bg-[#1A1F2C] text-white uppercase">PERDER PESO</option>
-                  <option value="Resistência" className="bg-[#1A1F2C] text-white uppercase">RESISTÊNCIA</option>
-                  <option value="Competir" className="bg-[#1A1F2C] text-white uppercase">COMPETIR</option>
+                  <option value="Condicionamento" className="bg-[#1A1F2C] text-white uppercase">CONDICIONAMENTO</option>
+                  <option value="Massa muscular" className="bg-[#1A1F2C] text-white uppercase">MASSA MUSCULAR</option>
+                  <option value="Melhorar minhas flexões" className="bg-[#1A1F2C] text-white uppercase">MELHORAR FLEXÕES</option>
+                  <option value="Bater recordes" className="bg-[#1A1F2C] text-white uppercase">BATER RECORDES</option>
+                  <option value="Vencer outras pessoas" className="bg-[#1A1F2C] text-white uppercase">VENCER PESSOAS</option>
+                  <option value="Chegar ao topo do ranking" className="bg-[#1A1F2C] text-white uppercase">TOPO DO RANKING</option>
                 </select>
                 <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 rotate-90 pointer-events-none" />
               </div>
@@ -2427,10 +2442,10 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
     } else {
       // Mapear opções do quiz para os enums do banco
       const goalMap: Record<string, string> = {
-        "Ganhar Massa": "Ganhar massa",
+        "Ganhar Massa": "Massa muscular",
         "Perder Peso": "Perder peso",
-        "Resistência": "Resistência",
-        "Competir no Topo": "Competir"
+        "Resistência": "Condicionamento",
+        "Competir no Topo": "Chegar ao topo do ranking"
       };
       
       setUser({
