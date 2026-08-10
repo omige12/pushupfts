@@ -2857,9 +2857,9 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
       const updatedUser = {
         ...user,
-        name: formData.name.toUpperCase().trim(),
-        age: parseInt(formData.age as string),
-        weight: parseInt(formData.weight as string)
+        name: (formData.name || '').toUpperCase().trim(),
+        age: parseInt(String(formData.age)) || 0,
+        weight: parseInt(String(formData.weight)) || 0
       };
 
       // Garantir que temos um player_id válido
