@@ -8,6 +8,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { Toaster } from "sonner";
+import { Shield } from "lucide-react";
 
 import appCss from "../styles.css?url";
 
@@ -38,29 +39,40 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const router = useRouter();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
-        </p>
-        <div className="mt-6 flex flex-wrap justify-center gap-2">
+    <div className="flex min-h-screen items-center justify-center bg-[#0B0E14] px-4 overflow-hidden relative">
+      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-purple-600/10 blur-[100px] rounded-full" />
+      
+      <div className="max-w-md w-full text-center z-10 space-y-6">
+        <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-red-500/10 border border-red-500/20 mb-4 animate-pulse">
+          <Shield className="w-10 h-10 text-red-500" />
+        </div>
+        
+        <div className="space-y-2">
+          <h1 className="text-3xl font-black italic tracking-tighter text-white uppercase leading-none">
+            OPS! ALGO DEU ERRADO
+          </h1>
+          <p className="text-xs font-black text-muted-foreground uppercase tracking-widest">
+            A ARENA ESTÁ INSTÁVEL OU OCORREU UM ERRO DE CARREGAMENTO.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 gap-3">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="game-button bg-primary w-full py-6 text-sm font-black italic uppercase tracking-tighter shadow-[0_6px_0_0_rgba(29,78,216,0.5)] active:translate-y-[6px] active:shadow-none transition-all flex items-center justify-center gap-2"
           >
-            Try again
+            TENTAR NOVAMENTE
           </button>
+          
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="game-button bg-white/5 border border-white/10 w-full py-6 text-sm font-black italic uppercase tracking-tighter shadow-[0_6px_0_0_rgba(0,0,0,0.3)] active:translate-y-[6px] active:shadow-none transition-all flex items-center justify-center gap-2"
           >
-            Go home
+            VOLTAR AO INÍCIO
           </a>
         </div>
       </div>
