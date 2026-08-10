@@ -2891,8 +2891,8 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           id: session.user.id,
           player_id: playerId,
           name: updatedUser.name || user.name,
-          age: parseInt(String(updatedUser.age)) || 0,
-          weight: parseInt(String(updatedUser.weight)) || 0,
+          age: updatedUser.age,
+          weight: updatedUser.weight,
           height: parseInt(String(user.height)) || 0,
           avatar_url: user.avatar,
           goal: (user.goal && ['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(user.goal) ? user.goal : 'Bater recordes') as any,
@@ -2904,7 +2904,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           record: user.record || 0,
           streak: user.streak || 0,
           updated_at: new Date().toISOString()
-        }, { 
+        } as any, { 
           onConflict: 'id'
         });
 
