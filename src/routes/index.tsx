@@ -340,9 +340,9 @@ function App() {
               setView('dashboard');
             }
 
-            // Forçar a verificação do PWA após o login bem-sucedido
+            // PWA logic here if needed for state tracking, but banner is removed
             if (!window.matchMedia('(display-mode: standalone)').matches) {
-              localStorage.removeItem('pwa-banner-dismissed');
+              // Banner removed by user request
             }
           } else {
             console.log("Profile not found, staying in onboarding");
