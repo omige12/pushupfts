@@ -263,19 +263,20 @@ function App() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === 'accepted') {
-      console.log('User accepted the install prompt');
+    if (deferredPrompt) {
+      console.log('PWA: Prompting user with deferredPrompt');
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`PWA: User choice outcome: ${outcome}`);
+      setDeferredPrompt(null);
+      setShowInstallBanner(false);
     } else {
-      console.log('User dismissed the install prompt');
+      console.log('PWA: No deferredPrompt available, providing instructions');
+      toast.info("📱 COMO INSTALAR", {
+        description: "No Android: Clique nos 3 pontos ⋮ e em 'Instalar Aplicativo'. No iOS: Clique em 'Compartilhar' e 'Adicionar à Tela de Início'.",
+        duration: 8000,
+      });
     }
-    
-    setDeferredPrompt(null);
-    setShowInstallBanner(false);
   };
 
   // Load user data from Supabase
@@ -592,7 +593,7 @@ function App() {
                 onClick={handleInstallClick}
                 className="bg-primary hover:bg-primary/90 text-[10px] font-black italic uppercase px-4 h-8 rounded-lg shadow-[0_3px_0_0_rgba(29,78,216,0.5)] active:translate-y-[2px] active:shadow-none transition-all shrink-0"
               >
-                INSTALAR AGORA
+                {deferredPrompt ? "INSTALAR AGORA" : "VER COMO INSTALAR"}
               </Button>
               <Button 
                 variant="ghost" 
