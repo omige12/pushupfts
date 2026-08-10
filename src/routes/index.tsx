@@ -1457,8 +1457,8 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
             </div>
           </div>
 
-          <Button onClick={handleSave} className="game-button bg-primary w-full py-8 mt-4 text-xl italic uppercase tracking-tighter shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all">
-            Salvar
+          <Button onClick={handleSave} disabled={isSaving} className="game-button bg-primary w-full py-8 mt-4 text-xl italic uppercase tracking-tighter shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all">
+            {isSaving ? <Loader2 className="w-6 h-6 animate-spin" /> : "Salvar"}
           </Button>
         </div>
 
