@@ -438,6 +438,72 @@ function App() {
     }
   };
 
+  // Add real-time subscription for rankings and points
+  useEffect(() => {
+    const setupSubscription = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
+
+      // Channel for personal profile updates
+      const profileChannel = supabase
+        .channel('profile-changes')
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'profiles',
+            filter: `id=eq.${session.user.id}`
+          },
+          (payload) => {
+            const profile = payload.new;
+            const newRank = getRankInfo(Number(profile.xp));
+            setUser(prev => ({
+              ...prev,
+              name: profile.name,
+              level: profile.level,
+              xp: Number(profile.xp),
+              wins: profile.wins,
+              losses: profile.losses,
+              record: profile.record,
+              totalPushups: profile.total_pushups,
+              streak: profile.streak,
+              avatar: profile.avatar_url,
+              achievements: profile.achievements || [],
+              patent: newRank.patentName,
+              subRank: newRank.subRank,
+            }));
+          }
+        )
+        .subscribe();
+
+      // Channel for global ranking updates
+      const rankingChannel = supabase
+        .channel('ranking-global')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'profiles'
+          },
+          () => {
+            // Signal to ranking components that data has changed
+            // This is handled by the useEffect in Ranking component which now needs to listen for changes
+            window.dispatchEvent(new CustomEvent('ranking-updated'));
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(profileChannel);
+        supabase.removeChannel(rankingChannel);
+      };
+    };
+
+    setupSubscription();
+  }, []);
+
   const renderView = () => {
     if (loading) return (
       <div className="min-h-screen flex items-center justify-center bg-background">
