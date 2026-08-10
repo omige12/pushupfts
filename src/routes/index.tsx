@@ -2450,7 +2450,8 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
       
       setUser({
         ...user,
-        goal: goalMap[newAnswers.objective] || 'Bater recordes'
+        goal: goalMap[newAnswers.objective] || 'Bater recordes',
+        height: parseInt(String(newAnswers.height)) || 0
       });
       setView('quiz-result');
     }
