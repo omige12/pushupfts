@@ -1557,22 +1557,39 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           </div>
         </div>
 
-        <Button 
-          className="game-button bg-primary w-full py-6 text-sm uppercase italic flex items-center justify-center gap-2"
-          onClick={() => {
-            setFormData({ 
-              ...user,
-              name: user.name || '',
-              age: user.age || 0,
-              weight: user.weight || 0,
-              height: user.height || 0,
-              goal: user.goal || 'Bater recordes'
-            });
-            setEditing(true);
-          }}
-        >
-          <Pencil className="w-4 h-4" /> Editar Perfil
-        </Button>
+        <div className="flex flex-col gap-2 w-full">
+          <Button 
+            className="game-button bg-primary w-full py-6 text-sm uppercase italic flex items-center justify-center gap-2"
+            onClick={() => {
+              setFormData({ 
+                ...user,
+                name: user.name || '',
+                age: user.age || 0,
+                weight: user.weight || 0,
+                height: user.height || 0,
+                goal: user.goal || 'Bater recordes'
+              });
+              setEditing(true);
+            }}
+          >
+            <Pencil className="w-4 h-4" /> Editar Perfil
+          </Button>
+          
+          <Button 
+            variant="ghost" 
+            className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] hover:text-white/40 transition-colors"
+            onClick={async () => {
+              const { error } = await supabase.auth.signOut();
+              if (error) {
+                toast.error("Erro ao sair");
+              } else {
+                window.location.reload();
+              }
+            }}
+          >
+            SAIR DA CONTA
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4">
