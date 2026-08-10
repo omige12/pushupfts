@@ -2432,10 +2432,10 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
     } else {
       // Mapear opções do quiz para os enums do banco
       const goalMap: Record<string, string> = {
-        "Ganhar Massa": "Ganhar massa",
+        "Ganhar Massa": "Massa muscular",
         "Perder Peso": "Perder peso",
-        "Resistência": "Resistência",
-        "Competir no Topo": "Competir"
+        "Resistência": "Condicionamento",
+        "Competir no Topo": "Chegar ao topo do ranking"
       };
       
       setUser({
