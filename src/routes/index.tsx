@@ -226,15 +226,13 @@ function App() {
 
 
   useEffect(() => {
-    const isDismissed = localStorage.getItem('pwa-banner-dismissed');
     const isInstalled = window.matchMedia('(display-mode: standalone)').matches || localStorage.getItem('pwa-installed') === 'true';
 
     const handleBeforeInstallPrompt = (e: any) => {
       console.log('PWA: beforeinstallprompt event fired');
       e.preventDefault();
       setDeferredPrompt(e);
-      
-      // Mostrar banner imediatamente quando o evento disparar
+      // Forçar a exibição do banner sempre que o prompt estiver disponível, ignorando dismiss anterior
       setShowInstallBanner(true);
     };
 
@@ -242,7 +240,7 @@ function App() {
       setIsStandalone(true);
       setShowInstallBanner(false);
       localStorage.setItem('pwa-installed', 'true');
-      toast.success("✅ PushUp Arena instalado com sucesso!");
+      toast.success("✅ Flex Battle instalado com sucesso!");
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -251,6 +249,11 @@ function App() {
     if (isInstalled) {
       setIsStandalone(true);
       setShowInstallBanner(false);
+    } else {
+      // Se não estiver instalado, tentamos mostrar o banner assim que o componente montar
+      // O evento beforeinstallprompt é o gatilho real, mas deixamos showInstallBanner true
+      // para caso o navegador já tenha o prompt em cache
+      setShowInstallBanner(true);
     }
 
     return () => {
@@ -597,7 +600,7 @@ function App() {
                 className="h-8 w-8 text-white/30 hover:text-white"
                 onClick={() => {
                   setShowInstallBanner(false);
-                  localStorage.setItem('pwa-banner-dismissed', 'true');
+
                 }}
               >
                 <X className="w-4 h-4" />
