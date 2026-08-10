@@ -230,13 +230,12 @@ function App() {
     const isInstalled = window.matchMedia('(display-mode: standalone)').matches || localStorage.getItem('pwa-installed') === 'true';
 
     const handleBeforeInstallPrompt = (e: any) => {
+      console.log('PWA: beforeinstallprompt event fired');
       e.preventDefault();
       setDeferredPrompt(e);
       
-      // Se não estiver instalado e não foi dispensado, mostrar banner imediatamente
-      if (!isInstalled && !isDismissed) {
-        setShowInstallBanner(true);
-      }
+      // Mostrar banner imediatamente quando o evento disparar
+      setShowInstallBanner(true);
     };
 
     const handleAppInstalled = () => {
