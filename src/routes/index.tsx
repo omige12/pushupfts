@@ -232,8 +232,8 @@ function App() {
       console.log('PWA: beforeinstallprompt event fired');
       e.preventDefault();
       setDeferredPrompt(e);
-      // Forçar a exibição do banner sempre que o prompt estiver disponível, ignorando dismiss anterior
-      setShowInstallBanner(true);
+      // O banner está desativado conforme solicitação do usuário
+      setShowInstallBanner(false);
     };
 
     const handleAppInstalled = () => {
@@ -250,10 +250,7 @@ function App() {
       setIsStandalone(true);
       setShowInstallBanner(false);
     } else {
-      // Se não estiver instalado, tentamos mostrar o banner assim que o componente montar
-      // O evento beforeinstallprompt é o gatilho real, mas deixamos showInstallBanner true
-      // para caso o navegador já tenha o prompt em cache
-      setShowInstallBanner(true);
+      setShowInstallBanner(false);
     }
 
     return () => {
