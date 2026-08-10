@@ -1548,7 +1548,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           </div>
           <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
             <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Recorde</p>
-            <p className="text-xl font-black text-gold">{stats.record}</p>
+            <p className="text-xl font-black text-white">{stats?.record || 0}</p>
           </div>
           <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
             <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Total</p>
