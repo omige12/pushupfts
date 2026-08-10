@@ -1531,7 +1531,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
             <span>Nível {getRankInfo(stats?.xp || 0).level}</span>
             <span>{getRankInfo(stats?.xp || 0).xpInLevel} / {XP_PER_DIVISION} XP</span>
           </div>
-          <Progress value={getRankInfo(stats.xp).progress} className="h-3 bg-white/5" />
+          <Progress value={getRankInfo(stats?.xp || 0).progress} className="h-3 bg-white/5" />
 
           <div className="flex justify-center">
              <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">Toque para ver patentes</span>
