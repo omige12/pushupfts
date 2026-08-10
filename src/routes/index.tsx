@@ -1218,12 +1218,12 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
   const [editing, setEditing] = useState(initialEditing);
   const [formData, setFormData] = useState({ 
-    ...user,
-    name: user.name || '',
-    age: user.age || 0,
-    weight: user.weight || 0,
-    height: user.height || 0,
-    goal: user.goal || 'Bater recordes'
+    name: user?.name || '',
+    age: user?.age || 0,
+    weight: user?.weight || 0,
+    height: user?.height || 0,
+    goal: user?.goal || 'Bater recordes',
+    avatar: user?.avatar || null
   });
 
   useEffect(() => {
@@ -1231,12 +1231,12 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       setEditing(true);
       // Sync formData when entering edit mode to ensure we have latest data
       setFormData({ 
-        ...user,
-        name: user.name || '',
-        age: user.age || 0,
-        weight: user.weight || 0,
-        height: user.height || 0,
-        goal: user.goal || 'Bater recordes'
+        name: user?.name || '',
+        age: user?.age || 0,
+        weight: user?.weight || 0,
+        height: user?.height || 0,
+        goal: user?.goal || 'Bater recordes',
+        avatar: user?.avatar || null
       });
     }
   }, [initialEditing, user]);
@@ -1262,7 +1262,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
       // Prepare data for Supabase
       const updateData: any = {
-        name: formData.name.toUpperCase().trim(),
+        name: (formData.name || '').toUpperCase().trim(),
         age: parseInt(String(formData.age)) || 0,
         weight: parseInt(String(formData.weight)) || 0,
         height: parseInt(String(formData.height)) || 0,
@@ -1503,22 +1503,22 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         </div>
 
         <div className="text-center space-y-1">
-          <h3 className="font-black text-2xl text-white tracking-tight">{(stats.name || 'ATLETA').toUpperCase()}</h3>
+          <h3 className="font-black text-2xl text-white tracking-tight">{(stats?.name || 'ATLETA').toUpperCase()}</h3>
           <div className="flex items-center justify-center gap-2">
             <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg cursor-pointer hover:bg-white/10 transition-colors" onClick={copyId}>
-              <span className="text-[10px] font-mono text-muted-foreground">{stats.id}</span>
+              <span className="text-[10px] font-mono text-muted-foreground">{stats?.id || '---'}</span>
               {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
             </div>
             <Badge 
               className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold cursor-pointer hover:scale-105 transition-transform"
               onClick={() => setView('patents-list')}
             >
-              {getRankInfo(stats.xp).emoji} {getRankInfo(stats.xp).rankName.toUpperCase()}
+              {getRankInfo(stats?.xp || 0).emoji} {getRankInfo(stats?.xp || 0).rankName.toUpperCase()}
             </Badge>
 
           </div>
           <div className="flex justify-center mt-1">
-             <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats.weight}KG • {stats.age} ANOS • {stats.height}CM</Badge>
+             <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats?.weight || 0}KG • {stats?.age || 0} ANOS • {stats?.height || 0}CM</Badge>
           </div>
         </div>
 
@@ -1528,10 +1528,10 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between text-xs font-black italic text-muted-foreground uppercase tracking-widest">
-            <span>Nível {getRankInfo(stats.xp).level}</span>
-            <span>{getRankInfo(stats.xp).xpInLevel} / {XP_PER_DIVISION} XP</span>
+            <span>Nível {getRankInfo(stats?.xp || 0).level}</span>
+            <span>{getRankInfo(stats?.xp || 0).xpInLevel} / {XP_PER_DIVISION} XP</span>
           </div>
-          <Progress value={getRankInfo(stats.xp).progress} className="h-3 bg-white/5" />
+          <Progress value={getRankInfo(stats?.xp || 0).progress} className="h-3 bg-white/5" />
 
           <div className="flex justify-center">
              <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">Toque para ver patentes</span>
@@ -1544,15 +1544,15 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         <div className="grid grid-cols-3 gap-3 w-full">
           <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
             <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Vitórias</p>
-            <p className="text-xl font-black text-white">{stats.wins}</p>
+            <p className="text-xl font-black text-white">{stats?.wins || 0}</p>
           </div>
           <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
             <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Recorde</p>
-            <p className="text-xl font-black text-gold">{stats.record}</p>
+            <p className="text-xl font-black text-white">{stats?.record || 0}</p>
           </div>
           <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
             <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Total</p>
-            <p className="text-xl font-black text-purple-evolve">{stats.totalPushups}</p>
+            <p className="text-xl font-black text-white">{stats?.totalPushups || 0}</p>
           </div>
         </div>
 
@@ -1561,12 +1561,12 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
             className="game-button bg-primary w-full py-6 text-sm uppercase italic flex items-center justify-center gap-2"
             onClick={() => {
               setFormData({ 
-                ...user,
-                name: user.name || '',
-                age: user.age || 0,
-                weight: user.weight || 0,
-                height: user.height || 0,
-                goal: user.goal || 'Bater recordes'
+                name: user?.name || '',
+                age: user?.age || 0,
+                weight: user?.weight || 0,
+                height: user?.height || 0,
+                goal: user?.goal || 'Bater recordes',
+                avatar: user?.avatar || null
               });
               setEditing(true);
             }}
