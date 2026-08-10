@@ -1261,7 +1261,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       }
 
       // Prepare data for Supabase
-      const updateData = {
+      const updateData: any = {
         name: formData.name.toUpperCase().trim(),
         age: parseInt(String(formData.age)) || 0,
         weight: parseInt(String(formData.weight)) || 0,
