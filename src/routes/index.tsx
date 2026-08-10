@@ -339,6 +339,11 @@ function App() {
             } else {
               setView('dashboard');
             }
+
+            // Forçar a verificação do PWA após o login bem-sucedido
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+              localStorage.removeItem('pwa-banner-dismissed');
+            }
           } else {
             console.log("Profile not found, staying in onboarding");
             setView('onboarding-start');
