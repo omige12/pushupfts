@@ -1235,7 +1235,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
       // Prepare data for Supabase
       const updateData = {
-        name: formData.name.toUpperCase().trim(),
+        name: formData.name ? formData.name.toUpperCase().trim() : user.name,
         age: parseInt(String(formData.age)) || 0,
         weight: parseInt(String(formData.weight)) || 0,
         height: parseInt(String(formData.height)) || 0,
@@ -2815,10 +2815,10 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
         .upsert({
           id: session.user.id,
           player_id: playerId,
-          name: updatedUser.name,
-          age: updatedUser.age,
-          weight: updatedUser.weight,
-          height: user.height || 0,
+          name: updatedUser.name || user.name,
+          age: parseInt(String(updatedUser.age)) || 0,
+          weight: parseInt(String(updatedUser.weight)) || 0,
+          height: parseInt(String(user.height)) || 0,
           avatar_url: user.avatar,
           goal: (user.goal && ['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(user.goal) ? user.goal : 'Bater recordes'),
           level: user.level || 1,
