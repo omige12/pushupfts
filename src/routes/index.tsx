@@ -1513,7 +1513,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold cursor-pointer hover:scale-105 transition-transform"
               onClick={() => setView('patents-list')}
             >
-              {getRankInfo(stats.xp).emoji} {getRankInfo(stats.xp).rankName.toUpperCase()}
+              {getRankInfo(stats?.xp || 0).emoji} {getRankInfo(stats?.xp || 0).rankName.toUpperCase()}
             </Badge>
 
           </div>
