@@ -437,53 +437,6 @@ function App() {
       });
     }
   };
-1: 
-2:   // Add real-time subscription for rankings and points
-3:   useEffect(() => {
-4:     const setupSubscription = async () => {
-5:       const { data: { session } } = await supabase.auth.getSession();
-6:       if (!session?.user) return;
-7: 
-8:       // Channel for personal profile updates
-9:       const profileChannel = supabase
-10:         .channel('profile-changes')
-11:         .on(
-12:           'postgres_changes',
-13:           {
-14:             event: 'UPDATE',
-15:             schema: 'public',
-16:             table: 'profiles',
-17:             filter: `id=eq.${session.user.id}`
-18:           },
-19:           (payload) => {
-20:             const profile = payload.new;
-21:             const newRank = getRankInfo(Number(profile.xp));
-22:             setUser(prev => ({
-23:               ...prev,
-24:               name: profile.name,
-25:               level: profile.level,
-26:               xp: Number(profile.xp),
-27:               wins: profile.wins,
-28:               losses: profile.losses,
-29:               record: profile.record,
-30:               totalPushups: profile.total_pushups,
-31:               streak: profile.streak,
-32:               avatar: profile.avatar_url,
-33:               achievements: profile.achievements || [],
-34:               patent: newRank.patentName,
-35:               subRank: newRank.subRank,
-36:             }));
-37:           }
-38:         )
-39:         .subscribe();
-40: 
-41:       return () => {
-42:         supabase.removeChannel(profileChannel);
-43:       };
-44:     };
-45: 
-46:     setupSubscription();
-47:   }, []);
 
   const renderView = () => {
     if (loading) return (
