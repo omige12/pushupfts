@@ -1217,7 +1217,14 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
 function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
   const [editing, setEditing] = useState(initialEditing);
-  const [formData, setFormData] = useState({ ...user });
+  const [formData, setFormData] = useState({ 
+    ...user,
+    name: user.name || '',
+    age: user.age || 0,
+    weight: user.weight || 0,
+    height: user.height || 0,
+    goal: user.goal || 'Bater recordes'
+  });
 
   useEffect(() => {
     if (initialEditing) setEditing(true);
@@ -1455,7 +1462,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         </div>
 
         <div className="text-center space-y-1">
-          <h3 className="font-black text-2xl text-white tracking-tight">{stats.name.toUpperCase()}</h3>
+          <h3 className="font-black text-2xl text-white tracking-tight">{(stats.name || 'ATLETA').toUpperCase()}</h3>
           <div className="flex items-center justify-center gap-2">
             <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg cursor-pointer hover:bg-white/10 transition-colors" onClick={copyId}>
               <span className="text-[10px] font-mono text-muted-foreground">{stats.id}</span>
