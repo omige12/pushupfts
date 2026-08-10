@@ -593,7 +593,7 @@ function App() {
                 onClick={handleInstallClick}
                 className="bg-primary hover:bg-primary/90 text-[10px] font-black italic uppercase px-4 h-8 rounded-lg shadow-[0_3px_0_0_rgba(29,78,216,0.5)] active:translate-y-[2px] active:shadow-none transition-all shrink-0"
               >
-                INSTALAR AGORA
+                {deferredPrompt ? "INSTALAR AGORA" : "VER COMO INSTALAR"}
               </Button>
               <Button 
                 variant="ghost" 
