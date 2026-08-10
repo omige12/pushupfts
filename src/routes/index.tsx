@@ -1384,6 +1384,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                 value={formData.height}
                 onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) || 0 })}
               />
+            </div>
 
             <div className="space-y-2">
               <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Objetivo Fitness</label>
