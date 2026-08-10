@@ -1231,12 +1231,12 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       setEditing(true);
       // Sync formData when entering edit mode to ensure we have latest data
       setFormData({ 
-        ...user,
-        name: user.name || '',
-        age: user.age || 0,
-        weight: user.weight || 0,
-        height: user.height || 0,
-        goal: user.goal || 'Bater recordes'
+        name: user?.name || '',
+        age: user?.age || 0,
+        weight: user?.weight || 0,
+        height: user?.height || 0,
+        goal: user?.goal || 'Bater recordes',
+        avatar: user?.avatar || null
       });
     }
   }, [initialEditing, user]);
