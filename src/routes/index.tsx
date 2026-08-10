@@ -1993,6 +1993,14 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
     };
 
     fetchRanking();
+
+    // Listen for real-time updates
+    const handleUpdate = () => fetchRanking();
+    window.addEventListener('ranking-updated', handleUpdate);
+
+    return () => {
+      window.removeEventListener('ranking-updated', handleUpdate);
+    };
   }, [user.id, tab]);
   
   return (
