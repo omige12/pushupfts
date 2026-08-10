@@ -1218,12 +1218,12 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
   const [editing, setEditing] = useState(initialEditing);
   const [formData, setFormData] = useState({ 
-    ...user,
-    name: user.name || '',
-    age: user.age || 0,
-    weight: user.weight || 0,
-    height: user.height || 0,
-    goal: user.goal || 'Bater recordes'
+    name: user?.name || '',
+    age: user?.age || 0,
+    weight: user?.weight || 0,
+    height: user?.height || 0,
+    goal: user?.goal || 'Bater recordes',
+    avatar: user?.avatar || null
   });
 
   useEffect(() => {
