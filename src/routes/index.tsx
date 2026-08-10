@@ -271,11 +271,22 @@ function App() {
       setDeferredPrompt(null);
       setShowInstallBanner(false);
     } else {
-      console.log('PWA: No deferredPrompt available, providing instructions');
-      toast.info("📱 COMO INSTALAR", {
-        description: "No Android: Clique nos 3 pontos ⋮ e em 'Instalar Aplicativo'. No iOS: Clique em 'Compartilhar' e 'Adicionar à Tela de Início'.",
-        duration: 8000,
-      });
+      console.log('PWA: No deferredPrompt available, redirecting to browser install');
+      // Tentar forçar o menu de instalação nativo se o prompt não foi capturado mas o navegador suporta
+      const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
+      if (isChrome && isMobile) {
+        toast.info("📱 TOQUE NO BOTÃO DE MENU", {
+          description: "Clique nos 3 pontos (⋮) no topo e selecione 'Instalar aplicativo' para baixar.",
+          duration: 10000,
+        });
+      } else {
+        toast.info("📱 COMO BAIXAR", {
+          description: "No Android: Clique em ⋮ e 'Instalar'. No iOS: Clique em 'Compartilhar' e 'Adicionar à Tela de Início'.",
+          duration: 10000,
+        });
+      }
     }
   };
 
@@ -584,8 +595,8 @@ function App() {
                 <img src={logoAsset.url} className="w-full h-full object-cover" alt="Logo" />
               </div>
               <div className="flex flex-col">
-                <h4 className="text-[11px] font-black text-white italic tracking-tighter uppercase leading-tight">📱 BAIXE O FLEX BATTLE</h4>
-                <p className="text-[9px] text-white/50 font-bold uppercase tracking-wider">Instale o app no seu celular.</p>
+                <h4 className="text-[11px] font-black text-white italic tracking-tighter uppercase leading-tight">📱 BAIXAR FLEX BATTLE</h4>
+                <p className="text-[9px] text-white/50 font-bold uppercase tracking-wider">Clique para baixar o app agora.</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -593,7 +604,7 @@ function App() {
                 onClick={handleInstallClick}
                 className="bg-primary hover:bg-primary/90 text-[10px] font-black italic uppercase px-4 h-8 rounded-lg shadow-[0_3px_0_0_rgba(29,78,216,0.5)] active:translate-y-[2px] active:shadow-none transition-all shrink-0"
               >
-                {deferredPrompt ? "INSTALAR AGORA" : "VER COMO INSTALAR"}
+                {deferredPrompt ? "BAIXAR AGORA" : "COMO BAIXAR"}
               </Button>
               <Button 
                 variant="ghost" 
