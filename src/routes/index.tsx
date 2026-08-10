@@ -1557,6 +1557,8 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         </div>
 
         <div className="flex flex-col gap-2 w-full">
+          {/* Ocultando botão de editar perfil a pedido do usuário */}
+          {/* 
           <Button 
             className="game-button bg-primary w-full py-6 text-sm uppercase italic flex items-center justify-center gap-2"
             onClick={() => {
@@ -1573,6 +1575,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           >
             <Pencil className="w-4 h-4" /> Editar Perfil
           </Button>
+          */}
           
           <Button 
             variant="ghost" 
