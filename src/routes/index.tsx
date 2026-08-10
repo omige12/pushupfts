@@ -271,22 +271,10 @@ function App() {
       setDeferredPrompt(null);
       setShowInstallBanner(false);
     } else {
-      console.log('PWA: No deferredPrompt available, redirecting to browser install');
-      // Tentar forçar o menu de instalação nativo se o prompt não foi capturado mas o navegador suporta
-      const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-      const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-      
-      if (isChrome && isMobile) {
-        toast.info("📱 TOQUE NO BOTÃO DE MENU", {
-          description: "Clique nos 3 pontos (⋮) no topo e selecione 'Instalar aplicativo' para baixar.",
-          duration: 10000,
-        });
-      } else {
-        toast.info("📱 COMO BAIXAR", {
-          description: "No Android: Clique em ⋮ e 'Instalar'. No iOS: Clique em 'Compartilhar' e 'Adicionar à Tela de Início'.",
-          duration: 10000,
-        });
-      }
+      console.log('PWA: No deferredPrompt available');
+      // No tutorial: if prompt is missing, we still try to trigger the installable state or do nothing
+      // Browsers often need a user gesture to show the prompt, which this is.
+      // If deferredPrompt is null, we can't "force" a download, but we remove the tutorial toast.
     }
   };
 
@@ -604,7 +592,7 @@ function App() {
                 onClick={handleInstallClick}
                 className="bg-primary hover:bg-primary/90 text-[10px] font-black italic uppercase px-4 h-8 rounded-lg shadow-[0_3px_0_0_rgba(29,78,216,0.5)] active:translate-y-[2px] active:shadow-none transition-all shrink-0"
               >
-                {deferredPrompt ? "BAIXAR AGORA" : "COMO BAIXAR"}
+                {deferredPrompt ? "BAIXAR AGORA" : "BAIXAR APP"}
               </Button>
               <Button 
                 variant="ghost" 
