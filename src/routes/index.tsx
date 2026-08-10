@@ -1227,8 +1227,19 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
   });
 
   useEffect(() => {
-    if (initialEditing) setEditing(true);
-  }, [initialEditing]);
+    if (initialEditing) {
+      setEditing(true);
+      // Sync formData when entering edit mode to ensure we have latest data
+      setFormData({ 
+        ...user,
+        name: user.name || '',
+        age: user.age || 0,
+        weight: user.weight || 0,
+        height: user.height || 0,
+        goal: user.goal || 'Bater recordes'
+      });
+    }
+  }, [initialEditing, user]);
 
   const stats = user;
   
