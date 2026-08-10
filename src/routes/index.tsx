@@ -1559,7 +1559,17 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         <Button 
           className="game-button bg-primary w-full py-6 text-sm uppercase italic flex items-center justify-center gap-2"
-          onClick={() => setView('edit-profile')}
+          onClick={() => {
+            setFormData({ 
+              ...user,
+              name: user.name || '',
+              age: user.age || 0,
+              weight: user.weight || 0,
+              height: user.height || 0,
+              goal: user.goal || 'Bater recordes'
+            });
+            setEditing(true);
+          }}
         >
           <Pencil className="w-4 h-4" /> Editar Perfil
         </Button>
