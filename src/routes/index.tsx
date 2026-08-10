@@ -1528,8 +1528,8 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between text-xs font-black italic text-muted-foreground uppercase tracking-widest">
-            <span>Nível {getRankInfo(stats.xp).level}</span>
-            <span>{getRankInfo(stats.xp).xpInLevel} / {XP_PER_DIVISION} XP</span>
+            <span>Nível {getRankInfo(stats?.xp || 0).level}</span>
+            <span>{getRankInfo(stats?.xp || 0).xpInLevel} / {XP_PER_DIVISION} XP</span>
           </div>
           <Progress value={getRankInfo(stats.xp).progress} className="h-3 bg-white/5" />
 
