@@ -232,8 +232,8 @@ function App() {
       console.log('PWA: beforeinstallprompt event fired');
       e.preventDefault();
       setDeferredPrompt(e);
-      // Forçar a exibição do banner sempre que o prompt estiver disponível, ignorando dismiss anterior
-      setShowInstallBanner(true);
+      // O banner está desativado conforme solicitação do usuário
+      setShowInstallBanner(false);
     };
 
     const handleAppInstalled = () => {
@@ -250,10 +250,7 @@ function App() {
       setIsStandalone(true);
       setShowInstallBanner(false);
     } else {
-      // Se não estiver instalado, tentamos mostrar o banner assim que o componente montar
-      // O evento beforeinstallprompt é o gatilho real, mas deixamos showInstallBanner true
-      // para caso o navegador já tenha o prompt em cache
-      setShowInstallBanner(true);
+      setShowInstallBanner(false);
     }
 
     return () => {
@@ -343,9 +340,9 @@ function App() {
               setView('dashboard');
             }
 
-            // Forçar a verificação do PWA após o login bem-sucedido
+            // PWA logic here if needed for state tracking, but banner is removed
             if (!window.matchMedia('(display-mode: standalone)').matches) {
-              localStorage.removeItem('pwa-banner-dismissed');
+              // Banner removed by user request
             }
           } else {
             console.log("Profile not found, staying in onboarding");
@@ -570,45 +567,7 @@ function App() {
         {renderView()}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {showInstallBanner && !isStandalone && (
-          <motion.div 
-            initial={{ y: 100, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 100, opacity: 0 }}
-            className="fixed bottom-6 left-4 right-4 z-[100] glass-panel p-4 border-gold/30 bg-[#0B0E14]/95 backdrop-blur-xl shadow-2xl rounded-2xl flex items-center justify-between gap-4"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-white/10">
-                <img src={logoAsset.url} className="w-full h-full object-cover" alt="Logo" />
-              </div>
-              <div className="flex flex-col">
-                <h4 className="text-[11px] font-black text-white italic tracking-tighter uppercase leading-tight">📱 BAIXAR FLEX BATTLE</h4>
-                <p className="text-[9px] text-white/50 font-bold uppercase tracking-wider">Clique para baixar o app agora.</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button 
-                onClick={handleInstallClick}
-                className="bg-primary hover:bg-primary/90 text-[10px] font-black italic uppercase px-4 h-8 rounded-lg shadow-[0_3px_0_0_rgba(29,78,216,0.5)] active:translate-y-[2px] active:shadow-none transition-all shrink-0"
-              >
-                {deferredPrompt ? "BAIXAR AGORA" : "BAIXAR APP"}
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 text-white/30 hover:text-white"
-                onClick={() => {
-                  setShowInstallBanner(false);
-
-                }}
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* PWA Banner removido a pedido do usuário */}
 
 
       <AnimatePresence>
