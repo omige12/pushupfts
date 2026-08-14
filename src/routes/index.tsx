@@ -2362,40 +2362,46 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
           return (
             <motion.div 
               key={i}
+          return (
+            <motion.div 
+              key={i}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className={`glass-panel p-5 border-white/5 relative overflow-hidden group ${!isCompleted && 'opacity-70'}`}
+              transition={{ delay: i * 0.05 }}
+              className="bg-[#151921] rounded-[1.8rem] p-5 border border-white/5 flex items-center gap-4 active:scale-[0.99] transition-all group"
             >
-              {isCompleted && (
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gold/10 blur-2xl -mr-12 -mt-12 rounded-full" />
-              )}
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center border-2 ${isCompleted ? 'bg-electric-blue/20 border-electric-blue/40 text-electric-blue' : 'bg-white/5 border-white/10 text-white/20'}`}>
+                <Zap className="w-6 h-6" />
+              </div>
               
-              <div className="flex items-center gap-4">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 ${isCompleted ? 'bg-gold/20 border-gold/40 text-gold' : 'bg-white/5 border-white/10 text-white/20'}`}>
-                  <ach.icon className="w-7 h-7" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-start mb-1">
-                    <div>
-                      <h4 className={`font-black text-sm italic tracking-tight ${isCompleted ? 'text-white' : 'text-white/60'}`}>{(ach.title || '').toUpperCase()}</h4>
-                      <p className="text-[9px] font-medium text-muted-foreground uppercase">{ach.desc}</p>
-                    </div>
-                    {isCompleted && (
-                      <Badge className="bg-gold text-black text-[8px] h-4 font-black italic border-none">DESBLOQUEADO</Badge>
-                    )}
+              <div className="flex-1">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="text-sm font-black italic text-white uppercase tracking-tighter leading-tight">{ach.title.toUpperCase()}</h4>
+                    <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-1">{ach.desc.toUpperCase()}</p>
                   </div>
-                  
-                  <div className="mt-3 space-y-1.5">
-                    <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground">
-                      <span>{ach.current} / {ach.req}</span>
-                      <span className="text-primary">{ach.reward}</span>
-                    </div>
-                    <Progress value={progress} className="h-1.5 bg-white/5" />
+                  <div className="text-[9px] font-black text-electric-blue uppercase tracking-widest">
+                    {ach.reward}
+                  </div>
+                </div>
+                
+                <div className="mt-4 space-y-1.5">
+                  <div className="h-1.5 w-full bg-[#0B0E14] rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      className={`h-full ${isCompleted ? 'bg-electric-blue shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-white/10'}`}
+                    />
+                  </div>
+                  <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">
+                    {ach.current} / {ach.req}
                   </div>
                 </div>
               </div>
+              
+              <ChevronRight className="w-4 h-4 text-white/10" />
             </motion.div>
+          );
           );
         })}
       </div>
