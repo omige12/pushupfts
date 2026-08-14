@@ -519,7 +519,7 @@ function App() {
       case 'onboarding-start': return <OnboardingStart setView={setView} />;
       case 'quiz': return <Quiz setView={setView} user={user} setUser={setUser} />;
       case 'quiz-result': return <QuizResult setView={setView} user={user} />;
-      case 'auth': return <AuthView setView={setView} />;
+      case 'auth': return <AuthView setView={setView} user={user} />;
       case 'photo-upload': return <PhotoUpload setView={setView} user={user} setUser={setUser} />;
       case 'profile-setup': return <ProfileSetup setView={setView} user={user} setUser={setUser} />;
       case 'profile-ready': return <ProfileReady setView={setView} user={user} />;
@@ -642,116 +642,189 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
-      <header className="flex justify-between items-center mb-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 space-y-5 pb-28">
+      {/* Header */}
+      <header className="flex justify-between items-start">
         <div className="flex items-center gap-3">
           <div 
-            className="w-14 h-14 bg-gradient-to-br from-gold to-orange-500 rounded-2xl border-2 border-white/20 shadow-lg shadow-gold/10 overflow-hidden cursor-pointer active:scale-90 transition-transform"
+            className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 transition-transform"
             onClick={() => setView('edit-profile')}
           >
-            {stats.avatar ? (
-              <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
-            ) : (
-              <div className="w-full h-full bg-secondary flex items-center justify-center">
-                <UserIcon className="w-6 h-6 text-muted-foreground" />
-              </div>
-            )}
+            <div className="w-full h-full rounded-full overflow-hidden">
+              {stats.avatar ? (
+                <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
+              ) : (
+                <div className="w-full h-full bg-[#1A1F26] flex items-center justify-center">
+                  <UserIcon className="w-6 h-6 text-white/40" />
+                </div>
+              )}
+            </div>
           </div>
-          <div className="cursor-pointer" onClick={() => setView('profile')}>
-            <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{(stats.name || 'ATLETA').toUpperCase()}</h1>
-            <div className="flex items-center gap-1.5">
-              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(rank.patentName)} {(rank.patentName || '').toUpperCase()}</Badge>
-              <div className="flex items-center gap-0.5 text-gold">
+          <div>
+            <h1 className="font-black text-xl italic text-white tracking-tight leading-none">{(stats.name || 'ATLETA').toUpperCase()}</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="bg-purple-evolve/20 border border-purple-evolve/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-[10px]">{getRankInfo(user.xp).emoji}</span>
+                <span className="text-[9px] font-black text-purple-evolve uppercase tracking-widest">{(rank.patentName || '').toUpperCase()}</span>
+              </div>
+              <div className="flex items-center gap-1 text-gold">
                 <Flame className="w-3 h-3 fill-gold" />
-                <span className="text-[10px] font-black">{stats.streak}</span>
+                <span className="text-[11px] font-black">{stats.streak}</span>
               </div>
             </div>
           </div>
+        </div>
+        
+        <div 
+          className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer active:scale-95 transition-all glow-purple"
+          onClick={() => toast.info("Recompensas em breve!")}
+        >
+          <div className="bg-gold/20 p-1.5 rounded-xl">
+            <Trophy className="w-5 h-5 text-gold" />
+          </div>
+          <div className="flex flex-col pr-2">
+            <span className="text-[10px] font-black text-white leading-none uppercase tracking-tighter">RECOMPENSAS</span>
+            <span className="text-[8px] text-white/40 font-bold uppercase tracking-widest mt-0.5">Resgate prêmios</span>
+          </div>
+          <ChevronRight className="w-4 h-4 text-white/20" />
         </div>
       </header>
 
+      {/* Patent Progress Card */}
       <div 
-        className={`glass-panel p-5 relative overflow-hidden group border-2 cursor-pointer active:scale-[0.98] transition-all bg-gradient-to-br ${rank.color || 'from-primary/20 to-transparent'} border-white/10`}
+        className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden cursor-pointer active:scale-[0.98] transition-all"
         onClick={() => setView('patents-list')}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-        <div className="relative z-10">
-          <div className="flex justify-between items-end mb-3">
-            <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${rank.color || 'from-primary/20 to-transparent'} flex items-center justify-center text-3xl shadow-lg border border-white/20`}>
-                {rank.emoji}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName}</span>
-                <span className="text-[9px] font-black text-primary/80 uppercase tracking-widest mt-1">Sua Patente Atual</span>
-              </div>
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]">
+               <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
             </div>
-            <div className="text-right">
-              <span className="text-xs font-black italic text-white tracking-tighter">{rank.xpInLevel} / {rank.xpForNext} XP</span>
+            <div>
+              <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName.toUpperCase()}</h2>
+              <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em] mt-1 opacity-70">SUA PATENTE ATUAL</p>
             </div>
           </div>
-          <Progress value={rank.progress} className="h-3 bg-white/10 border border-white/5" />
-          <div className="mt-3 flex justify-between items-center">
-            <p className="text-[9px] font-black text-muted-foreground uppercase tracking-wider italic">
-              {rank.isMax ? 'Nível Máximo Atingido' : `Faltam ${XP_PER_DIVISION - rank.xpInLevel} XP para o próximo nível`}
+          <div className="text-right">
+            <span className="text-xs font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel} / {rank.xpForNext} XP</span>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${rank.progress}%` }}
+              className="h-full bg-gold shadow-[0_0_10px_rgba(234,179,8,0.5)]"
+            />
+          </div>
+          
+          <div className="flex justify-between items-center pt-1">
+            <p className="text-[10px] font-black text-white/40 uppercase tracking-widest italic">
+              FALTAM {XP_PER_DIVISION - rank.xpInLevel} XP PARA O PRÓXIMO NÍVEL
             </p>
-            <div className="flex items-center gap-1 bg-primary/20 px-2 py-0.5 rounded-full border border-primary/30">
-               <Star className="w-3 h-3 text-gold fill-gold" />
-               <span className="text-[8px] font-black text-white uppercase tracking-widest">Ver Trilhas</span>
-            </div>
+            <button className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl hover:bg-white/10 transition-colors">
+              <Star className="w-3.5 h-3.5 text-gold fill-gold" />
+              <span className="text-[9px] font-black text-white uppercase tracking-widest">VER TRILHAS</span>
+            </button>
           </div>
         </div>
       </div>
 
-
-
-
+      {/* Action Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <Button 
-          className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
+        <div 
+          className="bg-electric-blue/5 border border-electric-blue/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.98] transition-all glow-primary"
           onClick={() => setView('multiplayer')}
         >
-          <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-            <Swords className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <div className="w-14 h-14 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-4">
+            <Swords className="w-8 h-8 text-electric-blue filter drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
           </div>
-          <span className="text-[10px] font-black italic tracking-tighter uppercase">Multijogador</span>
-        </Button>
-        <Button 
-          className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
-          onClick={() => setView('achievements')}
+          <div className="text-center space-y-1">
+            <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
+            <p className="text-[9px] font-medium text-white/40 leading-tight">Entre em uma partida com jogadores online</p>
+          </div>
+          <div className="mt-4 bg-electric-blue/20 p-2 rounded-full">
+            <ArrowLeft className="w-4 h-4 text-electric-blue rotate-180" />
+          </div>
+        </div>
+
+        <div 
+          className="bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.98] transition-all glow-purple"
+          onClick={() => toast.info("Missões em breve!")}
         >
-          <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-            <Medal className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <div className="w-14 h-14 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-4">
+            <LayoutDashboard className="w-8 h-8 text-purple-evolve filter drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
           </div>
-          <span className="text-[10px] font-black italic tracking-tighter uppercase">Conquistas</span>
-        </Button>
+          <div className="text-center space-y-1">
+            <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MISSÕES DIÁRIAS</h3>
+            <p className="text-[9px] font-medium text-white/40 leading-tight">Complete missões e ganhe recompensas</p>
+          </div>
+          <div className="mt-4 bg-purple-evolve/20 p-2 rounded-full">
+            <ArrowLeft className="w-4 h-4 text-purple-evolve rotate-180" />
+          </div>
+        </div>
       </div>
 
-      <div className="space-y-4 pt-2">
-        <Button 
-          className="game-button bg-energy-red w-full h-40 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
-          onClick={() => setView('treino')}
-        >
-          <div className="relative z-10 flex flex-col items-center gap-3">
-            <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
-              <Dumbbell className="w-10 h-10 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
-            </div>
-            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Modo Treino</span>
+      {/* Workout Banner */}
+      <div 
+        className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all glow-red"
+        onClick={() => setView('treino')}
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-energy-red/10 flex items-center justify-center">
+            <Dumbbell className="w-8 h-8 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
           </div>
-          <div className="absolute top-0 right-0 p-3">
-            <Badge className="bg-yellow-400 text-black font-black italic text-[10px] animate-pulse px-3 py-1">EVOLUÇÃO</Badge>
+          <div>
+            <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
+            <p className="text-[10px] font-medium text-white/40 uppercase tracking-widest mt-1">Aperfeiçoe suas habilidades</p>
           </div>
-          {/* Decorative background element */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        </Button>
-
+        </div>
+        <div className="bg-energy-red/20 p-2.5 rounded-full">
+          <ArrowLeft className="w-5 h-5 text-energy-red rotate-180" />
+        </div>
       </div>
 
-
-
+      {/* Bottom Stats Footer */}
+      {/* Bottom Stats Footer - Recreating WA0087.jpg */}
+      <div className="grid grid-cols-4 gap-4 pt-6 border-t border-white/5 mt-4">
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
+            <Trophy className="w-5 h-5 text-gold" />
+          </div>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">VITÓRIAS</span>
+          <span className="text-xl font-black text-white italic mt-1">{stats.wins || 0}</span>
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
+            <Target className="w-5 h-5 text-electric-blue" />
+          </div>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">RECORDE</span>
+          <span className="text-xl font-black text-white italic mt-1">{stats.record || 0}</span>
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
+            <Flame className="w-5 h-5 text-energy-red" />
+          </div>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">OFENSIVA</span>
+          <span className="text-xl font-black text-white italic mt-1">{stats.streak || 0}</span>
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
+            <Zap className="w-5 h-5 text-purple-evolve" />
+          </div>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">TOTAL</span>
+          <span className="text-xl font-black text-white italic mt-1">{stats.totalPushups || 0}</span>
+        </div>
+      </div>
     </motion.div>
   );
 }
+
+
 
 function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect: (b: typeof BOTS[0]) => void }) {
   return (
@@ -1920,71 +1993,100 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">MULTIJOGADOR</h2>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-28">
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">MULTIJOGADOR</h2>
+          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">COMPITA. VENÇA. DOMINE.</p>
+        </div>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => setView('dashboard')}>
+          <ArrowLeft className="w-5 h-5 text-white" />
+        </Button>
       </div>
 
       <div className="space-y-4">
-        <Button 
-          className="game-button bg-energy-red w-full h-36 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
+        {/* Partida Rápida (Large Card) */}
+        <div 
+          className="relative h-48 rounded-[2rem] border border-energy-red/20 bg-gradient-to-br from-energy-red/20 to-energy-red/5 p-6 flex flex-col justify-center gap-2 cursor-pointer active:scale-[0.98] transition-all glow-red group"
           onClick={() => onStartMatchmaking(false)}
         >
-
-          <div className="relative flex flex-col items-center gap-2">
-            <Globe className="w-12 h-12 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
-            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">🌎 JOGAR COM ALEATÓRIOS</span>
-            <p className="text-[9px] font-black opacity-60 tracking-widest uppercase">Competição Online Real</p>
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 rounded-full bg-energy-red/20 flex items-center justify-center border border-energy-red/30 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+              <Globe className="w-10 h-10 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-3xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
+              <p className="text-xs font-medium text-white/60 uppercase tracking-widest mt-2">ENTRE EM UMA PARTIDA ALEATÓRIA</p>
+              <div className="mt-3 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">COMPETIÇÃO ONLINE REAL</span>
+              </div>
+            </div>
+            <div className="bg-white/10 p-2 rounded-full group-hover:bg-white/20 transition-colors">
+              <ArrowLeft className="w-5 h-5 text-white rotate-180" />
+            </div>
           </div>
-        </Button>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Button 
-            className="game-button bg-blue-500/10 border-2 border-blue-500/20 h-28 flex flex-col items-center justify-center group shadow-none"
-            onClick={() => setView('friend-challenge')}
-          >
-            <UserIcon className="w-8 h-8 mb-1 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
-            <span className="text-xl tracking-tighter italic uppercase leading-none text-blue-400 text-center">Jogar com Amigos</span>
-          </Button>
-          <Button 
-            className="game-button bg-white/5 border border-white/10 h-28 flex flex-col items-center justify-center group"
-            onClick={onSelectBot}
-          >
-            <Zap className="w-8 h-8 mb-1 text-gold group-hover:scale-110 transition-transform duration-300" />
-            <span className="text-xl tracking-tighter italic uppercase leading-none">Treinar Bots</span>
-          </Button>
         </div>
 
-        <div className="glass-panel p-6 space-y-4 border-white/5">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center flex items-center justify-center gap-2">
-            <Search className="w-3 h-3" /> Procurar por ID
-          </p>
-          <div className="flex gap-2">
+        {/* Small Cards Row */}
+        <div className="grid grid-cols-2 gap-4">
+          <div 
+            className="bg-electric-blue/5 border border-electric-blue/10 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.98] transition-all glow-primary group"
+            onClick={() => setView('friend-challenge')}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center">
+              <UserIcon className="w-6 h-6 text-electric-blue" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">JOGAR COM AMIGOS</h3>
+              <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">CONVITE SEUS AMIGOS E JOGUEM JUNTOS</p>
+            </div>
+            <div className="self-end bg-white/5 p-1.5 rounded-full mt-auto">
+              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+            </div>
+          </div>
+
+          <div 
+            className="bg-card border border-white/5 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.98] transition-all group"
+            onClick={onSelectBot}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center">
+              <Zap className="w-6 h-6 text-gold" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">TREINO VS BOTS</h3>
+              <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APRIMORE SUAS HABILIDADES CONTRA BOTS</p>
+            </div>
+            <div className="self-end bg-white/5 p-1.5 rounded-full mt-auto">
+              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+            </div>
+          </div>
+        </div>
+
+        {/* Search Player (Full Width) */}
+        <div className="bg-[#1A1F26]/30 border border-white/5 rounded-[1.8rem] p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <Search className="w-5 h-5 text-white/40" />
+            <div>
+              <h3 className="text-sm font-black italic text-white uppercase tracking-tighter leading-none">BUSCAR JOGADOR</h3>
+              <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-1">ENCONTRE E DESAFIE QUALQUER JOGADOR</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
             <input 
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl p-4 font-mono text-sm text-white focus:outline-none focus:border-primary text-center tracking-widest"
+              className="flex-1 bg-[#0B0E14] border border-white/10 rounded-2xl px-5 h-14 font-mono text-sm text-white focus:outline-none focus:border-electric-blue transition-all"
               placeholder="ID do jogador"
               value={searchId}
               onChange={(e) => setSearchId(e.target.value.toUpperCase())}
             />
-            <Button onClick={handleSearch} className="game-button bg-primary h-auto px-6 italic">⚔️ DESAFIAR</Button>
+            <Button 
+              onClick={handleSearch} 
+              className="game-button bg-electric-blue h-14 px-6 italic text-sm font-black shadow-[0_4px_0_0_rgba(29,78,216,1)] active:shadow-none active:translate-y-1"
+            >
+              <Swords className="w-4 h-4 mr-2" /> DESAFIAR
+            </Button>
           </div>
         </div>
-
-        {foundPlayer && (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel p-6 border-primary/30 bg-primary/5 flex flex-col gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center border-2 border-primary/30 shadow-lg">
-                <UserIcon className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <div className="flex-1">
-                <p className="font-black text-xl italic text-white tracking-tight leading-none mb-1">{foundPlayer.name}</p>
-                <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none font-mono">{foundPlayer.id}</Badge>
-              </div>
-            </div>
-            <Button className="game-button bg-primary w-full py-4 text-sm uppercase italic" onClick={() => setView('friend-challenge')}>Desafiar Agora</Button>
-          </motion.div>
-        )}
       </div>
     </motion.div>
   );
@@ -2208,90 +2310,101 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
   const [activeCat, setActiveCat] = useState('flexoes');
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 pb-24 space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">CONQUISTAS</h2>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-28">
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">CONQUISTAS</h2>
+          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">Acompanhe seu progresso e conquiste tudo!</p>
+        </div>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => setView('dashboard')}>
+          <ArrowLeft className="w-5 h-5 text-white" />
+        </Button>
       </div>
       
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { label: 'Melhor Recorde', val: user.record, sub: 'FLEXÕES', icon: Target, color: 'text-gold' },
-            { label: 'Total Flexões', val: user.totalPushups, sub: 'FLEXÕES', icon: Dumbbell, color: 'text-primary' },
-            { label: 'Sequência Dias', val: user.streak, sub: 'DIAS 🔥', icon: Flame, color: 'text-energy-red' },
-            { label: 'Sequência Vitórias', val: Math.floor(user.wins / 10) + 1, sub: 'VITÓRIAS', icon: Swords, color: 'text-blue-400' },
-            { label: 'Melhor Desempenho', val: Math.floor(user.record * 0.9), sub: 'RECENTE', icon: TrendingUp, color: 'text-green-400' },
-            { label: 'Última Conquista', val: 'Elite', sub: 'RANK PRO', icon: Medal, color: 'text-purple-evolve' },
-          ].map((item, i) => (
-            <div key={i} className="glass-panel p-4 border-white/5 flex flex-col items-center gap-1 text-center">
-              <item.icon className={`w-5 h-5 ${item.color} mb-1`} />
-              <p className="text-[7px] font-black text-muted-foreground uppercase tracking-widest">{item.label}</p>
-              <span className="text-xl font-black italic text-white leading-none">{item.val}</span>
-              <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{item.sub}</span>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: 'MELHOR RECORDE', val: user.record, sub: 'FLEXÕES', icon: Target, color: 'text-gold', border: 'border-gold/20' },
+          { label: 'TOTAL FLEXÕES', val: user.totalPushups, sub: 'FLEXÕES', icon: Dumbbell, color: 'text-electric-blue', border: 'border-electric-blue/20' },
+          { label: 'SEQUÊNCIA DIAS', val: user.streak, sub: 'DIAS 🔥', icon: Flame, color: 'text-energy-red', border: 'border-energy-red/20' },
+          { label: 'SEQUÊNCIA VITÓRIAS', val: user.wins, sub: 'VITÓRIAS', icon: Swords, color: 'text-electric-blue', border: 'border-electric-blue/20' },
+          { label: 'MELHOR DESEMPENHO', val: user.record, sub: 'RECENTE', icon: TrendingUp, color: 'text-green-400', border: 'border-green-400/20' },
+          { label: 'ÚLTIMA CONQUISTA', val: 'Elite', sub: 'RANK PRO', icon: Medal, color: 'text-purple-evolve', border: 'border-purple-evolve/20' },
+        ].map((item, i) => (
+          <div key={i} className={`bg-[#151921] border ${item.border} rounded-2xl p-4 flex flex-col items-center justify-center gap-2 text-center h-32`}>
+            <item.icon className={`w-6 h-6 ${item.color}`} />
+            <div className="space-y-0.5">
+              <p className="text-[7px] font-black text-white/40 uppercase tracking-widest leading-tight">{item.label}</p>
+              <div className="text-2xl font-black italic text-white leading-none">{item.val}</div>
+              <p className="text-[7px] font-black text-white/40 uppercase tracking-widest leading-tight">{item.sub}</p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
-      <div className="flex justify-center gap-4 pb-2">
+      {/* Categories Toggle */}
+      <div className="flex bg-[#151921] p-1.5 rounded-2xl border border-white/5">
         {achievements.map((cat: any) => (
           <Button 
             key={cat.id} 
             onClick={() => setActiveCat(cat.id)}
-            className={`game-button h-14 w-14 flex items-center justify-center p-0 border-none shadow-none rounded-2xl transition-all ${activeCat === cat.id ? 'bg-primary scale-110 shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'bg-white/5 opacity-50 hover:opacity-80'}`}
+            className={`flex-1 h-12 rounded-xl transition-all border-none shadow-none font-black text-[10px] uppercase tracking-tighter italic ${activeCat === cat.id ? 'bg-electric-blue text-white glow-primary' : 'bg-transparent text-white/40 hover:text-white'}`}
           >
-            <cat.icon className="w-6 h-6" />
+            <cat.icon className="w-4 h-4 mr-2" />
+            {cat.label}
           </Button>
         ))}
       </div>
 
-      <div className="space-y-4">
+      {/* Achievement List */}
+      <div className="space-y-3">
         {achievements.find((c: any) => c.id === activeCat)?.items.map((ach: any, i: number) => {
           const isCompleted = ach.current >= ach.req;
           const progress = Math.min((ach.current / ach.req) * 100, 100);
+
           
           return (
             <motion.div 
               key={i}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className={`glass-panel p-5 border-white/5 relative overflow-hidden group ${!isCompleted && 'opacity-70'}`}
+              transition={{ delay: i * 0.05 }}
+              className="bg-[#151921] rounded-[1.8rem] p-5 border border-white/5 flex items-center gap-4 active:scale-[0.99] transition-all group"
             >
-              {isCompleted && (
-                <div className="absolute top-0 right-0 w-24 h-24 bg-gold/10 blur-2xl -mr-12 -mt-12 rounded-full" />
-              )}
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center border-2 ${isCompleted ? 'bg-electric-blue/20 border-electric-blue/40 text-electric-blue' : 'bg-white/5 border-white/10 text-white/20'}`}>
+                <Zap className="w-6 h-6" />
+              </div>
               
-              <div className="flex items-center gap-4">
-                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 ${isCompleted ? 'bg-gold/20 border-gold/40 text-gold' : 'bg-white/5 border-white/10 text-white/20'}`}>
-                  <ach.icon className="w-7 h-7" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-start mb-1">
-                    <div>
-                      <h4 className={`font-black text-sm italic tracking-tight ${isCompleted ? 'text-white' : 'text-white/60'}`}>{(ach.title || '').toUpperCase()}</h4>
-                      <p className="text-[9px] font-medium text-muted-foreground uppercase">{ach.desc}</p>
-                    </div>
-                    {isCompleted && (
-                      <Badge className="bg-gold text-black text-[8px] h-4 font-black italic border-none">DESBLOQUEADO</Badge>
-                    )}
+              <div className="flex-1">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h4 className="text-sm font-black italic text-white uppercase tracking-tighter leading-tight">{ach.title.toUpperCase()}</h4>
+                    <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-1">{ach.desc.toUpperCase()}</p>
                   </div>
-                  
-                  <div className="mt-3 space-y-1.5">
-                    <div className="flex justify-between text-[8px] font-black uppercase tracking-widest text-muted-foreground">
-                      <span>{ach.current} / {ach.req}</span>
-                      <span className="text-primary">{ach.reward}</span>
-                    </div>
-                    <Progress value={progress} className="h-1.5 bg-white/5" />
+                  <div className="text-[9px] font-black text-electric-blue uppercase tracking-widest">
+                    {ach.reward}
+                  </div>
+                </div>
+                
+                <div className="mt-4 space-y-1.5">
+                  <div className="h-1.5 w-full bg-[#0B0E14] rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      className={`h-full ${isCompleted ? 'bg-electric-blue shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-white/10'}`}
+                    />
+                  </div>
+                  <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">
+                    {ach.current} / {ach.req}
                   </div>
                 </div>
               </div>
+              
+              <ChevronRight className="w-4 h-4 text-white/10" />
             </motion.div>
           );
         })}
       </div>
-
     </motion.div>
   );
 }
@@ -2543,6 +2656,13 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
 
   const handleNumberInput = (val: string) => {
     setAnswers({ ...answers, [current.id]: val });
+    
+    // Update local user state
+    if (current.id === 'weight') {
+      setUser((prev: any) => ({ ...prev, weight: parseInt(val) || 0 }));
+    } else if (current.id === 'height') {
+      setUser((prev: any) => ({ ...prev, height: parseInt(val) || 0 }));
+    }
   };
 
   return (
@@ -2652,7 +2772,7 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
   );
 };
 
-const AuthView = ({ setView }: { setView: (v: View) => void }) => {
+const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) => {
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(() => {
     const isReg = localStorage.getItem('onboarding_registration') === 'true';
@@ -2661,7 +2781,7 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [name, setName] = useState(user.name === "GUERREIRO ALPHA" ? "" : user.name);
 
   const handleAuth = async () => {
     if (!email || !password || (!isLogin && !name)) {
@@ -2882,7 +3002,7 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
 
 const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
   const [formData, setFormData] = useState({
-    name: user.name || '',
+    name: user.name === "GUERREIRO ALPHA" ? "" : (user.name || ""),
     age: user.age || '',
     weight: user.weight || ''
   });
