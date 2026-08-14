@@ -2441,50 +2441,61 @@ const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
 
 const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
   const [step, setStep] = useState(1);
-  const [answers, setAnswers] = useState<any>({});
+  const [answers, setAnswers] = useState<any>({
+    age: '',
+    weight: '',
+    height: '',
+    level: '',
+    objective: '',
+    time: '',
+    motivation: ''
+  });
   
   const questions = [
     { 
       id: 'age',
       q: "🎂 QUAL É A SUA IDADE?", 
+      type: 'select',
       opts: ["-18", "18–25", "26–35", "36–45", "46–55", "55+"] 
     },
     { 
       id: 'weight',
-      q: "⚖️ QUAL É O SEU PESO?", 
-      opts: ["-60kg", "61–75kg", "76–90kg", "91–105kg", "105kg+"] 
+      q: "⚖️ QUAL É O SEU PESO (KG)?", 
+      type: 'number',
+      placeholder: "Ex: 75"
+    },
+    { 
+      id: 'height',
+      q: "📏 QUAL É A SUA ALTURA (CM)?", 
+      type: 'number',
+      placeholder: "Ex: 175"
     },
     { 
       id: 'level',
       q: "💪 QUAL O SEU NÍVEL ATUAL?", 
+      type: 'select',
       opts: ["Iniciante (0-10)", "Intermediário (11-30)", "Avançado (31-50)", "Elite (50+)"] 
     },
     { 
       id: 'objective',
       q: "🎯 QUAL É O SEU OBJETIVO?", 
+      type: 'select',
       opts: ["Ganhar Massa", "Perder Peso", "Resistência", "Competir no Topo"] 
     },
     { 
       id: 'time',
       q: "⏱️ QUANTO TEMPO POR DIA?", 
+      type: 'select',
       opts: ["15 min", "30 min", "1 hora", "Mais de 1 hora"] 
-    },
-    { 
-      id: 'motivation',
-      q: "🔥 O QUE MAIS TE MOTIVA?", 
-      opts: ["Saúde", "Estética", "Disciplina", "Vencer Outros"] 
     }
   ];
 
   const current = questions[step - 1];
 
-  const select = (opt: string) => {
-    const newAnswers = {...answers, [current.id]: opt};
-    setAnswers(newAnswers);
+  const next = () => {
     if (step < questions.length) {
       setStep(s => s + 1);
     } else {
-      // Mapear opções do quiz para os enums do banco
       const goalMap: Record<string, string> = {
         "Ganhar Massa": "Massa muscular",
         "Perder Peso": "Perder peso",
@@ -2494,16 +2505,30 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
       
       setUser({
         ...user,
-        goal: goalMap[newAnswers.objective] || 'Bater recordes',
-        height: parseInt(String(newAnswers.height)) || 0
+        goal: goalMap[answers.objective] || 'Bater recordes',
+        height: parseInt(String(answers.height)) || 0,
+        weight: parseInt(String(answers.weight)) || 0,
+        age: answers.age
       });
-      setView('quiz-result');
+      
+      // Salvar respostas temporárias para o cadastro
+      localStorage.setItem('quiz_answers', JSON.stringify(answers));
+      localStorage.setItem('onboarding_registration', 'true');
+      setView('auth');
     }
+  };
+
+  const select = (opt: string) => {
+    setAnswers({ ...answers, [current.id]: opt });
+    setTimeout(next, 300);
+  };
+
+  const handleNumberInput = (val: string) => {
+    setAnswers({ ...answers, [current.id]: val });
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0B0E14] relative overflow-hidden">
-      {/* Progress Bar at the top */}
       <div className="pt-12 px-6 space-y-4 z-20">
         <div className="flex justify-between items-end">
           <p className="text-[10px] font-black uppercase text-primary tracking-[0.2em]">ETAPA {step} / {questions.length}</p>
@@ -2531,43 +2556,63 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
               {current.q}
             </h2>
 
-            <div className="grid gap-3">
-              {current.opts.map((opt, i) => (
-                <motion.div
-                  key={opt}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  <Button 
-                    variant="outline" 
-                    className="w-full h-16 text-sm font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-between px-6 rounded-2xl group shadow-lg active:scale-[0.98] relative overflow-hidden" 
-                    onClick={() => select(opt)}
+            {current.type === 'select' ? (
+              <div className="grid gap-3">
+                {current.opts?.map((opt, i) => (
+                  <motion.div
+                    key={opt}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono text-xs">
-                        {String.fromCharCode(65 + i)}
+                    <Button 
+                      variant="outline" 
+                      className={`w-full h-16 text-sm font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-between px-6 rounded-2xl group shadow-lg active:scale-[0.98] relative overflow-hidden ${answers[current.id] === opt ? 'border-primary bg-primary/20' : ''}`} 
+                      onClick={() => select(opt)}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono text-xs">
+                          {String.fromCharCode(65 + i)}
+                        </div>
+                        <span className="flex-1 text-left">{opt}</span>
                       </div>
-                      <span className="flex-1 text-left">{opt}</span>
-                    </div>
-                    
-                    <div className="w-6 h-6 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary transition-all">
-                      <Check className="w-4 h-4 text-white opacity-0 group-hover:opacity-100" />
-                    </div>
-
-                    {/* Selection Flash Effect */}
-                    <motion.div 
-                      className="absolute inset-0 bg-primary/20 opacity-0 group-active:opacity-100 transition-opacity"
-                    />
-                  </Button>
-                </motion.div>
-              ))}
-            </div>
+                      <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${answers[current.id] === opt ? 'border-primary bg-primary' : 'border-white/10 group-hover:border-primary'}`}>
+                        <Check className={`w-4 h-4 text-white ${answers[current.id] === opt ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
+                      </div>
+                    </Button>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="relative">
+                  <input 
+                    type="number"
+                    pattern="[0-9]*"
+                    inputMode="numeric"
+                    placeholder={current.placeholder}
+                    className="w-full bg-white/5 border-2 border-white/10 rounded-2xl p-6 text-4xl font-black italic text-center text-white focus:outline-none focus:border-primary focus:bg-primary/5 transition-all"
+                    value={answers[current.id]}
+                    onChange={(e) => handleNumberInput(e.target.value)}
+                    autoFocus
+                  />
+                  <div className="absolute inset-y-0 right-6 flex items-center pointer-events-none">
+                    <span className="text-white/20 font-black italic text-xl uppercase">{current.id === 'weight' ? 'KG' : 'CM'}</span>
+                  </div>
+                </div>
+                <Button 
+                  className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all"
+                  onClick={next}
+                  disabled={!answers[current.id]}
+                >
+                  PRÓXIMO →
+                </Button>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
       
-      {/* Visual Decoration */}
       <div className="absolute top-1/2 left-[-20%] w-[60%] h-[40%] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-[-10%] w-[40%] h-[30%] bg-energy-red/5 blur-[100px] rounded-full pointer-events-none" />
     </div>
