@@ -786,34 +786,38 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </div>
 
       {/* Bottom Stats Footer */}
-      <div className="grid grid-cols-4 gap-2 pt-2 border-t border-white/5 mt-4">
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-1 mb-1 opacity-50">
-            <Trophy className="w-3 h-3" />
-            <span className="text-[9px] font-black uppercase tracking-tighter">Vitórias</span>
+      {/* Bottom Stats Footer - Recreating WA0087.jpg */}
+      <div className="grid grid-cols-4 gap-4 pt-6 border-t border-white/5 mt-4">
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
+            <Trophy className="w-5 h-5 text-gold" />
           </div>
-          <span className="text-lg font-black text-white italic">{stats.wins}</span>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">VITÓRIAS</span>
+          <span className="text-xl font-black text-white italic mt-1">{stats.wins || 0}</span>
         </div>
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-1 mb-1 opacity-50">
-            <Target className="w-3 h-3" />
-            <span className="text-[9px] font-black uppercase tracking-tighter">Taxa</span>
+        
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
+            <Target className="w-5 h-5 text-electric-blue" />
           </div>
-          <span className="text-lg font-black text-white italic">{Math.round((stats.wins / Math.max(1, stats.wins + stats.losses)) * 100)}%</span>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">RECORDE</span>
+          <span className="text-xl font-black text-white italic mt-1">{stats.record || 0}</span>
         </div>
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-1 mb-1 opacity-50">
-            <Zap className="w-3 h-3" />
-            <span className="text-[9px] font-black uppercase tracking-tighter">Sequência</span>
+        
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
+            <Flame className="w-5 h-5 text-energy-red" />
           </div>
-          <span className="text-lg font-black text-white italic">{stats.streak}</span>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">OFENSIVA</span>
+          <span className="text-xl font-black text-white italic mt-1">{stats.streak || 0}</span>
         </div>
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-1 mb-1 opacity-50">
-            <Star className="w-3 h-3" />
-            <span className="text-[9px] font-black uppercase tracking-tighter">Pontos</span>
+        
+        <div className="flex flex-col items-center">
+          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
+            <Zap className="w-5 h-5 text-purple-evolve" />
           </div>
-          <span className="text-lg font-black text-white italic">{Math.floor(stats.xp / 10)}</span>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">TOTAL</span>
+          <span className="text-xl font-black text-white italic mt-1">{stats.totalPushups || 0}</span>
         </div>
       </div>
     </motion.div>
