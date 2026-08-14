@@ -608,27 +608,51 @@ function App() {
       </AnimatePresence>
 
       {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready'].includes(view) && (
-        <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around items-center p-3 z-50">
-          <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Home className="w-6 h-6" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Início</span>
-          </button>
-          <button onClick={() => setView('achievements')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'achievements' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Medal className="w-6 h-6" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Conquistas</span>
-          </button>
-          <button onClick={() => setView('multiplayer')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'multiplayer' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Swords className="w-7 h-7" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Batalha</span>
-          </button>
-          <button onClick={() => setView('ranking')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'ranking' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Trophy className="w-6 h-6" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Ranking</span>
-          </button>
-          <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'profile' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <UserCircle className="w-6 h-6" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Perfil</span>
-          </button>
+        <nav className="fixed bottom-0 left-0 right-0 bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/5 px-6 pb-6 pt-4 flex justify-between items-center z-50">
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'dashboard' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('dashboard')}
+          >
+            <Home className={`w-7 h-7 ${view === 'dashboard' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Início</span>
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('multiplayer')}
+          >
+            <Swords className={`w-7 h-7 ${view === 'multiplayer' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Batalha</span>
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'ranking' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('ranking')}
+          >
+            <Trophy className={`w-7 h-7 ${view === 'ranking' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Ranking</span>
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('profile')}
+          >
+            <UserCircle className={`w-7 h-7 ${view === 'profile' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Perfil</span>
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'achievements' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('achievements')}
+          >
+            <Medal className={`w-7 h-7 ${view === 'achievements' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Conquistas</span>
+          </Button>
         </nav>
       )}
     </div>
