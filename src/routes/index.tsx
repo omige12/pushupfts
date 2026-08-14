@@ -2656,6 +2656,13 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
 
   const handleNumberInput = (val: string) => {
     setAnswers({ ...answers, [current.id]: val });
+    
+    // Update local user state
+    if (current.id === 'weight') {
+      setUser((prev: any) => ({ ...prev, weight: parseInt(val) || 0 }));
+    } else if (current.id === 'height') {
+      setUser((prev: any) => ({ ...prev, height: parseInt(val) || 0 }));
+    }
   };
 
   return (
@@ -2765,7 +2772,7 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
   );
 };
 
-const AuthView = ({ setView }: { setView: (v: View) => void }) => {
+const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) => {
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(() => {
     const isReg = localStorage.getItem('onboarding_registration') === 'true';
@@ -2774,7 +2781,7 @@ const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   });
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [name, setName] = useState(user.name === "GUERREIRO ALPHA" ? "" : user.name);
 
   const handleAuth = async () => {
     if (!email || !password || (!isLogin && !name)) {
@@ -2995,7 +3002,7 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
 
 const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
   const [formData, setFormData] = useState({
-    name: user.name || '',
+    name: user.name === "GUERREIRO ALPHA" ? "" : (user.name || ""),
     age: user.age || '',
     weight: user.weight || ''
   });
