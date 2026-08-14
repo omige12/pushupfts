@@ -2306,48 +2306,58 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
   const [activeCat, setActiveCat] = useState('flexoes');
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 pb-24 space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">CONQUISTAS</h2>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-28">
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">CONQUISTAS</h2>
+          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">Acompanhe seu progresso e conquiste tudo!</p>
+        </div>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => setView('dashboard')}>
+          <ArrowLeft className="w-5 h-5 text-white" />
+        </Button>
       </div>
       
-      <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { label: 'Melhor Recorde', val: user.record, sub: 'FLEXÕES', icon: Target, color: 'text-gold' },
-            { label: 'Total Flexões', val: user.totalPushups, sub: 'FLEXÕES', icon: Dumbbell, color: 'text-primary' },
-            { label: 'Sequência Dias', val: user.streak, sub: 'DIAS 🔥', icon: Flame, color: 'text-energy-red' },
-            { label: 'Sequência Vitórias', val: Math.floor(user.wins / 10) + 1, sub: 'VITÓRIAS', icon: Swords, color: 'text-blue-400' },
-            { label: 'Melhor Desempenho', val: Math.floor(user.record * 0.9), sub: 'RECENTE', icon: TrendingUp, color: 'text-green-400' },
-            { label: 'Última Conquista', val: 'Elite', sub: 'RANK PRO', icon: Medal, color: 'text-purple-evolve' },
-          ].map((item, i) => (
-            <div key={i} className="glass-panel p-4 border-white/5 flex flex-col items-center gap-1 text-center">
-              <item.icon className={`w-5 h-5 ${item.color} mb-1`} />
-              <p className="text-[7px] font-black text-muted-foreground uppercase tracking-widest">{item.label}</p>
-              <span className="text-xl font-black italic text-white leading-none">{item.val}</span>
-              <span className="text-[8px] font-black text-muted-foreground uppercase tracking-widest">{item.sub}</span>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: 'MELHOR RECORDE', val: user.record, sub: 'FLEXÕES', icon: Target, color: 'text-gold', border: 'border-gold/20' },
+          { label: 'TOTAL FLEXÕES', val: user.totalPushups, sub: 'FLEXÕES', icon: Dumbbell, color: 'text-electric-blue', border: 'border-electric-blue/20' },
+          { label: 'SEQUÊNCIA DIAS', val: user.streak, sub: 'DIAS 🔥', icon: Flame, color: 'text-energy-red', border: 'border-energy-red/20' },
+          { label: 'SEQUÊNCIA VITÓRIAS', val: user.wins, sub: 'VITÓRIAS', icon: Swords, color: 'text-electric-blue', border: 'border-electric-blue/20' },
+          { label: 'MELHOR DESEMPENHO', val: user.record, sub: 'RECENTE', icon: TrendingUp, color: 'text-green-400', border: 'border-green-400/20' },
+          { label: 'ÚLTIMA CONQUISTA', val: 'Elite', sub: 'RANK PRO', icon: Medal, color: 'text-purple-evolve', border: 'border-purple-evolve/20' },
+        ].map((item, i) => (
+          <div key={i} className={`bg-[#151921] border ${item.border} rounded-2xl p-4 flex flex-col items-center justify-center gap-2 text-center h-32`}>
+            <item.icon className={`w-6 h-6 ${item.color}`} />
+            <div className="space-y-0.5">
+              <p className="text-[7px] font-black text-white/40 uppercase tracking-widest leading-tight">{item.label}</p>
+              <div className="text-2xl font-black italic text-white leading-none">{item.val}</div>
+              <p className="text-[7px] font-black text-white/40 uppercase tracking-widest leading-tight">{item.sub}</p>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
-      <div className="flex justify-center gap-4 pb-2">
+      {/* Categories Toggle */}
+      <div className="flex bg-[#151921] p-1.5 rounded-2xl border border-white/5">
         {achievements.map((cat: any) => (
           <Button 
             key={cat.id} 
             onClick={() => setActiveCat(cat.id)}
-            className={`game-button h-14 w-14 flex items-center justify-center p-0 border-none shadow-none rounded-2xl transition-all ${activeCat === cat.id ? 'bg-primary scale-110 shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'bg-white/5 opacity-50 hover:opacity-80'}`}
+            className={`flex-1 h-12 rounded-xl transition-all border-none shadow-none font-black text-[10px] uppercase tracking-tighter italic ${activeCat === cat.id ? 'bg-electric-blue text-white glow-primary' : 'bg-transparent text-white/40 hover:text-white'}`}
           >
-            <cat.icon className="w-6 h-6" />
+            <cat.icon className="w-4 h-4 mr-2" />
+            {cat.label}
           </Button>
         ))}
       </div>
 
-      <div className="space-y-4">
+      {/* Achievement List */}
+      <div className="space-y-3">
         {achievements.find((c: any) => c.id === activeCat)?.items.map((ach: any, i: number) => {
           const isCompleted = ach.current >= ach.req;
           const progress = Math.min((ach.current / ach.req) * 100, 100);
+
           
           return (
             <motion.div 
