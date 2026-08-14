@@ -2651,6 +2651,7 @@ const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }
     </div>
   );
 };
+};
 
 const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   const [loading, setLoading] = useState(false);
