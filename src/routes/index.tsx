@@ -2362,9 +2362,6 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
           return (
             <motion.div 
               key={i}
-          return (
-            <motion.div 
-              key={i}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
