@@ -1701,36 +1701,39 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
       let response = "";
       
       const knowledge = {
-        app: "O PushUp Arena é um aplicativo de competição de flexões com sistema de patentes, bots desafiadores e modo multiplayer em tempo real.",
-        treino: "No modo treino, você pratica sozinho com ajuda da nossa IA que analisa sua postura e conta cada repetição. Ideal para aquecer!",
-        duelo: "As competições (duelos) permitem que você enfrente bots ou outros jogadores. Você escolhe a duração e quem fizer mais flexões vence.",
-        conta: "Sua conta armazena todo seu progresso, recordes e conquistas. Você pode personalizar seu perfil tocando na sua foto.",
-        patentes: "Nosso sistema competitivo vai de Bronze a Lendário, cada uma com 3 divisões (I, II, III). Acumule Score para subir!",
-        xp: "Você ganha XP ao completar treinos e vencer duelos. O XP aumenta seu nível de jogador e libera recompensas.",
-        conquistas: "As conquistas são desafios específicos que dam bônus de XP e molduras exclusivas para seu perfil.",
-        bots: "Temos 5 bots: Iniciante, Determinado, Guerreiro, Máquina e o lendário David Goggins. Cada um tem um ritmo de flexões diferente.",
-        multiplayer: "No multiplayer, você pode buscar jogadores pelo ID único (ex: PUSH-XXXX) ou jogar com pessoas aleatórias ao redor do mundo.",
-        perfil: "Para editar seu perfil, basta tocar na sua foto na tela de Perfil. Lá você altera nome, idade, peso e altura.",
-        ajuda: "Estou aqui para ajudar 24 horas! Posso tirar dúvidas sobre treinos, patentes, bots ou qualquer função do app.",
+        app: "O Flex Battle é a arena definitiva para competidores de flexões. Temos sistema de patentes (Bronze a Lendário), bots profissionais e multiplayer online real.",
+        treino: "No modo treino, nossa IA de postura analisa cada movimento seu. É o lugar perfeito para aperfeiçoar sua forma antes de ir para a batalha.",
+        duelo: "Os duelos são o coração do app. Você pode enfrentar bots ou jogadores reais. Quem fizer mais flexões válidas no tempo escolhido vence.",
+        conta: "Seu progresso é sagrado. Nível, XP, patentes e conquistas são salvos na sua conta e exibidos no seu Card de Atleta.",
+        patentes: "Nosso sistema competitivo: Bronze, Prata, Ouro, Platina, Diamante, Pro, Mestre e Lendário. Cada patente tem 3 divisões.",
+        xp: "Ganhe XP vencendo duelos, completando treinos e desbloqueando conquistas. Mais XP significa patentes maiores.",
+        conquistas: "Medalhas e troféus são dados por marcos como '100 flexões em um dia' ou '10 vitórias seguidas'.",
+        bots: "Desafie 5 níveis: Iniciante, Determinado, Guerreiro, Máquina e o lendário David Goggins. Eles não cansam, e você?",
+        multiplayer: "Jogue contra o mundo no Matchmaking Aleatório ou desafie amigos diretamente usando o ID único do jogador.",
+        perfil: "Seu perfil mostra sua evolução. Você pode ver seu score, recordes e estatísticas detalhadas de cada treino.",
+        ajuda: "Sou a Arena AI, seu suporte 24h. Posso falar sobre treinos, tecnologia, estudos ou qualquer curiosidade! Como posso te motivar hoje?",
       };
 
-      if (lower.includes('duelo') || lower.includes('combate') || lower.includes('vencer')) response = knowledge.duelo;
-      else if (lower.includes('treino') || lower.includes('praticar') || lower.includes('exercício')) response = knowledge.treino;
-      else if (lower.includes('patente') || lower.includes('liga') || lower.includes('rank') || lower.includes('bronze') || lower.includes('lenda')) response = knowledge.patentes;
-      else if (lower.includes('bot') || lower.includes('goggins') || lower.includes('máquina')) response = knowledge.bots;
-      else if (lower.includes('ranking') || lower.includes('pontos') || lower.includes('score')) response = "O Score é calculado com base em vitórias, total de flexões e recordes. Use isso para subir no Ranking Brasil!";
-      else if (lower.includes('perfil') || lower.includes('mudar') || lower.includes('foto') || lower.includes('nome') || lower.includes('editar')) response = knowledge.perfil;
-      else if (lower.includes('xp') || lower.includes('nível') || lower.includes('level')) response = knowledge.xp;
-      else if (lower.includes('conquista') || lower.includes('medalha') || lower.includes('troféu')) response = knowledge.conquistas;
-      else if (lower.includes('multiplayer') || lower.includes('amigo') || lower.includes('desafiar')) response = knowledge.multiplayer;
-      else if (lower.includes('aplicativo') || lower.includes('app') || lower.includes('pushup arena')) response = knowledge.app;
-      else if (lower.includes('oi') || lower.includes('olá') || lower.includes('bom dia') || lower.includes('ajuda')) response = "Olá! Como posso ajudar você hoje na Arena? Pergunte sobre treinos, patentes ou como melhorar seu desempenho!";
-      else {
-        response = "Essa é uma ótima pergunta! No momento, só consigo ajudar com informações sobre o PushUp Arena (treinos, patentes, bots, perfil, etc). Se precisar de algo técnico ou humano, nossa equipe de suporte via e-mail pode ajudar!";
+      // IA mais flexível e abrangente
+      if (lower.includes('exercício') || lower.includes('flexão') || lower.includes('treinar')) {
+        response = knowledge.treino + " " + knowledge.bots;
+      } else if (lower.includes('patente') || lower.includes('rank') || lower.includes('bronze') || lower.includes('lendário')) {
+        response = knowledge.patentes;
+      } else if (lower.includes('estudar') || lower.includes('aprendizado') || lower.includes('conhecimento')) {
+        response = "O conhecimento é como o músculo: cresce com a repetição e o desafio. No Flex Battle, focamos no corpo, mas a mente disciplinada é o que te leva ao topo. O que você quer aprender hoje?";
+      } else if (lower.includes('tecnologia') || lower.includes('programação') || lower.includes('ia')) {
+        response = "Utilizo Visão Computacional de ponta com MediaPipe para analisar seu corpo em tempo real. A tecnologia está aqui para potencializar seu esforço humano!";
+      } else if (lower.includes('ajuda') || lower.includes('socorro') || lower.includes('como funciona')) {
+        response = knowledge.ajuda;
+      } else {
+        // Resposta genérica mas contextualizada para IA
+        response = "Interessante! Como sua Arena AI, estou sempre aprendendo. " + 
+                  (lower.length > 5 ? `Sobre "${userMsg}", posso dizer que a disciplina que você aplica nas flexões serve para qualquer área da vida. ` : "") +
+                  "Quer saber mais sobre o Flex Battle ou quer conversar sobre outro desafio?";
       }
 
       setMessages(prev => [...prev, { role: 'ai', text: response }]);
-    }, 600);
+    }, 800);
   };
 
   return (
@@ -1749,27 +1752,42 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
         </div>
       </div>
 
-      <div className="flex-1 glass-panel p-4 flex flex-col gap-4 overflow-y-auto no-scrollbar">
+      <div className="flex-1 glass-panel p-4 flex flex-col gap-4 overflow-y-auto no-scrollbar bg-black/40">
         {messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] p-4 rounded-2xl text-sm font-medium ${
-              msg.role === 'user' ? 'bg-primary text-white rounded-tr-none' : 'bg-white/10 text-white/90 rounded-tl-none border border-white/5'
-            }`}>
+            <motion.div 
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className={`max-w-[85%] p-4 rounded-2xl text-sm font-medium shadow-xl ${
+                msg.role === 'user' 
+                  ? 'bg-primary text-white rounded-tr-none border-b-4 border-blue-700' 
+                  : 'bg-white/10 text-white/90 rounded-tl-none border border-white/10 backdrop-blur-md'
+              }`}
+            >
               {msg.text}
-            </div>
+            </motion.div>
           </div>
         ))}
+        {input && input.length > 0 && (
+           <div className="flex justify-start">
+             <div className="bg-white/5 p-3 rounded-2xl flex gap-1 items-center">
+               <div className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+               <div className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+               <div className="w-1.5 h-1.5 bg-white/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+             </div>
+           </div>
+        )}
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 pb-2">
         <input 
-          className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 font-bold text-white focus:outline-none focus:border-primary"
-          placeholder="Como subir de liga?"
+          className="flex-1 bg-white/5 border border-white/10 rounded-2xl p-4 font-bold text-white focus:outline-none focus:border-primary transition-all placeholder:text-white/20"
+          placeholder="Pergunte qualquer coisa..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
         />
-        <Button onClick={handleSend} className="game-button bg-primary px-6 h-[58px]">
+        <Button onClick={handleSend} className="game-button bg-primary w-14 h-14 p-0 flex items-center justify-center rounded-2xl shadow-[0_4px_0_0_rgba(29,78,216,1)]">
           <Target className="w-6 h-6 rotate-90" />
         </Button>
       </div>
@@ -2441,50 +2459,61 @@ const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
 
 const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
   const [step, setStep] = useState(1);
-  const [answers, setAnswers] = useState<any>({});
+  const [answers, setAnswers] = useState<any>({
+    age: '',
+    weight: '',
+    height: '',
+    level: '',
+    objective: '',
+    time: '',
+    motivation: ''
+  });
   
   const questions = [
     { 
       id: 'age',
       q: "🎂 QUAL É A SUA IDADE?", 
+      type: 'select',
       opts: ["-18", "18–25", "26–35", "36–45", "46–55", "55+"] 
     },
     { 
       id: 'weight',
-      q: "⚖️ QUAL É O SEU PESO?", 
-      opts: ["-60kg", "61–75kg", "76–90kg", "91–105kg", "105kg+"] 
+      q: "⚖️ QUAL É O SEU PESO (KG)?", 
+      type: 'number',
+      placeholder: "Ex: 75"
+    },
+    { 
+      id: 'height',
+      q: "📏 QUAL É A SUA ALTURA (CM)?", 
+      type: 'number',
+      placeholder: "Ex: 175"
     },
     { 
       id: 'level',
       q: "💪 QUAL O SEU NÍVEL ATUAL?", 
+      type: 'select',
       opts: ["Iniciante (0-10)", "Intermediário (11-30)", "Avançado (31-50)", "Elite (50+)"] 
     },
     { 
       id: 'objective',
       q: "🎯 QUAL É O SEU OBJETIVO?", 
+      type: 'select',
       opts: ["Ganhar Massa", "Perder Peso", "Resistência", "Competir no Topo"] 
     },
     { 
       id: 'time',
       q: "⏱️ QUANTO TEMPO POR DIA?", 
+      type: 'select',
       opts: ["15 min", "30 min", "1 hora", "Mais de 1 hora"] 
-    },
-    { 
-      id: 'motivation',
-      q: "🔥 O QUE MAIS TE MOTIVA?", 
-      opts: ["Saúde", "Estética", "Disciplina", "Vencer Outros"] 
     }
   ];
 
   const current = questions[step - 1];
 
-  const select = (opt: string) => {
-    const newAnswers = {...answers, [current.id]: opt};
-    setAnswers(newAnswers);
+  const next = () => {
     if (step < questions.length) {
       setStep(s => s + 1);
     } else {
-      // Mapear opções do quiz para os enums do banco
       const goalMap: Record<string, string> = {
         "Ganhar Massa": "Massa muscular",
         "Perder Peso": "Perder peso",
@@ -2494,16 +2523,30 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
       
       setUser({
         ...user,
-        goal: goalMap[newAnswers.objective] || 'Bater recordes',
-        height: parseInt(String(newAnswers.height)) || 0
+        goal: goalMap[answers.objective] || 'Bater recordes',
+        height: parseInt(String(answers.height)) || 0,
+        weight: parseInt(String(answers.weight)) || 0,
+        age: answers.age
       });
-      setView('quiz-result');
+      
+      // Salvar respostas temporárias para o cadastro
+      localStorage.setItem('quiz_answers', JSON.stringify(answers));
+      localStorage.setItem('onboarding_registration', 'true');
+      setView('auth');
     }
+  };
+
+  const select = (opt: string) => {
+    setAnswers({ ...answers, [current.id]: opt });
+    setTimeout(next, 300);
+  };
+
+  const handleNumberInput = (val: string) => {
+    setAnswers({ ...answers, [current.id]: val });
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#0B0E14] relative overflow-hidden">
-      {/* Progress Bar at the top */}
       <div className="pt-12 px-6 space-y-4 z-20">
         <div className="flex justify-between items-end">
           <p className="text-[10px] font-black uppercase text-primary tracking-[0.2em]">ETAPA {step} / {questions.length}</p>
@@ -2531,61 +2574,83 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
               {current.q}
             </h2>
 
-            <div className="grid gap-3">
-              {current.opts.map((opt, i) => (
-                <motion.div
-                  key={opt}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                >
-                  <Button 
-                    variant="outline" 
-                    className="w-full h-16 text-sm font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-between px-6 rounded-2xl group shadow-lg active:scale-[0.98] relative overflow-hidden" 
-                    onClick={() => select(opt)}
+            {current.type === 'select' ? (
+              <div className="grid gap-3">
+                {current.opts?.map((opt, i) => (
+                  <motion.div
+                    key={opt}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono text-xs">
-                        {String.fromCharCode(65 + i)}
+                    <Button 
+                      variant="outline" 
+                      className={`w-full h-16 text-sm font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-between px-6 rounded-2xl group shadow-lg active:scale-[0.98] relative overflow-hidden ${answers[current.id] === opt ? 'border-primary bg-primary/20' : ''}`} 
+                      onClick={() => select(opt)}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono text-xs">
+                          {String.fromCharCode(65 + i)}
+                        </div>
+                        <span className="flex-1 text-left">{opt}</span>
                       </div>
-                      <span className="flex-1 text-left">{opt}</span>
-                    </div>
-                    
-                    <div className="w-6 h-6 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary transition-all">
-                      <Check className="w-4 h-4 text-white opacity-0 group-hover:opacity-100" />
-                    </div>
-
-                    {/* Selection Flash Effect */}
-                    <motion.div 
-                      className="absolute inset-0 bg-primary/20 opacity-0 group-active:opacity-100 transition-opacity"
-                    />
-                  </Button>
-                </motion.div>
-              ))}
-            </div>
+                      <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${answers[current.id] === opt ? 'border-primary bg-primary' : 'border-white/10 group-hover:border-primary'}`}>
+                        <Check className={`w-4 h-4 text-white ${answers[current.id] === opt ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
+                      </div>
+                    </Button>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="relative">
+                  <input 
+                    type="number"
+                    pattern="[0-9]*"
+                    inputMode="numeric"
+                    placeholder={current.placeholder}
+                    className="w-full bg-white/5 border-2 border-white/10 rounded-2xl p-6 text-4xl font-black italic text-center text-white focus:outline-none focus:border-primary focus:bg-primary/5 transition-all"
+                    value={answers[current.id]}
+                    onChange={(e) => handleNumberInput(e.target.value)}
+                    autoFocus
+                  />
+                  <div className="absolute inset-y-0 right-6 flex items-center pointer-events-none">
+                    <span className="text-white/20 font-black italic text-xl uppercase">{current.id === 'weight' ? 'KG' : 'CM'}</span>
+                  </div>
+                </div>
+                <Button 
+                  className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all"
+                  onClick={next}
+                  disabled={!answers[current.id]}
+                >
+                  PRÓXIMO →
+                </Button>
+              </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
       
-      {/* Visual Decoration */}
       <div className="absolute top-1/2 left-[-20%] w-[60%] h-[40%] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
       <div className="absolute bottom-0 right-[-10%] w-[40%] h-[30%] bg-energy-red/5 blur-[100px] rounded-full pointer-events-none" />
     </div>
   );
 };
 
-const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }) => (
-  <div className="p-6 space-y-8 text-center flex flex-col items-center justify-center min-h-screen">
-    <h2 className="text-4xl font-black italic text-white uppercase">🔥 SEU DESAFIO FOI CRIADO!</h2>
-    <p>Agora crie seu perfil para começar.</p>
-    <Button className="game-button w-full" onClick={() => {
-      console.log("QuizResult: Moving to auth for registration...");
-      // For new users after quiz, we force them to the registration flow
-      localStorage.setItem('onboarding_registration', 'true');
-      setView('auth');
-    }}>CONTINUAR →</Button>
-  </div>
-);
+const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }) => {
+  useEffect(() => {
+    // Redireciona automaticamente para o cadastro após o quiz, removendo passos extras
+    localStorage.setItem('onboarding_registration', 'true');
+    setView('auth');
+  }, [setView]);
+
+  return (
+    <div className="p-6 space-y-8 text-center flex flex-col items-center justify-center min-h-screen bg-[#0B0E14]">
+      <div className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter">PREPARANDO SUA ARENA...</h2>
+    </div>
+  );
+};
 
 const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   const [loading, setLoading] = useState(false);
