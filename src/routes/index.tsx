@@ -2183,7 +2183,7 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   }, [user.id, tab]);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-10">
       <div className="flex flex-col gap-6">
         <h2 className="text-3xl font-black italic text-white tracking-tighter">RANKING</h2>
         
