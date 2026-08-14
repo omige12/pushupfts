@@ -2402,10 +2402,8 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
               <ChevronRight className="w-4 h-4 text-white/10" />
             </motion.div>
           );
-          );
         })}
       </div>
-
     </motion.div>
   );
 }
