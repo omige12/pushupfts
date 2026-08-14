@@ -2087,7 +2087,6 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
     </motion.div>
   );
 }
-}
 
 function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void }) {
   const [copied, setCopied] = useState(false);
