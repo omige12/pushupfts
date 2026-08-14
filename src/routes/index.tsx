@@ -562,7 +562,7 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-2">
+    <div className="min-h-screen bg-background text-foreground pb-8">
       <AnimatePresence mode="wait">
         {renderView()}
       </AnimatePresence>
@@ -608,7 +608,7 @@ function App() {
       </AnimatePresence>
 
       {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready'].includes(view) && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/5 px-6 pb-6 pt-4 flex justify-between items-center z-50">
+        <nav className="fixed bottom-0 left-0 right-0 bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/5 px-6 pb-8 pt-4 flex justify-between items-center z-50">
           <Button 
             variant="ghost" 
             className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'dashboard' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
@@ -2317,18 +2317,6 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
         { title: "30 Dias Seguidos", desc: "Mês da superação", req: 30, current: user.streak, reward: "XP +2000", icon: Target },
       ]
     },
-    { 
-      id: 'patentes', 
-      label: 'Patentes', 
-      icon: TrendingUp,
-      items: [
-        { title: "Alcançar Bronze", desc: "O início de tudo", req: 1, current: user.patent && user.patent !== "Nenhuma" ? 1 : 0, reward: "XP +50", icon: Award },
-        { title: "Alcançar Prata", desc: "Evoluindo sempre", req: 1, current: ["Prata", "Ouro", "Platina", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +500", icon: Sparkles },
-        { title: "Alcançar Ouro", desc: "Jogador Experiente", req: 1, current: ["Ouro", "Platina", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +1000", icon: Flame },
-        { title: "Alcançar Platina", desc: "Nível Superior", req: 1, current: ["Platina", "Diamante", "Pro", "Mestre", "Lendário"].includes(user.patent) ? 1 : 0, reward: "XP +2000", icon: Zap },
-        { title: "Alcançar Lendário", desc: "O topo do mundo", req: 1, current: user.patent === "Lendário" ? 1 : 0, reward: "Avatar Divino", icon: Trophy },
-      ]
-    }
   ], [user]);
 
   const [activeCat, setActiveCat] = useState('flexoes');
