@@ -2637,18 +2637,20 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
   );
 };
 
-const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }) => (
-  <div className="p-6 space-y-8 text-center flex flex-col items-center justify-center min-h-screen">
-    <h2 className="text-4xl font-black italic text-white uppercase">🔥 SEU DESAFIO FOI CRIADO!</h2>
-    <p>Agora crie seu perfil para começar.</p>
-    <Button className="game-button w-full" onClick={() => {
-      console.log("QuizResult: Moving to auth for registration...");
-      // For new users after quiz, we force them to the registration flow
-      localStorage.setItem('onboarding_registration', 'true');
-      setView('auth');
-    }}>CONTINUAR →</Button>
-  </div>
-);
+const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }) => {
+  useEffect(() => {
+    // Redireciona automaticamente para o cadastro após o quiz, removendo passos extras
+    localStorage.setItem('onboarding_registration', 'true');
+    setView('auth');
+  }, [setView]);
+
+  return (
+    <div className="p-6 space-y-8 text-center flex flex-col items-center justify-center min-h-screen bg-[#0B0E14]">
+      <div className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter">PREPARANDO SUA ARENA...</h2>
+    </div>
+  );
+};
 
 const AuthView = ({ setView }: { setView: (v: View) => void }) => {
   const [loading, setLoading] = useState(false);

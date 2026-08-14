@@ -259,14 +259,17 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
               setIsCameraActive(true);
               setFeedback("Processando...");
               
-              const detectFrame = async () => {
-                if (videoRef.current && pose) {
-                  // Process frames selectively for performance
+              let lastProcessTime = 0;
+              const FRAME_MIN_INTERVAL = 66; // ~15 FPS process limit to save battery/CPU
+
+              const detectFrame = async (now: number) => {
+                if (videoRef.current && pose && now - lastProcessTime >= FRAME_MIN_INTERVAL) {
+                  lastProcessTime = now;
                   await pose.send({ image: videoRef.current });
                 }
                 animationFrameId = requestAnimationFrame(detectFrame);
               };
-              detectFrame();
+              requestAnimationFrame(detectFrame);
             }
           };
         }
