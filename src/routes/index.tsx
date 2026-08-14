@@ -519,7 +519,7 @@ function App() {
       case 'onboarding-start': return <OnboardingStart setView={setView} />;
       case 'quiz': return <Quiz setView={setView} user={user} setUser={setUser} />;
       case 'quiz-result': return <QuizResult setView={setView} user={user} />;
-      case 'auth': return <AuthView setView={setView} />;
+      case 'auth': return <AuthView setView={setView} user={user} />;
       case 'photo-upload': return <PhotoUpload setView={setView} user={user} setUser={setUser} />;
       case 'profile-setup': return <ProfileSetup setView={setView} user={user} setUser={setUser} />;
       case 'profile-ready': return <ProfileReady setView={setView} user={user} />;
