@@ -233,7 +233,7 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
         });
 
         pose.setOptions({
-          modelComplexity: isMobile ? 0 : 1,
+          modelComplexity: 0, // Force low complexity for mobile performance
           smoothLandmarks: true,
           minDetectionConfidence: 0.5,
           minTrackingConfidence: 0.5,
