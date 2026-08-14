@@ -562,7 +562,7 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20">
+    <div className="min-h-screen bg-background text-foreground pb-2">
       <AnimatePresence mode="wait">
         {renderView()}
       </AnimatePresence>
@@ -608,27 +608,51 @@ function App() {
       </AnimatePresence>
 
       {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready'].includes(view) && (
-        <nav className="fixed bottom-0 w-full bg-card border-t border-border flex justify-around items-center p-3 z-50">
-          <button onClick={() => setView('dashboard')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'dashboard' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Home className="w-6 h-6" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Início</span>
-          </button>
-          <button onClick={() => setView('achievements')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'achievements' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Medal className="w-6 h-6" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Conquistas</span>
-          </button>
-          <button onClick={() => setView('multiplayer')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'multiplayer' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Swords className="w-7 h-7" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Batalha</span>
-          </button>
-          <button onClick={() => setView('ranking')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'ranking' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Trophy className="w-6 h-6" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Ranking</span>
-          </button>
-          <button onClick={() => setView('profile')} className={`flex flex-col items-center gap-1 transition-all active:scale-95 ${view === 'profile' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <UserCircle className="w-6 h-6" />
-            <span className="text-[8px] font-black uppercase tracking-tighter">Perfil</span>
-          </button>
+        <nav className="fixed bottom-0 left-0 right-0 bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/5 px-6 pb-6 pt-4 flex justify-between items-center z-50">
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'dashboard' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('dashboard')}
+          >
+            <Home className={`w-7 h-7 ${view === 'dashboard' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Início</span>
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('multiplayer')}
+          >
+            <Swords className={`w-7 h-7 ${view === 'multiplayer' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Batalha</span>
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'ranking' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('ranking')}
+          >
+            <Trophy className={`w-7 h-7 ${view === 'ranking' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Ranking</span>
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('profile')}
+          >
+            <UserCircle className={`w-7 h-7 ${view === 'profile' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Perfil</span>
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'achievements' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('achievements')}
+          >
+            <Medal className={`w-7 h-7 ${view === 'achievements' ? 'fill-primary/20' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Conquistas</span>
+          </Button>
         </nav>
       )}
     </div>
@@ -642,7 +666,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 space-y-5 pb-28">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 space-y-5 pb-10">
       {/* Header */}
       <header className="flex justify-between items-start">
         <div className="flex items-center gap-3">
@@ -1351,7 +1375,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
   if (editing) {
     return (
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-6 space-y-6 pb-24">
+      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-6 space-y-6 pb-10">
         <div className="flex items-center gap-4 mb-6">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setEditing(false)}><ArrowLeft className="w-5 h-5" /></Button>
           <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">EDITAR DADOS</h2>
@@ -1671,7 +1695,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
 function FullHistory({ setView, user }: { setView: (v: View) => void, user: any }) {
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6 pb-24">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6 pb-10">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('profile')}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">HISTÓRICO</h2>
@@ -1993,7 +2017,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-28">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-10">
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">MULTIJOGADOR</h2>
@@ -2183,7 +2207,7 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   }, [user.id, tab]);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-10">
       <div className="flex flex-col gap-6">
         <h2 className="text-3xl font-black italic text-white tracking-tighter">RANKING</h2>
         
@@ -2310,7 +2334,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
   const [activeCat, setActiveCat] = useState('flexoes');
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-28">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-10">
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">CONQUISTAS</h2>
@@ -2425,7 +2449,7 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
   const currentInfo = getRankInfo(user.xp);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-24 space-y-6">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-10 space-y-6">
       <div className="flex items-center gap-4 mb-2">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('profile')}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">TRILHA DE EVOLUÇÃO</h2>
