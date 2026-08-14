@@ -642,110 +642,183 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-6 space-y-6">
-      <header className="flex justify-between items-center mb-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 space-y-5 pb-28">
+      {/* Header */}
+      <header className="flex justify-between items-start">
         <div className="flex items-center gap-3">
           <div 
-            className="w-14 h-14 bg-gradient-to-br from-gold to-orange-500 rounded-2xl border-2 border-white/20 shadow-lg shadow-gold/10 overflow-hidden cursor-pointer active:scale-90 transition-transform"
+            className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 transition-transform"
             onClick={() => setView('edit-profile')}
           >
-            {stats.avatar ? (
-              <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
-            ) : (
-              <div className="w-full h-full bg-secondary flex items-center justify-center">
-                <UserIcon className="w-6 h-6 text-muted-foreground" />
-              </div>
-            )}
+            <div className="w-full h-full rounded-full overflow-hidden">
+              {stats.avatar ? (
+                <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
+              ) : (
+                <div className="w-full h-full bg-[#1A1F26] flex items-center justify-center">
+                  <UserIcon className="w-6 h-6 text-white/40" />
+                </div>
+              )}
+            </div>
           </div>
-          <div className="cursor-pointer" onClick={() => setView('profile')}>
-            <h1 className="font-black text-xl italic text-white tracking-tighter leading-none mb-1">{(stats.name || 'ATLETA').toUpperCase()}</h1>
-            <div className="flex items-center gap-1.5">
-              <Badge className="bg-purple-evolve text-[8px] h-4 font-black italic tracking-widest px-1.5 border-none">{getPatentEmoji(rank.patentName)} {(rank.patentName || '').toUpperCase()}</Badge>
-              <div className="flex items-center gap-0.5 text-gold">
+          <div>
+            <h1 className="font-black text-xl italic text-white tracking-tight leading-none">{(stats.name || 'ATLETA').toUpperCase()}</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="bg-purple-evolve/20 border border-purple-evolve/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-[10px]">{getRankInfo(user.xp).emoji}</span>
+                <span className="text-[9px] font-black text-purple-evolve uppercase tracking-widest">{(rank.patentName || '').toUpperCase()}</span>
+              </div>
+              <div className="flex items-center gap-1 text-gold">
                 <Flame className="w-3 h-3 fill-gold" />
-                <span className="text-[10px] font-black">{stats.streak}</span>
+                <span className="text-[11px] font-black">{stats.streak}</span>
               </div>
             </div>
           </div>
+        </div>
+        
+        <div 
+          className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer active:scale-95 transition-all glow-purple"
+          onClick={() => toast.info("Recompensas em breve!")}
+        >
+          <div className="bg-gold/20 p-1.5 rounded-xl">
+            <Trophy className="w-5 h-5 text-gold" />
+          </div>
+          <div className="flex flex-col pr-2">
+            <span className="text-[10px] font-black text-white leading-none uppercase tracking-tighter">RECOMPENSAS</span>
+            <span className="text-[8px] text-white/40 font-bold uppercase tracking-widest mt-0.5">Resgate prêmios</span>
+          </div>
+          <ChevronRight className="w-4 h-4 text-white/20" />
         </div>
       </header>
 
+      {/* Patent Progress Card */}
       <div 
-        className={`glass-panel p-5 relative overflow-hidden group border-2 cursor-pointer active:scale-[0.98] transition-all bg-gradient-to-br ${rank.color || 'from-primary/20 to-transparent'} border-white/10`}
+        className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden cursor-pointer active:scale-[0.98] transition-all"
         onClick={() => setView('patents-list')}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-        <div className="relative z-10">
-          <div className="flex justify-between items-end mb-3">
-            <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${rank.color || 'from-primary/20 to-transparent'} flex items-center justify-center text-3xl shadow-lg border border-white/20`}>
-                {rank.emoji}
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName}</span>
-                <span className="text-[9px] font-black text-primary/80 uppercase tracking-widest mt-1">Sua Patente Atual</span>
-              </div>
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]">
+               <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
             </div>
-            <div className="text-right">
-              <span className="text-xs font-black italic text-white tracking-tighter">{rank.xpInLevel} / {rank.xpForNext} XP</span>
+            <div>
+              <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName.toUpperCase()}</h2>
+              <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em] mt-1 opacity-70">SUA PATENTE ATUAL</p>
             </div>
           </div>
-          <Progress value={rank.progress} className="h-3 bg-white/10 border border-white/5" />
-          <div className="mt-3 flex justify-between items-center">
-            <p className="text-[9px] font-black text-muted-foreground uppercase tracking-wider italic">
-              {rank.isMax ? 'Nível Máximo Atingido' : `Faltam ${XP_PER_DIVISION - rank.xpInLevel} XP para o próximo nível`}
+          <div className="text-right">
+            <span className="text-xs font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel} / {rank.xpForNext} XP</span>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${rank.progress}%` }}
+              className="h-full bg-gold shadow-[0_0_10px_rgba(234,179,8,0.5)]"
+            />
+          </div>
+          
+          <div className="flex justify-between items-center pt-1">
+            <p className="text-[10px] font-black text-white/40 uppercase tracking-widest italic">
+              FALTAM {XP_PER_DIVISION - rank.xpInLevel} XP PARA O PRÓXIMO NÍVEL
             </p>
-            <div className="flex items-center gap-1 bg-primary/20 px-2 py-0.5 rounded-full border border-primary/30">
-               <Star className="w-3 h-3 text-gold fill-gold" />
-               <span className="text-[8px] font-black text-white uppercase tracking-widest">Ver Trilhas</span>
-            </div>
+            <button className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl hover:bg-white/10 transition-colors">
+              <Star className="w-3.5 h-3.5 text-gold fill-gold" />
+              <span className="text-[9px] font-black text-white uppercase tracking-widest">VER TRILHAS</span>
+            </button>
           </div>
         </div>
       </div>
 
-
-
-
+      {/* Action Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <Button 
-          className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
+        <div 
+          className="bg-electric-blue/5 border border-electric-blue/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.98] transition-all glow-primary"
           onClick={() => setView('multiplayer')}
         >
-          <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-            <Swords className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <div className="w-14 h-14 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-4">
+            <Swords className="w-8 h-8 text-electric-blue filter drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
           </div>
-          <span className="text-[10px] font-black italic tracking-tighter uppercase">Multijogador</span>
-        </Button>
-        <Button 
-          className="game-button bg-primary/20 h-28 flex flex-col gap-2 border-white/5 active:scale-95 transition-all shadow-[0_6px_0_0_rgba(0,0,0,0.3)] hover:shadow-[0_4px_0_0_rgba(0,0,0,0.3)] hover:translate-y-[2px] active:translate-y-[6px] active:shadow-none" 
-          onClick={() => setView('achievements')}
+          <div className="text-center space-y-1">
+            <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
+            <p className="text-[9px] font-medium text-white/40 leading-tight">Entre em uma partida com jogadores online</p>
+          </div>
+          <div className="mt-4 bg-electric-blue/20 p-2 rounded-full">
+            <ArrowLeft className="w-4 h-4 text-electric-blue rotate-180" />
+          </div>
+        </div>
+
+        <div 
+          className="bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.98] transition-all glow-purple"
+          onClick={() => toast.info("Missões em breve!")}
         >
-          <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
-            <Medal className="w-8 h-8 text-primary drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+          <div className="w-14 h-14 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-4">
+            <LayoutDashboard className="w-8 h-8 text-purple-evolve filter drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
           </div>
-          <span className="text-[10px] font-black italic tracking-tighter uppercase">Conquistas</span>
-        </Button>
+          <div className="text-center space-y-1">
+            <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MISSÕES DIÁRIAS</h3>
+            <p className="text-[9px] font-medium text-white/40 leading-tight">Complete missões e ganhe recompensas</p>
+          </div>
+          <div className="mt-4 bg-purple-evolve/20 p-2 rounded-full">
+            <ArrowLeft className="w-4 h-4 text-purple-evolve rotate-180" />
+          </div>
+        </div>
       </div>
 
-      <div className="space-y-4 pt-2">
-        <Button 
-          className="game-button bg-energy-red w-full h-40 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
-          onClick={() => setView('treino')}
-        >
-          <div className="relative z-10 flex flex-col items-center gap-3">
-            <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
-              <Dumbbell className="w-10 h-10 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
-            </div>
-            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">Modo Treino</span>
+      {/* Workout Banner */}
+      <div 
+        className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all glow-red"
+        onClick={() => setView('treino')}
+      >
+        <div className="flex items-center gap-4">
+          <div className="w-14 h-14 rounded-2xl bg-energy-red/10 flex items-center justify-center">
+            <Dumbbell className="w-8 h-8 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
           </div>
-          <div className="absolute top-0 right-0 p-3">
-            <Badge className="bg-yellow-400 text-black font-black italic text-[10px] animate-pulse px-3 py-1">EVOLUÇÃO</Badge>
+          <div>
+            <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
+            <p className="text-[10px] font-medium text-white/40 uppercase tracking-widest mt-1">Aperfeiçoe suas habilidades</p>
           </div>
-          {/* Decorative background element */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-        </Button>
-
+        </div>
+        <div className="bg-energy-red/20 p-2.5 rounded-full">
+          <ArrowLeft className="w-5 h-5 text-energy-red rotate-180" />
+        </div>
       </div>
+
+      {/* Bottom Stats Footer */}
+      <div className="grid grid-cols-4 gap-2 pt-2 border-t border-white/5 mt-4">
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-1 mb-1 opacity-50">
+            <Trophy className="w-3 h-3" />
+            <span className="text-[9px] font-black uppercase tracking-tighter">Vitórias</span>
+          </div>
+          <span className="text-lg font-black text-white italic">{stats.wins}</span>
+        </div>
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-1 mb-1 opacity-50">
+            <Target className="w-3 h-3" />
+            <span className="text-[9px] font-black uppercase tracking-tighter">Taxa</span>
+          </div>
+          <span className="text-lg font-black text-white italic">{Math.round((stats.wins / Math.max(1, stats.wins + stats.losses)) * 100)}%</span>
+        </div>
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-1 mb-1 opacity-50">
+            <Zap className="w-3 h-3" />
+            <span className="text-[9px] font-black uppercase tracking-tighter">Sequência</span>
+          </div>
+          <span className="text-lg font-black text-white italic">{stats.streak}</span>
+        </div>
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-1 mb-1 opacity-50">
+            <Star className="w-3 h-3" />
+            <span className="text-[9px] font-black uppercase tracking-tighter">Pontos</span>
+          </div>
+          <span className="text-lg font-black text-white italic">{Math.floor(stats.xp / 10)}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 
 
