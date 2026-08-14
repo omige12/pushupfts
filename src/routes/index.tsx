@@ -1989,74 +1989,104 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">MULTIJOGADOR</h2>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-28">
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">MULTIJOGADOR</h2>
+          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">COMPITA. VENÇA. DOMINE.</p>
+        </div>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => setView('dashboard')}>
+          <ArrowLeft className="w-5 h-5 text-white" />
+        </Button>
       </div>
 
       <div className="space-y-4">
-        <Button 
-          className="game-button bg-energy-red w-full h-36 relative overflow-hidden group shadow-[0_10px_0_0_rgba(185,28,28,0.5)] active:scale-95 transition-all active:translate-y-[10px] active:shadow-none" 
+        {/* Partida Rápida (Large Card) */}
+        <div 
+          className="relative h-48 rounded-[2rem] border border-energy-red/20 bg-gradient-to-br from-energy-red/20 to-energy-red/5 p-6 flex flex-col justify-center gap-2 cursor-pointer active:scale-[0.98] transition-all glow-red group"
           onClick={() => onStartMatchmaking(false)}
         >
-
-          <div className="relative flex flex-col items-center gap-2">
-            <Globe className="w-12 h-12 group-hover:scale-110 transition-transform drop-shadow-[0_0_15px_rgba(0,0,0,0.5)]" />
-            <span className="text-3xl tracking-tighter italic font-black uppercase text-shadow-lg">🌎 JOGAR COM ALEATÓRIOS</span>
-            <p className="text-[9px] font-black opacity-60 tracking-widest uppercase">Competição Online Real</p>
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 rounded-full bg-energy-red/20 flex items-center justify-center border border-energy-red/30 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
+              <Globe className="w-10 h-10 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-3xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
+              <p className="text-xs font-medium text-white/60 uppercase tracking-widest mt-2">ENTRE EM UMA PARTIDA ALEATÓRIA</p>
+              <div className="mt-3 flex items-center gap-2">
+                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">COMPETIÇÃO ONLINE REAL</span>
+              </div>
+            </div>
+            <div className="bg-white/10 p-2 rounded-full group-hover:bg-white/20 transition-colors">
+              <ArrowLeft className="w-5 h-5 text-white rotate-180" />
+            </div>
           </div>
-        </Button>
-
-        <div className="grid grid-cols-2 gap-4">
-          <Button 
-            className="game-button bg-blue-500/10 border-2 border-blue-500/20 h-28 flex flex-col items-center justify-center group shadow-none"
-            onClick={() => setView('friend-challenge')}
-          >
-            <UserIcon className="w-8 h-8 mb-1 text-blue-400 group-hover:scale-110 transition-transform duration-300" />
-            <span className="text-xl tracking-tighter italic uppercase leading-none text-blue-400 text-center">Jogar com Amigos</span>
-          </Button>
-          <Button 
-            className="game-button bg-white/5 border border-white/10 h-28 flex flex-col items-center justify-center group"
-            onClick={onSelectBot}
-          >
-            <Zap className="w-8 h-8 mb-1 text-gold group-hover:scale-110 transition-transform duration-300" />
-            <span className="text-xl tracking-tighter italic uppercase leading-none">Treinar Bots</span>
-          </Button>
         </div>
 
-        <div className="glass-panel p-6 space-y-4 border-white/5">
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center flex items-center justify-center gap-2">
-            <Search className="w-3 h-3" /> Procurar por ID
-          </p>
-          <div className="flex gap-2">
+        {/* Small Cards Row */}
+        <div className="grid grid-cols-2 gap-4">
+          <div 
+            className="bg-electric-blue/5 border border-electric-blue/10 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.98] transition-all glow-primary group"
+            onClick={() => setView('friend-challenge')}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center">
+              <UserIcon className="w-6 h-6 text-electric-blue" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">JOGAR COM AMIGOS</h3>
+              <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">CONVITE SEUS AMIGOS E JOGUEM JUNTOS</p>
+            </div>
+            <div className="self-end bg-white/5 p-1.5 rounded-full mt-auto">
+              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+            </div>
+          </div>
+
+          <div 
+            className="bg-card border border-white/5 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.98] transition-all group"
+            onClick={onSelectBot}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center">
+              <Zap className="w-6 h-6 text-gold" />
+            </div>
+            <div>
+              <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">TREINO VS BOTS</h3>
+              <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APRIMORE SUAS HABILIDADES CONTRA BOTS</p>
+            </div>
+            <div className="self-end bg-white/5 p-1.5 rounded-full mt-auto">
+              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+            </div>
+          </div>
+        </div>
+
+        {/* Search Player (Full Width) */}
+        <div className="bg-[#1A1F26]/30 border border-white/5 rounded-[1.8rem] p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <Search className="w-5 h-5 text-white/40" />
+            <div>
+              <h3 className="text-sm font-black italic text-white uppercase tracking-tighter leading-none">BUSCAR JOGADOR</h3>
+              <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-1">ENCONTRE E DESAFIE QUALQUER JOGADOR</p>
+            </div>
+          </div>
+          <div className="flex gap-3">
             <input 
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl p-4 font-mono text-sm text-white focus:outline-none focus:border-primary text-center tracking-widest"
+              className="flex-1 bg-[#0B0E14] border border-white/10 rounded-2xl px-5 h-14 font-mono text-sm text-white focus:outline-none focus:border-electric-blue transition-all"
               placeholder="ID do jogador"
               value={searchId}
               onChange={(e) => setSearchId(e.target.value.toUpperCase())}
             />
-            <Button onClick={handleSearch} className="game-button bg-primary h-auto px-6 italic">⚔️ DESAFIAR</Button>
+            <Button 
+              onClick={handleSearch} 
+              className="game-button bg-electric-blue h-14 px-6 italic text-sm font-black shadow-[0_4px_0_0_rgba(29,78,216,1)] active:shadow-none active:translate-y-1"
+            >
+              <Swords className="w-4 h-4 mr-2" /> DESAFIAR
+            </Button>
           </div>
         </div>
-
-        {foundPlayer && (
-          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="glass-panel p-6 border-primary/30 bg-primary/5 flex flex-col gap-4">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center border-2 border-primary/30 shadow-lg">
-                <UserIcon className="w-8 h-8 text-muted-foreground" />
-              </div>
-              <div className="flex-1">
-                <p className="font-black text-xl italic text-white tracking-tight leading-none mb-1">{foundPlayer.name}</p>
-                <Badge className="bg-primary/20 text-[8px] h-4 px-1.5 border-none font-mono">{foundPlayer.id}</Badge>
-              </div>
-            </div>
-            <Button className="game-button bg-primary w-full py-4 text-sm uppercase italic" onClick={() => setView('friend-challenge')}>Desafiar Agora</Button>
-          </motion.div>
-        )}
       </div>
     </motion.div>
   );
+}
 }
 
 function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void }) {
