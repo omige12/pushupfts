@@ -3928,10 +3928,13 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
       setRewardData(updated);
       
       const reward = REWARDS[newStreak - 1];
-      if (reward.type === 'XP' || reward.type === 'Misto') {
+      if (reward.type === 'XP' || reward.type === 'Misto' || reward.type === 'Premium') {
         const xpAmount = reward.amount;
         const newTotalXp = user.xp + xpAmount;
-        await supabase.from('profiles').update({ xp: newTotalXp }).eq('id', session.user.id);
+        await supabase.from('profiles').update({ 
+          xp: newTotalXp,
+          last_login_at: new Date().toISOString()
+        } as any).eq('id', session.user.id);
         setUser((prev: any) => ({ ...prev, xp: newTotalXp }));
       }
 
