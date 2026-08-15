@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
-import { Pose } from '@mediapipe/pose';
+import pkg from '@mediapipe/pose';
+const { Pose } = pkg;
 import type { Results } from '@mediapipe/pose';
 import * as tf from '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
@@ -220,7 +221,7 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
   useEffect(() => {
     if (!isActive) return;
 
-    let pose: Pose | null = null;
+    let pose: any = null;
     let stream: MediaStream | null = null;
     let animationFrameId: number;
 
