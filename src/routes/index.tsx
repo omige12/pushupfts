@@ -1732,27 +1732,35 @@ function FullHistory({ setView, user }: { setView: (v: View) => void, user: any 
       </div>
 
       <div className="space-y-4">
-        {user.history.map((match: any) => (
-          <div key={match.id} className="glass-panel p-5 flex items-center justify-between border-white/5">
-            <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white text-xl shadow-lg border-2 border-white/20 overflow-hidden ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`}>
-                {BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp) ? (
-                  <img src={BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp)?.avatar} className="w-full h-full object-cover" alt="Bot" />
-                ) : (
-                  match.opp[0]
-                )}
+        {user.history && user.history.length > 0 ? (
+          user.history.map((match: any) => (
+            <div key={match.id} className="glass-panel p-5 flex items-center justify-between border-white/5 active:scale-[0.98] transition-all" role="article" aria-label={`Partida contra ${match.opp}`}>
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white text-xl shadow-lg border-2 border-white/20 overflow-hidden ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`}>
+                  {BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp) ? (
+                    <img src={BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp)?.avatar} className="w-full h-full object-cover" alt={`Avatar de ${match.opp}`} />
+                  ) : (
+                    match.opp[0]
+                  )}
+                </div>
+                <div>
+                  <p className="font-black text-lg italic text-white tracking-tight">{(match.opp || '').toUpperCase()}</p>
+                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{match.score} • {match.date}</p>
+                </div>
               </div>
-              <div>
-                <p className="font-black text-lg italic text-white tracking-tight">{(match.opp || '').toUpperCase()}</p>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{match.score} • {match.date}</p>
+              <div className="text-right">
+                <p className={`text-lg font-black italic ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{(match.res || '').toUpperCase()}</p>
+                <p className="text-[10px] text-gold font-black italic">{match.xp} XP</p>
               </div>
             </div>
-            <div className="text-right">
-              <p className={`text-lg font-black italic ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{(match.res || '').toUpperCase()}</p>
-              <p className="text-[10px] text-gold font-black italic">{match.xp} XP</p>
-            </div>
+          ))
+        ) : (
+          <div className="text-center py-20 glass-panel p-8 border-white/5 bg-[#0F131A]/50">
+            <LayoutDashboard className="w-16 h-16 text-white/10 mx-auto mb-6" />
+            <p className="text-xl font-black text-white/40 uppercase italic tracking-tighter">Jogador sem partida</p>
+            <p className="text-xs text-white/20 mt-2 uppercase tracking-widest">COMECE UMA BATALHA AGORA!</p>
           </div>
-        ))}
+        )}
       </div>
     </motion.div>
   );
