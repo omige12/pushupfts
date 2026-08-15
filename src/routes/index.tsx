@@ -234,6 +234,30 @@ const NeonFireWrapper = ({ children, color, onClick, className = "" }: { childre
 
 function App() {
   const [view, setView] = useState<View>('onboarding-start');
+  const [navigationHistory, setNavigationHistory] = useState<View[]>([]);
+  
+  const handleSetView = useCallback((newView: View, replace: boolean = false) => {
+    setView(prev => {
+      if (!replace) {
+        setNavigationHistory(history => [...history, prev]);
+      }
+      return newView;
+    });
+  }, []);
+
+  const goBack = useCallback(() => {
+    setNavigationHistory(history => {
+      if (history.length === 0) {
+        setView('dashboard');
+        return [];
+      }
+      const newHistory = [...history];
+      const previousView = newHistory.pop()!;
+      setView(previousView);
+      return newHistory;
+    });
+  }, []);
+
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
   const [opponent, setOpponent] = useState<any | null>(null);
   const [isTraining, setIsTraining] = useState(false);
