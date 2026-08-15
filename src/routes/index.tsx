@@ -676,7 +676,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         <div className="flex items-center gap-3">
           <div 
             className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
-            onClick={() => setView('edit-profile')}
+            onClick={() => setView('profile')}
           >
             <div className="w-full h-full rounded-full overflow-hidden">
               {stats.avatar ? (
@@ -1548,11 +1548,22 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6 pb-20">
-      <div className="flex items-center gap-4 mb-2">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}>
-          <ArrowLeft className="w-5 h-5" />
+      <div className="flex justify-between items-center w-full mb-2">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => setView('dashboard')}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
+        </div>
+        
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="rounded-xl bg-electric-blue/10 border border-electric-blue/20 shadow-[0_0_15px_rgba(0,210,255,0.2)] active:scale-90 btn-respond-fast" 
+          onClick={() => setEditing(true)}
+        >
+          <Pencil className="w-5 h-5 text-electric-blue" />
         </Button>
-        <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
       </div>
 
       <div className="flex flex-col items-center gap-6 relative py-4">
@@ -1667,24 +1678,6 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         {/* Action Buttons */}
         <div className="grid grid-cols-1 gap-4 w-full pt-4">
-          <Button 
-            variant="ghost" 
-            aria-label="Editar Perfil"
-            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-electric-blue/20 hover:bg-electric-blue/5 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
-            onClick={() => setEditing(true)}
-          >
-            <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center border border-electric-blue/20 shadow-[0_0_15px_rgba(0,210,255,0.2)]">
-                <Pencil className="w-6 h-6 text-electric-blue" />
-              </div>
-              <div className="text-left">
-                <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">EDITAR PERFIL</p>
-                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">ALTERAR SEUS DADOS</p>
-              </div>
-            </div>
-            <ChevronRight className="w-6 h-6 text-white/20" />
-          </Button>
-
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
