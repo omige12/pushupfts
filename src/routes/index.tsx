@@ -953,7 +953,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         
         <div 
           className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer active:scale-95 btn-respond-fast transition-all glow-purple"
-          onClick={() => toast.info("Recompensas em breve!")}
+          onClick={() => setView('daily-reward')}
         >
           <div className="bg-gold/20 p-1.5 rounded-xl">
             <Trophy className="w-5 h-5 text-gold" />
