@@ -2493,9 +2493,27 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
     const fetchRanking = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from('profiles')
-          .select('id, name, xp, record, wins, streak, avatar_url, player_id')
+          .select('id, name, xp, record, wins, streak, avatar_url, player_id');
+
+        if (tab === 'friends') {
+          // Get all friend IDs
+          const { data: friendships } = await supabase
+            .from('friendships')
+            .select('user_id, friend_id')
+            .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+            .eq('status', 'accepted');
+          
+          const friendIds = friendships ? friendships.map((f: any) => 
+            f.user_id === user.id ? f.friend_id : f.user_id
+          ) : [];
+          
+          // Filter by these IDs plus the user's ID
+          query = query.in('id', [...friendIds, user.id]);
+        }
+
+        const { data, error } = await query
           .order('xp', { ascending: false })
           .limit(50);
 
