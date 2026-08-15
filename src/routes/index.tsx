@@ -1680,24 +1680,6 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         <div className="grid grid-cols-1 gap-4 w-full pt-4">
           <Button 
             variant="ghost" 
-            aria-label="Editar Perfil"
-            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-electric-blue/20 hover:bg-electric-blue/5 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
-            onClick={() => setEditing(true)}
-          >
-            <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center border border-electric-blue/20 shadow-[0_0_15px_rgba(0,210,255,0.2)]">
-                <Pencil className="w-6 h-6 text-electric-blue" />
-              </div>
-              <div className="text-left">
-                <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">EDITAR PERFIL</p>
-                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">ALTERAR SEUS DADOS</p>
-              </div>
-            </div>
-            <ChevronRight className="w-6 h-6 text-white/20" />
-          </Button>
-
-          <Button 
-            variant="ghost" 
             aria-label="Ver Histórico de Partidas"
             className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-white/5 hover:border-white/10 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
             onClick={() => setView('history')}
