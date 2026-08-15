@@ -178,8 +178,8 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
           ctx.stroke();
         };
 
-        const skeletonColor = '#FFFFFF99';
-        const jointColor = '#EAB308';
+        const skeletonColor = '#FFFFFFCC';
+        const jointColor = '#00D2FF'; // Electric Blue for joints
 
         // Connections
         const connections = [
@@ -190,9 +190,10 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
           [leftShoulder, rightShoulder], [leftHip, rightHip]
         ];
 
+        ctx.lineWidth = 2; // Thinner lines
         connections.forEach(([p1, p2]) => drawLine(p1, p2, skeletonColor));
 
-        // Joints
+        // Joints - Modern glowing circles
         const joints = [
           leftShoulder, leftElbow, leftWrist, leftHip, leftKnee, leftAnkle,
           rightShoulder, rightElbow, rightWrist, rightHip, rightKnee, rightAnkle
@@ -201,17 +202,21 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
         joints.forEach(pt => {
           if (!pt || (pt.visibility || 0) < 0.5) return;
           
+          // Glow effect
           ctx.beginPath();
           ctx.arc(pt.x * canvasRef.current!.width, pt.y * canvasRef.current!.height, 8, 0, 2 * Math.PI);
           ctx.fillStyle = jointColor;
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = jointColor;
           ctx.fill();
+          ctx.shadowBlur = 0; // Reset shadow for other drawings
           
           ctx.beginPath();
-          ctx.arc(pt.x * canvasRef.current!.width, pt.y * canvasRef.current!.height, 12, 0, 2 * Math.PI);
-          ctx.strokeStyle = '#FFFFFF';
-          ctx.lineWidth = 2;
-          ctx.stroke();
+          ctx.arc(pt.x * canvasRef.current!.width, pt.y * canvasRef.current!.height, 4, 0, 2 * Math.PI);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fill();
         });
+
       }
 
       ctx.restore();
@@ -336,69 +341,7 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Dynamic Feedback Overlay */}
-      <div className="absolute inset-0 pointer-events-none p-6 flex flex-col justify-between z-10">
-        <div className="flex justify-between items-start">
-          <div className="bg-black/60 backdrop-blur-xl px-4 py-2 rounded-2xl border border-white/10 flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full animate-pulse ${postureStatus === 'correct' ? 'bg-green-500' : 'bg-red-500'}`} />
-            <span className="text-[10px] font-black italic text-white uppercase tracking-[0.2em]">
-              AI SCANNER v3.0
-            </span>
-          </div>
-          <div className="bg-black/60 backdrop-blur-xl px-4 py-2 rounded-2xl border border-white/10 text-right">
-             <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">Postura</p>
-             <p className={`text-[10px] font-black italic ${postureStatus === 'correct' ? 'text-green-500' : 'text-red-500'}`}>
-               {accuracy}%
-             </p>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center gap-6 mb-8">
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={feedback}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -20, opacity: 0 }}
-              className={`px-8 py-3 rounded-2xl backdrop-blur-2xl border-2 flex items-center gap-3 shadow-2xl ${
-                postureStatus === 'correct' ? 'bg-green-500/10 border-green-500/30 text-green-400' : 
-                postureStatus === 'warning' ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400' : 
-                'bg-red-500/10 border-red-500/30 text-red-400'
-              }`}
-            >
-              {postureStatus === 'correct' ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
-              <span className="text-sm font-black italic uppercase tracking-wider">{feedback}</span>
-            </motion.div>
-          </AnimatePresence>
-          
-          <div className="relative flex items-center justify-center">
-            {/* Pulsing ring */}
-            <motion.div
-              key={count}
-              initial={{ scale: 1, opacity: 0.8 }}
-              animate={{ scale: 1.6, opacity: 0 }}
-              transition={{ duration: 0.6 }}
-              className="absolute w-40 h-40 border-[6px] border-primary/50 rounded-full"
-            />
-            
-            <div className="bg-primary/20 backdrop-blur-3xl w-44 h-44 rounded-full border-[6px] border-primary/40 shadow-[0_0_60px_rgba(59,130,246,0.4)] flex items-center justify-center">
-              <motion.span 
-                key={count}
-                initial={{ scale: 0.5, rotate: -20 }}
-                animate={{ scale: 1, rotate: 0 }}
-                className="text-8xl font-black italic text-white tracking-tighter drop-shadow-2xl"
-              >
-                {count}
-              </motion.span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Screen Frame Decoration */}
-      <div className="absolute inset-0 border-[16px] border-white/5 pointer-events-none">
-        <div className="w-full h-full border border-dashed border-white/20 rounded-2xl" />
-      </div>
+      {/* HUD components are now controlled by the parent Challenge component for better design integration */}
     </div>
   );
 };
