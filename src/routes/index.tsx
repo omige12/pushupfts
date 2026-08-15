@@ -1426,7 +1426,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                 </div>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 invisible h-0 overflow-hidden">
                <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-[10px] font-black uppercase h-8 px-4" onClick={() => {
                   const input = document.createElement('input');
                   input.type = 'file';
