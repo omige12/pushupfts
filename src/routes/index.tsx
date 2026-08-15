@@ -2316,7 +2316,8 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
         level: profile.level,
         patent: getRankInfo(profile.xp).patentName,
         record: profile.record,
-        avatar: profile.avatar_url
+        avatar: profile.avatar_url,
+        last_seen_at: profile.last_seen_at
       });
       toast.success("Jogador encontrado!");
     } else {
