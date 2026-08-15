@@ -2441,24 +2441,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
           </div>
         </div>
 
-        {/* Small Cards Row */}
         <div className="grid grid-cols-2 gap-4">
-          <div 
-            className="bg-electric-blue/5 border border-electric-blue/10 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-primary group"
-            onClick={() => setView('friend-challenge')}
-          >
-            <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center">
-              <UserIcon className="w-6 h-6 text-electric-blue" />
-            </div>
-            <div>
-              <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">JOGAR COM AMIGOS</h3>
-              <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">CONVITE SEUS AMIGOS E JOGUEM JUNTOS</p>
-            </div>
-            <div className="self-end bg-white/5 p-1.5 rounded-full mt-auto">
-              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
-            </div>
-          </div>
-
           <div 
             className="bg-card border border-white/5 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all group"
             onClick={onSelectBot}
