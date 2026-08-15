@@ -994,21 +994,20 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden transition-all group"
         >
           {/* Background pattern */}
-          <div className="absolute top-0 right-0 p-2 opacity-10 pointer-events-none flex items-center justify-center w-24 h-24">
+          <div className="absolute top-0 right-0 p-2 opacity-20 pointer-events-none flex items-center justify-center w-28 h-28 translate-x-4 -translate-y-4">
             <Shield className="w-full h-full text-gold" />
-            <span className="absolute font-black text-[10px] text-gold mt-1 italic tracking-tighter">
-              {rank.xpInLevel} XP
+            <span className="absolute font-black text-[14px] text-gold mt-1 italic tracking-tighter">
+              {rank.xpInLevel}
+            </span>
+            <span className="absolute font-black text-[6px] text-gold/60 mt-8 uppercase tracking-widest">
+              XP
             </span>
           </div>
 
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)] relative">
-                <Shield className="absolute inset-0 w-full h-full text-gold/20 pointer-events-none" />
-                <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)] z-10">{rank.emoji}</div>
-                <div className="absolute -bottom-1 bg-gold px-1.5 rounded-full z-20 shadow-[0_0_10px_rgba(234,179,8,0.5)]">
-                  <span className="text-[8px] font-black text-black italic leading-none">{rank.xpInLevel}XP</span>
-                </div>
+              <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]">
+                <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
               </div>
               <div>
                 <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName.toUpperCase()}</h2>
