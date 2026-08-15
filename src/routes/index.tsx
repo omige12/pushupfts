@@ -552,6 +552,13 @@ function App() {
           history: [newMatch, ...prev.history].slice(0, 15)
         };
       });
+      
+      // Update missions progress
+      await supabase.rpc('increment_mission_progress', { p_user_id: session.user.id, p_type: 'pushups', p_amount: pushups });
+      await supabase.rpc('increment_mission_progress', { p_user_id: session.user.id, p_type: 'matches', p_amount: 1 });
+      await supabase.rpc('increment_mission_progress', { p_user_id: session.user.id, p_type: 'battles', p_amount: 1 });
+      if (won) await supabase.rpc('increment_mission_progress', { p_user_id: session.user.id, p_type: 'wins', p_amount: 1 });
+      await supabase.rpc('increment_mission_progress', { p_user_id: session.user.id, p_type: 'xp', p_amount: xpGained });
     }
   };
 
