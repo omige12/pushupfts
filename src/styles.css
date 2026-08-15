@@ -55,24 +55,24 @@
 
 :root {
   --radius: 1.5rem;
-  --background: #0B0E14;
+  --background: #05070A;
   --foreground: #FFFFFF;
-  --card: #151921;
+  --card: #0F131A;
   --card-foreground: #FFFFFF;
-  --popover: #151921;
+  --popover: #0F131A;
   --popover-foreground: #FFFFFF;
   --primary: #3B82F6;
   --primary-foreground: #FFFFFF;
-  --secondary: #1F2937;
+  --secondary: #161B24;
   --secondary-foreground: #FFFFFF;
-  --muted: #1F2937;
-  --muted-foreground: #94A3B8;
+  --muted: #161B24;
+  --muted-foreground: #64748B;
   --accent: #EAB308;
-  --accent-foreground: #0B0E14;
+  --accent-foreground: #05070A;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
-  --border: rgba(255, 255, 255, 0.05);
-  --input: rgba(255, 255, 255, 0.05);
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.08);
   --ring: #3B82F6;
 }
 
@@ -132,6 +132,26 @@
   
   .bg-card-gold {
     background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(234, 179, 8, 0.05));
+  }
+
+  .premium-glow-blue {
+    @apply border border-blue-500/20 shadow-[0_0_20px_rgba(59,132,246,0.1)];
+  }
+
+  .premium-glow-green {
+    @apply border border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.1)];
+  }
+
+  .premium-glow-red {
+    @apply border border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)];
+  }
+
+  .premium-glow-purple {
+    @apply border border-purple-500/20 shadow-[0_0_20px_rgba(139,92,246,0.1)];
+  }
+
+  .premium-glow-gold {
+    @apply border border-gold/20 shadow-[0_0_25px_rgba(234,179,8,0.15)];
   }
 }
 
