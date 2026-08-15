@@ -2685,7 +2685,7 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
             count: Number(p.xp),
             avatar: p.name.substring(0, 2).toUpperCase(),
             avatarUrl: p.avatar_url,
-            isUser: p.player_id === user.id,
+            isUser: p.id === user.id,
             record: p.record,
             wins: p.wins,
             streak: p.streak,
