@@ -1634,28 +1634,28 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         {/* Stats Grid - Premium Neon Visual */}
         <div className="grid grid-cols-3 gap-3 w-full">
-          <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-green-500/10 shadow-[0_0_15px_rgba(34,197,94,0.05)] hover:bg-green-500/5 transition-all group">
-            <div className="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center mx-auto mb-3 border border-green-500/20">
-              <Trophy className="w-4 h-4 text-green-500" />
+          <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-electric-blue/30 transition-all group">
+            <div className="w-8 h-8 rounded-xl bg-electric-blue/10 flex items-center justify-center mx-auto mb-3 border border-electric-blue/20">
+              <Trophy className="w-4 h-4 text-electric-blue" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">VITÓRIAS</p>
-            <p className="text-2xl font-black text-white italic">{stats.wins ?? 0}</p>
+            <p className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(0,210,255,0.3)]">{stats.wins ?? 0}</p>
           </div>
           
-          <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.05)] hover:bg-blue-500/5 transition-all group">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center mx-auto mb-3 border border-blue-500/20">
-              <Target className="w-4 h-4 text-blue-500" />
+          <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-electric-blue/30 transition-all group">
+            <div className="w-8 h-8 rounded-xl bg-electric-blue/10 flex items-center justify-center mx-auto mb-3 border border-electric-blue/20">
+              <Target className="w-4 h-4 text-electric-blue" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">RECORDE</p>
-            <p className="text-2xl font-black text-white italic">{stats.record ?? 0}</p>
+            <p className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(0,210,255,0.3)]">{stats.record ?? 0}</p>
           </div>
           
-          <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.05)] hover:bg-purple-500/5 transition-all group">
-            <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center mx-auto mb-3 border border-purple-500/20">
-              <Zap className="w-4 h-4 text-purple-500" />
+          <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-purple-evolve/30 transition-all group">
+            <div className="w-8 h-8 rounded-xl bg-purple-evolve/10 flex items-center justify-center mx-auto mb-3 border border-purple-evolve/20">
+              <Zap className="w-4 h-4 text-purple-evolve" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">TOTAL</p>
-            <p className="text-2xl font-black text-white italic">{stats.totalPushups ?? 0}</p>
+            <p className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">{stats.totalPushups ?? 0}</p>
           </div>
         </div>
 
