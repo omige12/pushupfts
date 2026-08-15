@@ -2353,40 +2353,120 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
 }
 
 function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void }) {
-  const [copied, setCopied] = useState(false);
+  const [friends, setFriends] = useState<any[]>([]);
+  const [friendRequests, setFriendRequests] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [foundUser, setFoundUser] = useState<any>(null);
 
-  const copyId = () => {
-    navigator.clipboard.writeText(user.id);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  useEffect(() => {
+    const fetchFriends = async () => {
+      const { data: friendships, error } = await supabase
+        .from('friendships')
+        .select(`
+          status,
+          user:profiles!friendships_user_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at),
+          friend:profiles!friendships_friend_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at)
+        `)
+        .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+        .eq('status', 'accepted');
+      
+      if (friendships) {
+        setFriends(friendships.map(f => f.user.id === user.id ? f.friend : f.user));
+      }
+    };
+    fetchFriends();
+  }, [user.id]);
+
+  const searchFriend = async () => {
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
+      .eq('player_id', searchQuery.toUpperCase())
+      .neq('id', user.id)
+      .maybeSingle();
+
+    if (profile) setFoundUser(profile);
+    else {
+      setFoundUser(null);
+      toast.error("Nenhum jogador encontrado.");
+    }
+  };
+
+  const addFriend = async (friendId: string) => {
+    const { error } = await supabase.from('friendships').insert({
+      user_id: user.id,
+      friend_id: friendId,
+      status: 'pending'
+    });
+    if (!error) toast.success("Solicitação enviada!");
+    else toast.error("Erro ao enviar solicitação.");
   };
 
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
-      <div className="flex items-center gap-4 mb-6">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8">
+      <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">AMIGOS</h2>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">SOCIAL</h2>
       </div>
 
-      <div className="glass-panel p-8 text-center space-y-6 border-blue-500/20">
-        <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto border-2 border-blue-500/30">
-          <UserIcon className="w-10 h-10 text-blue-400" />
+      {/* ID Section */}
+      <div className="glass-panel p-6 border-blue-500/20 space-y-4">
+        <h3 className="text-xs font-black text-white/40 uppercase tracking-widest">SEU ID DE JOGADOR</h3>
+        <div className="flex gap-2">
+          <div className="flex-1 bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-xl font-black text-white tracking-[0.2em]">
+            {user.id}
+          </div>
+          <Button variant="ghost" size="icon" className="h-full rounded-xl bg-primary/20 text-primary" onClick={copyId}>
+            <Copy className="w-5 h-5" />
+          </Button>
         </div>
-        <div>
-          <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">Convidar Amigos</h3>
-          <p className="text-xs text-muted-foreground font-medium px-4">Compartilhe seu ID para competir contra quem você conhece.</p>
+      </div>
+
+      {/* Search Section */}
+      <div className="space-y-4">
+        <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">ADICIONAR AMIGO</h3>
+        <div className="flex gap-2">
+          <input 
+            className="flex-1 bg-[#1A1F26] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white/20"
+            placeholder="Digite o ID (Ex: PUSH-XXXX)"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Button className="h-14 w-14 rounded-2xl bg-primary" onClick={searchFriend}><Search className="w-6 h-6" /></Button>
         </div>
         
-        <div className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-lg font-black text-white tracking-[0.2em] relative group cursor-pointer" onClick={copyId}>
-          {user.id}
-          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-xl transition-opacity">
-            {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5 text-white" />}
+        {foundUser && (
+          <div className="bg-[#151921] p-4 rounded-2xl flex items-center justify-between border border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-white/5 rounded-full overflow-hidden">
+                {foundUser.avatar_url && <img src={foundUser.avatar_url} className="w-full h-full object-cover" />}
+              </div>
+              <div>
+                <p className="font-black text-white italic">{foundUser.name}</p>
+                <p className="text-[10px] text-white/40 uppercase">{getRankInfo(foundUser.xp).patentName}</p>
+              </div>
+            </div>
+            <Button className="bg-primary text-xs" onClick={() => addFriend(foundUser.id)}>ADICIONAR</Button>
           </div>
-        </div>
+        )}
+      </div>
 
-        <Button className="game-button bg-blue-500 w-full py-6 text-lg tracking-tighter italic uppercase">
-          Compartilhar Link
-        </Button>
+      {/* Friends List */}
+      <div className="space-y-4">
+        <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">AMIGOS ({friends.length})</h3>
+        {friends.map(friend => {
+          const lastSeen = new Date(friend.last_seen_at).getTime();
+          const isOnline = Date.now() - lastSeen < 60000;
+          return (
+            <div key={friend.id} className="bg-[#151921] p-4 rounded-2xl flex items-center justify-between border border-white/5">
+              <div className="flex items-center gap-3">
+                <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} />
+                <p className="font-black text-white italic">{friend.name}</p>
+              </div>
+              {isOnline && <Button className="bg-primary text-[10px] h-8" onClick={() => onChallengePlayer(friend)}>DESAFIAR</Button>}
+            </div>
+          );
+        })}
       </div>
     </motion.div>
   );
