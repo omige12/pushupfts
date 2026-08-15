@@ -608,46 +608,51 @@ function App() {
       </AnimatePresence>
 
       {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready'].includes(view) && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-[#0B0E14]/95 backdrop-blur-2xl border-t border-white/10 px-4 pb-8 pt-4 flex justify-around items-center z-50">
+        <nav className="fixed bottom-6 left-4 right-4 bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-50 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]">
           {[
-            { id: 'dashboard', label: 'Início', icon: Home, color: 'blue' },
-            { id: 'achievements', label: 'Conquistas', icon: Award, color: 'purple' },
-            { id: 'multiplayer', label: 'Batalha', icon: Swords, color: 'red', aliases: ['select-bot', 'select-duration', 'matchmaking', 'challenge'] },
-            { id: 'ranking', label: 'Ranking', icon: Trophy, color: 'blue' },
-            { id: 'profile', label: 'Perfil', icon: UserCircle, color: 'orange', aliases: ['history', 'support', 'settings', 'edit-profile'] }
+            { id: 'dashboard', label: 'Início', icon: Home, aliases: [] },
+            { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
+            { id: 'multiplayer', label: 'Batalha', icon: Swords, aliases: ['select-bot', 'select-duration', 'matchmaking', 'challenge'] },
+            { id: 'ranking', label: 'Ranking', icon: Trophy, aliases: [] },
+            { id: 'profile', label: 'Perfil', icon: UserCircle, aliases: ['history', 'support', 'settings', 'edit-profile'] }
           ].map((item) => {
             const isActive = view === item.id || item.aliases?.includes(view);
-            const colorClass = item.color === 'blue' ? 'text-electric-blue' : 
-                               item.color === 'purple' ? 'text-purple-evolve' :
-                               item.color === 'red' ? 'text-energy-red' : 'text-gold';
             
-            const glowClass = item.color === 'blue' ? 'bg-electric-blue/20' : 
-                              item.color === 'purple' ? 'bg-purple-evolve/20' :
-                              item.color === 'red' ? 'bg-energy-red/20' : 'bg-gold/20';
-
             return (
               <Button 
                 key={item.id}
                 variant="ghost" 
                 aria-label={`Ir para ${item.label}`}
-                className={`flex flex-col items-center gap-1 h-auto py-2 px-3 transition-all duration-75 active:scale-90 btn-respond-fast relative ${isActive ? colorClass : 'text-white/30'}`}
+                className={`flex flex-col items-center gap-1.5 h-auto py-2.5 px-1 flex-1 transition-all duration-75 active:scale-95 btn-respond-fast relative rounded-2xl ${isActive ? 'text-electric-blue' : 'text-white/40 hover:text-white/60'}`}
                 onClick={() => setView(item.id as View)}
               >
-                <item.icon className={`w-6 h-6 transition-all duration-200 ${isActive ? `drop-shadow-[0_0_10px_rgba(var(--${item.color}-rgb),0.5)] fill-current/10` : ''}`} />
-                <span className={`text-[8px] font-black uppercase tracking-[0.15em] leading-none mt-1`}>{item.label}</span>
+                <div className="relative">
+                  <item.icon className={`w-6 h-6 transition-all duration-300 ${isActive ? 'drop-shadow-[0_0_8px_rgba(0,210,255,0.8)]' : ''}`} />
+                  {isActive && (
+                    <motion.div 
+                      layoutId="nav-glow-icon"
+                      className="absolute inset-0 bg-electric-blue/20 blur-md rounded-full -z-10"
+                    />
+                  )}
+                </div>
+                
+                <span className={`text-[8px] font-black uppercase tracking-[0.1em] leading-none transition-colors duration-300 ${isActive ? 'neon-text-blue' : ''}`}>
+                  {item.label}
+                </span>
+
                 {isActive && (
-                  <motion.div 
-                    layoutId="nav-indicator"
-                    className={`absolute -bottom-1 w-1 h-1 rounded-full ${glowClass} shadow-[0_0_10px_currentColor]`}
-                  />
-                )}
-                {isActive && (
-                  <motion.div 
-                    layoutId="nav-glow" 
-                    className={`absolute inset-0 ${glowClass} blur-xl rounded-full -z-10`} 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.4 }}
-                  />
+                  <>
+                    <motion.div 
+                      layoutId="nav-indicator-line"
+                      className="absolute -bottom-1 w-5 h-1 bg-electric-blue rounded-full shadow-[0_0_10px_rgba(0,210,255,0.8)]"
+                    />
+                    <motion.div 
+                      layoutId="nav-bg-glow"
+                      className="absolute inset-0 bg-electric-blue/5 rounded-2xl -z-20"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                    />
+                  </>
                 )}
               </Button>
             );
