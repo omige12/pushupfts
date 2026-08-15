@@ -1404,10 +1404,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   <UserIcon className="w-16 h-16 text-muted-foreground" />
                 )}
               </div>
-              <div className="absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity backdrop-blur-sm">
+              <div className="absolute inset-0 bg-black/60 rounded-full opacity-0 flex items-center justify-center transition-opacity backdrop-blur-sm pointer-events-none">
                 <div className="flex flex-col items-center gap-1">
-                  <Camera className="w-6 h-6 text-white" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Alterar Foto</span>
+                  <UserIcon className="w-6 h-6 text-white/40" />
                 </div>
               </div>
             </div>
