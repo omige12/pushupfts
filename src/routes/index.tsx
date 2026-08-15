@@ -2530,12 +2530,34 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
           const lastSeen = new Date(friend.last_seen_at).getTime();
           const isOnline = Date.now() - lastSeen < 60000;
           return (
-            <div key={friend.id} className="bg-[#151921] p-4 rounded-2xl flex items-center justify-between border border-white/5">
+            <div key={friend.id} className="bg-[#151921] p-4 rounded-[1.5rem] flex items-center justify-between border border-white/5 premium-glow-blue">
               <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}`} />
-                <p className="font-black text-white italic">{friend.name}</p>
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10">
+                    {friend.avatar_url ? (
+                      <img src={friend.avatar_url} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                        <UserIcon className="w-5 h-5 text-white/20" />
+                      </div>
+                    )}
+                  </div>
+                  <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#151921] ${isOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-white/20'}`} />
+                </div>
+                <div>
+                  <p className="font-black text-white italic tracking-tighter uppercase leading-none">{friend.name}</p>
+                  <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest mt-1">
+                    {getRankInfo(friend.xp).patentName}
+                  </p>
+                </div>
               </div>
-              {isOnline && <Button className="bg-primary text-[10px] h-8" onClick={() => onChallengePlayer(friend)}>DESAFIAR</Button>}
+              <Button 
+                disabled={!isOnline}
+                className={`h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest transition-all ${isOnline ? 'bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)]' : 'bg-white/5 text-white/20'}`} 
+                onClick={() => onChallengePlayer(friend)}
+              >
+                {isOnline ? 'DESAFIAR' : 'OFFLINE'}
+              </Button>
             </div>
           );
         })}
