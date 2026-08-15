@@ -3857,7 +3857,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
       } else {
         const { data: newReward } = await supabase
           .from('daily_rewards')
-          .insert({ user_id: session.user.id, streak_count: 0 })
+          .insert({ user_id: session.user.id, streak_count: 0 } as any)
           .select()
           .single();
         setRewardData(newReward);
