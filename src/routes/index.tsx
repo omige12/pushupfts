@@ -2480,76 +2480,27 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
           </NeonFireWrapper>
         </div>
 
-        {/* Search Player (Full Width) */}
-        <div className="bg-[#1A1F26]/30 border border-white/5 rounded-[1.8rem] p-6 space-y-4">
-          <div className="flex items-center gap-3">
-            <Search className="w-5 h-5 text-white/40" />
-            <div>
-              <h3 className="text-sm font-black italic text-white uppercase tracking-tighter leading-none">BUSCAR JOGADOR</h3>
-              <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-1">ENCONTRE E DESAFIE QUALQUER JOGADOR</p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <input 
-              className="flex-1 bg-[#0B0E14] border border-white/10 rounded-2xl px-5 h-14 font-mono text-sm text-white focus:outline-none focus:border-electric-blue transition-all"
-              placeholder="Digite o ID numérico"
-              type="tel"
-              pattern="[0-9]*"
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value.replace(/\D/g, ''))}
-            />
-            <Button 
-              onClick={handleSearch} 
-              className="premium-challenge-btn h-14 px-8 flex items-center justify-center gap-3"
-            >
-              <Swords className="w-5 h-5 neon-text-blue" />
-              <span className="text-sm">DESAFIAR</span>
-            </Button>
-          </div>
-        </div>
-
-        {foundPlayer && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-[#151921] p-5 rounded-[2rem] border border-white/5 premium-glow-blue flex items-center justify-between group"
-          >
-            <div className="flex items-center gap-4">
-              <div className="relative w-14 h-14 rounded-full border-2 border-electric-blue/30 p-0.5 overflow-hidden">
-                {foundPlayer.avatar ? (
-                  <img src={foundPlayer.avatar} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full bg-white/5 flex items-center justify-center">
-                    <UserIcon className="w-6 h-6 text-white/20" />
-                  </div>
-                )}
+        {/* Jogar com Amigos (Full Width) */}
+        <NeonFireWrapper 
+          color="blue"
+          onClick={() => setView('friend-challenge')}
+          className="w-full"
+        >
+          <div className="bg-[#1A1F26]/30 border border-white/5 rounded-[1.8rem] p-6 flex items-center justify-between cursor-pointer active:scale-[0.98] transition-all group">
+            <div className="flex items-center gap-6">
+              <div className="w-16 h-16 rounded-2xl bg-electric-blue/10 flex items-center justify-center border border-electric-blue/20">
+                <UserIcon className="w-8 h-8 text-electric-blue" />
               </div>
               <div>
-                <h4 className="font-black text-white italic tracking-tighter uppercase leading-none">{foundPlayer.name}</h4>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <Badge className="bg-electric-blue/20 text-[8px] h-3.5 border-none px-2 uppercase font-black italic">{foundPlayer.patent}</Badge>
-                  <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">NÍVEL {foundPlayer.level}</span>
-                </div>
+                <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">JOGAR COM AMIGOS</h3>
+                <p className="text-xs font-medium text-white/40 uppercase tracking-widest mt-2">CONVIDE SEUS AMIGOS E JOGUEM JUNTOS</p>
               </div>
             </div>
-            <div className="flex flex-col items-end gap-2">
-              <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-full">
-                <div className={`w-1.5 h-1.5 rounded-full ${foundPlayer.last_seen_at && new Date().getTime() - new Date(foundPlayer.last_seen_at).getTime() < 60000 ? 'bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]' : 'bg-white/20'}`} />
-                <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">
-                  {foundPlayer.last_seen_at && new Date().getTime() - new Date(foundPlayer.last_seen_at).getTime() < 60000 ? 'ONLINE' : 'OFFLINE'}
-                </span>
-              </div>
-              <Button 
-                className="bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)] h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest hover:scale-105 active:scale-95 transition-all"
-                onClick={() => {
-                  onChallengePlayer(foundPlayer);
-                }}
-              >
-                DESAFIAR
-              </Button>
+            <div className="bg-white/5 p-2 rounded-full group-hover:bg-white/10 transition-colors">
+              <ArrowLeft className="w-5 h-5 text-white rotate-180" />
             </div>
-          </motion.div>
-        )}
+          </div>
+        </NeonFireWrapper>
       </div>
     </motion.div>
   );
