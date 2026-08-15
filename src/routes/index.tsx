@@ -739,6 +739,43 @@ function App() {
         )}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {incomingChallenge && (
+          <motion.div 
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed inset-x-4 bottom-24 z-[60] bg-[#0B0E14] border-2 border-electric-blue rounded-[2rem] p-6 shadow-[0_0_50px_rgba(0,210,255,0.3)]"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 rounded-full bg-electric-blue/20 flex items-center justify-center border border-electric-blue/30">
+                <Swords className="w-8 h-8 text-electric-blue" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black italic text-white uppercase tracking-tighter">DESAFIO RECEBIDO!</h3>
+                <p className="text-xs text-white/40 font-bold uppercase tracking-widest mt-0.5">ALGUÉM TE DESAFIOU PARA UMA BATALHA</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <Button 
+                variant="ghost" 
+                className="flex-1 h-14 rounded-2xl bg-white/5 text-white/60 hover:text-white"
+                onClick={() => setIncomingChallenge(null)}
+              >
+                RECUSAR
+              </Button>
+              <Button 
+                className="flex-1 h-14 rounded-2xl bg-electric-blue text-white shadow-[0_0_20px_rgba(0,210,255,0.4)]"
+                onClick={() => acceptChallenge(incomingChallenge)}
+              >
+                ACEITAR
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready'].includes(view) && (
         <nav className="fixed bottom-6 left-4 right-4 bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-50 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]">
           {[
