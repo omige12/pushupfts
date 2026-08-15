@@ -513,6 +513,14 @@ function App() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) return;
 
+      // Heartbeat for online status
+      const heartbeat = setInterval(async () => {
+        await supabase
+          .from('profiles')
+          .update({ last_seen_at: new Date().toISOString() })
+          .eq('id', session.user.id);
+      }, 30000);
+
       // Channel for personal profile updates
       const profileChannel = supabase
         .channel('profile-changes')
@@ -546,6 +554,41 @@ function App() {
         )
         .subscribe();
 
+      // Channel for friend requests and challenges
+      const socialChannel = supabase
+        .channel('social-interactions')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'friendships',
+            filter: `friend_id=eq.${session.user.id}`
+          },
+          (payload) => {
+            if (payload.eventType === 'INSERT' && payload.new.status === 'pending') {
+              toast.info("Nova solicitação de amizade!");
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'challenges',
+            filter: `challenged_id=eq.${session.user.id}`
+          },
+          (payload) => {
+            if (payload.new.status === 'pending') {
+              // We'll handle showing the challenge invite modal here via global state if needed
+              // For now, let's just trigger a custom event that the Dashboard or other components can listen to
+              window.dispatchEvent(new CustomEvent('challenge-received', { detail: payload.new }));
+            }
+          }
+        )
+        .subscribe();
+
       // Channel for global ranking updates
       const rankingChannel = supabase
         .channel('ranking-global')
@@ -557,16 +600,16 @@ function App() {
             table: 'profiles'
           },
           () => {
-            // Signal to ranking components that data has changed
-            // This is handled by the useEffect in Ranking component which now needs to listen for changes
             window.dispatchEvent(new CustomEvent('ranking-updated'));
           }
         )
         .subscribe();
 
       return () => {
+        clearInterval(heartbeat);
         supabase.removeChannel(profileChannel);
         supabase.removeChannel(rankingChannel);
+        supabase.removeChannel(socialChannel);
       };
     };
 
