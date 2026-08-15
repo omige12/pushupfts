@@ -1098,10 +1098,20 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-[#0A0F1E] flex flex-col overflow-hidden">
       {/* HUD Superior — Mobile Optimized */}
-      <div className="relative pt-8 px-4 pb-4 bg-gradient-to-b from-black/80 to-transparent z-20">
-        <div className="max-w-md mx-auto">
+      <div className="relative pt-6 px-4 pb-4 bg-gradient-to-b from-black/90 to-transparent z-20">
+        <div className="max-w-md mx-auto relative">
+          {/* Back Button */}
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="absolute -top-1 -left-1 rounded-xl bg-white/5 active:scale-90 border border-white/10 z-30" 
+            onClick={onExit}
+          >
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </Button>
+
           {/* Side-by-side Profiles */}
-          <div className="flex justify-between items-center px-6">
+          <div className="flex justify-between items-center px-6 pt-2">
             <div className="flex flex-col items-center">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-600 p-0.5 shadow-lg border border-white/20">
                 <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-900 flex items-center justify-center">
@@ -1131,10 +1141,10 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
               </div>
             ) : (
               <div className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-2xl bg-yellow-500/10 p-0.5 shadow-lg border border-dashed border-yellow-500/40 flex items-center justify-center">
+                <div className="w-14 h-14 rounded-2xl bg-gold/10 p-0.5 shadow-lg border border-dashed border-gold/40 flex items-center justify-center">
                   <Trophy className="w-6 h-6 text-gold" />
                 </div>
-                <span className="text-[9px] font-black italic text-gold uppercase mt-1 tracking-tighter">RECORDE</span>
+                <span className="text-[9px] font-black italic text-gold uppercase mt-1 tracking-tighter">OBJETIVO</span>
               </div>
             )}
           </div>
