@@ -259,6 +259,14 @@ export type Database = {
     }
     Functions: {
       generate_numeric_player_id: { Args: never; Returns: string }
+      increment_mission_progress: {
+        Args: {
+          p_amount: number
+          p_type: Database["public"]["Enums"]["mission_type"]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       fitness_goal:
