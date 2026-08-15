@@ -2304,7 +2304,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
 
     const { data: profile, error } = await supabase
       .from('profiles')
-      .select('id, name, xp, record, avatar_url, level, player_id')
+      .select('id, name, xp, record, avatar_url, level, player_id, last_seen_at')
       .eq('player_id', searchId)
       .neq('id', user.id)
       .maybeSingle();
