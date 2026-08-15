@@ -2601,7 +2601,12 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
           const lastSeen = new Date(friend.last_seen_at).getTime();
           const isOnline = Date.now() - lastSeen < 60000;
           return (
-            <div key={friend.id} className="bg-[#151921] p-4 rounded-[1.5rem] flex items-center justify-between border border-white/5 premium-glow-blue">
+            <motion.div 
+              key={friend.id} 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-[#151921] p-4 rounded-[1.8rem] flex items-center justify-between border border-white/5 premium-glow-blue group"
+            >
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10">
