@@ -2267,7 +2267,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
              {/* Opponent */}
              <div className="flex-1 space-y-3">
                <div className="w-20 h-20 mx-auto bg-energy-red/20 rounded-2xl border-2 border-energy-red flex items-center justify-center overflow-hidden">
-                 <UserIcon className="w-10 h-10 text-energy-red" />
+                 {matchedOpponent?.avatar ? <img src={matchedOpponent.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-10 h-10 text-energy-red" />}
                </div>
                <div>
                  <p className="text-xs font-black text-white italic truncate">{matchedOpponent?.name}</p>
