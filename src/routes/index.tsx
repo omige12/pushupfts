@@ -1331,7 +1331,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       const updateData: any = {
         name: (formData.name || '').toUpperCase().trim(),
         age: parseInt(String(formData.age)) || 0,
-        weight: parseInt(String(formData.weight)) || 0,
+        weight: parseFloat(String(formData.weight)) || 0,
         height: parseInt(String(formData.height)) || 0,
         avatar_url: formData.avatar,
         goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Ganhar força'),
