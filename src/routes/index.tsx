@@ -2154,7 +2154,7 @@ function Support({ setView, goBack }: { setView: (v: View) => void, goBack: () =
   );
 }
 
-function SupportChat({ setView }: { setView: (v: View) => void }) {
+function SupportChat({ setView, goBack }: { setView: (v: View) => void, goBack: () => void }) {
   const [messages, setMessages] = useState([
     { role: 'ai', text: 'Olá! Sou seu assistente do PushUp Arena. Como posso ajudar você hoje com duelos, treinos ou sua conta?' }
   ]);
