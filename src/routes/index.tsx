@@ -3818,6 +3818,14 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
   );
 };
 
+const ProfileReady = ({ setView, user }: { setView: (v: View) => void, user: any }) => (
+  <div className="p-6 text-center space-y-8 flex flex-col items-center justify-center min-h-screen">
+    <h2 className="text-4xl font-black italic text-primary">🎉 PERFIL CRIADO!</h2>
+    <p className="text-muted-foreground">"Agora sua jornada começa."</p>
+    <Button className="game-button w-full" onClick={() => setView('dashboard')}>🔥 COMEÇAR</Button>
+  </div>
+);
+
 function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) => void, user: any, setUser: any, goBack: () => void }) {
   const [rewardData, setRewardData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
