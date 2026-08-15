@@ -831,10 +831,10 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         onClick={() => setView('treino')}
       >
         <div 
-          className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between transition-all shadow-[0_0_20px_rgba(239,68,68,0.1)] border-energy-red/30"
+          className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between transition-all shadow-[0_0_20px_rgba(239,68,68,0.1)] border-energy-red/30 group"
         >
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-energy-red/10 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-2xl bg-energy-red/10 flex items-center justify-center group-hover:scale-110 transition-transform">
               <Dumbbell className="w-8 h-8 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
             </div>
             <div>
@@ -842,9 +842,9 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
               <p className="text-[10px] font-medium text-white/40 uppercase tracking-widest mt-1">Aperfeiçoe suas habilidades</p>
             </div>
           </div>
-        </div>
-        <div className="bg-energy-red/20 p-2.5 rounded-full">
-          <ArrowLeft className="w-5 h-5 text-energy-red rotate-180" />
+          <div className="bg-energy-red/20 p-2.5 rounded-full group-hover:translate-x-1 transition-transform">
+            <ChevronRight className="w-5 h-5 text-energy-red" />
+          </div>
         </div>
       </NeonFireWrapper>
 
