@@ -736,8 +736,13 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         onClick={() => setView('patents-list')}
       >
         <div 
-          className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden transition-all"
+          className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden transition-all group"
         >
+          {/* Background pattern */}
+          <div className="absolute top-0 right-0 p-2 opacity-5 pointer-events-none">
+            <Shield className="w-24 h-24 text-gold rotate-12" />
+          </div>
+
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]">
@@ -748,29 +753,30 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
                 <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em] mt-1 opacity-70">SUA PATENTE ATUAL</p>
               </div>
             </div>
-            <div className="text-right">
-              <span className="text-xs font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel} / {rank.xpForNext} XP</span>
+            <div className="text-right flex flex-col items-end">
+              <span className="text-xl font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel}</span>
+              <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">/ {rank.xpForNext} XP</span>
             </div>
           </div>
-        </div>
 
-        <div className="space-y-4">
-          <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: `${rank.progress}%` }}
-              className="h-full bg-gold shadow-[0_0_10px_rgba(234,179,8,0.5)]"
-            />
-          </div>
-          
-          <div className="flex justify-between items-center pt-1">
-            <p className="text-[10px] font-black text-white/40 uppercase tracking-widest italic">
-              FALTAM {XP_PER_DIVISION - rank.xpInLevel} XP PARA O PRÓXIMO NÍVEL
-            </p>
-            <button className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl hover:bg-white/10 transition-colors">
-              <Star className="w-3.5 h-3.5 text-gold fill-gold" />
-              <span className="text-[9px] font-black text-white uppercase tracking-widest">VER TRILHAS</span>
-            </button>
+          <div className="space-y-4">
+            <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${rank.progress}%` }}
+                className="h-full bg-gradient-to-r from-gold to-yellow-300 shadow-[0_0_10px_rgba(234,179,8,0.5)] rounded-full"
+              />
+            </div>
+            
+            <div className="flex justify-between items-center pt-1">
+              <p className="text-[9px] font-black text-white/40 uppercase tracking-widest italic">
+                PRÓXIMO NÍVEL EM {rank.xpForNext - rank.xpInLevel} XP
+              </p>
+              <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
+                <Star className="w-3.5 h-3.5 text-gold fill-gold" />
+                <span className="text-[9px] font-black text-white uppercase tracking-widest">RANK {rank.level}</span>
+              </div>
+            </div>
           </div>
         </div>
       </NeonFireWrapper>
