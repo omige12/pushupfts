@@ -2423,6 +2423,41 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
             </Button>
           </div>
         </div>
+
+        {foundPlayer && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#151921] p-5 rounded-[2rem] border border-white/5 premium-glow-blue flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="relative w-14 h-14 rounded-full border-2 border-electric-blue/30 p-0.5 overflow-hidden">
+                {foundPlayer.avatar ? (
+                  <img src={foundPlayer.avatar} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                    <UserIcon className="w-6 h-6 text-white/20" />
+                  </div>
+                )}
+              </div>
+              <div>
+                <h4 className="font-black text-white italic tracking-tighter uppercase leading-none">{foundPlayer.name}</h4>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <Badge className="bg-electric-blue/20 text-[8px] h-3.5 border-none px-2 uppercase font-black italic">{foundPlayer.patent}</Badge>
+                  <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">NÍVEL {foundPlayer.level}</span>
+                </div>
+              </div>
+            </div>
+            <Button 
+              className="bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)] h-12 px-6 rounded-xl font-black italic text-xs tracking-widest hover:scale-105 active:scale-95 transition-all"
+              onClick={() => {
+                onChallengePlayer(foundPlayer);
+              }}
+            >
+              DESAFIAR
+            </Button>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
