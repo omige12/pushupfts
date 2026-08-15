@@ -1873,7 +1873,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6 pb-20">
       <div className="flex justify-between items-center w-full mb-2">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => setView('dashboard')}>
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
