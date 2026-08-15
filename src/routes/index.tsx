@@ -170,12 +170,12 @@ const BOTS = [
 const NeonFireWrapper = ({ children, color, intense = false, onClick, className = "" }: { children: React.ReactNode, color: string, intense?: boolean, onClick?: () => void, className?: string }) => {
   const [isPressed, setIsPressed] = useState(false);
   
-  const colors: Record<string, { glow: string, particles: string }> = {
-    blue: { glow: "rgba(0, 210, 255, 0.4)", particles: "#00D2FF" },
-    purple: { glow: "rgba(168, 85, 247, 0.4)", particles: "#A855F7" },
-    red: { glow: "rgba(255, 49, 49, 0.4)", particles: "#FF3131" },
-    gold: { glow: "rgba(255, 215, 0, 0.4)", particles: "#FFD700" },
-    green: { glow: "rgba(34, 197, 94, 0.4)", particles: "#22C55E" }
+  const colors: Record<string, { glow: string, particles: string, aura: string[] }> = {
+    blue: { glow: "rgba(0, 210, 255, 0.4)", particles: "#00D2FF", aura: ["#00D2FF", "#3B82F6", "#60A5FA"] },
+    purple: { glow: "rgba(168, 85, 247, 0.4)", particles: "#A855F7", aura: ["#A855F7", "#D8B4FE", "#C084FC"] },
+    red: { glow: "rgba(255, 49, 49, 0.4)", particles: "#FF3131", aura: ["#FF3131", "#EF4444", "#F87171"] },
+    gold: { glow: "rgba(255, 215, 0, 0.4)", particles: "#FFD700", aura: ["#FFD700", "#FDE047", "#FACC15"] },
+    green: { glow: "rgba(34, 197, 94, 0.4)", particles: "#22C55E", aura: ["#22C55E", "#4ADE80", "#86EFAC"] }
   };
 
   const activeColor = colors[color as keyof typeof colors] || colors.blue;
@@ -188,57 +188,72 @@ const NeonFireWrapper = ({ children, color, intense = false, onClick, className 
 
   return (
     <motion.div 
-      className={`neon-fire-container ${className}`}
+      className={`relative ${className}`}
       onTap={handleTouch}
       animate={{ scale: isPressed ? 0.96 : 1 }}
       transition={{ type: "spring", stiffness: 400, damping: 20 }}
     >
-      <div className="neon-fire-effect">
-        {/* Main Glow */}
-        <div 
-          className="fire-glow" 
-          style={{ 
-            backgroundColor: activeColor.glow,
-            opacity: isPressed ? 0.9 : (intense ? 0.7 : 0.5),
-            filter: `blur(${isPressed ? '16px' : '12px'})`
-          }} 
-        />
+      {/* Animated Aura Effect */}
+      <div className="absolute inset-[-8px] pointer-events-none z-[-1] overflow-hidden rounded-[inherit]">
+        {[...Array(3)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute inset-0 opacity-40"
+            style={{
+              background: `linear-gradient(to top, transparent, ${activeColor.aura[i % activeColor.aura.length]})`,
+              filter: 'blur(8px)',
+            }}
+            animate={{
+              y: [0, -20, 0],
+              opacity: isPressed ? [0.4, 0.9, 0.4] : [0.2, 0.5, 0.2],
+              scale: isPressed ? [1, 1.1, 1] : [1, 1.05, 1],
+            }}
+            transition={{
+              duration: 2 + i,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.5,
+            }}
+          />
+        ))}
         
-        {/* Animated Flames/Edge */}
-        <div 
-          className="fire-edge" 
-          style={{ 
-            color: activeColor.particles,
-            opacity: isPressed ? 1 : 0.8
-          }} 
-        />
-
-        {/* Floating Particles */}
-        <div className="fire-particles">
-          {[...Array(isPressed ? 8 : 4)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 rounded-full"
-              style={{ 
-                backgroundColor: activeColor.particles,
-                left: `${20 + Math.random() * 60}%`,
-                top: `${80 + Math.random() * 20}%`
-              }}
-              animate={{
-                y: [-20, -60 - Math.random() * 40],
-                x: [0, (Math.random() - 0.5) * 30],
-                opacity: [0, 1, 0],
-                scale: [0, 1.2, 0]
-              }}
-              transition={{
-                duration: 1.5 + Math.random(),
-                repeat: Infinity,
-                delay: Math.random() * 2
-              }}
-            />
-          ))}
-        </div>
+        {/* Dynamic Static/Electric Lines */}
+        {[...Array(isPressed ? 12 : 6)].map((_, i) => (
+          <motion.div
+            key={`line-${i}`}
+            className="absolute w-[1px] rounded-full"
+            style={{
+              backgroundColor: activeColor.particles,
+              height: Math.random() * 40 + 20 + 'px',
+              left: Math.random() * 100 + '%',
+              bottom: '-10%',
+              boxShadow: `0 0 8px ${activeColor.particles}`,
+            }}
+            animate={{
+              y: [-20, -120],
+              opacity: [0, 0.8, 0],
+              x: [(Math.random() - 0.5) * 20, (Math.random() - 0.5) * 40],
+            }}
+            transition={{
+              duration: 1 + Math.random(),
+              repeat: Infinity,
+              ease: "easeOut",
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
       </div>
+
+      {/* Internal Glow */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-[-1] rounded-[inherit]" 
+        style={{ 
+          backgroundColor: activeColor.glow,
+          opacity: isPressed ? 0.4 : 0.1,
+          filter: 'blur(20px)'
+        }} 
+      />
+      
       {children}
     </motion.div>
   );
