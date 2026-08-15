@@ -1664,15 +1664,15 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <Button 
             variant="ghost" 
             aria-label="Editar Perfil"
-            className="premium-glow-gold bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-gold/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-gold"
+            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-electric-blue/20 hover:bg-electric-blue/5 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
             onClick={() => setEditing(true)}
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center border border-gold/20">
-                <Pencil className="w-6 h-6 text-gold" />
+              <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center border border-electric-blue/20 shadow-[0_0_15px_rgba(0,210,255,0.2)]">
+                <Pencil className="w-6 h-6 text-electric-blue" />
               </div>
               <div className="text-left">
-                <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">EDITAR PERFIL</p>
+                <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">EDITAR PERFIL</p>
                 <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">ALTERAR SEUS DADOS</p>
               </div>
             </div>
@@ -1682,12 +1682,12 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
-            className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-white/5 hover:border-white/10 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
             onClick={() => setView('history')}
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                <LayoutDashboard className="w-6 h-6 text-blue-500" />
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                <LayoutDashboard className="w-6 h-6 text-white/40" />
               </div>
               <div className="text-left">
                 <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">HISTÓRICO</p>
@@ -1702,12 +1702,12 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <Button 
             variant="ghost" 
             aria-label="Acessar Suporte e Atendimento"
-            className="premium-glow-green bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-green-500/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-green-500"
+            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-white/5 hover:border-white/10 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
             onClick={() => setView('support')}
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
-                <Shield className="w-6 h-6 text-green-500" />
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                <Shield className="w-6 h-6 text-white/40" />
               </div>
               <div className="text-left">
                 <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">SUPORTE</p>
