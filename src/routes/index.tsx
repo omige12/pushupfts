@@ -2202,7 +2202,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
     const timer = setTimeout(() => {
       setStatus('found');
       const opp = {
-        id: 'PUSH-' + Math.random().toString(36).substr(2, 4).toUpperCase(),
+        id: Math.floor(Math.random() * 90000000 + 10000000).toString(),
         name: ['BRUNO FERRAZ', 'ANA BEAST', 'MARCOS PUSH', 'LUCAS ELITE', 'CARLA FORÇA'][Math.floor(Math.random() * 5)],
         level: user.level + Math.floor(Math.random() * 3) - 1,
         patent: user.patent,
