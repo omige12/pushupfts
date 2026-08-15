@@ -1611,8 +1611,10 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         </div>
 
         {/* Progress Card */}
-        <div 
-          className="w-full bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer active:scale-[0.98] btn-respond-fast transition-all border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
+        <motion.div 
+          whileTap={{ scale: 0.9, opacity: 0.8 }}
+          transition={{ type: "spring", stiffness: 600, damping: 20 }}
+          className="w-full bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between items-end">
@@ -1637,7 +1639,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <div className="flex justify-center">
             <span className="text-[8px] font-black text-purple-evolve/60 uppercase tracking-[0.3em] animate-pulse">TOQUE PARA VER PATENTES</span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Stats Grid - Premium Neon Visual */}
         <div className="grid grid-cols-3 gap-3 w-full">
