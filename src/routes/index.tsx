@@ -810,7 +810,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
       {/* Bottom Stats Footer */}
       {/* Bottom Stats Footer - Recreating WA0087.jpg */}
-      <div className="grid grid-cols-4 gap-2 pt-8 border-t border-white/5 mt-6 pb-2">
+      <div className="grid grid-cols-4 gap-2 pt-6 border-t border-white/5 mt-2 pb-2">
         <div className="flex flex-col items-center text-center">
           <div className="w-14 h-14 rounded-2xl bg-gold/10 flex items-center justify-center mb-2.5 border border-gold/30 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
             <Trophy className="w-7 h-7 text-gold neon-text-gold" />
