@@ -2509,10 +2509,12 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
         <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">ADICIONAR AMIGO</h3>
         <div className="flex gap-2">
           <input 
-            className="flex-1 bg-[#1A1F26] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white/20"
-            placeholder="Digite o ID (Ex: PUSH-XXXX)"
+            className="flex-1 bg-[#1A1F26] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white/20 font-mono"
+            placeholder="Digite o ID numérico (Ex: 48291736)"
+            type="tel"
+            pattern="[0-9]*"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value.replace(/\D/g, ''))}
           />
           <Button className="h-14 w-14 rounded-2xl bg-primary" onClick={searchFriend}><Search className="w-6 h-6" /></Button>
         </div>
