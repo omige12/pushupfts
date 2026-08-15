@@ -242,6 +242,30 @@ function App() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [incomingChallenge, setIncomingChallenge] = useState<any>(null);
+
+  useEffect(() => {
+    const handleChallenge = (e: any) => {
+      setIncomingChallenge(e.detail);
+    };
+    window.addEventListener('challenge-received', handleChallenge);
+    return () => window.removeEventListener('challenge-received', handleChallenge);
+  }, []);
+
+  const acceptChallenge = (challenge: any) => {
+    setOpponent({
+      id: challenge.challenger_id,
+      name: "DESAFIANTE",
+      avatar: null,
+      record: 0,
+      patent: "Bronze"
+    });
+    setDuration(challenge.duration);
+    setIsTraining(false);
+    setSelectedBot(null);
+    setIncomingChallenge(null);
+    setView('challenge');
+  };
 
 
   const [loading, setLoading] = useState(true);
@@ -513,6 +537,14 @@ function App() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.user) return;
 
+      // Heartbeat for online status
+      const heartbeat = setInterval(async () => {
+        await supabase
+          .from('profiles')
+          .update({ last_seen_at: new Date().toISOString() })
+          .eq('id', session.user.id);
+      }, 30000);
+
       // Channel for personal profile updates
       const profileChannel = supabase
         .channel('profile-changes')
@@ -546,6 +578,41 @@ function App() {
         )
         .subscribe();
 
+      // Channel for friend requests and challenges
+      const socialChannel = supabase
+        .channel('social-interactions')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'friendships',
+            filter: `friend_id=eq.${session.user.id}`
+          },
+          (payload) => {
+            if (payload.eventType === 'INSERT' && payload.new.status === 'pending') {
+              toast.info("Nova solicitação de amizade!");
+            }
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'challenges',
+            filter: `challenged_id=eq.${session.user.id}`
+          },
+          (payload) => {
+            if (payload.new.status === 'pending') {
+              // We'll handle showing the challenge invite modal here via global state if needed
+              // For now, let's just trigger a custom event that the Dashboard or other components can listen to
+              window.dispatchEvent(new CustomEvent('challenge-received', { detail: payload.new }));
+            }
+          }
+        )
+        .subscribe();
+
       // Channel for global ranking updates
       const rankingChannel = supabase
         .channel('ranking-global')
@@ -557,16 +624,16 @@ function App() {
             table: 'profiles'
           },
           () => {
-            // Signal to ranking components that data has changed
-            // This is handled by the useEffect in Ranking component which now needs to listen for changes
             window.dispatchEvent(new CustomEvent('ranking-updated'));
           }
         )
         .subscribe();
 
       return () => {
+        clearInterval(heartbeat);
         supabase.removeChannel(profileChannel);
         supabase.removeChannel(rankingChannel);
+        supabase.removeChannel(socialChannel);
       };
     };
 
@@ -667,6 +734,43 @@ function App() {
                 </div>
               </div>
               <Button className="game-button bg-primary w-full py-8 text-xl italic uppercase" onClick={() => setLevelUpData(null)}>CONTINUAR JORNADA</Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {incomingChallenge && (
+          <motion.div 
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed inset-x-4 bottom-24 z-[60] bg-[#0B0E14] border-2 border-electric-blue rounded-[2rem] p-6 shadow-[0_0_50px_rgba(0,210,255,0.3)]"
+          >
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-16 h-16 rounded-full bg-electric-blue/20 flex items-center justify-center border border-electric-blue/30">
+                <Swords className="w-8 h-8 text-electric-blue" />
+              </div>
+              <div>
+                <h3 className="text-xl font-black italic text-white uppercase tracking-tighter">DESAFIO RECEBIDO!</h3>
+                <p className="text-xs text-white/40 font-bold uppercase tracking-widest mt-0.5">ALGUÉM TE DESAFIOU PARA UMA BATALHA</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <Button 
+                variant="ghost" 
+                className="flex-1 h-14 rounded-2xl bg-white/5 text-white/60 hover:text-white"
+                onClick={() => setIncomingChallenge(null)}
+              >
+                RECUSAR
+              </Button>
+              <Button 
+                className="flex-1 h-14 rounded-2xl bg-electric-blue text-white shadow-[0_0_20px_rgba(0,210,255,0.4)]"
+                onClick={() => acceptChallenge(incomingChallenge)}
+              >
+                ACEITAR
+              </Button>
             </div>
           </motion.div>
         )}
@@ -2310,40 +2414,158 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
 }
 
 function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void }) {
+  const [friends, setFriends] = useState<any[]>([]);
+  const [friendRequests, setFriendRequests] = useState<any[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [foundUser, setFoundUser] = useState<any>(null);
   const [copied, setCopied] = useState(false);
 
   const copyId = () => {
-    navigator.clipboard.writeText(user.id);
+    navigator.clipboard.writeText(user.player_id || user.id);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  useEffect(() => {
+    const fetchFriends = async () => {
+      const { data: friendships, error } = await supabase
+        .from('friendships')
+        .select(`
+          status,
+          user_id,
+          friend_id,
+          profiles_user:profiles!friendships_user_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at),
+          profiles_friend:profiles!friendships_friend_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at)
+        `)
+        .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+        .eq('status', 'accepted');
+      
+      if (friendships) {
+        setFriends(friendships.map((f: any) => 
+          f.user_id === user.id ? f.profiles_friend : f.profiles_user
+        ));
+      }
+    };
+    fetchFriends();
+  }, [user.id]);
+
+  const searchFriend = async () => {
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
+      .eq('player_id', searchQuery.toUpperCase())
+      .neq('id', user.id)
+      .maybeSingle();
+
+    if (profile) setFoundUser(profile);
+    else {
+      setFoundUser(null);
+      toast.error("Nenhum jogador encontrado.");
+    }
+  };
+
+  const addFriend = async (friendId: string) => {
+    const { error } = await supabase.from('friendships').insert({
+      user_id: user.id,
+      friend_id: friendId,
+      status: 'pending'
+    });
+    if (!error) toast.success("Solicitação enviada!");
+    else toast.error("Erro ao enviar solicitação.");
+  };
+
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6">
-      <div className="flex items-center gap-4 mb-6">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8">
+      <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">AMIGOS</h2>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter">SOCIAL</h2>
       </div>
 
-      <div className="glass-panel p-8 text-center space-y-6 border-blue-500/20">
-        <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto border-2 border-blue-500/30">
-          <UserIcon className="w-10 h-10 text-blue-400" />
+      {/* ID Section */}
+      <div className="glass-panel p-6 border-blue-500/20 space-y-4">
+        <h3 className="text-xs font-black text-white/40 uppercase tracking-widest">SEU ID DE JOGADOR</h3>
+        <div className="flex gap-2">
+          <div className="flex-1 bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-xl font-black text-white tracking-[0.2em] overflow-hidden truncate">
+            {user.player_id || user.id.substring(0, 8).toUpperCase()}
+          </div>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className={`h-full w-14 rounded-xl transition-all ${copied ? 'bg-green-500/20 text-green-500' : 'bg-primary/20 text-primary'}`} 
+            onClick={copyId}
+          >
+            {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+          </Button>
         </div>
-        <div>
-          <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">Convidar Amigos</h3>
-          <p className="text-xs text-muted-foreground font-medium px-4">Compartilhe seu ID para competir contra quem você conhece.</p>
+      </div>
+
+      {/* Search Section */}
+      <div className="space-y-4">
+        <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">ADICIONAR AMIGO</h3>
+        <div className="flex gap-2">
+          <input 
+            className="flex-1 bg-[#1A1F26] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white/20"
+            placeholder="Digite o ID (Ex: PUSH-XXXX)"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <Button className="h-14 w-14 rounded-2xl bg-primary" onClick={searchFriend}><Search className="w-6 h-6" /></Button>
         </div>
         
-        <div className="bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-lg font-black text-white tracking-[0.2em] relative group cursor-pointer" onClick={copyId}>
-          {user.id}
-          <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 flex items-center justify-center rounded-xl transition-opacity">
-            {copied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5 text-white" />}
+        {foundUser && (
+          <div className="bg-[#151921] p-4 rounded-2xl flex items-center justify-between border border-white/10">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-white/5 rounded-full overflow-hidden">
+                {foundUser.avatar_url && <img src={foundUser.avatar_url} className="w-full h-full object-cover" />}
+              </div>
+              <div>
+                <p className="font-black text-white italic">{foundUser.name}</p>
+                <p className="text-[10px] text-white/40 uppercase">{getRankInfo(foundUser.xp).patentName}</p>
+              </div>
+            </div>
+            <Button className="bg-primary text-xs" onClick={() => addFriend(foundUser.id)}>ADICIONAR</Button>
           </div>
-        </div>
+        )}
+      </div>
 
-        <Button className="game-button bg-blue-500 w-full py-6 text-lg tracking-tighter italic uppercase">
-          Compartilhar Link
-        </Button>
+      {/* Friends List */}
+      <div className="space-y-4">
+        <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">AMIGOS ({friends.length})</h3>
+        {friends.map(friend => {
+          const lastSeen = new Date(friend.last_seen_at).getTime();
+          const isOnline = Date.now() - lastSeen < 60000;
+          return (
+            <div key={friend.id} className="bg-[#151921] p-4 rounded-[1.5rem] flex items-center justify-between border border-white/5 premium-glow-blue">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10">
+                    {friend.avatar_url ? (
+                      <img src={friend.avatar_url} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                        <UserIcon className="w-5 h-5 text-white/20" />
+                      </div>
+                    )}
+                  </div>
+                  <div className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-[#151921] ${isOnline ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-white/20'}`} />
+                </div>
+                <div>
+                  <p className="font-black text-white italic tracking-tighter uppercase leading-none">{friend.name}</p>
+                  <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest mt-1">
+                    {getRankInfo(friend.xp).patentName}
+                  </p>
+                </div>
+              </div>
+              <Button 
+                disabled={!isOnline}
+                className={`h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest transition-all ${isOnline ? 'bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)]' : 'bg-white/5 text-white/20'}`} 
+                onClick={() => onChallengePlayer(friend)}
+              >
+                {isOnline ? 'DESAFIAR' : 'OFFLINE'}
+              </Button>
+            </div>
+          );
+        })}
       </div>
     </motion.div>
   );
@@ -2359,9 +2581,27 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
     const fetchRanking = async () => {
       setLoading(true);
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from('profiles')
-          .select('id, name, xp, record, wins, streak, avatar_url, player_id')
+          .select('id, name, xp, record, wins, streak, avatar_url, player_id');
+
+        if (tab === 'friends') {
+          // Get all friend IDs
+          const { data: friendships } = await supabase
+            .from('friendships')
+            .select('user_id, friend_id')
+            .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+            .eq('status', 'accepted');
+          
+          const friendIds = friendships ? friendships.map((f: any) => 
+            f.user_id === user.id ? f.friend_id : f.user_id
+          ) : [];
+          
+          // Filter by these IDs plus the user's ID
+          query = query.in('id', [...friendIds, user.id]);
+        }
+
+        const { data, error } = await query
           .order('xp', { ascending: false })
           .limit(50);
 
