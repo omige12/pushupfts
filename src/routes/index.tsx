@@ -1552,22 +1552,24 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       <div className="flex flex-col items-center gap-6 relative py-4">
         {/* Avatar and Info Header */}
         <div className="relative group">
-          <div className="w-36 h-36 bg-secondary rounded-full border-[3px] border-gold p-1 shadow-[0_0_30px_rgba(234,179,8,0.2)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
-            <div className="w-full h-full rounded-full overflow-hidden bg-muted flex items-center justify-center">
+          <div className="w-36 h-36 bg-[#0F131A] rounded-full border-[3px] border-electric-blue p-1 shadow-[0_0_25px_rgba(0,210,255,0.3),inset_0_0_15px_rgba(0,210,255,0.1)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
+            <div className="w-full h-full rounded-full overflow-hidden bg-muted flex items-center justify-center relative">
               {stats.avatar ? (
                 <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
               ) : (
                 <UserIcon className="w-16 h-16 text-muted-foreground" />
               )}
+              {/* Metallic Ring Detail */}
+              <div className="absolute inset-0 rounded-full border-[6px] border-white/5 pointer-events-none shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)]" />
             </div>
             <div 
-              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+              className="absolute inset-0 bg-electric-blue/20 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
               onClick={() => setEditing(true)}
             >
-              <Camera className="w-8 h-8 text-white" />
+              <Camera className="w-8 h-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
             </div>
           </div>
-          <div className="absolute -bottom-1 -right-1 bg-gold p-2 rounded-full border-[3px] border-[#05070A] shadow-lg">
+          <div className="absolute -bottom-1 -right-1 bg-electric-blue p-2 rounded-full border-[3px] border-[#05070A] shadow-[0_0_15px_rgba(0,210,255,0.5)]">
             <Star className="w-5 h-5 text-[#05070A]" />
           </div>
         </div>
@@ -1603,30 +1605,30 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         {/* Progress Card */}
         <div 
-          className="w-full glass-panel p-6 space-y-4 cursor-pointer active:scale-[0.95] btn-respond-fast transition-all premium-glow-gold"
+          className="w-full bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer active:scale-[0.98] btn-respond-fast transition-all border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between items-end">
             <div className="flex flex-col">
               <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] mb-1">EVOLUÇÃO</span>
-              <span className="text-lg font-black italic text-white leading-none uppercase">Nível {getRankInfo(stats?.xp || 0).level}</span>
+              <span className="text-lg font-black italic text-white leading-none uppercase neon-text-purple">Nível {getRankInfo(stats?.xp || 0).level}</span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black italic text-gold leading-none">{getRankInfo(stats?.xp || 0).xpInLevel}</span>
+              <span className="text-lg font-black italic text-purple-evolve leading-none drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">{getRankInfo(stats?.xp || 0).xpInLevel}</span>
               <span className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">/ {XP_PER_DIVISION} XP</span>
             </div>
           </div>
           
-          <div className="relative h-4 w-full bg-white/5 rounded-full overflow-hidden">
+          <div className="relative h-4 w-full bg-black/40 rounded-full overflow-hidden border border-white/5 p-0.5">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${getRankInfo(stats?.xp || 0).progress}%` }}
-              className="absolute top-0 left-0 h-full bg-gradient-to-r from-gold to-yellow-600 rounded-full"
+              className="absolute top-0.5 left-0.5 bottom-0.5 bg-gradient-to-r from-purple-evolve to-purple-600 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]"
             />
           </div>
           
           <div className="flex justify-center">
-            <span className="text-[8px] font-black text-gold/60 uppercase tracking-[0.3em] animate-pulse">TOQUE PARA VER PATENTES</span>
+            <span className="text-[8px] font-black text-purple-evolve/60 uppercase tracking-[0.3em] animate-pulse">TOQUE PARA VER PATENTES</span>
           </div>
         </div>
 
