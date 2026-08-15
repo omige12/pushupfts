@@ -234,6 +234,30 @@ const NeonFireWrapper = ({ children, color, onClick, className = "" }: { childre
 
 function App() {
   const [view, setView] = useState<View>('onboarding-start');
+  const [navigationHistory, setNavigationHistory] = useState<View[]>([]);
+  
+  const handleSetView = useCallback((newView: View, replace: boolean = false) => {
+    setView(prev => {
+      if (!replace) {
+        setNavigationHistory(history => [...history, prev]);
+      }
+      return newView;
+    });
+  }, []);
+
+  const goBack = useCallback(() => {
+    setNavigationHistory(history => {
+      if (history.length === 0) {
+        setView('dashboard');
+        return [];
+      }
+      const newHistory = [...history];
+      const previousView = newHistory.pop()!;
+      setView(previousView);
+      return newHistory;
+    });
+  }, []);
+
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
   const [opponent, setOpponent] = useState<any | null>(null);
   const [isTraining, setIsTraining] = useState(false);
@@ -648,31 +672,31 @@ function App() {
     );
 
     switch (view) {
-      case 'onboarding-start': return <OnboardingStart setView={setView} />;
-      case 'quiz': return <Quiz setView={setView} user={user} setUser={setUser} />;
-      case 'quiz-result': return <QuizResult setView={setView} user={user} />;
-      case 'auth': return <AuthView setView={setView} user={user} />;
-      case 'photo-upload': return <PhotoUpload setView={setView} user={user} setUser={setUser} />;
-      case 'profile-setup': return <ProfileSetup setView={setView} user={user} setUser={setUser} />;
-      case 'profile-ready': return <ProfileReady setView={setView} user={user} />;
-      case 'dashboard': return <Dashboard setView={setView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
-      case 'treino': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
-      case 'select-bot': return <SelectBot setView={setView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
-      case 'select-duration': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
-      case 'training-setup': return <SelectDuration setView={setView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
+      case 'onboarding-start': return <OnboardingStart setView={handleSetView} />;
+      case 'quiz': return <Quiz setView={handleSetView} user={user} setUser={setUser} />;
+      case 'quiz-result': return <QuizResult setView={handleSetView} user={user} />;
+      case 'auth': return <AuthView setView={handleSetView} user={user} />;
+      case 'photo-upload': return <PhotoUpload setView={handleSetView} user={user} setUser={setUser} />;
+      case 'profile-setup': return <ProfileSetup setView={handleSetView} user={user} setUser={setUser} />;
+      case 'profile-ready': return <ProfileReady setView={handleSetView} user={user} />;
+      case 'dashboard': return <Dashboard setView={handleSetView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
+      case 'treino': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
+      case 'select-bot': return <SelectBot setView={handleSetView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
+      case 'select-duration': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
+      case 'training-setup': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
       case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} isTraining={isTraining} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); setIsTraining(false); }} onComplete={updateStats} />;
       case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('challenge'); }} onCancel={() => setView('select-duration')} duration={duration} />;
-      case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
-      case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
-      case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
-      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={(training) => { setIsTraining(training); setView('select-duration'); }} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} />;
-      case 'achievements': return <Achievements setView={setView} user={user} />;
-      case 'support': return <Support setView={setView} />;
-      case 'support-chat': return <SupportChat setView={setView} />;
-      case 'history': return <FullHistory setView={setView} user={user} />;
-      case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} />;
-      case 'ranking': return <Ranking setView={setView} user={user} />;
-      case 'patents-list': return <PatentsList setView={setView} user={user} />;
+      case 'profile': return <Profile setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
+      case 'settings': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} />;
+      case 'edit-profile': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} />;
+      case 'multiplayer': return <Multiplayer setView={handleSetView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={(training) => { setIsTraining(training); setView('select-duration'); }} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} />;
+      case 'achievements': return <Achievements setView={handleSetView} user={user} goBack={goBack} />;
+      case 'support': return <Support setView={handleSetView} goBack={goBack} />;
+      case 'support-chat': return <SupportChat setView={handleSetView} goBack={goBack} />;
+      case 'history': return <FullHistory setView={handleSetView} user={user} goBack={goBack} />;
+      case 'friend-challenge': return <FriendChallenge setView={handleSetView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} />;
+      case 'ranking': return <Ranking setView={handleSetView} user={user} goBack={goBack} />;
+      case 'patents-list': return <PatentsList setView={handleSetView} user={user} goBack={goBack} />;
       default: return <OnboardingStart setView={setView} />;
     }
 
@@ -1589,7 +1613,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 }
 
 
-function Profile({ setView, user, setUser, initialEditing = false }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean }) {
+function Profile({ setView, user, setUser, initialEditing = false, goBack }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean, goBack: () => void }) {
   const [editing, setEditing] = useState(initialEditing);
   const [formData, setFormData] = useState({ 
     name: user?.name || '',
@@ -1849,7 +1873,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6 pb-20">
       <div className="flex justify-between items-center w-full mb-2">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => setView('dashboard')}>
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
@@ -2036,11 +2060,11 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
   );
 }
 
-function FullHistory({ setView, user }: { setView: (v: View) => void, user: any }) {
+function FullHistory({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6 pb-10">
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('profile')}><ArrowLeft className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">HISTÓRICO</h2>
       </div>
 
@@ -2079,11 +2103,11 @@ function FullHistory({ setView, user }: { setView: (v: View) => void, user: any 
   );
 }
 
-function Support({ setView }: { setView: (v: View) => void }) {
+function Support({ setView, goBack }: { setView: (v: View) => void, goBack: () => void }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('profile')}><ArrowLeft className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">SUPORTE</h2>
       </div>
 
@@ -2130,7 +2154,7 @@ function Support({ setView }: { setView: (v: View) => void }) {
   );
 }
 
-function SupportChat({ setView }: { setView: (v: View) => void }) {
+function SupportChat({ setView, goBack }: { setView: (v: View) => void, goBack: () => void }) {
   const [messages, setMessages] = useState([
     { role: 'ai', text: 'Olá! Sou seu assistente do PushUp Arena. Como posso ajudar você hoje com duelos, treinos ou sua conta?' }
   ]);
@@ -2187,7 +2211,7 @@ function SupportChat({ setView }: { setView: (v: View) => void }) {
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[60] bg-[#0B0E14] flex flex-col p-6 gap-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('support')}><ArrowLeft className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-primary/20 flex items-center justify-center border border-primary/30 relative">
             <Shield className="w-6 h-6 text-primary" />
@@ -2347,7 +2371,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
   );
 }
 
-function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallengePlayer }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void, onChallengePlayer: (opp: any) => void }) {
+function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallengePlayer, goBack }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void, onChallengePlayer: (opp: any) => void, goBack: () => void }) {
   const [searchId, setSearchId] = useState('');
   const [foundPlayer, setFoundPlayer] = useState<any>(null);
 
@@ -2388,7 +2412,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">MULTIJOGADOR</h2>
           <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">COMPITA. VENÇA. DOMINE.</p>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => setView('dashboard')}>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
           <ArrowLeft className="w-5 h-5 text-white" />
         </Button>
       </div>
@@ -2527,7 +2551,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
   );
 }
 
-function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void }) {
+function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void, goBack: () => void }) {
   const [friends, setFriends] = useState<any[]>([]);
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -2596,7 +2620,7 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('multiplayer')}><ArrowLeft className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">SOCIAL</h2>
       </div>
 
@@ -2698,7 +2722,7 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
 }
 
 
-function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
+function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   const [tab, setTab] = useState<'local' | 'friends'>('local');
   const [rankingData, setRankingData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -2770,7 +2794,7 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
       <div className="flex flex-col gap-8">
         <div className="flex justify-between items-start">
           <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">RANKING</h2>
-          <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => setView('dashboard')}>
+          <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
             <ArrowLeft className="w-5 h-5 text-white" />
           </Button>
         </div>
@@ -2853,7 +2877,7 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   );
 }
 
-function Achievements({ setView, user }: { setView: (v: View) => void, user: any }) {
+function Achievements({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   const achievements = useMemo(() => [
     { 
       id: 'flexoes', 
@@ -2909,7 +2933,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">CONQUISTAS</h2>
           <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">Acompanhe seu progresso e conquiste tudo!</p>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => setView('dashboard')}>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
           <ArrowLeft className="w-5 h-5 text-white" />
         </Button>
       </div>
@@ -3013,7 +3037,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
   );
 }
 
-function PatentsList({ setView, user }: { setView: (v: View) => void, user: any }) {
+function PatentsList({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   const patents = [
     { name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", rewards: ["Moldura Básica", "XP Base"], divisions: ["III", "II", "I"] },
     { name: "Prata", min: 1500, emoji: "🥈", color: "from-slate-400 to-slate-200", rewards: ["Moldura Prateada", "XP +10%"], divisions: ["III", "II", "I"] },
@@ -3031,7 +3055,7 @@ function PatentsList({ setView, user }: { setView: (v: View) => void, user: any 
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-10 space-y-6">
       <div className="flex items-center gap-4 mb-2">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('profile')}><ArrowLeft className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">TRILHA DE EVOLUÇÃO</h2>
       </div>
 
