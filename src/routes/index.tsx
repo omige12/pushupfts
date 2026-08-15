@@ -862,6 +862,7 @@ function App() {
             { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
             { id: 'multiplayer', label: 'Batalha', icon: Swords, aliases: ['select-bot', 'select-duration', 'matchmaking', 'challenge'] },
             { id: 'ranking', label: 'Ranking', icon: Trophy, aliases: [] },
+            { id: 'treino', label: 'Modo Treino', icon: Dumbbell, aliases: ['training-setup'] },
             { id: 'profile', label: 'Perfil', icon: UserCircle, aliases: ['history', 'support', 'settings', 'edit-profile'] }
           ].map((item) => {
             const isActive = view === item.id || item.aliases?.includes(view);
