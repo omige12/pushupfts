@@ -807,17 +807,17 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]">
-               <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
+                <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
+              </div>
+              <div>
+                <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName.toUpperCase()}</h2>
+                <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em] mt-1 opacity-70">SUA PATENTE ATUAL</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName.toUpperCase()}</h2>
-              <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em] mt-1 opacity-70">SUA PATENTE ATUAL</p>
+            <div className="text-right">
+              <span className="text-xs font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel} / {rank.xpForNext} XP</span>
             </div>
           </div>
-          <div className="text-right">
-            <span className="text-xs font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel} / {rank.xpForNext} XP</span>
-          </div>
-        </div>
 
         <div className="space-y-4">
           <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
@@ -852,14 +852,14 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             <div className="w-14 h-14 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-4">
               <Swords className="w-8 h-8 text-electric-blue filter drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
             </div>
-          <div className="text-center space-y-1">
-            <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
-            <p className="text-[9px] font-medium text-white/40 leading-tight">Entre em uma partida com jogadores online</p>
+            <div className="text-center space-y-1">
+              <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
+              <p className="text-[9px] font-medium text-white/40 leading-tight">Entre em uma partida com jogadores online</p>
+            </div>
+            <div className="mt-4 bg-electric-blue/20 p-2 rounded-full">
+              <ArrowLeft className="w-4 h-4 text-electric-blue rotate-180" />
+            </div>
           </div>
-          <div className="mt-4 bg-electric-blue/20 p-2 rounded-full">
-            <ArrowLeft className="w-4 h-4 text-electric-blue rotate-180" />
-          </div>
-        </NeonFireWrapper>
 
         <NeonFireWrapper 
           color="purple"
