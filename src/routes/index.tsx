@@ -696,7 +696,7 @@ function App() {
       case 'history': return <FullHistory setView={setView} user={user} />;
       case 'friend-challenge': return <FriendChallenge setView={setView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} />;
       case 'ranking': return <Ranking setView={setView} user={user} />;
-      case 'patents-list': return <PatentsList setView={setView} user={user} />;
+      case 'patents-list': return <PatentsList setView={handleSetView} user={user} goBack={goBack} />;
       default: return <OnboardingStart setView={setView} />;
     }
 
