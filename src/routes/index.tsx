@@ -2415,12 +2415,16 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       </div>
 
       {/* Categories Toggle */}
-      <div className="flex bg-[#151921] p-1.5 rounded-2xl border border-white/5">
+      <div className="flex bg-[#151921] p-1.5 rounded-2xl border border-white/5" role="tablist" aria-label="Categorias de Conquistas">
         {achievements.map((cat: any) => (
           <Button 
             key={cat.id} 
+            role="tab"
+            aria-selected={activeCat === cat.id}
+            aria-controls={`achievement-panel-${cat.id}`}
+            aria-label={`Ver conquistas de ${cat.label}`}
             onClick={() => setActiveCat(cat.id)}
-            className={`flex-1 h-12 rounded-xl transition-all border-none shadow-none font-black text-[10px] uppercase tracking-tighter italic ${activeCat === cat.id ? 'bg-electric-blue text-white glow-primary' : 'bg-transparent text-white/40 hover:text-white'}`}
+            className={`flex-1 h-12 rounded-xl transition-all border-none shadow-none font-black text-[10px] uppercase tracking-tighter italic focus-visible:ring-2 focus-visible:ring-electric-blue ${activeCat === cat.id ? 'bg-electric-blue text-white glow-primary' : 'bg-transparent text-white/40 hover:text-white'}`}
           >
             <cat.icon className="w-4 h-4 mr-2" />
             {cat.label}
@@ -2429,50 +2433,57 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       </div>
 
       {/* Achievement List */}
-      <div className="space-y-3">
+      <div 
+        className="space-y-3 pb-20" 
+        id={`achievement-panel-${activeCat}`}
+        role="tabpanel"
+        aria-label={`Lista de conquistas: ${achievements.find(c => c.id === activeCat)?.label}`}
+      >
         {achievements.find((c: any) => c.id === activeCat)?.items.map((ach: any, i: number) => {
           const isCompleted = ach.current >= ach.req;
           const progress = Math.min((ach.current / ach.req) * 100, 100);
 
-          
           return (
             <motion.div 
               key={i}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-[#151921] rounded-[1.8rem] p-5 border border-white/5 flex items-center gap-4 active:scale-[0.99] transition-all group"
+              className="bg-[#151921] rounded-[1.8rem] p-5 border border-white/5 flex items-center gap-4 active:scale-[0.99] transition-all group focus-within:ring-2 focus-within:ring-electric-blue h-auto min-h-[120px]"
+              role="group"
+              aria-label={`Conquista: ${ach.title}. Status: ${isCompleted ? 'Concluída' : 'Em progresso'}. Requisito: ${ach.req}. Atual: ${ach.current}. Recompensa: ${ach.reward}.`}
             >
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center border-2 ${isCompleted ? 'bg-electric-blue/20 border-electric-blue/40 text-electric-blue' : 'bg-white/5 border-white/10 text-white/20'}`}>
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0 ${isCompleted ? 'bg-electric-blue/20 border-electric-blue/40 text-electric-blue' : 'bg-white/5 border-white/10 text-white/20'}`}>
                 <Zap className="w-6 h-6" />
               </div>
               
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-sm font-black italic text-white uppercase tracking-tighter leading-tight">{ach.title.toUpperCase()}</h4>
-                    <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-1">{ach.desc.toUpperCase()}</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start gap-2">
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-black italic text-white uppercase tracking-tighter leading-tight truncate">{ach.title.toUpperCase()}</h4>
+                    <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-1 break-words">{ach.desc.toUpperCase()}</p>
                   </div>
-                  <div className="text-[9px] font-black text-electric-blue uppercase tracking-widest">
+                  <div className="text-[9px] font-black text-electric-blue uppercase tracking-widest shrink-0">
                     {ach.reward}
                   </div>
                 </div>
                 
                 <div className="mt-4 space-y-1.5">
-                  <div className="h-1.5 w-full bg-[#0B0E14] rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-[#0B0E14] rounded-full overflow-hidden border border-white/5">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${progress}%` }}
                       className={`h-full ${isCompleted ? 'bg-electric-blue shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-white/10'}`}
                     />
                   </div>
-                  <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">
-                    {ach.current} / {ach.req}
+                  <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] flex justify-between">
+                    <span>{ach.current} / {ach.req}</span>
+                    {isCompleted && <span className="text-electric-blue font-black">CONCLUÍDO</span>}
                   </div>
                 </div>
               </div>
               
-              <ChevronRight className="w-4 h-4 text-white/10" />
+              <ChevronRight className="w-4 h-4 text-white/10 shrink-0" />
             </motion.div>
           );
         })}
