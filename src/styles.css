@@ -192,7 +192,22 @@
   @apply relative overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 border-t border-white/20 shadow-[0_4px_0_0_rgba(30,58,138,1),0_0_20px_rgba(59,130,246,0.3)] active:shadow-none active:translate-y-1 transition-all duration-75 rounded-2xl font-black italic tracking-tighter uppercase;
 }
 
-/* Neon Fire effect removed */
+/* Neon Glow Utility */
+@utility neon-glow {
+  @apply relative transition-all duration-300;
+  box-shadow: 0 0 5px var(--glow-color, rgba(255, 255, 255, 0.1)), 
+              inset 0 0 5px var(--glow-color, rgba(255, 255, 255, 0.05));
+  border-color: var(--glow-color, rgba(255, 255, 255, 0.1));
+}
+
+@keyframes neon-breathe {
+  0%, 100% { opacity: 0.6; box-shadow: 0 0 8px var(--glow-color); }
+  50% { opacity: 1; box-shadow: 0 0 15px var(--glow-color); }
+}
+
+.animate-neon-breathe {
+  animation: neon-breathe 3s ease-in-out infinite;
+}
 
 #lovable-badge {
   display: none !important;

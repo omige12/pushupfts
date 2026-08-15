@@ -167,14 +167,68 @@ const BOTS = [
   },
 ];
 
-const NeonFireWrapper = ({ children, onClick, className = "" }: { children: React.ReactNode, color: string, intense?: boolean, onClick?: () => void, className?: string }) => {
+const NeonFireWrapper = ({ children, color, onClick, className = "" }: { children: React.ReactNode, color: string, intense?: boolean, onClick?: () => void, className?: string }) => {
+  const getGlowColor = () => {
+    switch(color) {
+      case 'gold': return 'rgba(255, 215, 0, 0.4)';
+      case 'blue': return 'rgba(0, 210, 255, 0.4)';
+      case 'purple': return 'rgba(168, 85, 247, 0.4)';
+      case 'red': return 'rgba(255, 49, 49, 0.4)';
+      case 'green': return 'rgba(34, 197, 94, 0.4)';
+      default: return 'rgba(0, 210, 255, 0.4)';
+    }
+  };
+
+  const glowColor = getGlowColor();
+
   return (
-    <div 
-      className={className}
+    <motion.div 
+      className={`relative rounded-[1.8rem] overflow-hidden ${className}`}
       onClick={onClick}
+      initial={false}
+      whileTap={{ scale: 0.98 }}
+      style={{ 
+        '--glow-color': glowColor
+      } as any}
     >
+      {/* Animated Neon Border */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none rounded-[1.8rem] z-10"
+        animate={{
+          boxShadow: [
+            `0 0 10px ${glowColor.replace('0.4', '0.15')}`,
+            `0 0 20px ${glowColor.replace('0.4', '0.3')}`,
+            `0 0 10px ${glowColor.replace('0.4', '0.15')}`
+          ],
+          borderColor: [
+            glowColor.replace('0.4', '0.2'),
+            glowColor.replace('0.4', '0.4'),
+            glowColor.replace('0.4', '0.2')
+          ]
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        style={{
+          border: '1.5px solid',
+          borderColor: glowColor.replace('0.4', '0.2')
+        }}
+      />
+      
+      {/* Tap Interaction Glow */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-20"
+        whileTap={{ 
+          boxShadow: `inset 0 0 40px ${glowColor.replace('0.4', '0.6')}, 0 0 35px ${glowColor.replace('0.4', '0.8')}`,
+          borderColor: glowColor.replace('0.4', '0.9')
+        }}
+        transition={{ duration: 0.1 }}
+      />
+
       {children}
-    </div>
+    </motion.div>
   );
 };
 
