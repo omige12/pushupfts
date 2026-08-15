@@ -697,6 +697,8 @@ function App() {
       case 'friend-challenge': return <FriendChallenge setView={handleSetView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} />;
       case 'ranking': return <Ranking setView={handleSetView} user={user} goBack={goBack} />;
       case 'patents-list': return <PatentsList setView={handleSetView} user={user} goBack={goBack} />;
+      case 'daily-reward': return <DailyReward setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
+      case 'daily-missions': return <DailyMissions setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
       default: return <OnboardingStart setView={setView} />;
     }
 
