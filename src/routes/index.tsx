@@ -995,7 +995,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         >
           {/* Background pattern */}
           <div className="absolute top-0 right-0 p-2 opacity-5 pointer-events-none">
-            <Shield className="w-24 h-24 text-gold rotate-12" />
+            <Shield className="w-24 h-24 text-gold" />
           </div>
 
           <div className="flex justify-between items-center mb-6">
