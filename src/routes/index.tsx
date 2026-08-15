@@ -2469,27 +2469,32 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
 
       <div className="space-y-4">
         {/* Partida Rápida (Large Card) */}
-        <div 
-          className="relative h-48 rounded-[2rem] border border-energy-red/20 bg-gradient-to-br from-energy-red/20 to-energy-red/5 p-6 flex flex-col justify-center gap-2 cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red group"
+        <NeonFireWrapper 
+          color="blue"
           onClick={() => onStartMatchmaking(false)}
+          className="w-full"
         >
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-energy-red/20 flex items-center justify-center border border-energy-red/30 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
-              <Globe className="w-10 h-10 text-white" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-3xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
-              <p className="text-xs font-medium text-white/60 uppercase tracking-widest mt-2">ENTRE EM UMA PARTIDA ALEATÓRIA</p>
-              <div className="mt-3 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">COMPETIÇÃO ONLINE REAL</span>
+          <div 
+            className="relative h-48 rounded-[2rem] border border-electric-blue/20 bg-gradient-to-br from-electric-blue/20 to-electric-blue/5 p-6 flex flex-col justify-center gap-2 cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-primary group"
+          >
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 rounded-full bg-electric-blue/20 flex items-center justify-center border border-electric-blue/30 shadow-[0_0_20px_rgba(0,210,255,0.3)]">
+                <Globe className="w-10 h-10 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-3xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
+                <p className="text-xs font-medium text-white/60 uppercase tracking-widest mt-2">ENTRE EM UMA PARTIDA ALEATÓRIA</p>
+                <div className="mt-3 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">COMPETIÇÃO ONLINE REAL</span>
+                </div>
+              </div>
+              <div className="bg-white/10 p-2 rounded-full group-hover:bg-white/20 transition-colors">
+                <ArrowLeft className="w-5 h-5 text-white rotate-180" />
               </div>
             </div>
-            <div className="bg-white/10 p-2 rounded-full group-hover:bg-white/20 transition-colors">
-              <ArrowLeft className="w-5 h-5 text-white rotate-180" />
-            </div>
           </div>
-        </div>
+        </NeonFireWrapper>
 
         <div className="grid grid-cols-2 gap-4">
           <div 
