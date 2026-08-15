@@ -2930,7 +2930,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
       items: [
         { title: "3 Dias Seguidos", desc: "Foco inicial", req: 3, current: user.streak, reward: "XP +150", icon: Flame },
         { title: "7 Dias Seguidos", desc: "Uma semana de aço", req: 7, current: user.streak, reward: "XP +400", icon: Flame },
-        { title: "14 Dias Seguidos", desc: "Hábito formado", req: 14, current: user.streak, reward: "Medalha Fogo", icon: Award },
+        { title: "15 Dias Seguidos", desc: "Hábito formado", req: 15, current: user.streak, reward: "Medalha Fogo", icon: Award },
         { title: "30 Dias Seguidos", desc: "Mês da superação", req: 30, current: user.streak, reward: "XP +2000", icon: Target },
       ]
     },
