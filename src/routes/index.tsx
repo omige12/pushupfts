@@ -170,12 +170,12 @@ const BOTS = [
 const NeonFireWrapper = ({ children, color, onClick, className = "" }: { children: React.ReactNode, color: string, intense?: boolean, onClick?: () => void, className?: string }) => {
   const getGlowColor = () => {
     switch(color) {
-      case 'gold': return 'rgba(234, 179, 8, 0.5)';
-      case 'blue': return 'rgba(59, 130, 246, 0.5)';
-      case 'purple': return 'rgba(168, 85, 247, 0.5)';
-      case 'red': return 'rgba(255, 49, 49, 0.5)';
-      case 'green': return 'rgba(34, 197, 94, 0.5)';
-      default: return 'rgba(59, 130, 246, 0.5)';
+      case 'gold': return 'rgba(255, 215, 0, 0.4)';
+      case 'blue': return 'rgba(0, 210, 255, 0.4)';
+      case 'purple': return 'rgba(168, 85, 247, 0.4)';
+      case 'red': return 'rgba(255, 49, 49, 0.4)';
+      case 'green': return 'rgba(34, 197, 94, 0.4)';
+      default: return 'rgba(0, 210, 255, 0.4)';
     }
   };
 
@@ -183,23 +183,27 @@ const NeonFireWrapper = ({ children, color, onClick, className = "" }: { childre
 
   return (
     <motion.div 
-      className={`relative rounded-[1.8rem] border overflow-hidden ${className}`}
+      className={`relative rounded-[1.8rem] overflow-hidden ${className}`}
       onClick={onClick}
       initial={false}
-      whileTap={{ scale: 0.97 }}
+      whileTap={{ scale: 0.98 }}
       style={{ 
-        '--glow-color': glowColor,
-        borderColor: glowColor.replace('0.5', '0.2')
+        '--glow-color': glowColor
       } as any}
     >
-      {/* Dynamic Border Glow */}
+      {/* Animated Neon Border */}
       <motion.div
-        className="absolute inset-0 pointer-events-none rounded-[1.8rem]"
+        className="absolute inset-0 pointer-events-none rounded-[1.8rem] z-10"
         animate={{
           boxShadow: [
-            `0 0 10px ${glowColor.replace('0.5', '0.2')}`,
-            `0 0 20px ${glowColor.replace('0.5', '0.4')}`,
-            `0 0 10px ${glowColor.replace('0.5', '0.2')}`
+            `0 0 10px ${glowColor.replace('0.4', '0.15')}`,
+            `0 0 20px ${glowColor.replace('0.4', '0.3')}`,
+            `0 0 10px ${glowColor.replace('0.4', '0.15')}`
+          ],
+          borderColor: [
+            glowColor.replace('0.4', '0.2'),
+            glowColor.replace('0.4', '0.4'),
+            glowColor.replace('0.4', '0.2')
           ]
         }}
         transition={{
@@ -208,17 +212,19 @@ const NeonFireWrapper = ({ children, color, onClick, className = "" }: { childre
           ease: "easeInOut"
         }}
         style={{
-          border: `1.5px solid ${glowColor.replace('0.5', '0.3')}`
+          border: '1.5px solid',
+          borderColor: glowColor.replace('0.4', '0.2')
         }}
       />
       
-      {/* Tap Feedback Overlay */}
+      {/* Tap Interaction Glow */}
       <motion.div
-        className="absolute inset-0 bg-current opacity-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none z-20"
         whileTap={{ 
-          opacity: 0.1,
-          boxShadow: `inset 0 0 30px ${glowColor}`
+          boxShadow: `inset 0 0 40px ${glowColor.replace('0.4', '0.6')}, 0 0 35px ${glowColor.replace('0.4', '0.8')}`,
+          borderColor: glowColor.replace('0.4', '0.9')
         }}
+        transition={{ duration: 0.1 }}
       />
 
       {children}
