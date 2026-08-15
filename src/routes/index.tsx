@@ -1289,7 +1289,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
     age: user?.age || 0,
     weight: user?.weight || 0,
     height: user?.height || 0,
-    goal: user?.goal || 'Bater recordes',
+    goal: user?.goal || 'Ganhar força',
     avatar: user?.avatar || null
   });
 
@@ -1302,7 +1302,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         age: user?.age || 0,
         weight: user?.weight || 0,
         height: user?.height || 0,
-        goal: user?.goal || 'Bater recordes',
+        goal: user?.goal || 'Ganhar força',
         avatar: user?.avatar || null
       });
     }
@@ -1334,7 +1334,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         weight: parseInt(String(formData.weight)) || 0,
         height: parseInt(String(formData.height)) || 0,
         avatar_url: formData.avatar,
-        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Bater recordes'),
+        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Ganhar força'),
         updated_at: new Date().toISOString()
       };
 
@@ -1362,7 +1362,13 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       }));
 
       setEditing(false);
-      setView('profile'); // Force view back to profile just in case
+      // Ensure we navigate to profile view if not already there
+      setView('profile');
+      
+      // Update local state and trigger a refresh of the user data if needed
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('storage'));
+      }
 
       toast.success("✅ Perfil atualizado com sucesso!", {
         className: "font-black italic text-xs uppercase tracking-widest bg-card border-green-500/50 text-white shadow-[0_0_20px_rgba(34,197,94,0.2)]"
@@ -1477,7 +1483,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   type="number"
                   className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
                   value={formData.age}
-                  onChange={(e) => setFormData({ ...formData, age: parseInt(e.target.value) || 0 })}
+                  onChange={(e) => setFormData({ ...formData, age: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                 />
               </div>
               <div className="space-y-2">
@@ -1486,7 +1492,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   type="number"
                   className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
                   value={formData.weight}
-                  onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 0 })}
+                  onChange={(e) => setFormData({ ...formData, weight: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                 />
               </div>
             </div>
@@ -1497,7 +1503,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                 type="number"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
                 value={formData.height}
-                onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) || 0 })}
+                onChange={(e) => setFormData({ ...formData, height: e.target.value === '' ? 0 : parseInt(e.target.value) })}
               />
             </div>
 
@@ -3147,7 +3153,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           weight: updatedUser.weight,
           height: parseInt(String(user.height)) || 0,
           avatar_url: user.avatar,
-          goal: (user.goal && ['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(user.goal) ? user.goal : 'Bater recordes') as any,
+          goal: (user.goal && ['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(user.goal) ? user.goal : 'Ganhar força') as any,
           level: user.level || 1,
           xp: user.xp || 0,
           total_pushups: user.totalPushups || 0,
