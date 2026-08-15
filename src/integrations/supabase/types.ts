@@ -44,6 +44,63 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_missions: {
+        Row: {
+          claimed: boolean
+          current_progress: number
+          goal: number
+          id: string
+          mission_date: string
+          title: string
+          type: Database["public"]["Enums"]["mission_type"]
+          user_id: string
+          xp_reward: number
+        }
+        Insert: {
+          claimed?: boolean
+          current_progress?: number
+          goal: number
+          id?: string
+          mission_date?: string
+          title: string
+          type: Database["public"]["Enums"]["mission_type"]
+          user_id: string
+          xp_reward?: number
+        }
+        Update: {
+          claimed?: boolean
+          current_progress?: number
+          goal?: number
+          id?: string
+          mission_date?: string
+          title?: string
+          type?: Database["public"]["Enums"]["mission_type"]
+          user_id?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
+      daily_rewards: {
+        Row: {
+          id: string
+          last_claimed_at: string | null
+          streak_count: number
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          last_claimed_at?: string | null
+          streak_count?: number
+          user_id: string
+        }
+        Update: {
+          id?: string
+          last_claimed_at?: string | null
+          streak_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       friendships: {
         Row: {
           created_at: string | null
@@ -213,6 +270,7 @@ export type Database = {
         | "Bater recordes"
         | "Vencer outras pessoas"
         | "Chegar ao topo do ranking"
+      mission_type: "pushups" | "battles" | "wins" | "xp" | "login" | "matches"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -350,6 +408,7 @@ export const Constants = {
         "Vencer outras pessoas",
         "Chegar ao topo do ranking",
       ],
+      mission_type: ["pushups", "battles", "wins", "xp", "login", "matches"],
     },
   },
 } as const
