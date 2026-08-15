@@ -2449,14 +2449,22 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
                 </div>
               </div>
             </div>
-            <Button 
-              className="bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)] h-12 px-6 rounded-xl font-black italic text-xs tracking-widest hover:scale-105 active:scale-95 transition-all"
-              onClick={() => {
-                onChallengePlayer(foundPlayer);
-              }}
-            >
-              DESAFIAR
-            </Button>
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-full">
+                <div className={`w-1.5 h-1.5 rounded-full ${foundPlayer.last_seen_at && new Date().getTime() - new Date(foundPlayer.last_seen_at).getTime() < 60000 ? 'bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]' : 'bg-white/20'}`} />
+                <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">
+                  {foundPlayer.last_seen_at && new Date().getTime() - new Date(foundPlayer.last_seen_at).getTime() < 60000 ? 'ONLINE' : 'OFFLINE'}
+                </span>
+              </div>
+              <Button 
+                className="bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)] h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest hover:scale-105 active:scale-95 transition-all"
+                onClick={() => {
+                  onChallengePlayer(foundPlayer);
+                }}
+              >
+                DESAFIAR
+              </Button>
+            </div>
           </motion.div>
         )}
       </div>
