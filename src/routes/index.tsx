@@ -2296,16 +2296,29 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
   const [searchId, setSearchId] = useState('');
   const [foundPlayer, setFoundPlayer] = useState<any>(null);
 
-  const handleSearch = () => {
-    if (searchId.trim().toUpperCase().startsWith('PUSH-')) {
+  const handleSearch = async () => {
+    if (!/^\d+$/.test(searchId)) {
+      toast.error("O ID deve conter apenas números.");
+      return;
+    }
+
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('id, name, xp, record, avatar_url, level, player_id')
+      .eq('player_id', searchId)
+      .neq('id', user.id)
+      .maybeSingle();
+
+    if (profile) {
       setFoundPlayer({
-        id: searchId.toUpperCase(),
-        name: 'JOGADOR ENCONTRADO',
-        level: 12,
-        patent: 'Prata',
-        record: 45,
-        avatar: null
+        id: profile.id,
+        name: profile.name,
+        level: profile.level,
+        patent: getRankInfo(profile.xp).patentName,
+        record: profile.record,
+        avatar: profile.avatar_url
       });
+      toast.success("Jogador encontrado!");
     } else {
       setFoundPlayer(null);
       toast.error("Jogador não encontrado");
