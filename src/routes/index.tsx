@@ -1483,7 +1483,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   type="number"
                   className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
                   value={formData.age}
-                  onChange={(e) => setFormData({ ...formData, age: parseInt(e.target.value) || 0 })}
+                  onChange={(e) => setFormData({ ...formData, age: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                 />
               </div>
               <div className="space-y-2">
@@ -1492,7 +1492,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   type="number"
                   className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
                   value={formData.weight}
-                  onChange={(e) => setFormData({ ...formData, weight: parseInt(e.target.value) || 0 })}
+                  onChange={(e) => setFormData({ ...formData, weight: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                 />
               </div>
             </div>
@@ -1503,7 +1503,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                 type="number"
                 className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
                 value={formData.height}
-                onChange={(e) => setFormData({ ...formData, height: parseInt(e.target.value) || 0 })}
+                onChange={(e) => setFormData({ ...formData, height: e.target.value === '' ? 0 : parseInt(e.target.value) })}
               />
             </div>
 
