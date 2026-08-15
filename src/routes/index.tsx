@@ -167,7 +167,7 @@ const BOTS = [
   },
 ];
 
-const NeonFireWrapper = ({ children, color, onClick, className = "" }: { children: React.ReactNode, color: string, intense?: boolean, onClick?: () => void, className?: string }) => {
+const NeonFireWrapper = ({ children, color, onClick, className = "", intense = false }: { children: React.ReactNode, color: string, intense?: boolean, onClick?: () => void, className?: string }) => {
   const getGlowColor = () => {
     switch(color) {
       case 'gold': return 'rgba(255, 215, 0, 0.4)';
