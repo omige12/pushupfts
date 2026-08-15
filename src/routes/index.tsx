@@ -1632,7 +1632,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               <Trophy className="w-4 h-4 text-green-500" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">VITÓRIAS</p>
-            <p className="text-2xl font-black text-white italic">{stats?.wins || 0}</p>
+            <p className="text-2xl font-black text-white italic">{stats.wins}</p>
           </div>
           
           <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.05)] hover:bg-blue-500/5 transition-all group">
@@ -1640,7 +1640,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               <Target className="w-4 h-4 text-blue-500" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">RECORDE</p>
-            <p className="text-2xl font-black text-white italic">{stats?.record || 0}</p>
+            <p className="text-2xl font-black text-white italic">{stats.record}</p>
           </div>
           
           <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.05)] hover:bg-purple-500/5 transition-all group">
@@ -1648,7 +1648,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               <Zap className="w-4 h-4 text-purple-500" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">TOTAL</p>
-            <p className="text-2xl font-black text-white italic">{stats?.totalPushups || 0}</p>
+            <p className="text-2xl font-black text-white italic">{stats.totalPushups}</p>
           </div>
         </div>
 
