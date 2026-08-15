@@ -3037,7 +3037,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
   );
 }
 
-function PatentsList({ setView, user }: { setView: (v: View) => void, user: any }) {
+function PatentsList({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   const patents = [
     { name: "Bronze", min: 0, emoji: "🥉", color: "from-orange-700 to-orange-400", rewards: ["Moldura Básica", "XP Base"], divisions: ["III", "II", "I"] },
     { name: "Prata", min: 1500, emoji: "🥈", color: "from-slate-400 to-slate-200", rewards: ["Moldura Prateada", "XP +10%"], divisions: ["III", "II", "I"] },
