@@ -1381,7 +1381,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">EDITAR PERFIL</h2>
         </div>
 
-        <div className="glass-panel p-6 space-y-8 border-electric-blue/20 relative">
+        <div className="glass-panel p-6 space-y-8 border-electric-blue/20 relative shadow-[0_0_20px_rgba(0,210,255,0.05)]">
           <div className="flex flex-col items-center gap-6">
             <div className="relative group">
               <div className="w-32 h-32 bg-[#0F131A] rounded-full border-4 border-electric-blue p-1 shadow-[0_0_20px_rgba(0,210,255,0.2)] overflow-hidden">
@@ -1435,7 +1435,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest text-center block">IDADE</label>
+                <label className="text-[10px] font-black text-purple-evolve uppercase tracking-widest text-center block">IDADE</label>
                 <input 
                   type="number"
                   inputMode="numeric"
@@ -1445,7 +1445,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest text-center block">PESO (KG)</label>
+                <label className="text-[10px] font-black text-electric-blue uppercase tracking-widest text-center block">PESO (KG)</label>
                 <input 
                   type="number"
                   inputMode="decimal"
@@ -1457,7 +1457,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
             </div>
             
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">ALTURA (CM)</label>
+              <label className="text-[10px] font-black text-gold uppercase tracking-widest ml-1">ALTURA (CM)</label>
               <input 
                 type="number"
                 inputMode="numeric"
@@ -1532,7 +1532,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         <Button 
           variant="ghost" 
           size="icon" 
-          className="rounded-xl bg-electric-blue/10 border border-electric-blue/20 shadow-[0_0_15px_rgba(0,210,255,0.2)] active:scale-90 btn-respond-fast" 
+          className="rounded-xl bg-electric-blue/10 border border-electric-blue/20 shadow-[0_0_15px_rgba(0,210,255,0.2)] active:scale-85 active:brightness-125 btn-respond-fast" 
           onClick={() => setEditing(true)}
         >
           <Pencil className="w-5 h-5 text-electric-blue" />
@@ -1542,7 +1542,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       <div className="flex flex-col items-center gap-6 relative py-4">
         {/* Avatar and Info Header */}
         <div className="relative group">
-          <div className="w-36 h-36 bg-[#0F131A] rounded-full border-[3px] border-electric-blue p-1 shadow-[0_0_25px_rgba(0,210,255,0.3),inset_0_0_15px_rgba(0,210,255,0.1)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
+          <div className="w-36 h-36 bg-[#0F131A] rounded-full border-[3px] border-electric-blue p-1 shadow-[0_0_35px_rgba(0,210,255,0.4),inset_0_0_15px_rgba(0,210,255,0.1)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
             <div className="w-full h-full rounded-full overflow-hidden bg-muted flex items-center justify-center relative">
               {stats.avatar ? (
                 <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
