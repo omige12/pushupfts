@@ -2901,13 +2901,10 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
       items: [
         { title: "Primeira Flexão", desc: "Comece sua jornada", req: 1, current: user.totalPushups, reward: "XP +50", icon: Zap },
         { title: "10 Flexões", desc: "Aquecendo os motores", req: 10, current: user.totalPushups, reward: "XP +100", icon: Zap },
-        { title: "25 Flexões", desc: "Já é um começo", req: 25, current: user.totalPushups, reward: "XP +150", icon: Dumbbell },
-        { title: "50 Flexões", desc: "Metade de cem", req: 50, current: user.totalPushups, reward: "XP +250", icon: Dumbbell },
+        { title: "50 Flexões", desc: "Já é um começo", req: 50, current: user.totalPushups, reward: "XP +250", icon: Dumbbell },
         { title: "100 Flexões", desc: "Mostre consistência", req: 100, current: user.totalPushups, reward: "Medalha Bronze", icon: Award },
-        { title: "250 Flexões", desc: "Atleta em formação", req: 250, current: user.totalPushups, reward: "XP +500", icon: Award },
         { title: "500 Flexões", desc: "Resistência pura", req: 500, current: user.totalPushups, reward: "XP +1000", icon: Target },
         { title: "1.000 Flexões", desc: "Guerreiro Mil", req: 1000, current: user.totalPushups, reward: "Moldura Mil", icon: Shield },
-        { title: "2.500 Flexões", desc: "Força bruta", req: 2500, current: user.totalPushups, reward: "XP +2500", icon: Shield },
         { title: "5.000 Flexões", desc: "Máquina de guerra", req: 5000, current: user.totalPushups, reward: "XP +5000", icon: Star },
         { title: "10.000 Flexões", desc: "Lenda da Arena", req: 10000, current: user.totalPushups, reward: "Avatar Lendário", icon: Sparkles },
       ]
