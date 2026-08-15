@@ -4232,11 +4232,13 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
         })}
       </div>
 
-      <div className="mt-8 text-center p-6 bg-white/5 rounded-3xl border border-white/10">
-        <Timer className="w-8 h-8 text-white/20 mx-auto mb-2" />
-        <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">MISSÕES ATUALIZAM EM:</p>
-        <p className="text-lg font-black text-white italic mt-1">NOVO DIA</p>
-      </div>
+      <NeonFireWrapper color="blue" className="mt-8">
+        <div className="text-center p-6 bg-white/5 rounded-[2rem] border border-white/10">
+          <Timer className="w-8 h-8 text-electric-blue mx-auto mb-2 drop-shadow-[0_0_8px_rgba(0,210,255,0.5)]" />
+          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">MISSÕES ATUALIZAM EM</p>
+          <p className="text-4xl font-black text-white italic mt-2 tabular-nums tracking-tighter shadow-text-neon">{timeLeft || '00:00:00'}</p>
+        </div>
+      </NeonFireWrapper>
     </motion.div>
   );
 }
