@@ -1043,7 +1043,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         <NeonFireWrapper 
 
           color="purple"
-          onClick={() => toast.info("Missões em breve!")}
+          onClick={() => setView('daily-missions')}
         >
           <div 
             className="h-full bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] transition-all shadow-[0_0_20px_rgba(139,92,246,0.1)] border-purple-evolve/30"
