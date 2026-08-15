@@ -4075,7 +4075,7 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
 
         const { data: inserted } = await supabase
           .from('daily_missions')
-          .insert(newMissions)
+          .insert(newMissions as any)
           .select();
         
         if (inserted) setMissions(inserted);
