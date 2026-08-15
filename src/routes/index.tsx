@@ -1537,112 +1537,161 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6">
-      <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">PERFIL</h2>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6 pb-20">
+      <div className="flex items-center gap-4 mb-2">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}>
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
       </div>
 
-      <div className="glass-panel p-8 flex flex-col items-center gap-6 relative overflow-hidden group">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold via-purple-evolve to-energy-red" />
-        
-        <div 
-          className="relative cursor-pointer active:scale-95 transition-transform"
-          onClick={() => setEditing(true)}
-        >
-          <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold shadow-[0_0_20px_rgba(255,215,0,0.3)] group-hover:scale-105 transition-transform duration-500 flex items-center justify-center overflow-hidden relative">
-             {stats.avatar ? (
-               <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
-             ) : (
-               <UserIcon className="w-16 h-16 text-muted-foreground" />
-             )}
-             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-               <Pencil className="w-8 h-8 text-white" />
-             </div>
+      <div className="flex flex-col items-center gap-6 relative py-4">
+        {/* Avatar and Info Header */}
+        <div className="relative group">
+          <div className="w-36 h-36 bg-secondary rounded-full border-[3px] border-gold p-1 shadow-[0_0_30px_rgba(234,179,8,0.2)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
+            <div className="w-full h-full rounded-full overflow-hidden bg-muted flex items-center justify-center">
+              {stats.avatar ? (
+                <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
+              ) : (
+                <UserIcon className="w-16 h-16 text-muted-foreground" />
+              )}
+            </div>
+            <div 
+              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+              onClick={() => setEditing(true)}
+            >
+              <Camera className="w-8 h-8 text-white" />
+            </div>
           </div>
-          <div className="absolute -bottom-2 -right-2 bg-purple-evolve p-2 rounded-full border-2 border-background shadow-lg">
-            <Star className="w-4 h-4 text-white" />
+          <div className="absolute -bottom-1 -right-1 bg-gold p-2 rounded-full border-[3px] border-[#05070A] shadow-lg">
+            <Star className="w-5 h-5 text-[#05070A]" />
           </div>
         </div>
 
-        <div className="text-center space-y-1">
-          <h3 className="font-black text-2xl text-white tracking-tight">{(stats?.name || 'ATLETA').toUpperCase()}</h3>
-          <div className="flex items-center justify-center gap-2">
-            <div className="flex items-center gap-1 bg-white/5 px-2 py-1 rounded-lg cursor-pointer hover:bg-white/10 transition-colors" onClick={copyId}>
-              <span className="text-[10px] font-mono text-muted-foreground">{stats?.id || '---'}</span>
-              {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3 text-muted-foreground" />}
+        <div className="text-center space-y-3">
+          <h3 className="font-black text-4xl text-white tracking-tighter italic uppercase leading-none">
+            {(stats?.name || 'ATLETA').toUpperCase()}
+          </h3>
+          
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <div className="bg-white/5 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2 cursor-pointer hover:bg-white/10 transition-colors" onClick={copyId}>
+              <span className="text-[10px] font-mono text-white/60 tracking-wider">ID: {stats?.id || '---'}</span>
+              {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3 text-white/40" />}
             </div>
+            
             <Badge 
-              className="bg-gold/20 text-gold border-gold/30 px-3 py-0.5 font-bold cursor-pointer hover:scale-105 transition-transform"
+              className="bg-gold/10 text-gold border-gold/20 px-4 py-1.5 font-black italic tracking-widest text-[10px] uppercase cursor-pointer hover:scale-105 transition-transform"
               onClick={() => setView('patents-list')}
             >
               {getRankInfo(stats?.xp || 0).emoji} {getRankInfo(stats?.xp || 0).rankName.toUpperCase()}
             </Badge>
-
           </div>
-          <div className="flex justify-center mt-1">
-             <Badge className="bg-white/10 text-white/60 border-white/20 px-3 py-0.5 font-bold">{stats?.weight || 0}KG • {stats?.age || 0} ANOS • {stats?.height || 0}CM</Badge>
+
+          {/* Physical info capsule */}
+          <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-md px-5 py-2 rounded-full border border-white/10 mt-2">
+            <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">{stats?.weight || 0}KG</span>
+            <div className="w-1 h-1 rounded-full bg-white/20" />
+            <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">{stats?.age || 0} ANOS</span>
+            <div className="w-1 h-1 rounded-full bg-white/20" />
+            <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">{stats?.height || 0}CM</span>
           </div>
         </div>
 
-
+        {/* Progress Card */}
         <div 
-          className="w-full space-y-2 cursor-pointer active:scale-[0.98] transition-all"
+          className="w-full glass-panel p-6 space-y-4 cursor-pointer active:scale-[0.98] transition-all premium-glow-gold"
           onClick={() => setView('patents-list')}
         >
-          <div className="flex justify-between text-xs font-black italic text-muted-foreground uppercase tracking-widest">
-            <span>Nível {getRankInfo(stats?.xp || 0).level}</span>
-            <span>{getRankInfo(stats?.xp || 0).xpInLevel} / {XP_PER_DIVISION} XP</span>
+          <div className="flex justify-between items-end">
+            <div className="flex flex-col">
+              <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] mb-1">EVOLUÇÃO</span>
+              <span className="text-lg font-black italic text-white leading-none uppercase">Nível {getRankInfo(stats?.xp || 0).level}</span>
+            </div>
+            <div className="text-right">
+              <span className="text-lg font-black italic text-gold leading-none">{getRankInfo(stats?.xp || 0).xpInLevel}</span>
+              <span className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">/ {XP_PER_DIVISION} XP</span>
+            </div>
           </div>
-          <Progress value={getRankInfo(stats?.xp || 0).progress} className="h-3 bg-white/5" />
-
-          <div className="flex justify-center">
-             <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">Toque para ver patentes</span>
-          </div>
-        </div>
-
-
-
-
-        <div className="grid grid-cols-3 gap-3 w-full">
-          <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
-            <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Vitórias</p>
-            <p className="text-xl font-black text-white">{stats?.wins || 0}</p>
-          </div>
-          <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
-            <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Recorde</p>
-            <p className="text-xl font-black text-white">{stats?.record || 0}</p>
-          </div>
-          <div className="bg-white/5 p-4 rounded-2xl text-center border border-white/5 hover:bg-white/10 transition-colors">
-            <p className="text-[10px] font-black text-muted-foreground uppercase mb-1">Total</p>
-            <p className="text-xl font-black text-white">{stats?.totalPushups || 0}</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2 w-full">
-          {/* Ocultando botão de editar perfil a pedido do usuário */}
-          {/* 
-          <Button 
-            className="game-button bg-primary w-full py-6 text-sm uppercase italic flex items-center justify-center gap-2"
-            onClick={() => {
-              setFormData({ 
-                name: user?.name || '',
-                age: user?.age || 0,
-                weight: user?.weight || 0,
-                height: user?.height || 0,
-                goal: user?.goal || 'Bater recordes',
-                avatar: user?.avatar || null
-              });
-              setEditing(true);
-            }}
-          >
-            <Pencil className="w-4 h-4" /> Editar Perfil
-          </Button>
-          */}
           
+          <div className="relative h-4 w-full bg-white/5 rounded-full overflow-hidden">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${getRankInfo(stats?.xp || 0).progress}%` }}
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-gold to-yellow-600 rounded-full"
+            />
+          </div>
+          
+          <div className="flex justify-center">
+            <span className="text-[8px] font-black text-gold/60 uppercase tracking-[0.3em] animate-pulse">TOQUE PARA VER PATENTES</span>
+          </div>
+        </div>
+
+        {/* Stats Grid - Premium Neon Visual */}
+        <div className="grid grid-cols-3 gap-3 w-full">
+          <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-green-500/10 shadow-[0_0_15px_rgba(34,197,94,0.05)] hover:bg-green-500/5 transition-all group">
+            <div className="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center mx-auto mb-3 border border-green-500/20">
+              <Trophy className="w-4 h-4 text-green-500" />
+            </div>
+            <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">VITÓRIAS</p>
+            <p className="text-2xl font-black text-white italic">{stats?.wins || 0}</p>
+          </div>
+          
+          <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.05)] hover:bg-blue-500/5 transition-all group">
+            <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center mx-auto mb-3 border border-blue-500/20">
+              <Target className="w-4 h-4 text-blue-500" />
+            </div>
+            <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">RECORDE</p>
+            <p className="text-2xl font-black text-white italic">{stats?.record || 0}</p>
+          </div>
+          
+          <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.05)] hover:bg-purple-500/5 transition-all group">
+            <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center mx-auto mb-3 border border-purple-500/20">
+              <Zap className="w-4 h-4 text-purple-500" />
+            </div>
+            <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">TOTAL</p>
+            <p className="text-2xl font-black text-white italic">{stats?.totalPushups || 0}</p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="grid grid-cols-1 gap-4 w-full pt-4">
           <Button 
             variant="ghost" 
-            className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] hover:text-white/40 transition-colors"
+            className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.98]"
+            onClick={() => setView('history')}
+          >
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
+                <LayoutDashboard className="w-6 h-6 text-blue-500" />
+              </div>
+              <div className="text-left">
+                <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">HISTÓRICO</p>
+                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">PARTIDAS ANTERIORES</p>
+              </div>
+            </div>
+            <ChevronRight className="w-6 h-6 text-white/20" />
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className="premium-glow-green bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-green-500/5 transition-all active:scale-[0.98]"
+            onClick={() => setView('support')}
+          >
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
+                <Shield className="w-6 h-6 text-green-500" />
+              </div>
+              <div className="text-left">
+                <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">SUPORTE</p>
+                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">AJUDA E ATENDIMENTO</p>
+              </div>
+            </div>
+            <ChevronRight className="w-6 h-6 text-white/20" />
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] hover:text-white/40 transition-colors py-8"
             onClick={async () => {
               const { error } = await supabase.auth.signOut();
               if (error) {
@@ -1655,39 +1704,6 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
             SAIR DA CONTA
           </Button>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 gap-4">
-        <Button 
-          variant="ghost" 
-          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10"
-          onClick={() => setView('history')}
-        >
-          <div className="flex items-center gap-4">
-            <LayoutDashboard className="w-6 h-6 text-primary" />
-            <div className="text-left">
-              <p className="font-black text-white italic">HISTÓRICO</p>
-              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Partidas anteriores</p>
-            </div>
-          </div>
-          <ChevronRight className="w-5 h-5 text-white/20" />
-        </Button>
-
-        <Button 
-          variant="ghost" 
-          className="glass-panel p-6 h-auto flex justify-between items-center border-white/5 hover:bg-white/10"
-          onClick={() => setView('support')}
-        >
-          <div className="flex items-center gap-4">
-            <Shield className="w-6 h-6 text-green-400" />
-            <div className="text-left">
-              <p className="font-black text-white italic">SUPORTE</p>
-              <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">Ajuda e atendimento</p>
-            </div>
-          </div>
-          <ChevronRight className="w-5 h-5 text-white/20" />
-        </Button>
-
       </div>
     </motion.div>
   );
