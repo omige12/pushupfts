@@ -665,7 +665,7 @@ function App() {
       case 'profile': return <Profile setView={setView} user={user} setUser={setUser} />;
       case 'settings': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
       case 'edit-profile': return <Profile setView={setView} user={user} setUser={setUser} initialEditing={true} />;
-      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={(training) => { setIsTraining(training); setView('select-duration'); }} />;
+      case 'multiplayer': return <Multiplayer setView={setView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={(training) => { setIsTraining(training); setView('select-duration'); }} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} />;
       case 'achievements': return <Achievements setView={setView} user={user} />;
       case 'support': return <Support setView={setView} />;
       case 'support-chat': return <SupportChat setView={setView} />;
@@ -697,6 +697,61 @@ function App() {
     <div className="min-h-screen bg-background text-foreground pb-8">
       <AnimatePresence mode="wait">
         {renderView()}
+      </AnimatePresence>
+
+      {/* Challenge Invitation Modal */}
+      <AnimatePresence>
+        {incomingChallenge && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
+          >
+            <div className="w-full max-w-sm bg-[#1A1F26] border-2 border-electric-blue rounded-[2.5rem] p-8 space-y-8 premium-glow-blue relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-electric-blue to-transparent animate-pulse" />
+              
+              <div className="text-center space-y-4">
+                <div className="w-24 h-24 mx-auto relative">
+                  <div className="absolute inset-0 bg-electric-blue/20 rounded-full animate-ping" />
+                  <div className="relative w-full h-full bg-[#0B0E14] rounded-full border-2 border-electric-blue flex items-center justify-center overflow-hidden">
+                    <Swords className="w-12 h-12 text-electric-blue animate-bounce" />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">NOVO DESAFIO!</h2>
+                  <p className="text-[10px] font-black text-electric-blue uppercase tracking-[0.2em] mt-2 animate-pulse">ALGUÉM QUER TE ENCARAR</p>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-2xl p-4 flex items-center gap-4 border border-white/5">
+                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
+                  <Timer className="w-6 h-6 text-white/40" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">DURAÇÃO</p>
+                  <p className="text-xl font-black text-white italic">{incomingChallenge.duration} SEGUNDOS</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <Button 
+                  className="game-button bg-electric-blue py-7 text-lg"
+                  onClick={() => acceptChallenge(incomingChallenge)}
+                >
+                  ACEITAR DESAFIO
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="py-6 text-energy-red font-black italic uppercase tracking-widest hover:bg-energy-red/10"
+                  onClick={() => setIncomingChallenge(null)}
+                >
+                  RECUSAR
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       {/* PWA Banner removido a pedido do usuário */}
@@ -2202,7 +2257,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
     const timer = setTimeout(() => {
       setStatus('found');
       const opp = {
-        id: 'PUSH-' + Math.random().toString(36).substr(2, 4).toUpperCase(),
+        id: Math.floor(Math.random() * 90000000 + 10000000).toString(),
         name: ['BRUNO FERRAZ', 'ANA BEAST', 'MARCOS PUSH', 'LUCAS ELITE', 'CARLA FORÇA'][Math.floor(Math.random() * 5)],
         level: user.level + Math.floor(Math.random() * 3) - 1,
         patent: user.patent,
@@ -2267,7 +2322,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
              {/* Opponent */}
              <div className="flex-1 space-y-3">
                <div className="w-20 h-20 mx-auto bg-energy-red/20 rounded-2xl border-2 border-energy-red flex items-center justify-center overflow-hidden">
-                 <UserIcon className="w-10 h-10 text-energy-red" />
+                 {matchedOpponent?.avatar ? <img src={matchedOpponent.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-10 h-10 text-energy-red" />}
                </div>
                <div>
                  <p className="text-xs font-black text-white italic truncate">{matchedOpponent?.name}</p>
@@ -2292,20 +2347,34 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
   );
 }
 
-function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void }) {
+function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallengePlayer }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void, onChallengePlayer: (opp: any) => void }) {
   const [searchId, setSearchId] = useState('');
   const [foundPlayer, setFoundPlayer] = useState<any>(null);
 
-  const handleSearch = () => {
-    if (searchId.trim().toUpperCase().startsWith('PUSH-')) {
+  const handleSearch = async () => {
+    if (!/^\d+$/.test(searchId)) {
+      toast.error("O ID deve conter apenas números.");
+      return;
+    }
+
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('id, name, xp, record, avatar_url, level, player_id, last_seen_at')
+      .eq('player_id', searchId)
+      .neq('id', user.id)
+      .maybeSingle();
+
+    if (profile) {
       setFoundPlayer({
-        id: searchId.toUpperCase(),
-        name: 'JOGADOR ENCONTRADO',
-        level: 12,
-        patent: 'Prata',
-        record: 45,
-        avatar: null
+        id: profile.id,
+        name: profile.name,
+        level: profile.level,
+        patent: getRankInfo(profile.xp).patentName,
+        record: profile.record,
+        avatar: profile.avatar_url,
+        last_seen_at: profile.last_seen_at
       });
+      toast.success("Jogador encontrado!");
     } else {
       setFoundPlayer(null);
       toast.error("Jogador não encontrado");
@@ -2395,9 +2464,11 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
           <div className="flex gap-3">
             <input 
               className="flex-1 bg-[#0B0E14] border border-white/10 rounded-2xl px-5 h-14 font-mono text-sm text-white focus:outline-none focus:border-electric-blue transition-all"
-              placeholder="ID do jogador"
+              placeholder="Digite o ID numérico"
+              type="tel"
+              pattern="[0-9]*"
               value={searchId}
-              onChange={(e) => setSearchId(e.target.value.toUpperCase())}
+              onChange={(e) => setSearchId(e.target.value.replace(/\D/g, ''))}
             />
             <Button 
               onClick={handleSearch} 
@@ -2408,6 +2479,49 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
             </Button>
           </div>
         </div>
+
+        {foundPlayer && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-[#151921] p-5 rounded-[2rem] border border-white/5 premium-glow-blue flex items-center justify-between group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="relative w-14 h-14 rounded-full border-2 border-electric-blue/30 p-0.5 overflow-hidden">
+                {foundPlayer.avatar ? (
+                  <img src={foundPlayer.avatar} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                    <UserIcon className="w-6 h-6 text-white/20" />
+                  </div>
+                )}
+              </div>
+              <div>
+                <h4 className="font-black text-white italic tracking-tighter uppercase leading-none">{foundPlayer.name}</h4>
+                <div className="flex items-center gap-2 mt-1.5">
+                  <Badge className="bg-electric-blue/20 text-[8px] h-3.5 border-none px-2 uppercase font-black italic">{foundPlayer.patent}</Badge>
+                  <span className="text-[9px] font-black text-white/40 uppercase tracking-widest">NÍVEL {foundPlayer.level}</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col items-end gap-2">
+              <div className="flex items-center gap-1.5 px-2 py-1 bg-white/5 rounded-full">
+                <div className={`w-1.5 h-1.5 rounded-full ${foundPlayer.last_seen_at && new Date().getTime() - new Date(foundPlayer.last_seen_at).getTime() < 60000 ? 'bg-green-500 animate-pulse shadow-[0_0_8px_#22c55e]' : 'bg-white/20'}`} />
+                <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">
+                  {foundPlayer.last_seen_at && new Date().getTime() - new Date(foundPlayer.last_seen_at).getTime() < 60000 ? 'ONLINE' : 'OFFLINE'}
+                </span>
+              </div>
+              <Button 
+                className="bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)] h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest hover:scale-105 active:scale-95 transition-all"
+                onClick={() => {
+                  onChallengePlayer(foundPlayer);
+                }}
+              >
+                DESAFIAR
+              </Button>
+            </div>
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );
@@ -2450,10 +2564,15 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
   }, [user.id]);
 
   const searchFriend = async () => {
+    if (!/^\d+$/.test(searchQuery)) {
+      toast.error("O ID deve conter apenas números.");
+      return;
+    }
+
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
-      .eq('player_id', searchQuery.toUpperCase())
+      .eq('player_id', searchQuery)
       .neq('id', user.id)
       .maybeSingle();
 
@@ -2504,10 +2623,12 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
         <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">ADICIONAR AMIGO</h3>
         <div className="flex gap-2">
           <input 
-            className="flex-1 bg-[#1A1F26] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white/20"
-            placeholder="Digite o ID (Ex: PUSH-XXXX)"
+            className="flex-1 bg-[#1A1F26] border border-white/10 rounded-2xl p-4 text-white placeholder:text-white/20 font-mono"
+            placeholder="Digite o ID numérico (Ex: 48291736)"
+            type="tel"
+            pattern="[0-9]*"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value.replace(/\D/g, ''))}
           />
           <Button className="h-14 w-14 rounded-2xl bg-primary" onClick={searchFriend}><Search className="w-6 h-6" /></Button>
         </div>
@@ -2535,7 +2656,12 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
           const lastSeen = new Date(friend.last_seen_at).getTime();
           const isOnline = Date.now() - lastSeen < 60000;
           return (
-            <div key={friend.id} className="bg-[#151921] p-4 rounded-[1.5rem] flex items-center justify-between border border-white/5 premium-glow-blue">
+            <motion.div 
+              key={friend.id} 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-[#151921] p-4 rounded-[1.8rem] flex items-center justify-between border border-white/5 premium-glow-blue group"
+            >
               <div className="flex items-center gap-3">
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10">
@@ -2563,7 +2689,7 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
               >
                 {isOnline ? 'DESAFIAR' : 'OFFLINE'}
               </Button>
-            </div>
+            </motion.div>
           );
         })}
       </div>
@@ -2614,7 +2740,7 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
             count: Number(p.xp),
             avatar: p.name.substring(0, 2).toUpperCase(),
             avatarUrl: p.avatar_url,
-            isUser: p.player_id === user.id,
+            isUser: p.id === user.id,
             record: p.record,
             wins: p.wins,
             streak: p.streak,
