@@ -2412,7 +2412,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">MULTIJOGADOR</h2>
           <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">COMPITA. VENÇA. DOMINE.</p>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => setView('dashboard')}>
+        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
           <ArrowLeft className="w-5 h-5 text-white" />
         </Button>
       </div>
