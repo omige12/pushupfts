@@ -4075,11 +4075,11 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
       } else {
         // Generate new missions for today
         const newMissions: any[] = [
+          { user_id: session.user.id, type: 'login', title: '📱 ENTRAR NO APP', goal: 1, xp_reward: 50 },
           { user_id: session.user.id, type: 'pushups', title: '🏋️ FAZER 50 FLEXÕES', goal: 50, xp_reward: 100 },
           { user_id: session.user.id, type: 'matches', title: '⚔️ COMPLETAR 3 PARTIDAS', goal: 3, xp_reward: 150 },
           { user_id: session.user.id, type: 'wins', title: '🏆 VENCER 1 BATALHA', goal: 1, xp_reward: 200 },
-          { user_id: session.user.id, type: 'xp', title: '⭐ GANHAR 500 XP', goal: 500, xp_reward: 250 },
-          { user_id: session.user.id, type: 'login', title: '📱 ENTRAR NO APP', goal: 1, xp_reward: 50 }
+          { user_id: session.user.id, type: 'xp', title: '⭐ GANHAR 500 XP', goal: 500, xp_reward: 250 }
         ];
 
         const { data: inserted } = await supabase
