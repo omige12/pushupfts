@@ -810,37 +810,37 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
       {/* Bottom Stats Footer */}
       {/* Bottom Stats Footer - Recreating WA0087.jpg */}
-      <div className="grid grid-cols-4 gap-2 pt-6 border-t border-white/5 mt-4">
+      <div className="grid grid-cols-4 gap-2 pt-8 border-t border-white/5 mt-6 pb-2">
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-2 border border-gold/30 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
-            <Trophy className="w-6 h-6 text-gold neon-text-gold" />
+          <div className="w-14 h-14 rounded-2xl bg-gold/10 flex items-center justify-center mb-2.5 border border-gold/30 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
+            <Trophy className="w-7 h-7 text-gold neon-text-gold" />
           </div>
-          <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">VITÓRIAS</span>
-          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.wins ?? 0}</span>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1.5">VITÓRIAS</span>
+          <span className="text-3xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.wins ?? 0}</span>
         </div>
         
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-2 border border-electric-blue/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
-            <Target className="w-6 h-6 text-electric-blue neon-text-blue" />
+          <div className="w-14 h-14 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-2.5 border border-electric-blue/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+            <Target className="w-7 h-7 text-electric-blue neon-text-blue" />
           </div>
-          <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">RECORDE</span>
-          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.record ?? 0}</span>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1.5">RECORDE</span>
+          <span className="text-3xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.record ?? 0}</span>
         </div>
         
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-2xl bg-energy-red/10 flex items-center justify-center mb-2 border border-energy-red/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
-            <Flame className="w-6 h-6 text-energy-red neon-text-red" />
+          <div className="w-14 h-14 rounded-2xl bg-energy-red/10 flex items-center justify-center mb-2.5 border border-energy-red/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+            <Flame className="w-7 h-7 text-energy-red neon-text-red" />
           </div>
-          <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">OFENSIVA</span>
-          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.streak ?? 0}</span>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1.5">OFENSIVA</span>
+          <span className="text-3xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.streak ?? 0}</span>
         </div>
         
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-2 border border-purple-evolve/20 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
-            <Zap className="w-6 h-6 text-purple-evolve neon-text-purple" />
+          <div className="w-14 h-14 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-2.5 border border-purple-evolve/20 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
+            <Zap className="w-7 h-7 text-purple-evolve neon-text-purple" />
           </div>
-          <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">TOTAL</span>
-          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.totalPushups ?? 0}</span>
+          <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1.5">TOTAL</span>
+          <span className="text-3xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.totalPushups ?? 0}</span>
         </div>
       </div>
     </motion.div>
