@@ -2918,7 +2918,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
         { title: "Primeira Vitória", desc: "Vença um duelo real", req: 1, current: user.wins, reward: "XP +200", icon: Trophy },
         { title: "5 Vitórias", desc: "Início promissor", req: 5, current: user.wins, reward: "XP +500", icon: Trophy },
         { title: "10 Vitórias", desc: "Competidor Nato", req: 10, current: user.wins, reward: "Medalha Prata", icon: Medal },
-        { title: "25 Vitórias", desc: "Veterano de Combate", req: 25, current: user.wins, reward: "XP +1500", icon: Swords },
+        { title: "20 Vitórias", desc: "Guerreiro de Elite", req: 20, current: user.wins, reward: "XP +1000", icon: Swords },
         { title: "50 Vitórias", desc: "Elite da Arena", req: 50, current: user.wins, reward: "Título Mestre", icon: Star },
         { title: "100 Vitórias", desc: "Imbatível", req: 100, current: user.wins, reward: "Moldura Diamante", icon: Sparkles },
       ]
