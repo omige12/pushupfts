@@ -2371,7 +2371,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
   );
 }
 
-function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallengePlayer }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void, onChallengePlayer: (opp: any) => void }) {
+function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallengePlayer, goBack }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void, onChallengePlayer: (opp: any) => void, goBack: () => void }) {
   const [searchId, setSearchId] = useState('');
   const [foundPlayer, setFoundPlayer] = useState<any>(null);
 
