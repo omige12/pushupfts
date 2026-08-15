@@ -1667,7 +1667,8 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         <div className="grid grid-cols-1 gap-4 w-full pt-4">
           <Button 
             variant="ghost" 
-            className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.98]"
+            aria-label="Ver Histórico de Partidas"
+            className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-blue-500"
             onClick={() => setView('history')}
           >
             <div className="flex items-center gap-5">
@@ -1676,7 +1677,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               </div>
               <div className="text-left">
                 <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">HISTÓRICO</p>
-                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">PARTIDAS ANTERIORES</p>
+                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">
+                  {stats?.history?.length > 0 ? "PARTIDAS ANTERIORES" : "JOGADOR SEM PARTIDA"}
+                </p>
               </div>
             </div>
             <ChevronRight className="w-6 h-6 text-white/20" />
@@ -1684,7 +1687,8 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
           <Button 
             variant="ghost" 
-            className="premium-glow-green bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-green-500/5 transition-all active:scale-[0.98]"
+            aria-label="Acessar Suporte e Atendimento"
+            className="premium-glow-green bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-green-500/5 transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-green-500"
             onClick={() => setView('support')}
           >
             <div className="flex items-center gap-5">
