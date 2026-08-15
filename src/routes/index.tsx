@@ -1582,10 +1582,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               <div className="absolute inset-0 rounded-full border-[6px] border-white/5 pointer-events-none shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)]" />
             </div>
             <div 
-              className="absolute inset-0 bg-electric-blue/20 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-              onClick={() => setEditing(true)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
             >
-              <Camera className="w-8 h-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+              <Camera className="w-8 h-8 text-white/40" />
             </div>
           </div>
           <div className="absolute -bottom-1 -right-1 bg-electric-blue p-2 rounded-full border-[3px] border-[#05070A] shadow-[0_0_15px_rgba(0,210,255,0.5)]">
