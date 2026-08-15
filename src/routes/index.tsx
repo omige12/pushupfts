@@ -1006,12 +1006,8 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)] relative">
-                <Shield className="absolute inset-0 w-full h-full text-gold/20 pointer-events-none" />
-                <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)] z-10">{rank.emoji}</div>
-                <div className="absolute -bottom-1 bg-gold px-1.5 rounded-full z-20 shadow-[0_0_10px_rgba(234,179,8,0.5)]">
-                  <span className="text-[8px] font-black text-black italic leading-none">{rank.xpInLevel}XP</span>
-                </div>
+              <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]">
+                <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
               </div>
               <div>
                 <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName.toUpperCase()}</h2>
