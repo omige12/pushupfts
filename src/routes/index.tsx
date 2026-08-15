@@ -1014,6 +1014,25 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   const [countdown, setCountdown] = useState(5);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [lastWhoIsAhead, setLastWhoIsAhead] = useState<'player' | 'opponent' | null>(null);
+  const [trainingStep, setTrainingStep] = useState(0);
+  const [showTip, setShowTip] = useState(false);
+
+  const trainingTips = [
+    { title: "POSICIONE-SE", text: "Fique de lado para a câmera para que o scanner veja seu corpo inteiro.", icon: <Camera className="w-5 h-5" /> },
+    { title: "COSTAS RETAS", text: "Mantenha o corpo alinhado. Quadril nem muito alto, nem muito baixo.", icon: <Shield className="w-5 h-5" /> },
+    { title: "DESCIDA TOTAL", text: "Desça até que seus cotovelos formem um ângulo de 90 graus.", icon: <Target className="w-5 h-5" /> },
+    { title: "EXTENSÃO", text: "Suba totalmente esticando os braços para validar a repetição.", icon: <Zap className="w-5 h-5" /> }
+  ];
+
+  useEffect(() => {
+    if (isTraining && gameState === 'playing') {
+      setShowTip(true);
+      const interval = setInterval(() => {
+        setTrainingStep(prev => (prev + 1) % trainingTips.length);
+      }, 8000);
+      return () => clearInterval(interval);
+    }
+  }, [isTraining, gameState]);
 
   const handlePlayerCount = useCallback((count: number) => {
     setPlayerPushups(count);
@@ -1226,6 +1245,37 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Guided Training Tips */}
+        {isTraining && gameState === 'playing' && (
+          <AnimatePresence>
+            {showTip && (
+              <motion.div 
+                initial={{ x: 100, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 100, opacity: 0 }}
+                className="absolute top-1/2 right-4 -translate-y-1/2 z-40 w-48 pointer-events-none"
+              >
+                <div className="bg-black/60 backdrop-blur-xl p-4 rounded-3xl border border-gold/30 shadow-[0_0_30px_rgba(234,179,8,0.2)]">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-2 rounded-xl bg-gold/20 text-gold">
+                      {trainingTips[trainingStep].icon}
+                    </div>
+                    <span className="text-[10px] font-black italic text-gold uppercase tracking-tighter">DICA MESTRE</span>
+                  </div>
+                  <h4 className="text-xs font-black text-white uppercase italic mb-1">{trainingTips[trainingStep].title}</h4>
+                  <p className="text-[9px] font-medium text-white/60 leading-relaxed uppercase">{trainingTips[trainingStep].text}</p>
+                  
+                  <div className="flex gap-1 mt-3">
+                    {trainingTips.map((_, i) => (
+                      <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i === trainingStep ? 'bg-gold' : 'bg-white/10'}`} />
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
 
         {/* Action Buttons Overlay */}
         <div className="absolute top-4 right-4 z-30">
