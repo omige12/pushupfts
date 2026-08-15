@@ -1331,7 +1331,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       const updateData: any = {
         name: (formData.name || '').toUpperCase().trim(),
         age: parseInt(String(formData.age)) || 0,
-        weight: parseInt(String(formData.weight)) || 0,
+        weight: parseFloat(String(formData.weight)) || 0,
         height: parseInt(String(formData.height)) || 0,
         avatar_url: formData.avatar,
         goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Ganhar força'),
@@ -1387,7 +1387,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
     return (
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-6 space-y-6 pb-10">
         <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setEditing(false)}><ArrowLeft className="w-5 h-5" /></Button>
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => setEditing(false)}>
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </Button>
           <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">EDITAR DADOS</h2>
         </div>
 
@@ -1515,14 +1517,14 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   value={formData.goal}
                   onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
                 >
-                  <option value="Ganhar força" className="bg-[#1A1F2C] text-white uppercase">GANHAR FORÇA</option>
-                  <option value="Perder peso" className="bg-[#1A1F2C] text-white uppercase">PERDER PESO</option>
-                  <option value="Condicionamento" className="bg-[#1A1F2C] text-white uppercase">CONDICIONAMENTO</option>
-                  <option value="Massa muscular" className="bg-[#1A1F2C] text-white uppercase">MASSA MUSCULAR</option>
-                  <option value="Melhorar minhas flexões" className="bg-[#1A1F2C] text-white uppercase">MELHORAR FLEXÕES</option>
-                  <option value="Bater recordes" className="bg-[#1A1F2C] text-white uppercase">BATER RECORDES</option>
-                  <option value="Vencer outras pessoas" className="bg-[#1A1F2C] text-white uppercase">VENCER PESSOAS</option>
-                  <option value="Chegar ao topo do ranking" className="bg-[#1A1F2C] text-white uppercase">TOPO DO RANKING</option>
+                  <option value="Ganhar força" className="bg-[#1A1F2C] text-white">GANHAR FORÇA</option>
+                  <option value="Perder peso" className="bg-[#1A1F2C] text-white">PERDER PESO</option>
+                  <option value="Condicionamento" className="bg-[#1A1F2C] text-white">CONDICIONAMENTO</option>
+                  <option value="Massa muscular" className="bg-[#1A1F2C] text-white">MASSA MUSCULAR</option>
+                  <option value="Melhorar minhas flexões" className="bg-[#1A1F2C] text-white">MELHORAR FLEXÕES</option>
+                  <option value="Bater recordes" className="bg-[#1A1F2C] text-white">BATER RECORDES</option>
+                  <option value="Vencer outras pessoas" className="bg-[#1A1F2C] text-white">VENCER PESSOAS</option>
+                  <option value="Chegar ao topo do ranking" className="bg-[#1A1F2C] text-white">TOPO DO RANKING</option>
                 </select>
                 <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 rotate-90 pointer-events-none" />
               </div>
@@ -1580,10 +1582,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               <div className="absolute inset-0 rounded-full border-[6px] border-white/5 pointer-events-none shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)]" />
             </div>
             <div 
-              className="absolute inset-0 bg-electric-blue/20 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
-              onClick={() => setEditing(true)}
+              className="absolute inset-0 bg-black/40 backdrop-blur-[1px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
             >
-              <Camera className="w-8 h-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+              <Camera className="w-8 h-8 text-white/40" />
             </div>
           </div>
           <div className="absolute -bottom-1 -right-1 bg-electric-blue p-2 rounded-full border-[3px] border-[#05070A] shadow-[0_0_15px_rgba(0,210,255,0.5)]">
