@@ -189,6 +189,7 @@ export type Database = {
           goal: Database["public"]["Enums"]["fitness_goal"] | null
           height: number | null
           id: string
+          last_login_at: string | null
           last_seen_at: string | null
           level: number
           losses: number
@@ -212,6 +213,7 @@ export type Database = {
           goal?: Database["public"]["Enums"]["fitness_goal"] | null
           height?: number | null
           id: string
+          last_login_at?: string | null
           last_seen_at?: string | null
           level?: number
           losses?: number
@@ -235,6 +237,7 @@ export type Database = {
           goal?: Database["public"]["Enums"]["fitness_goal"] | null
           height?: number | null
           id?: string
+          last_login_at?: string | null
           last_seen_at?: string | null
           level?: number
           losses?: number
@@ -267,6 +270,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      track_daily_login: { Args: { user_id_param: string }; Returns: undefined }
     }
     Enums: {
       fitness_goal:

@@ -3888,7 +3888,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
       const lastClaimedDate = new Date(lastClaimed);
       lastClaimedDate.setHours(0, 0, 0, 0);
       if (lastClaimedDate.getTime() === today.getTime()) {
-        toast.error("Você já resgatou sua recompensa de hoje!");
+        toast.error("Recompensa já resgatada!");
         return;
       }
     }
@@ -3899,7 +3899,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      let newStreak = rewardData.streak_count + 1;
+      let newStreak = (rewardData.streak_count || 0) + 1;
       if (lastClaimed) {
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
@@ -3928,12 +3928,15 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
       setRewardData(updated);
       
       const reward = REWARDS[newStreak - 1];
-      if (reward.type === 'XP' || reward.type === 'Misto') {
-        const xpAmount = reward.amount;
-        const newTotalXp = user.xp + xpAmount;
-        await supabase.from('profiles').update({ xp: newTotalXp }).eq('id', session.user.id);
-        setUser((prev: any) => ({ ...prev, xp: newTotalXp }));
-      }
+      const xpAmount = reward.amount;
+      const newTotalXp = (user.xp || 0) + xpAmount;
+      
+      await supabase.from('profiles').update({ 
+        xp: newTotalXp,
+        last_login_at: new Date().toISOString()
+      } as any).eq('id', session.user.id);
+      
+      setUser((prev: any) => ({ ...prev, xp: newTotalXp }));
 
       confetti({
         particleCount: 150,
@@ -3944,8 +3947,8 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
 
       toast.success(`Parabéns! Você resgatou: ${reward.label}`);
       
-      // Update login mission
-      await supabase.rpc('increment_mission_progress', { p_user_id: session.user.id, p_type: 'login', p_amount: 1 } as any);
+      // Trigger daily login mission and update last_login_at
+      await supabase.rpc('track_daily_login', { user_id_param: session.user.id } as any);
 
     } catch (err) {
       console.error(err);
@@ -3959,7 +3962,9 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
     if (!rewardData?.last_claimed_at) return false;
     const lastClaimed = new Date(rewardData.last_claimed_at);
     const today = new Date();
-    return lastClaimed.toDateString() === today.toDateString();
+    return lastClaimed.getFullYear() === today.getFullYear() && 
+           lastClaimed.getMonth() === today.getMonth() && 
+           lastClaimed.getDate() === today.getDate();
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
@@ -4032,7 +4037,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
               }`}
             >
               {claiming ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : null}
-              {claimedToday ? 'RESGATADO' : 'RESGATAR RECOMPENSA'}
+              {claimedToday ? 'RESGATADO HOJE ✓' : 'RESGATAR RECOMPENSA'}
             </Button>
           </NeonFireWrapper>
         </div>
@@ -4058,6 +4063,29 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
   const [missions, setMissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [claimingId, setClaimingId] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      
+      const diff = tomorrow.getTime() - now.getTime();
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      setTimeLeft(`${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+      
+      // If it reaches midnight, refresh
+      if (hours === 0 && minutes === 0 && seconds === 0) {
+        window.location.reload();
+      }
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const fetchMissions = async () => {
@@ -4075,11 +4103,11 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
       } else {
         // Generate new missions for today
         const newMissions: any[] = [
+          { user_id: session.user.id, type: 'login', title: '📱 ENTRAR NO APP', goal: 1, xp_reward: 50 },
           { user_id: session.user.id, type: 'pushups', title: '🏋️ FAZER 50 FLEXÕES', goal: 50, xp_reward: 100 },
           { user_id: session.user.id, type: 'matches', title: '⚔️ COMPLETAR 3 PARTIDAS', goal: 3, xp_reward: 150 },
           { user_id: session.user.id, type: 'wins', title: '🏆 VENCER 1 BATALHA', goal: 1, xp_reward: 200 },
-          { user_id: session.user.id, type: 'xp', title: '⭐ GANHAR 500 XP', goal: 500, xp_reward: 250 },
-          { user_id: session.user.id, type: 'login', title: '📱 ENTRAR NO APP', goal: 1, xp_reward: 50 }
+          { user_id: session.user.id, type: 'xp', title: '⭐ GANHAR 500 XP', goal: 500, xp_reward: 250 }
         ];
 
         const { data: inserted } = await supabase
@@ -4207,11 +4235,13 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
         })}
       </div>
 
-      <div className="mt-8 text-center p-6 bg-white/5 rounded-3xl border border-white/10">
-        <Timer className="w-8 h-8 text-white/20 mx-auto mb-2" />
-        <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">MISSÕES ATUALIZAM EM:</p>
-        <p className="text-lg font-black text-white italic mt-1">NOVO DIA</p>
-      </div>
+      <NeonFireWrapper color="blue" className="mt-8">
+        <div className="text-center p-6 bg-white/5 rounded-[2rem] border border-white/10">
+          <Timer className="w-8 h-8 text-electric-blue mx-auto mb-2 drop-shadow-[0_0_8px_rgba(0,210,255,0.5)]" />
+          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em]">MISSÕES ATUALIZAM EM</p>
+          <p className="text-4xl font-black text-white italic mt-2 tabular-nums tracking-tighter shadow-text-neon">{timeLeft || '00:00:00'}</p>
+        </div>
+      </NeonFireWrapper>
     </motion.div>
   );
 }
