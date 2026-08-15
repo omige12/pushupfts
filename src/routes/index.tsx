@@ -1395,22 +1395,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         <div className="glass-panel p-6 space-y-6 border-gold/20 relative overflow-hidden">
           <div className="flex flex-col items-center gap-4 mb-2">
-            <div className="relative group cursor-pointer" onClick={() => {
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = 'image/*';
-              input.onchange = (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (re) => {
-                    setFormData({ ...formData, avatar: re.target?.result as string });
-                  };
-                  reader.readAsDataURL(file);
-                }
-              };
-              input.click();
-            }}>
+            <div className="relative group cursor-default">
 
               <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold flex items-center justify-center overflow-hidden shadow-2xl">
                 {formData.avatar ? (
