@@ -1548,11 +1548,22 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6 pb-20">
-      <div className="flex items-center gap-4 mb-2">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}>
-          <ArrowLeft className="w-5 h-5" />
+      <div className="flex justify-between items-center w-full mb-2">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => setView('dashboard')}>
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
+        </div>
+        
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="rounded-xl bg-electric-blue/10 border border-electric-blue/20 shadow-[0_0_15px_rgba(0,210,255,0.2)] active:scale-90 btn-respond-fast" 
+          onClick={() => setEditing(true)}
+        >
+          <Pencil className="w-5 h-5 text-electric-blue" />
         </Button>
-        <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
       </div>
 
       <div className="flex flex-col items-center gap-6 relative py-4">
