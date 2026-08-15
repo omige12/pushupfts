@@ -630,7 +630,7 @@ function App() {
                 key={item.id}
                 variant="ghost" 
                 aria-label={`Ir para ${item.label}`}
-                className={`flex flex-col items-center gap-1 h-auto py-2 px-3 transition-all duration-75 active:scale-90 relative ${isActive ? colorClass : 'text-white/30'}`}
+                className={`flex flex-col items-center gap-1 h-auto py-2 px-3 transition-all duration-75 active:scale-90 btn-respond-fast relative ${isActive ? colorClass : 'text-white/30'}`}
                 onClick={() => setView(item.id as View)}
               >
                 <item.icon className={`w-6 h-6 transition-all duration-200 ${isActive ? `drop-shadow-[0_0_10px_rgba(var(--${item.color}-rgb),0.5)] fill-current/10` : ''}`} />
@@ -670,7 +670,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       <header className="flex justify-between items-start">
         <div className="flex items-center gap-3">
           <div 
-            className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 transition-transform"
+            className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
             onClick={() => setView('edit-profile')}
           >
             <div className="w-full h-full rounded-full overflow-hidden">
@@ -699,7 +699,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         </div>
         
         <div 
-          className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer active:scale-95 transition-all glow-purple"
+          className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer active:scale-95 btn-respond-fast transition-all glow-purple"
           onClick={() => toast.info("Recompensas em breve!")}
         >
           <div className="bg-gold/20 p-1.5 rounded-xl">
@@ -715,7 +715,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
       {/* Patent Progress Card */}
       <div 
-        className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden cursor-pointer active:scale-[0.98] transition-all"
+        className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden cursor-pointer active:scale-[0.95] btn-respond-fast transition-all"
         onClick={() => setView('patents-list')}
       >
         <div className="flex justify-between items-center mb-6">
@@ -757,7 +757,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       {/* Action Grid */}
       <div className="grid grid-cols-2 gap-4">
         <div 
-          className="bg-electric-blue/5 border border-electric-blue/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.98] transition-all glow-primary"
+          className="bg-electric-blue/5 border border-electric-blue/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-primary"
           onClick={() => setView('multiplayer')}
         >
           <div className="w-14 h-14 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-4">
@@ -773,7 +773,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         </div>
 
         <div 
-          className="bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.98] transition-all glow-purple"
+          className="bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-purple"
           onClick={() => toast.info("Missões em breve!")}
         >
           <div className="w-14 h-14 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-4">
@@ -791,7 +791,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
       {/* Workout Banner */}
       <div 
-        className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all glow-red"
+        className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red"
         onClick={() => setView('treino')}
       >
         <div className="flex items-center gap-4">
@@ -1598,7 +1598,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         {/* Progress Card */}
         <div 
-          className="w-full glass-panel p-6 space-y-4 cursor-pointer active:scale-[0.98] transition-all premium-glow-gold"
+          className="w-full glass-panel p-6 space-y-4 cursor-pointer active:scale-[0.95] btn-respond-fast transition-all premium-glow-gold"
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between items-end">
@@ -1657,7 +1657,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
-            className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-blue-500"
             onClick={() => setView('history')}
           >
             <div className="flex items-center gap-5">
@@ -1677,7 +1677,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <Button 
             variant="ghost" 
             aria-label="Acessar Suporte e Atendimento"
-            className="premium-glow-green bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-green-500/5 transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-green-500"
+            className="premium-glow-green bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-green-500/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-green-500"
             onClick={() => setView('support')}
           >
             <div className="flex items-center gap-5">
@@ -1723,7 +1723,7 @@ function FullHistory({ setView, user }: { setView: (v: View) => void, user: any 
       <div className="space-y-4">
         {user.history && user.history.length > 0 ? (
           user.history.map((match: any) => (
-            <div key={match.id} className="glass-panel p-5 flex items-center justify-between border-white/5 active:scale-[0.98] transition-all" role="article" aria-label={`Partida contra ${match.opp}`}>
+            <div key={match.id} className="glass-panel p-5 flex items-center justify-between border-white/5 active:scale-[0.95] btn-respond-fast transition-all" role="article" aria-label={`Partida contra ${match.opp}`}>
               <div className="flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white text-xl shadow-lg border-2 border-white/20 overflow-hidden ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`}>
                   {BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp) ? (
@@ -2058,7 +2058,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
       <div className="space-y-4">
         {/* Partida Rápida (Large Card) */}
         <div 
-          className="relative h-48 rounded-[2rem] border border-energy-red/20 bg-gradient-to-br from-energy-red/20 to-energy-red/5 p-6 flex flex-col justify-center gap-2 cursor-pointer active:scale-[0.98] transition-all glow-red group"
+          className="relative h-48 rounded-[2rem] border border-energy-red/20 bg-gradient-to-br from-energy-red/20 to-energy-red/5 p-6 flex flex-col justify-center gap-2 cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red group"
           onClick={() => onStartMatchmaking(false)}
         >
           <div className="flex items-center gap-6">
@@ -2082,7 +2082,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
         {/* Small Cards Row */}
         <div className="grid grid-cols-2 gap-4">
           <div 
-            className="bg-electric-blue/5 border border-electric-blue/10 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.98] transition-all glow-primary group"
+            className="bg-electric-blue/5 border border-electric-blue/10 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-primary group"
             onClick={() => setView('friend-challenge')}
           >
             <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center">
@@ -2098,7 +2098,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
           </div>
 
           <div 
-            className="bg-card border border-white/5 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.98] transition-all group"
+            className="bg-card border border-white/5 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all group"
             onClick={onSelectBot}
           >
             <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center">
@@ -2439,7 +2439,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-[#151921] rounded-[1.8rem] p-5 border border-white/5 flex items-center gap-4 active:scale-[0.99] transition-all group focus-within:ring-2 focus-within:ring-electric-blue h-auto min-h-[120px]"
+              className="bg-[#151921] rounded-[1.8rem] p-5 border border-white/5 flex items-center gap-4 active:scale-[0.95] btn-respond-fast transition-all group focus-within:ring-2 focus-within:ring-electric-blue h-auto min-h-[120px]"
               role="group"
               aria-label={`Conquista: ${ach.title}. Status: ${isCompleted ? 'Concluída' : 'Em progresso'}. Requisito: ${ach.req}. Atual: ${ach.current}. Recompensa: ${ach.reward}.`}
             >
@@ -2778,7 +2778,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
                   >
                     <Button 
                       variant="outline" 
-                      className={`w-full h-16 text-sm font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-between px-6 rounded-2xl group shadow-lg active:scale-[0.98] relative overflow-hidden ${answers[current.id] === opt ? 'border-primary bg-primary/20' : ''}`} 
+                      className={`w-full h-16 text-sm font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-between px-6 rounded-2xl group shadow-lg active:scale-[0.95] btn-respond-fast relative overflow-hidden ${answers[current.id] === opt ? 'border-primary bg-primary/20' : ''}`} 
                       onClick={() => select(opt)}
                     >
                       <div className="flex items-center gap-4">
@@ -3049,11 +3049,11 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
         </div>
 
         <div className="grid grid-cols-2 gap-4 w-full">
-          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95">
+          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 btn-respond-fast">
             <Camera className="w-4 h-4 mr-2" /> Câmera
             <input type="file" accept="image/*" capture="user" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
           </Button>
-          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95">
+          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 btn-respond-fast">
             <ImageIcon className="w-4 h-4 mr-2" /> Galeria
             <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
           </Button>
