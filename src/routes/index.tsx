@@ -1387,7 +1387,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
     return (
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-6 space-y-6 pb-10">
         <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setEditing(false)}><ArrowLeft className="w-5 h-5" /></Button>
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => setEditing(false)}>
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </Button>
           <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">EDITAR DADOS</h2>
         </div>
 
