@@ -3888,7 +3888,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
       const lastClaimedDate = new Date(lastClaimed);
       lastClaimedDate.setHours(0, 0, 0, 0);
       if (lastClaimedDate.getTime() === today.getTime()) {
-        toast.error("Você já resgatou sua recompensa de hoje!");
+        toast.error("Recompensa já resgatada!");
         return;
       }
     }
@@ -3899,7 +3899,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) return;
 
-      let newStreak = rewardData.streak_count + 1;
+      let newStreak = (rewardData.streak_count || 0) + 1;
       if (lastClaimed) {
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
@@ -3928,15 +3928,15 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
       setRewardData(updated);
       
       const reward = REWARDS[newStreak - 1];
-      if (reward.type === 'XP' || reward.type === 'Misto' || reward.type === 'Premium') {
-        const xpAmount = reward.amount;
-        const newTotalXp = user.xp + xpAmount;
-        await supabase.from('profiles').update({ 
-          xp: newTotalXp,
-          last_login_at: new Date().toISOString()
-        } as any).eq('id', session.user.id);
-        setUser((prev: any) => ({ ...prev, xp: newTotalXp }));
-      }
+      const xpAmount = reward.amount;
+      const newTotalXp = (user.xp || 0) + xpAmount;
+      
+      await supabase.from('profiles').update({ 
+        xp: newTotalXp,
+        last_login_at: new Date().toISOString()
+      } as any).eq('id', session.user.id);
+      
+      setUser((prev: any) => ({ ...prev, xp: newTotalXp }));
 
       confetti({
         particleCount: 150,
