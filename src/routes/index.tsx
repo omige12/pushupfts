@@ -2961,7 +2961,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
           { label: 'SEQUÊNCIA DIAS', val: user.streak, sub: 'DIAS 🔥', icon: Flame, color: 'text-energy-red', border: 'border-energy-red/20' },
           { label: 'SEQUÊNCIA VITÓRIAS', val: user.wins, sub: 'VITÓRIAS', icon: Swords, color: 'text-electric-blue', border: 'border-electric-blue/20' },
           { label: 'MELHOR DESEMPENHO', val: user.record, sub: 'RECENTE', icon: TrendingUp, color: 'text-green-400', border: 'border-green-400/20' },
-          { label: 'ÚLTIMA CONQUISTA', val: 'Elite', sub: 'RANK PRO', icon: Medal, color: 'text-purple-evolve', border: 'border-purple-evolve/20' },
+          { label: 'ÚLTIMO RANK', val: getRankInfo(user.xp).rankName, sub: 'PATENTE', icon: Medal, color: 'text-purple-evolve', border: 'border-purple-evolve/20' },
         ].map((item, i) => (
           <div key={i} className={`bg-[#151921] border ${item.border} rounded-2xl p-4 flex flex-col items-center justify-center gap-2 text-center h-32`}>
             <item.icon className={`w-6 h-6 ${item.color}`} />
