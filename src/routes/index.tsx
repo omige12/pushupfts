@@ -167,6 +167,83 @@ const BOTS = [
   },
 ];
 
+const NeonFireWrapper = ({ children, color, intense = false, onClick, className = "" }: { children: React.ReactNode, color: string, intense?: boolean, onClick?: () => void, className?: string }) => {
+  const [isPressed, setIsPressed] = useState(false);
+  
+  const colors: Record<string, { glow: string, particles: string }> = {
+    blue: { glow: "rgba(0, 210, 255, 0.4)", particles: "#00D2FF" },
+    purple: { glow: "rgba(168, 85, 247, 0.4)", particles: "#A855F7" },
+    red: { glow: "rgba(255, 49, 49, 0.4)", particles: "#FF3131" },
+    gold: { glow: "rgba(255, 215, 0, 0.4)", particles: "#FFD700" },
+    green: { glow: "rgba(34, 197, 94, 0.4)", particles: "#22C55E" }
+  };
+
+  const activeColor = colors[color as keyof typeof colors] || colors.blue;
+
+  const handleTouch = () => {
+    setIsPressed(true);
+    setTimeout(() => setIsPressed(false), 250);
+    if (onClick) onClick();
+  };
+
+  return (
+    <motion.div 
+      className={`neon-fire-container ${className}`}
+      onTap={handleTouch}
+      animate={{ scale: isPressed ? 0.96 : 1 }}
+      transition={{ type: "spring", stiffness: 400, damping: 20 }}
+    >
+      <div className="neon-fire-effect">
+        {/* Main Glow */}
+        <div 
+          className="fire-glow" 
+          style={{ 
+            backgroundColor: activeColor.glow,
+            opacity: isPressed ? 0.9 : (intense ? 0.7 : 0.5),
+            filter: `blur(${isPressed ? '16px' : '12px'})`
+          }} 
+        />
+        
+        {/* Animated Flames/Edge */}
+        <div 
+          className="fire-edge" 
+          style={{ 
+            color: activeColor.particles,
+            opacity: isPressed ? 1 : 0.8
+          }} 
+        />
+
+        {/* Floating Particles */}
+        <div className="fire-particles">
+          {[...Array(isPressed ? 8 : 4)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-1 h-1 rounded-full"
+              style={{ 
+                backgroundColor: activeColor.particles,
+                left: `${20 + Math.random() * 60}%`,
+                top: `${80 + Math.random() * 20}%`
+              }}
+              animate={{
+                y: [-20, -60 - Math.random() * 40],
+                x: [0, (Math.random() - 0.5) * 30],
+                opacity: [0, 1, 0],
+                scale: [0, 1.2, 0]
+              }}
+              transition={{
+                duration: 1.5 + Math.random(),
+                repeat: Infinity,
+                delay: Math.random() * 2
+              }}
+            />
+          ))}
+        </div>
+      </div>
+      {children}
+    </motion.div>
+  );
+};
+
 function App() {
   const [view, setView] = useState<View>('onboarding-start');
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
@@ -719,13 +796,17 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </header>
 
       {/* Patent Progress Card */}
-      <div 
-        className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden cursor-pointer active:scale-[0.95] btn-respond-fast transition-all"
+      <NeonFireWrapper 
+        color="gold" 
+        className="mb-4"
         onClick={() => setView('patents-list')}
       >
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]">
+        <div 
+          className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden transition-all"
+        >
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]">
                <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
             </div>
             <div>
@@ -757,17 +838,20 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             </button>
           </div>
         </div>
-      </div>
+      </NeonFireWrapper>
 
       {/* Action Grid */}
       <div className="grid grid-cols-2 gap-4">
-        <div 
-          className="bg-electric-blue/5 border border-electric-blue/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all shadow-[0_0_20px_rgba(59,130,246,0.1)] border-electric-blue/30"
+        <NeonFireWrapper 
+          color="blue"
           onClick={() => setView('multiplayer')}
         >
-          <div className="w-14 h-14 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-4">
-            <Swords className="w-8 h-8 text-electric-blue filter drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
-          </div>
+          <div 
+            className="h-full bg-electric-blue/5 border border-electric-blue/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] transition-all shadow-[0_0_20px_rgba(59,130,246,0.1)] border-electric-blue/30"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-4">
+              <Swords className="w-8 h-8 text-electric-blue filter drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+            </div>
           <div className="text-center space-y-1">
             <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
             <p className="text-[9px] font-medium text-white/40 leading-tight">Entre em uma partida com jogadores online</p>
@@ -775,15 +859,18 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           <div className="mt-4 bg-electric-blue/20 p-2 rounded-full">
             <ArrowLeft className="w-4 h-4 text-electric-blue rotate-180" />
           </div>
-        </div>
+        </NeonFireWrapper>
 
-        <div 
-          className="bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all shadow-[0_0_20px_rgba(139,92,246,0.1)] border-purple-evolve/30"
+        <NeonFireWrapper 
+          color="purple"
           onClick={() => toast.info("Missões em breve!")}
         >
-          <div className="w-14 h-14 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-4">
-            <LayoutDashboard className="w-8 h-8 text-purple-evolve filter drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
-          </div>
+          <div 
+            className="h-full bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] transition-all shadow-[0_0_20px_rgba(139,92,246,0.1)] border-purple-evolve/30"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-4">
+              <LayoutDashboard className="w-8 h-8 text-purple-evolve filter drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
+            </div>
           <div className="text-center space-y-1">
             <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MISSÕES DIÁRIAS</h3>
             <p className="text-[9px] font-medium text-white/40 leading-tight">Complete missões e ganhe recompensas</p>
@@ -791,18 +878,21 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           <div className="mt-4 bg-purple-evolve/20 p-2 rounded-full">
             <ArrowLeft className="w-4 h-4 text-purple-evolve rotate-180" />
           </div>
-        </div>
+        </NeonFireWrapper>
       </div>
 
       {/* Workout Banner */}
-      <div 
-        className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between cursor-pointer active:scale-[0.95] btn-respond-fast transition-all shadow-[0_0_20px_rgba(239,68,68,0.1)] border-energy-red/30"
+      <NeonFireWrapper 
+        color="red"
         onClick={() => setView('treino')}
       >
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-energy-red/10 flex items-center justify-center">
-            <Dumbbell className="w-8 h-8 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-          </div>
+        <div 
+          className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between transition-all shadow-[0_0_20px_rgba(239,68,68,0.1)] border-energy-red/30"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-energy-red/10 flex items-center justify-center">
+              <Dumbbell className="w-8 h-8 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+            </div>
           <div>
             <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
             <p className="text-[10px] font-medium text-white/40 uppercase tracking-widest mt-1">Aperfeiçoe suas habilidades</p>
@@ -811,7 +901,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         <div className="bg-energy-red/20 p-2.5 rounded-full">
           <ArrowLeft className="w-5 h-5 text-energy-red rotate-180" />
         </div>
-      </div>
+      </NeonFireWrapper>
 
       {/* Bottom Stats Footer - Adjusted */}
       <div className="grid grid-cols-4 gap-2 pt-1 border-t border-white/5 -mt-2 pb-2">
