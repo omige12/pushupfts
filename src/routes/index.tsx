@@ -1656,6 +1656,24 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         <div className="grid grid-cols-1 gap-4 w-full pt-4">
           <Button 
             variant="ghost" 
+            aria-label="Editar Perfil"
+            className="premium-glow-gold bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-gold/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-gold"
+            onClick={() => setEditing(true)}
+          >
+            <div className="flex items-center gap-5">
+              <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center border border-gold/20">
+                <Pencil className="w-6 h-6 text-gold" />
+              </div>
+              <div className="text-left">
+                <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">EDITAR PERFIL</p>
+                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">ALTERAR SEUS DADOS</p>
+              </div>
+            </div>
+            <ChevronRight className="w-6 h-6 text-white/20" />
+          </Button>
+
+          <Button 
+            variant="ghost" 
             aria-label="Ver Histórico de Partidas"
             className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-blue-500"
             onClick={() => setView('history')}
