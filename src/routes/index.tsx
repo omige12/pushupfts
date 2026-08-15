@@ -2382,7 +2382,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
   const [activeCat, setActiveCat] = useState('flexoes');
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-10">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-20 overflow-y-auto max-h-[calc(100vh-80px)]">
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">CONQUISTAS</h2>
