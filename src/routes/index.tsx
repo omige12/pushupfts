@@ -1395,22 +1395,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         <div className="glass-panel p-6 space-y-6 border-gold/20 relative overflow-hidden">
           <div className="flex flex-col items-center gap-4 mb-2">
-            <div className="relative group cursor-pointer" onClick={() => {
-              const input = document.createElement('input');
-              input.type = 'file';
-              input.accept = 'image/*';
-              input.onchange = (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = (re) => {
-                    setFormData({ ...formData, avatar: re.target?.result as string });
-                  };
-                  reader.readAsDataURL(file);
-                }
-              };
-              input.click();
-            }}>
+            <div className="relative group cursor-default">
 
               <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold flex items-center justify-center overflow-hidden shadow-2xl">
                 {formData.avatar ? (
@@ -1419,14 +1404,13 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   <UserIcon className="w-16 h-16 text-muted-foreground" />
                 )}
               </div>
-              <div className="absolute inset-0 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity backdrop-blur-sm">
+              <div className="absolute inset-0 bg-black/60 rounded-full opacity-0 flex items-center justify-center transition-opacity backdrop-blur-sm pointer-events-none">
                 <div className="flex flex-col items-center gap-1">
-                  <Camera className="w-6 h-6 text-white" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-widest">Alterar Foto</span>
+                  <UserIcon className="w-6 h-6 text-white/40" />
                 </div>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 invisible h-0 overflow-hidden">
                <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-[10px] font-black uppercase h-8 px-4" onClick={() => {
                   const input = document.createElement('input');
                   input.type = 'file';
