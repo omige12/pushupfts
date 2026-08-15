@@ -3947,8 +3947,8 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
 
       toast.success(`Parabéns! Você resgatou: ${reward.label}`);
       
-      // Update login mission
-      await supabase.rpc('increment_mission_progress', { p_user_id: session.user.id, p_type: 'login', p_amount: 1 } as any);
+      // Trigger daily login mission and update last_login_at
+      await supabase.rpc('track_daily_login', { user_id_param: session.user.id } as any);
 
     } catch (err) {
       console.error(err);
