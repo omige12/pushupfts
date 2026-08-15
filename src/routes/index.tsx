@@ -2395,9 +2395,11 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
           <div className="flex gap-3">
             <input 
               className="flex-1 bg-[#0B0E14] border border-white/10 rounded-2xl px-5 h-14 font-mono text-sm text-white focus:outline-none focus:border-electric-blue transition-all"
-              placeholder="ID do jogador"
+              placeholder="Digite o ID numérico"
+              type="tel"
+              pattern="[0-9]*"
               value={searchId}
-              onChange={(e) => setSearchId(e.target.value.toUpperCase())}
+              onChange={(e) => setSearchId(e.target.value.replace(/\D/g, ''))}
             />
             <Button 
               onClick={handleSearch} 
