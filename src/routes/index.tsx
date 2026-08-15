@@ -1313,71 +1313,50 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
   const [isSaving, setIsSaving] = useState(false);
   
   const handleSave = async () => {
+    // Validação estrita
+    const numericAge = parseInt(String(formData.age), 10);
+    const numericWeight = parseFloat(String(formData.weight));
+    const numericHeight = parseInt(String(formData.height), 10);
+
     if (!formData.name.trim()) {
       toast.error("⚠️ O nome do atleta não pode estar vazio.");
+      return;
+    }
+    if (isNaN(numericAge) || isNaN(numericWeight) || isNaN(numericHeight)) {
+      toast.error("⚠️ Verifique os valores numéricos de idade, peso e altura.");
       return;
     }
 
     setIsSaving(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) {
-        toast.error("⚠️ Sessão não encontrada. Faça login novamente.");
-        setIsSaving(false);
-        return;
-      }
+      if (!session?.user) throw new Error("Sessão expirada.");
 
-      // Prepare data for Supabase
-      const updateData: any = {
-        name: (formData.name || '').toUpperCase().trim(),
-        age: parseInt(String(formData.age)) || 0,
-        weight: parseFloat(String(formData.weight)) || 0,
-        height: parseInt(String(formData.height)) || 0,
+      const updateData = {
+        name: formData.name.trim().toUpperCase(),
+        age: numericAge,
+        weight: numericWeight,
+        height: numericHeight,
         avatar_url: formData.avatar,
-        goal: (['Ganhar força', 'Perder peso', 'Condicionamento', 'Massa muscular', 'Melhorar minhas flexões', 'Bater recordes', 'Vencer outras pessoas', 'Chegar ao topo do ranking'].includes(formData.goal) ? formData.goal : 'Ganhar força'),
+        goal: formData.goal,
         updated_at: new Date().toISOString()
       };
-
-      console.log("Updating profile for user:", session.user.id, updateData);
 
       const { error } = await supabase
         .from('profiles')
         .update(updateData)
         .eq('id', session.user.id);
 
-      if (error) {
-        console.error("Supabase update error:", error);
-        throw error;
-      }
+      if (error) throw error;
 
-      // Update global state
-      setUser((prev: any) => ({
-        ...prev,
-        name: updateData.name,
-        age: updateData.age,
-        weight: updateData.weight,
-        height: updateData.height,
-        goal: updateData.goal,
-        avatar: updateData.avatar_url
-      }));
-
-      setEditing(false);
-      // Ensure we navigate to profile view if not already there
-      setView('profile');
+      setUser((prev: any) => ({ ...prev, ...updateData, avatar: updateData.avatar_url }));
       
-      // Update local state and trigger a refresh of the user data if needed
-      if (typeof window !== 'undefined') {
-        window.dispatchEvent(new Event('storage'));
-      }
-
-      toast.success("✅ Perfil atualizado com sucesso!", {
-        className: "font-black italic text-xs uppercase tracking-widest bg-card border-green-500/50 text-white shadow-[0_0_20px_rgba(34,197,94,0.2)]"
-      });
+      setEditing(false);
+      setView('profile');
+      toast.success("✅ Perfil atualizado!");
     } catch (err: any) {
-      console.error("Error updating profile:", err);
-      toast.error("❌ Erro ao atualizar perfil", {
-        description: err.message || "Verifique sua conexão e tente novamente."
-      });
+      console.error("Erro ao salvar:", err);
+      toast.error("❌ Erro ao salvar", { description: err.message || "Tente novamente." });
     } finally {
       setIsSaving(false);
     }
@@ -1385,141 +1364,150 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
   if (editing) {
     return (
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="p-6 space-y-6 pb-10">
-        <div className="flex items-center gap-4 mb-6">
-          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => setEditing(false)}>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        exit={{ opacity: 0, y: 20 }}
+        className="p-6 space-y-6 pb-24 min-h-screen overflow-y-auto"
+      >
+        <div className="flex items-center gap-4 mb-2">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" 
+            onClick={() => setEditing(false)}
+          >
             <ArrowLeft className="w-5 h-5 text-white" />
           </Button>
-          <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">EDITAR DADOS</h2>
+          <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">EDITAR PERFIL</h2>
         </div>
 
-        <div className="glass-panel p-6 space-y-6 border-gold/20 relative overflow-hidden">
-          <div className="flex flex-col items-center gap-4 mb-2">
-            <div className="relative group cursor-default">
-
-              <div className="w-32 h-32 bg-secondary rounded-full border-4 border-gold flex items-center justify-center overflow-hidden shadow-2xl">
+        <div className="glass-panel p-6 space-y-8 border-electric-blue/20 relative">
+          <div className="flex flex-col items-center gap-6">
+            <div className="relative group">
+              <div className="w-32 h-32 bg-[#0F131A] rounded-full border-4 border-electric-blue p-1 shadow-[0_0_20px_rgba(0,210,255,0.2)] overflow-hidden">
                 {formData.avatar ? (
                   <img src={formData.avatar} className="w-full h-full object-cover" alt="Preview" />
                 ) : (
-                  <UserIcon className="w-16 h-16 text-muted-foreground" />
+                  <div className="w-full h-full bg-white/5 flex items-center justify-center">
+                    <UserIcon className="w-16 h-16 text-white/20" />
+                  </div>
                 )}
               </div>
-              <div className="absolute inset-0 bg-black/60 rounded-full opacity-0 flex items-center justify-center transition-opacity backdrop-blur-sm pointer-events-none">
-                <div className="flex flex-col items-center gap-1">
-                  <UserIcon className="w-6 h-6 text-white/40" />
-                </div>
+              
+              <div className="absolute -bottom-2 -right-2 flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  className="w-10 h-10 rounded-full bg-primary border-primary shadow-lg hover:bg-primary/90"
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = (e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0];
+                      if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (re) => setFormData({ ...formData, avatar: re.target?.result as string });
+                        reader.readAsDataURL(file);
+                      }
+                    };
+                    input.click();
+                  }}
+                >
+                  <ImageIcon className="w-5 h-5 text-white" />
+                </Button>
               </div>
             </div>
-            <div className="flex gap-2 invisible h-0 overflow-hidden">
-               <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-[10px] font-black uppercase h-8 px-4" onClick={() => {
-                  const input = document.createElement('input');
-                  input.type = 'file';
-                  input.accept = 'image/*';
-                  input.capture = 'user';
-                  input.onchange = (e) => {
-                    const file = (e.target as HTMLInputElement).files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (re) => {
-                        setFormData({ ...formData, avatar: re.target?.result as string });
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  };
-                  input.click();
-               }}>
-                 <Camera className="w-3 h-3 mr-1" /> Câmera
-               </Button>
-               <Button variant="outline" size="sm" className="bg-white/5 border-white/10 text-[10px] font-black uppercase h-8 px-4" onClick={() => {
-                  const input = document.createElement('input');
-                  input.type = 'file';
-                  input.accept = 'image/*';
-                  input.onchange = (e) => {
-                    const file = (e.target as HTMLInputElement).files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (re) => {
-                        setFormData({ ...formData, avatar: re.target?.result as string });
-                      };
-                      reader.readAsDataURL(file);
-                    }
-                  };
-                  input.click();
-               }}>
-                 <ImageIcon className="w-3 h-3 mr-1" /> Galeria
-               </Button>
-            </div>
+            
+            <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">CLIQUE NO ÍCONE PARA ALTERAR FOTO</p>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-5">
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nome de Atleta</label>
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">NOME DE ATLETA</label>
               <input 
-                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-lg uppercase tracking-tight"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-electric-blue transition-all text-lg uppercase"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value.toUpperCase() })}
-                placeholder="EX: GUERREIRO"
+                placeholder="EX: GUERREIRO ALPHA"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Idade</label>
+                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest text-center block">IDADE</label>
                 <input 
                   type="number"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
-                  value={formData.age}
+                  inputMode="numeric"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-electric-blue text-center text-lg"
+                  value={formData.age || ''}
                   onChange={(e) => setFormData({ ...formData, age: e.target.value === '' ? 0 : parseInt(e.target.value) })}
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Peso (kg)</label>
+                <label className="text-[10px] font-black text-white/40 uppercase tracking-widest text-center block">PESO (KG)</label>
                 <input 
                   type="number"
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
-                  value={formData.weight}
-                  onChange={(e) => setFormData({ ...formData, weight: e.target.value === '' ? 0 : parseInt(e.target.value) })}
+                  inputMode="decimal"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-electric-blue text-center text-lg"
+                  value={formData.weight || ''}
+                  onChange={(e) => setFormData({ ...formData, weight: e.target.value === '' ? 0 : parseFloat(e.target.value) })}
                 />
               </div>
             </div>
             
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1 text-center block">Altura (cm)</label>
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">ALTURA (CM)</label>
               <input 
                 type="number"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center"
-                value={formData.height}
+                inputMode="numeric"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black italic text-white focus:outline-none focus:border-electric-blue text-center text-lg"
+                value={formData.height || ''}
                 onChange={(e) => setFormData({ ...formData, height: e.target.value === '' ? 0 : parseInt(e.target.value) })}
               />
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Objetivo Fitness</label>
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-1">OBJETIVO FITNESS</label>
               <div className="relative">
                 <select 
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-primary appearance-none h-[58px] italic"
+                  className="w-full bg-[#0F131A] border border-white/10 rounded-2xl p-4 font-black text-white focus:outline-none focus:border-electric-blue appearance-none italic"
                   value={formData.goal}
                   onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
                 >
-                  <option value="Ganhar força" className="bg-[#1A1F2C] text-white">GANHAR FORÇA</option>
-                  <option value="Perder peso" className="bg-[#1A1F2C] text-white">PERDER PESO</option>
-                  <option value="Condicionamento" className="bg-[#1A1F2C] text-white">CONDICIONAMENTO</option>
-                  <option value="Massa muscular" className="bg-[#1A1F2C] text-white">MASSA MUSCULAR</option>
-                  <option value="Melhorar minhas flexões" className="bg-[#1A1F2C] text-white">MELHORAR FLEXÕES</option>
-                  <option value="Bater recordes" className="bg-[#1A1F2C] text-white">BATER RECORDES</option>
-                  <option value="Vencer outras pessoas" className="bg-[#1A1F2C] text-white">VENCER PESSOAS</option>
-                  <option value="Chegar ao topo do ranking" className="bg-[#1A1F2C] text-white">TOPO DO RANKING</option>
+                  <option value="Ganhar força">GANHAR FORÇA</option>
+                  <option value="Perder peso">PERDER PESO</option>
+                  <option value="Condicionamento">CONDICIONAMENTO</option>
+                  <option value="Massa muscular">MASSA MUSCULAR</option>
+                  <option value="Melhorar minhas flexões">MELHORAR FLEXÕES</option>
+                  <option value="Bater recordes">BATER RECORDES</option>
+                  <option value="Vencer outras pessoas">VENCER PESSOAS</option>
+                  <option value="Chegar ao topo do ranking">TOPO DO RANKING</option>
                 </select>
                 <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 rotate-90 pointer-events-none" />
               </div>
             </div>
           </div>
 
-          <Button onClick={handleSave} disabled={isSaving} className="game-button bg-primary w-full py-8 mt-4 text-xl italic uppercase tracking-tighter shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all">
-            {isSaving ? <Loader2 className="w-6 h-6 animate-spin" /> : "Salvar"}
-          </Button>
+          <div className="flex flex-col gap-3 pt-4">
+            <Button 
+              onClick={handleSave} 
+              disabled={isSaving} 
+              className="game-button bg-primary w-full py-7 text-xl italic uppercase tracking-tighter shadow-[0_6px_0_0_rgba(29,78,216,0.5)] active:translate-y-[6px] active:shadow-none transition-all"
+            >
+              {isSaving ? <Loader2 className="w-6 h-6 animate-spin" /> : "SALVAR ALTERAÇÕES"}
+            </Button>
+            
+            <Button 
+              variant="ghost" 
+              onClick={() => setEditing(false)}
+              className="w-full text-white/30 uppercase text-[10px] font-black tracking-widest hover:text-white"
+            >
+              CANCELAR
+            </Button>
+          </div>
         </div>
-
       </motion.div>
     );
   }
