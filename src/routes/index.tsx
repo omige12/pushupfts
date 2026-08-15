@@ -3959,7 +3959,9 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
     if (!rewardData?.last_claimed_at) return false;
     const lastClaimed = new Date(rewardData.last_claimed_at);
     const today = new Date();
-    return lastClaimed.toDateString() === today.toDateString();
+    return lastClaimed.getFullYear() === today.getFullYear() && 
+           lastClaimed.getMonth() === today.getMonth() && 
+           lastClaimed.getDate() === today.getDate();
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
