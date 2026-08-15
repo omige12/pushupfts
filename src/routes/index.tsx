@@ -1552,22 +1552,24 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       <div className="flex flex-col items-center gap-6 relative py-4">
         {/* Avatar and Info Header */}
         <div className="relative group">
-          <div className="w-36 h-36 bg-secondary rounded-full border-[3px] border-gold p-1 shadow-[0_0_30px_rgba(234,179,8,0.2)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
-            <div className="w-full h-full rounded-full overflow-hidden bg-muted flex items-center justify-center">
+          <div className="w-36 h-36 bg-[#0F131A] rounded-full border-[3px] border-electric-blue p-1 shadow-[0_0_25px_rgba(0,210,255,0.3),inset_0_0_15px_rgba(0,210,255,0.1)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
+            <div className="w-full h-full rounded-full overflow-hidden bg-muted flex items-center justify-center relative">
               {stats.avatar ? (
                 <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
               ) : (
                 <UserIcon className="w-16 h-16 text-muted-foreground" />
               )}
+              {/* Metallic Ring Detail */}
+              <div className="absolute inset-0 rounded-full border-[6px] border-white/5 pointer-events-none shadow-[inset_0_2px_4px_rgba(255,255,255,0.1)]" />
             </div>
             <div 
-              className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+              className="absolute inset-0 bg-electric-blue/20 backdrop-blur-[2px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
               onClick={() => setEditing(true)}
             >
-              <Camera className="w-8 h-8 text-white" />
+              <Camera className="w-8 h-8 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
             </div>
           </div>
-          <div className="absolute -bottom-1 -right-1 bg-gold p-2 rounded-full border-[3px] border-[#05070A] shadow-lg">
+          <div className="absolute -bottom-1 -right-1 bg-electric-blue p-2 rounded-full border-[3px] border-[#05070A] shadow-[0_0_15px_rgba(0,210,255,0.5)]">
             <Star className="w-5 h-5 text-[#05070A]" />
           </div>
         </div>
@@ -1603,57 +1605,57 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
         {/* Progress Card */}
         <div 
-          className="w-full glass-panel p-6 space-y-4 cursor-pointer active:scale-[0.95] btn-respond-fast transition-all premium-glow-gold"
+          className="w-full bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer active:scale-[0.98] btn-respond-fast transition-all border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between items-end">
             <div className="flex flex-col">
               <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em] mb-1">EVOLUÇÃO</span>
-              <span className="text-lg font-black italic text-white leading-none uppercase">Nível {getRankInfo(stats?.xp || 0).level}</span>
+              <span className="text-lg font-black italic text-white leading-none uppercase neon-text-purple">Nível {getRankInfo(stats?.xp || 0).level}</span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black italic text-gold leading-none">{getRankInfo(stats?.xp || 0).xpInLevel}</span>
+              <span className="text-lg font-black italic text-purple-evolve leading-none drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]">{getRankInfo(stats?.xp || 0).xpInLevel}</span>
               <span className="text-[10px] font-black text-white/20 uppercase tracking-widest ml-1">/ {XP_PER_DIVISION} XP</span>
             </div>
           </div>
           
-          <div className="relative h-4 w-full bg-white/5 rounded-full overflow-hidden">
+          <div className="relative h-4 w-full bg-black/40 rounded-full overflow-hidden border border-white/5 p-0.5">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${getRankInfo(stats?.xp || 0).progress}%` }}
-              className="absolute top-0 left-0 h-full bg-gradient-to-r from-gold to-yellow-600 rounded-full"
+              className="absolute top-0.5 left-0.5 bottom-0.5 bg-gradient-to-r from-purple-evolve to-purple-600 rounded-full shadow-[0_0_10px_rgba(168,85,247,0.5)]"
             />
           </div>
           
           <div className="flex justify-center">
-            <span className="text-[8px] font-black text-gold/60 uppercase tracking-[0.3em] animate-pulse">TOQUE PARA VER PATENTES</span>
+            <span className="text-[8px] font-black text-purple-evolve/60 uppercase tracking-[0.3em] animate-pulse">TOQUE PARA VER PATENTES</span>
           </div>
         </div>
 
         {/* Stats Grid - Premium Neon Visual */}
         <div className="grid grid-cols-3 gap-3 w-full">
-          <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-green-500/10 shadow-[0_0_15px_rgba(34,197,94,0.05)] hover:bg-green-500/5 transition-all group">
-            <div className="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center mx-auto mb-3 border border-green-500/20">
-              <Trophy className="w-4 h-4 text-green-500" />
+          <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-electric-blue/30 transition-all group">
+            <div className="w-8 h-8 rounded-xl bg-electric-blue/10 flex items-center justify-center mx-auto mb-3 border border-electric-blue/20">
+              <Trophy className="w-4 h-4 text-electric-blue" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">VITÓRIAS</p>
-            <p className="text-2xl font-black text-white italic">{stats.wins ?? 0}</p>
+            <p className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(0,210,255,0.3)]">{stats.wins ?? 0}</p>
           </div>
           
-          <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.05)] hover:bg-blue-500/5 transition-all group">
-            <div className="w-8 h-8 rounded-xl bg-blue-500/10 flex items-center justify-center mx-auto mb-3 border border-blue-500/20">
-              <Target className="w-4 h-4 text-blue-500" />
+          <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-electric-blue/30 transition-all group">
+            <div className="w-8 h-8 rounded-xl bg-electric-blue/10 flex items-center justify-center mx-auto mb-3 border border-electric-blue/20">
+              <Target className="w-4 h-4 text-electric-blue" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">RECORDE</p>
-            <p className="text-2xl font-black text-white italic">{stats.record ?? 0}</p>
+            <p className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(0,210,255,0.3)]">{stats.record ?? 0}</p>
           </div>
           
-          <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.05)] hover:bg-purple-500/5 transition-all group">
-            <div className="w-8 h-8 rounded-xl bg-purple-500/10 flex items-center justify-center mx-auto mb-3 border border-purple-500/20">
-              <Zap className="w-4 h-4 text-purple-500" />
+          <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-purple-evolve/30 transition-all group">
+            <div className="w-8 h-8 rounded-xl bg-purple-evolve/10 flex items-center justify-center mx-auto mb-3 border border-purple-evolve/20">
+              <Zap className="w-4 h-4 text-purple-evolve" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">TOTAL</p>
-            <p className="text-2xl font-black text-white italic">{stats.totalPushups ?? 0}</p>
+            <p className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">{stats.totalPushups ?? 0}</p>
           </div>
         </div>
 
@@ -1662,15 +1664,15 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <Button 
             variant="ghost" 
             aria-label="Editar Perfil"
-            className="premium-glow-gold bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-gold/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-gold"
+            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-electric-blue/20 hover:bg-electric-blue/5 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
             onClick={() => setEditing(true)}
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center border border-gold/20">
-                <Pencil className="w-6 h-6 text-gold" />
+              <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center border border-electric-blue/20 shadow-[0_0_15px_rgba(0,210,255,0.2)]">
+                <Pencil className="w-6 h-6 text-electric-blue" />
               </div>
               <div className="text-left">
-                <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">EDITAR PERFIL</p>
+                <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">EDITAR PERFIL</p>
                 <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">ALTERAR SEUS DADOS</p>
               </div>
             </div>
@@ -1680,12 +1682,12 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
-            className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-white/5 hover:border-white/10 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
             onClick={() => setView('history')}
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                <LayoutDashboard className="w-6 h-6 text-blue-500" />
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                <LayoutDashboard className="w-6 h-6 text-white/40" />
               </div>
               <div className="text-left">
                 <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">HISTÓRICO</p>
@@ -1700,12 +1702,12 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <Button 
             variant="ghost" 
             aria-label="Acessar Suporte e Atendimento"
-            className="premium-glow-green bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-green-500/5 transition-all active:scale-[0.95] btn-respond-fast focus-visible:ring-2 focus-visible:ring-green-500"
+            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-white/5 hover:border-white/10 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
             onClick={() => setView('support')}
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center border border-green-500/20">
-                <Shield className="w-6 h-6 text-green-500" />
+              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                <Shield className="w-6 h-6 text-white/40" />
               </div>
               <div className="text-left">
                 <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">SUPORTE</p>

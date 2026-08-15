@@ -165,7 +165,7 @@
 }
 
 @utility btn-respond-fast {
-  @apply transition-all duration-75 active:scale-95;
+  @apply transition-all duration-100 active:scale-[0.97] active:brightness-125;
 }
 
 @utility neon-text-blue {
