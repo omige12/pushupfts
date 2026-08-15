@@ -4177,7 +4177,7 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
                   ) : isCompleted ? (
                     <Button 
                       size="sm" 
-                      className="h-8 bg-gold text-black font-black italic text-[10px] rounded-xl shadow-[0_0_15px_rgba(255,215,0,0.4)] animate-bounce"
+                      className="h-8 bg-gold text-black font-black italic text-[10px] rounded-xl shadow-[0_0_15px_rgba(255,215,0,0.4)] animate-bounce active:scale-95 transition-all"
                       onClick={() => claimMission(mission)}
                       disabled={!!claimingId}
                     >
