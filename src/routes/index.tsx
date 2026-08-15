@@ -676,7 +676,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         <div className="flex items-center gap-3">
           <div 
             className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
-            onClick={() => setView('edit-profile')}
+            onClick={() => setView('profile')}
           >
             <div className="w-full h-full rounded-full overflow-hidden">
               {stats.avatar ? (
