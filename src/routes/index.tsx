@@ -1582,13 +1582,13 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
             </Badge>
           </div>
 
-          {/* Physical info capsule */}
-          <div className="inline-flex items-center gap-3 bg-white/5 backdrop-blur-md px-5 py-2 rounded-full border border-white/10 mt-2">
-            <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">{stats?.weight || 0}KG</span>
+          {/* Physical info capsule - Neon design */}
+          <div className="inline-flex items-center gap-3 bg-[#0F131A] backdrop-blur-md px-5 py-2 rounded-full border border-electric-blue/30 mt-2 shadow-[0_0_15px_rgba(0,210,255,0.1)]">
+            <span className="text-[10px] font-black text-electric-blue uppercase tracking-widest">{stats?.weight || 0}KG</span>
             <div className="w-1 h-1 rounded-full bg-white/20" />
-            <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">{stats?.age || 0} ANOS</span>
+            <span className="text-[10px] font-black text-purple-evolve uppercase tracking-widest">{stats?.age || 0} ANOS</span>
             <div className="w-1 h-1 rounded-full bg-white/20" />
-            <span className="text-[10px] font-black text-white/80 uppercase tracking-widest">{stats?.height || 0}CM</span>
+            <span className="text-[10px] font-black text-gold uppercase tracking-widest">{stats?.height || 0}CM</span>
           </div>
         </div>
 
