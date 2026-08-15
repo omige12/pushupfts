@@ -4037,7 +4037,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
               }`}
             >
               {claiming ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : null}
-              {claimedToday ? 'RESGATADO' : 'RESGATAR RECOMPENSA'}
+              {claimedToday ? 'RESGATADO HOJE ✓' : 'RESGATAR RECOMPENSA'}
             </Button>
           </NeonFireWrapper>
         </div>
