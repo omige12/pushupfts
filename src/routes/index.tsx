@@ -2060,7 +2060,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   );
 }
 
-function FullHistory({ setView, user }: { setView: (v: View) => void, user: any }) {
+function FullHistory({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6 pb-10">
       <div className="flex items-center gap-4 mb-6">
