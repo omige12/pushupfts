@@ -608,61 +608,50 @@ function App() {
       </AnimatePresence>
 
       {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready'].includes(view) && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/5 px-6 pb-8 pt-4 flex justify-between items-center z-50">
-          <Button 
-            variant="ghost" 
-            aria-label="Ir para o Início"
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'dashboard' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('dashboard')}
-          >
-            <Home className={`w-7 h-7 transition-all ${view === 'dashboard' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Início</span>
-            {view === 'dashboard' && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
-          </Button>
+        <nav className="fixed bottom-0 left-0 right-0 bg-[#0B0E14]/95 backdrop-blur-2xl border-t border-white/10 px-4 pb-8 pt-4 flex justify-around items-center z-50">
+          {[
+            { id: 'dashboard', label: 'Início', icon: Home, color: 'blue' },
+            { id: 'achievements', label: 'Conquistas', icon: Award, color: 'purple' },
+            { id: 'multiplayer', label: 'Batalha', icon: Swords, color: 'red', aliases: ['select-bot', 'select-duration', 'matchmaking', 'challenge'] },
+            { id: 'ranking', label: 'Ranking', icon: Trophy, color: 'blue' },
+            { id: 'profile', label: 'Perfil', icon: UserCircle, color: 'orange', aliases: ['history', 'support', 'settings', 'edit-profile'] }
+          ].map((item) => {
+            const isActive = view === item.id || item.aliases?.includes(view);
+            const colorClass = item.color === 'blue' ? 'text-electric-blue' : 
+                               item.color === 'purple' ? 'text-purple-evolve' :
+                               item.color === 'red' ? 'text-energy-red' : 'text-gold';
+            
+            const glowClass = item.color === 'blue' ? 'bg-electric-blue/20' : 
+                              item.color === 'purple' ? 'bg-purple-evolve/20' :
+                              item.color === 'red' ? 'bg-energy-red/20' : 'bg-gold/20';
 
-          <Button 
-            variant="ghost" 
-            aria-label="Ir para Conquistas"
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'achievements' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('achievements')}
-          >
-            <Award className={`w-7 h-7 transition-all ${view === 'achievements' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Conquistas</span>
-            {view === 'achievements' && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            aria-label="Ir para Batalha"
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('multiplayer')}
-          >
-            <Swords className={`w-7 h-7 transition-all ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Batalha</span>
-            {(view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge') && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            aria-label="Ir para o Ranking"
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'ranking' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('ranking')}
-          >
-            <Trophy className={`w-7 h-7 transition-all ${view === 'ranking' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Ranking</span>
-            {view === 'ranking' && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            aria-label="Ir para o Perfil"
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('profile')}
-          >
-            <UserCircle className={`w-7 h-7 transition-all ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Perfil</span>
-            {(view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile') && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
-          </Button>
+            return (
+              <Button 
+                key={item.id}
+                variant="ghost" 
+                aria-label={`Ir para ${item.label}`}
+                className={`flex flex-col items-center gap-1 h-auto py-2 px-3 transition-all duration-75 active:scale-90 relative ${isActive ? colorClass : 'text-white/30'}`}
+                onClick={() => setView(item.id as View)}
+              >
+                <item.icon className={`w-6 h-6 transition-all duration-200 ${isActive ? `drop-shadow-[0_0_10px_rgba(var(--${item.color}-rgb),0.5)] fill-current/10` : ''}`} />
+                <span className={`text-[8px] font-black uppercase tracking-[0.15em] leading-none mt-1`}>{item.label}</span>
+                {isActive && (
+                  <motion.div 
+                    layoutId="nav-indicator"
+                    className={`absolute -bottom-1 w-1 h-1 rounded-full ${glowClass} shadow-[0_0_10px_currentColor]`}
+                  />
+                )}
+                {isActive && (
+                  <motion.div 
+                    layoutId="nav-glow" 
+                    className={`absolute inset-0 ${glowClass} blur-xl rounded-full -z-10`} 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.4 }}
+                  />
+                )}
+              </Button>
+            );
+          })}
         </nav>
       )}
     </div>
@@ -821,37 +810,37 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
       {/* Bottom Stats Footer */}
       {/* Bottom Stats Footer - Recreating WA0087.jpg */}
-      <div className="grid grid-cols-4 gap-4 pt-6 border-t border-white/5 mt-4">
-        <div className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
-            <Trophy className="w-5 h-5 text-gold" />
+      <div className="grid grid-cols-4 gap-2 pt-6 border-t border-white/5 mt-4">
+        <div className="flex flex-col items-center text-center">
+          <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-2 border border-gold/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]">
+            <Trophy className="w-6 h-6 text-gold neon-text-gold" />
           </div>
-          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">VITÓRIAS</span>
-          <span className="text-xl font-black text-white italic mt-1">{stats.wins || 0}</span>
+          <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">VITÓRIAS</span>
+          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.wins}</span>
         </div>
         
-        <div className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
-            <Target className="w-5 h-5 text-electric-blue" />
+        <div className="flex flex-col items-center text-center">
+          <div className="w-12 h-12 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-2 border border-electric-blue/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+            <Target className="w-6 h-6 text-electric-blue neon-text-blue" />
           </div>
-          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">RECORDE</span>
-          <span className="text-xl font-black text-white italic mt-1">{stats.record || 0}</span>
+          <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">RECORDE</span>
+          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.record}</span>
         </div>
         
-        <div className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
-            <Flame className="w-5 h-5 text-energy-red" />
+        <div className="flex flex-col items-center text-center">
+          <div className="w-12 h-12 rounded-2xl bg-energy-red/10 flex items-center justify-center mb-2 border border-energy-red/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+            <Flame className="w-6 h-6 text-energy-red neon-text-red" />
           </div>
-          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">OFENSIVA</span>
-          <span className="text-xl font-black text-white italic mt-1">{stats.streak || 0}</span>
+          <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">OFENSIVA</span>
+          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.streak}</span>
         </div>
         
-        <div className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center mb-2">
-            <Zap className="w-5 h-5 text-purple-evolve" />
+        <div className="flex flex-col items-center text-center">
+          <div className="w-12 h-12 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-2 border border-purple-evolve/20 shadow-[0_0_15px_rgba(139,92,246,0.1)]">
+            <Zap className="w-6 h-6 text-purple-evolve neon-text-purple" />
           </div>
-          <span className="text-[9px] font-black text-white/40 uppercase tracking-widest leading-none">TOTAL</span>
-          <span className="text-xl font-black text-white italic mt-1">{stats.totalPushups || 0}</span>
+          <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">TOTAL</span>
+          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.totalPushups}</span>
         </div>
       </div>
     </motion.div>
@@ -2143,9 +2132,10 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking }: { setVi
             />
             <Button 
               onClick={handleSearch} 
-              className="game-button bg-electric-blue h-14 px-6 italic text-sm font-black shadow-[0_4px_0_0_rgba(29,78,216,1)] active:shadow-none active:translate-y-1"
+              className="premium-challenge-btn h-14 px-8 flex items-center justify-center gap-3"
             >
-              <Swords className="w-4 h-4 mr-2" /> DESAFIAR
+              <Swords className="w-5 h-5 neon-text-blue" />
+              <span className="text-sm">DESAFIAR</span>
             </Button>
           </div>
         </div>
