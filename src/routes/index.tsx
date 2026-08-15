@@ -1352,138 +1352,176 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete, isTraining]);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-[#0A0F1E] flex flex-col overflow-hidden">
-      {/* HUD Superior — Mobile Optimized */}
-      <div className="relative pt-6 px-4 pb-4 bg-gradient-to-b from-black/90 to-transparent z-20">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden">
+      {/* HUD Superior — Mobile Optimized Premium HUD */}
+      <div className="absolute top-0 left-0 right-0 z-30 p-4 pt-6 bg-gradient-to-b from-black/80 to-transparent">
         <div className="max-w-md mx-auto relative">
-          {/* Back Button */}
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="absolute -top-1 -left-1 rounded-xl bg-white/5 active:scale-90 border border-white/10 z-30" 
-            onClick={onExit}
-          >
-            <ArrowLeft className="w-5 h-5 text-white" />
-          </Button>
+          {/* Header Title */}
+          <div className="flex justify-center mb-6">
+            <span className="text-[10px] font-black text-gold uppercase tracking-[0.4em] italic drop-shadow-md">RANKED MATCH</span>
+          </div>
 
-          {/* Side-by-side Profiles */}
-          <div className="flex justify-between items-center px-6 pt-2">
+          {/* Profiles and Timer Container */}
+          <div className="grid grid-cols-3 items-center gap-2">
+            {/* User Profile */}
             <div className="flex flex-col items-center">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-blue-600 p-0.5 shadow-lg border border-white/20">
-                <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-900 flex items-center justify-center">
-                  {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-6 h-6 text-primary" />}
+              <div className="relative">
+                <div className="w-16 h-16 clip-path-hexagon bg-electric-blue/30 p-0.5 shadow-[0_0_20px_rgba(0,210,255,0.3)] border border-electric-blue/40">
+                  <div className="w-full h-full clip-path-hexagon overflow-hidden bg-slate-900 flex items-center justify-center">
+                    {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-7 h-7 text-electric-blue" />}
+                  </div>
+                </div>
+                {/* Rank Badge */}
+                <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-black/60 backdrop-blur-md rounded-lg border border-white/10 flex items-center justify-center text-[10px] shadow-lg">
+                  {getRankInfo(user.xp || 0).emoji}
                 </div>
               </div>
-              <span className="text-[9px] font-black italic text-white uppercase mt-1 tracking-tighter truncate max-w-[70px]">{user.name}</span>
+              <div className="mt-2 text-center">
+                <p className="text-[10px] font-black italic text-white uppercase tracking-tighter truncate max-w-[80px]">Você</p>
+                <p className="text-[8px] font-bold text-white/40 uppercase tracking-tighter">{user.xp || 0} ELO</p>
+              </div>
             </div>
 
-            <div className="flex flex-col items-center">
-              <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.3em] mb-0.5">TEMPO</span>
-              <div className="bg-black/60 backdrop-blur-xl px-5 py-2 rounded-2xl border border-white/10 shadow-2xl">
-                <span className={`text-3xl font-black italic tabular-nums leading-none tracking-tighter ${timeLeft <= 5 ? 'text-red-500 animate-pulse' : 'text-white'}`}>
+            {/* Timer Central */}
+            <div className="flex flex-col items-center justify-center">
+              <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.3em] mb-1">TIME</span>
+              <div className="relative">
+                <span className={`text-4xl font-black italic tabular-nums leading-none tracking-tighter drop-shadow-lg ${timeLeft <= 5 ? 'text-energy-red animate-pulse' : 'text-white'}`}>
                   {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
                 </span>
               </div>
             </div>
 
-            {!isTraining ? (
-              <div className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-energy-red to-red-800 p-0.5 shadow-lg border border-white/20">
-                  <div className="w-full h-full rounded-[14px] overflow-hidden bg-slate-900 flex items-center justify-center">
-                    <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
+            {/* Opponent Profile */}
+            <div className="flex flex-col items-center">
+              <div className="relative">
+                <div className="w-16 h-16 clip-path-hexagon bg-energy-red/30 p-0.5 shadow-[0_0_20px_rgba(255,49,49,0.3)] border border-energy-red/40">
+                  <div className="w-full h-full clip-path-hexagon overflow-hidden bg-slate-900 flex items-center justify-center">
+                    {!isTraining ? (
+                      <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
+                    ) : (
+                      <Trophy className="w-7 h-7 text-gold" />
+                    )}
                   </div>
                 </div>
-                <span className="text-[9px] font-black italic text-white uppercase mt-1 tracking-tighter truncate max-w-[70px]">{activeOpponent?.name || 'ADVERSÁRIO'}</span>
+                {/* Rank Badge */}
+                {!isTraining && (
+                  <div className="absolute -bottom-1 -left-1 w-7 h-7 bg-black/60 backdrop-blur-md rounded-lg border border-white/10 flex items-center justify-center text-[10px] shadow-lg">
+                    {bot?.league === 'LENDA' ? '🌟' : '🛡️'}
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="flex flex-col items-center">
-                <div className="w-14 h-14 rounded-2xl bg-gold/10 p-0.5 shadow-lg border border-dashed border-gold/40 flex items-center justify-center">
-                  <Trophy className="w-6 h-6 text-gold" />
-                </div>
-                <span className="text-[9px] font-black italic text-gold uppercase mt-1 tracking-tighter">OBJETIVO</span>
+              <div className="mt-2 text-center">
+                <p className="text-[10px] font-black italic text-white uppercase tracking-tighter truncate max-w-[80px]">
+                  {isTraining ? 'OBJETIVO' : (activeOpponent?.name || 'ADVERSÁRIO')}
+                </p>
+                <p className="text-[8px] font-bold text-white/40 uppercase tracking-tighter">
+                  {isTraining ? 'PRÁTICA' : `${activeOpponent?.record || 400} ELO`}
+                </p>
               </div>
-            )}
+            </div>
           </div>
 
-          {/* Large Flexões Label and Counters */}
-          <div className="mt-6 text-center">
-            <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.5em] italic">FLEXÕES</span>
-            <div className={`flex ${isTraining ? 'justify-center gap-12' : 'justify-between px-10'} items-center mt-2`}>
-              <div className="flex flex-col items-center">
+          {/* Scores and Progress Bar */}
+          <div className="mt-6 px-2">
+             <div className="flex justify-between items-end mb-2">
                 <motion.span 
                   key={playerPushups}
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_20px_rgba(59,130,246,0.6)]"
+                  initial={{ scale: 0.8 }} animate={{ scale: 1 }}
+                  className="text-4xl font-black italic text-white drop-shadow-[0_0_15px_rgba(0,210,255,0.5)]"
                 >
                   {playerPushups}
                 </motion.span>
-                {isTraining && <span className="text-[8px] font-black text-primary/60 uppercase tracking-widest mt-1">ATUAIS</span>}
-              </div>
-
-              {!isTraining && (
+                
                 <motion.span 
                   key={oppPushups}
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  className="text-7xl font-black italic text-white leading-none drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]"
+                  initial={{ scale: 0.8 }} animate={{ scale: 1 }}
+                  className="text-4xl font-black italic text-white drop-shadow-[0_0_15px_rgba(255,49,49,0.5)]"
                 >
-                  {oppPushups}
+                  {isTraining ? user.record : oppPushups}
                 </motion.span>
-              )}
+             </div>
 
-              {isTraining && (
-                <div className="flex flex-col items-center">
-                  <span className="text-4xl font-black italic text-gold/60 leading-none mt-4">{user.record}</span>
-                  <span className="text-[8px] font-black text-gold/40 uppercase tracking-widest mt-1">MELHOR</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Battle Bar */}
-          {!isTraining && (
-            <div className="px-6">
-              <div className="h-3 w-full bg-slate-900 rounded-full overflow-hidden border border-white/10 flex p-[1.5px] shadow-inner">
+             {/* Dynamic Progress Bar */}
+             <div className="h-4 w-full bg-slate-900/50 backdrop-blur-md rounded-full overflow-hidden border border-white/10 p-[2px] relative shadow-inner">
                 <motion.div 
-                  className="h-full bg-gradient-to-r from-blue-600 to-blue-400 rounded-full"
+                  className="h-full bg-gradient-to-r from-green-500 to-green-400 rounded-full relative"
                   initial={{ width: '50%' }}
                   animate={{ 
-                    width: `${(playerPushups / (playerPushups + oppPushups || 1)) * 100}%` 
+                    width: `${(playerPushups / (playerPushups + (isTraining ? user.record : oppPushups) || 1)) * 100}%` 
                   }}
                   transition={{ type: 'spring', stiffness: 100, damping: 20 }}
-                />
-              </div>
-            </div>
-          )}
+                >
+                   {/* Glow diamond indicator at the edge */}
+                   <div className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 rotate-45 bg-white shadow-[0_0_10px_#fff] z-10" />
+                </motion.div>
+             </div>
+          </div>
+        </div>
+
+        {/* Action Buttons Overlay */}
+        <div className="absolute top-4 right-4 z-40">
+          <Button variant="ghost" size="icon" className="w-10 h-10 rounded-xl bg-black/40 backdrop-blur-md border border-white/10 text-white/50" onClick={onExit}>
+             <X className="w-5 h-5" />
+          </Button>
         </div>
       </div>
 
-      {/* Main Camera View */}
+
+      {/* Main Camera View - Occupying full screen height */}
       <div className="flex-1 relative bg-black">
         <PushUpCounter 
           isActive={true} 
           onCount={handlePlayerCount} 
           onReady={handleCameraReady}
           soundEnabled={true}
+          showSkeleton={true}
         />
         
+        {/* Large Centered Counter at Bottom */}
+        <div className="absolute bottom-10 left-0 right-0 flex justify-center z-30 pointer-events-none">
+          <div className="relative flex items-center justify-center">
+            {/* Pulsing ring on count change */}
+            <motion.div
+              key={playerPushups}
+              initial={{ scale: 1, opacity: 0.8 }}
+              animate={{ scale: 1.5, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="absolute w-32 h-32 border-4 border-gold/60 rounded-full"
+            />
+            
+            {/* The Medal/Circle Counter */}
+            <div className="bg-gold p-1 rounded-full shadow-[0_0_40px_rgba(234,179,8,0.5)] border-4 border-gold/20">
+              <div className="bg-[#0B0E14] w-28 h-28 rounded-full border-4 border-gold/40 flex items-center justify-center">
+                <motion.span 
+                  key={playerPushups}
+                  initial={{ scale: 0.5, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  className="text-6xl font-black italic text-gold drop-shadow-2xl tabular-nums"
+                >
+                  {playerPushups}
+                </motion.span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <AnimatePresence>
           {battleMessage && (
             <motion.div 
-              initial={{ y: 50, opacity: 0 }}
+              initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -50, opacity: 0 }}
-              className="absolute bottom-12 left-0 right-0 flex justify-center z-20 pointer-events-none"
+              exit={{ y: -20, opacity: 0 }}
+              className="absolute top-1/2 left-0 right-0 flex justify-center z-20 pointer-events-none -translate-y-24"
             >
-              <div className={`backdrop-blur-3xl px-10 py-4 rounded-3xl border-2 shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-colors duration-500 ${lastWhoIsAhead === 'player' ? 'bg-primary/20 border-primary/50 text-primary' : lastWhoIsAhead === 'opponent' ? 'bg-energy-red/20 border-energy-red/50 text-energy-red' : 'bg-black/60 border-white/10 text-white'}`}>
-                <p className="text-xl font-black italic uppercase tracking-tighter">{battleMessage}</p>
+              <div className={`backdrop-blur-3xl px-8 py-3 rounded-2xl border-2 shadow-2xl transition-colors duration-500 ${lastWhoIsAhead === 'player' ? 'bg-electric-blue/20 border-electric-blue/50 text-electric-blue' : lastWhoIsAhead === 'opponent' ? 'bg-energy-red/20 border-energy-red/50 text-energy-red' : 'bg-black/60 border-white/10 text-white'}`}>
+                <p className="text-sm font-black italic uppercase tracking-widest drop-shadow-md">{battleMessage}</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Guided Training Tips */}
+        {/* Guided Training Tips Overlay (Side) */}
         {isTraining && gameState === 'playing' && (
           <AnimatePresence>
             {showTip && (
@@ -1491,36 +1529,24 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
                 initial={{ x: 100, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: 100, opacity: 0 }}
-                className="absolute top-1/2 right-4 -translate-y-1/2 z-40 w-48 pointer-events-none"
+                className="absolute top-1/2 right-4 -translate-y-32 z-40 w-44 pointer-events-none"
               >
-                <div className="bg-black/60 backdrop-blur-xl p-4 rounded-3xl border border-gold/30 shadow-[0_0_30px_rgba(234,179,8,0.2)]">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-2 rounded-xl bg-gold/20 text-gold">
+                <div className="bg-black/60 backdrop-blur-xl p-3 rounded-2xl border border-gold/30 shadow-lg">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="p-1.5 rounded-lg bg-gold/20 text-gold">
                       {trainingTips[trainingStep].icon}
                     </div>
-                    <span className="text-[10px] font-black italic text-gold uppercase tracking-tighter">DICA MESTRE</span>
+                    <span className="text-[8px] font-black italic text-gold uppercase tracking-tighter">COACH</span>
                   </div>
-                  <h4 className="text-xs font-black text-white uppercase italic mb-1">{trainingTips[trainingStep].title}</h4>
-                  <p className="text-[9px] font-medium text-white/60 leading-relaxed uppercase">{trainingTips[trainingStep].text}</p>
-                  
-                  <div className="flex gap-1 mt-3">
-                    {trainingTips.map((_, i) => (
-                      <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i === trainingStep ? 'bg-gold' : 'bg-white/10'}`} />
-                    ))}
-                  </div>
+                  <h4 className="text-[10px] font-black text-white uppercase italic mb-0.5">{trainingTips[trainingStep].title}</h4>
+                  <p className="text-[8px] font-medium text-white/50 leading-tight uppercase">{trainingTips[trainingStep].text}</p>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         )}
-
-        {/* Action Buttons Overlay */}
-        <div className="absolute top-4 right-4 z-30">
-          <Button variant="ghost" size="icon" className="w-12 h-12 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 text-white/50" onClick={onExit}>
-             <X className="w-6 h-6" />
-          </Button>
-        </div>
       </div>
+
 
       <AnimatePresence>
         {gameState === 'countdown' && (
