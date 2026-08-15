@@ -1289,7 +1289,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
     age: user?.age || 0,
     weight: user?.weight || 0,
     height: user?.height || 0,
-    goal: user?.goal || 'Bater recordes',
+    goal: user?.goal || 'Ganhar força',
     avatar: user?.avatar || null
   });
 
@@ -1302,7 +1302,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         age: user?.age || 0,
         weight: user?.weight || 0,
         height: user?.height || 0,
-        goal: user?.goal || 'Bater recordes',
+        goal: user?.goal || 'Ganhar força',
         avatar: user?.avatar || null
       });
     }
