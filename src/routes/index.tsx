@@ -167,14 +167,62 @@ const BOTS = [
   },
 ];
 
-const NeonFireWrapper = ({ children, onClick, className = "" }: { children: React.ReactNode, color: string, intense?: boolean, onClick?: () => void, className?: string }) => {
+const NeonFireWrapper = ({ children, color, onClick, className = "" }: { children: React.ReactNode, color: string, intense?: boolean, onClick?: () => void, className?: string }) => {
+  const getGlowColor = () => {
+    switch(color) {
+      case 'gold': return 'rgba(234, 179, 8, 0.5)';
+      case 'blue': return 'rgba(59, 130, 246, 0.5)';
+      case 'purple': return 'rgba(168, 85, 247, 0.5)';
+      case 'red': return 'rgba(255, 49, 49, 0.5)';
+      case 'green': return 'rgba(34, 197, 94, 0.5)';
+      default: return 'rgba(59, 130, 246, 0.5)';
+    }
+  };
+
+  const glowColor = getGlowColor();
+
   return (
-    <div 
-      className={className}
+    <motion.div 
+      className={`relative rounded-[1.8rem] border overflow-hidden ${className}`}
       onClick={onClick}
+      initial={false}
+      whileTap={{ scale: 0.97 }}
+      style={{ 
+        '--glow-color': glowColor,
+        borderColor: glowColor.replace('0.5', '0.2')
+      } as any}
     >
+      {/* Dynamic Border Glow */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none rounded-[1.8rem]"
+        animate={{
+          boxShadow: [
+            `0 0 10px ${glowColor.replace('0.5', '0.2')}`,
+            `0 0 20px ${glowColor.replace('0.5', '0.4')}`,
+            `0 0 10px ${glowColor.replace('0.5', '0.2')}`
+          ]
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        style={{
+          border: `1.5px solid ${glowColor.replace('0.5', '0.3')}`
+        }}
+      />
+      
+      {/* Tap Feedback Overlay */}
+      <motion.div
+        className="absolute inset-0 bg-current opacity-0 pointer-events-none"
+        whileTap={{ 
+          opacity: 0.1,
+          boxShadow: `inset 0 0 30px ${glowColor}`
+        }}
+      />
+
       {children}
-    </div>
+    </motion.div>
   );
 };
 
