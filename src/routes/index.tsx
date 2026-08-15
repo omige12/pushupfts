@@ -1653,44 +1653,44 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
-            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-white/5 hover:border-white/10 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
+            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-white/5 hover:border-purple-evolve/30 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] group"
             onClick={() => setView('history')}
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
-                <LayoutDashboard className="w-6 h-6 text-white/40" />
+              <div className="w-12 h-12 rounded-2xl bg-purple-evolve/10 flex items-center justify-center border border-purple-evolve/20 group-hover:shadow-[0_0_15px_rgba(168,85,247,0.3)] transition-all">
+                <LayoutDashboard className="w-6 h-6 text-purple-evolve" />
               </div>
               <div className="text-left">
                 <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">HISTÓRICO</p>
-                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">
+                <p className="text-[10px] text-purple-evolve/60 font-black uppercase tracking-widest mt-1">
                   {stats?.history?.length > 0 ? "PARTIDAS ANTERIORES" : "JOGADOR SEM PARTIDA"}
                 </p>
               </div>
             </div>
-            <ChevronRight className="w-6 h-6 text-white/20" />
+            <ChevronRight className="w-6 h-6 text-white/20 group-hover:text-purple-evolve transition-colors" />
           </Button>
 
           <Button 
             variant="ghost" 
             aria-label="Acessar Suporte e Atendimento"
-            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-white/5 hover:border-white/10 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)]"
+            className="bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] border border-white/5 hover:border-green-400/30 transition-all active:scale-[0.98] btn-respond-fast shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] group"
             onClick={() => setView('support')}
           >
             <div className="flex items-center gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
-                <Shield className="w-6 h-6 text-white/40" />
+              <div className="w-12 h-12 rounded-2xl bg-green-400/10 flex items-center justify-center border border-green-400/20 group-hover:shadow-[0_0_15px_rgba(74,222,128,0.3)] transition-all">
+                <Shield className="w-6 h-6 text-green-400" />
               </div>
               <div className="text-left">
                 <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">SUPORTE</p>
-                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">AJUDA E ATENDIMENTO</p>
+                <p className="text-[10px] text-green-400/60 font-black uppercase tracking-widest mt-1">AJUDA E ATENDIMENTO</p>
               </div>
             </div>
-            <ChevronRight className="w-6 h-6 text-white/20" />
+            <ChevronRight className="w-6 h-6 text-white/20 group-hover:text-green-400 transition-colors" />
           </Button>
 
           <Button 
             variant="ghost" 
-            className="text-[10px] font-black text-white/20 uppercase tracking-[0.4em] hover:text-white/40 transition-colors py-8"
+            className="text-[10px] font-black text-energy-red/40 uppercase tracking-[0.4em] hover:text-energy-red/60 transition-colors py-8 hover:neon-text-red active:scale-95 btn-respond-fast"
             onClick={async () => {
               const { error } = await supabase.auth.signOut();
               if (error) {
