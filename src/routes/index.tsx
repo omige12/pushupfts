@@ -2469,44 +2469,54 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
 
       <div className="space-y-4">
         {/* Partida Rápida (Large Card) */}
-        <div 
-          className="relative h-48 rounded-[2rem] border border-energy-red/20 bg-gradient-to-br from-energy-red/20 to-energy-red/5 p-6 flex flex-col justify-center gap-2 cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red group"
+        <NeonFireWrapper 
+          color="blue"
           onClick={() => onStartMatchmaking(false)}
+          className="w-full"
         >
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-full bg-energy-red/20 flex items-center justify-center border border-energy-red/30 shadow-[0_0_20px_rgba(239,68,68,0.3)]">
-              <Globe className="w-10 h-10 text-white" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-3xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
-              <p className="text-xs font-medium text-white/60 uppercase tracking-widest mt-2">ENTRE EM UMA PARTIDA ALEATÓRIA</p>
-              <div className="mt-3 flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">COMPETIÇÃO ONLINE REAL</span>
+          <div 
+            className="relative h-48 rounded-[2rem] border border-electric-blue/20 bg-gradient-to-br from-electric-blue/20 to-electric-blue/5 p-6 flex flex-col justify-center gap-2 cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-primary group"
+          >
+            <div className="flex items-center gap-6">
+              <div className="w-20 h-20 rounded-full bg-electric-blue/20 flex items-center justify-center border border-electric-blue/30 shadow-[0_0_20px_rgba(0,210,255,0.3)]">
+                <Globe className="w-10 h-10 text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-3xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
+                <p className="text-xs font-medium text-white/60 uppercase tracking-widest mt-2">ENTRE EM UMA PARTIDA ALEATÓRIA</p>
+                <div className="mt-3 flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                  <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">COMPETIÇÃO ONLINE REAL</span>
+                </div>
+              </div>
+              <div className="bg-white/10 p-2 rounded-full group-hover:bg-white/20 transition-colors">
+                <ArrowLeft className="w-5 h-5 text-white rotate-180" />
               </div>
             </div>
-            <div className="bg-white/10 p-2 rounded-full group-hover:bg-white/20 transition-colors">
-              <ArrowLeft className="w-5 h-5 text-white rotate-180" />
-            </div>
           </div>
-        </div>
+        </NeonFireWrapper>
 
         <div className="grid grid-cols-2 gap-4">
-          <div 
-            className="bg-card border border-white/5 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all group"
+          <NeonFireWrapper 
+            color="gold"
             onClick={onSelectBot}
+            className="h-full"
           >
-            <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center">
-              <Zap className="w-6 h-6 text-gold" />
+            <div 
+              className="h-full bg-gold/5 border border-gold/20 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center">
+                <Zap className="w-6 h-6 text-gold" />
+              </div>
+              <div>
+                <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">TREINO VS BOTS</h3>
+                <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APRIMORE SUAS HABILIDADES CONTRA BOTS</p>
+              </div>
+              <div className="self-end bg-white/5 p-1.5 rounded-full mt-auto">
+                <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+              </div>
             </div>
-            <div>
-              <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">TREINO VS BOTS</h3>
-              <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APRIMORE SUAS HABILIDADES CONTRA BOTS</p>
-            </div>
-            <div className="self-end bg-white/5 p-1.5 rounded-full mt-auto">
-              <ArrowLeft className="w-4 h-4 text-white rotate-180" />
-            </div>
-          </div>
+          </NeonFireWrapper>
 
           <NeonFireWrapper 
             color="red"
@@ -2891,13 +2901,10 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
       items: [
         { title: "Primeira Flexão", desc: "Comece sua jornada", req: 1, current: user.totalPushups, reward: "XP +50", icon: Zap },
         { title: "10 Flexões", desc: "Aquecendo os motores", req: 10, current: user.totalPushups, reward: "XP +100", icon: Zap },
-        { title: "25 Flexões", desc: "Já é um começo", req: 25, current: user.totalPushups, reward: "XP +150", icon: Dumbbell },
-        { title: "50 Flexões", desc: "Metade de cem", req: 50, current: user.totalPushups, reward: "XP +250", icon: Dumbbell },
+        { title: "50 Flexões", desc: "Já é um começo", req: 50, current: user.totalPushups, reward: "XP +250", icon: Dumbbell },
         { title: "100 Flexões", desc: "Mostre consistência", req: 100, current: user.totalPushups, reward: "Medalha Bronze", icon: Award },
-        { title: "250 Flexões", desc: "Atleta em formação", req: 250, current: user.totalPushups, reward: "XP +500", icon: Award },
         { title: "500 Flexões", desc: "Resistência pura", req: 500, current: user.totalPushups, reward: "XP +1000", icon: Target },
         { title: "1.000 Flexões", desc: "Guerreiro Mil", req: 1000, current: user.totalPushups, reward: "Moldura Mil", icon: Shield },
-        { title: "2.500 Flexões", desc: "Força bruta", req: 2500, current: user.totalPushups, reward: "XP +2500", icon: Shield },
         { title: "5.000 Flexões", desc: "Máquina de guerra", req: 5000, current: user.totalPushups, reward: "XP +5000", icon: Star },
         { title: "10.000 Flexões", desc: "Lenda da Arena", req: 10000, current: user.totalPushups, reward: "Avatar Lendário", icon: Sparkles },
       ]
@@ -2911,7 +2918,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
         { title: "Primeira Vitória", desc: "Vença um duelo real", req: 1, current: user.wins, reward: "XP +200", icon: Trophy },
         { title: "5 Vitórias", desc: "Início promissor", req: 5, current: user.wins, reward: "XP +500", icon: Trophy },
         { title: "10 Vitórias", desc: "Competidor Nato", req: 10, current: user.wins, reward: "Medalha Prata", icon: Medal },
-        { title: "25 Vitórias", desc: "Veterano de Combate", req: 25, current: user.wins, reward: "XP +1500", icon: Swords },
+        { title: "20 Vitórias", desc: "Guerreiro de Elite", req: 20, current: user.wins, reward: "XP +1000", icon: Swords },
         { title: "50 Vitórias", desc: "Elite da Arena", req: 50, current: user.wins, reward: "Título Mestre", icon: Star },
         { title: "100 Vitórias", desc: "Imbatível", req: 100, current: user.wins, reward: "Moldura Diamante", icon: Sparkles },
       ]
@@ -2923,7 +2930,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
       items: [
         { title: "3 Dias Seguidos", desc: "Foco inicial", req: 3, current: user.streak, reward: "XP +150", icon: Flame },
         { title: "7 Dias Seguidos", desc: "Uma semana de aço", req: 7, current: user.streak, reward: "XP +400", icon: Flame },
-        { title: "14 Dias Seguidos", desc: "Hábito formado", req: 14, current: user.streak, reward: "Medalha Fogo", icon: Award },
+        { title: "15 Dias Seguidos", desc: "Hábito formado", req: 15, current: user.streak, reward: "Medalha Fogo", icon: Award },
         { title: "30 Dias Seguidos", desc: "Mês da superação", req: 30, current: user.streak, reward: "XP +2000", icon: Target },
       ]
     },
@@ -2951,13 +2958,13 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
           { label: 'SEQUÊNCIA DIAS', val: user.streak, sub: 'DIAS 🔥', icon: Flame, color: 'text-energy-red', border: 'border-energy-red/20' },
           { label: 'SEQUÊNCIA VITÓRIAS', val: user.wins, sub: 'VITÓRIAS', icon: Swords, color: 'text-electric-blue', border: 'border-electric-blue/20' },
           { label: 'MELHOR DESEMPENHO', val: user.record, sub: 'RECENTE', icon: TrendingUp, color: 'text-green-400', border: 'border-green-400/20' },
-          { label: 'ÚLTIMA CONQUISTA', val: 'Elite', sub: 'RANK PRO', icon: Medal, color: 'text-purple-evolve', border: 'border-purple-evolve/20' },
+          { label: 'ÚLTIMO RANK', val: getRankInfo(user.xp).rankName, sub: 'PATENTE', icon: Medal, color: 'text-purple-evolve', border: 'border-purple-evolve/20' },
         ].map((item, i) => (
           <div key={i} className={`bg-[#151921] border ${item.border} rounded-2xl p-4 flex flex-col items-center justify-center gap-2 text-center h-32`}>
             <item.icon className={`w-6 h-6 ${item.color}`} />
             <div className="space-y-0.5">
               <p className="text-[7px] font-black text-white/40 uppercase tracking-widest leading-tight">{item.label}</p>
-              <div className="text-2xl font-black italic text-white leading-none">{item.val}</div>
+              <div className={`font-black italic text-white leading-none ${String(item.val).length > 8 ? 'text-lg' : 'text-2xl'}`}>{item.val}</div>
               <p className="text-[7px] font-black text-white/40 uppercase tracking-widest leading-tight">{item.sub}</p>
             </div>
           </div>
@@ -3003,8 +3010,8 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
               role="group"
               aria-label={`Conquista: ${ach.title}. Status: ${isCompleted ? 'Concluída' : 'Em progresso'}. Requisito: ${ach.req}. Atual: ${ach.current}. Recompensa: ${ach.reward}.`}
             >
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0 ${isCompleted ? 'bg-electric-blue/20 border-electric-blue/40 text-electric-blue' : 'bg-white/5 border-white/10 text-white/20'}`}>
-                <Zap className="w-6 h-6" />
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0 ${isCompleted ? 'bg-electric-blue/20 border-electric-blue/40 text-electric-blue shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-white/5 border-white/10 text-white/20'}`}>
+                <ach.icon className="w-6 h-6" />
               </div>
               
               <div className="flex-1 min-w-0">
