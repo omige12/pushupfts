@@ -968,19 +968,20 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           </div>
         </div>
         
-        <div 
-          className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer active:scale-95 btn-respond-fast transition-all glow-purple"
+        <motion.div 
+          whileTap={{ scale: 0.95 }}
+          className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer transition-all hover:bg-purple-evolve/20 active:border-purple-evolve/40 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
           onClick={() => setView('daily-reward')}
         >
           <div className="bg-gold/20 p-1.5 rounded-xl">
-            <Trophy className="w-5 h-5 text-gold" />
+            <Trophy className="w-5 h-5 text-gold filter drop-shadow-[0_0_8px_gold]" />
           </div>
           <div className="flex flex-col pr-2">
             <span className="text-[10px] font-black text-white leading-none uppercase tracking-tighter">RECOMPENSAS</span>
             <span className="text-[8px] text-white/40 font-bold uppercase tracking-widest mt-0.5">Resgate prêmios</span>
           </div>
           <ChevronRight className="w-4 h-4 text-white/20" />
-        </div>
+        </motion.div>
       </header>
 
       {/* Patent Progress Card */}
