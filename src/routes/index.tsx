@@ -4021,7 +4021,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
 
         {/* Claim Button */}
         <div className="pt-4">
-          <NeonFireWrapper color={claimedToday ? 'blue' : 'gold'} onClick={claimedToday ? undefined : claimReward}>
+          <NeonFireWrapper color={claimedToday ? 'blue' : 'gold'} onClick={claimedToday ? undefined : claimReward} intense={!claimedToday}>
             <Button 
               disabled={claimedToday || claiming}
               className={`w-full py-8 text-xl font-black italic uppercase transition-all ${
