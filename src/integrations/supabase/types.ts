@@ -201,7 +201,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_numeric_player_id: { Args: never; Returns: string }
     }
     Enums: {
       fitness_goal:
