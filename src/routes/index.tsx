@@ -4160,7 +4160,7 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
           const isClaimed = mission.claimed;
 
           return (
-            <NeonFireWrapper key={mission.id} color={isClaimed ? 'blue' : isCompleted ? 'gold' : 'purple'} className="group">
+            <NeonFireWrapper key={mission.id} color={isClaimed ? 'blue' : isCompleted ? 'gold' : 'purple'} className="group" intense={isCompleted && !isClaimed}>
               <div className={`p-5 rounded-[1.8rem] bg-[#151921] border-2 transition-all ${
                 isClaimed ? 'opacity-60 border-white/5' : 
                 isCompleted ? 'border-gold shadow-[0_0_20px_rgba(255,215,0,0.1)]' : 
