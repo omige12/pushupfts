@@ -2877,7 +2877,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
   );
 }
 
-function Achievements({ setView, user }: { setView: (v: View) => void, user: any }) {
+function Achievements({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   const achievements = useMemo(() => [
     { 
       id: 'flexoes', 
