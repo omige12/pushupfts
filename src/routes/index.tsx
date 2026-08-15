@@ -2634,7 +2634,7 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
               >
                 {isOnline ? 'DESAFIAR' : 'OFFLINE'}
               </Button>
-            </div>
+            </motion.div>
           );
         })}
       </div>
