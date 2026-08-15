@@ -1468,31 +1468,60 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
       </div>
 
 
-      {/* Main Camera View */}
+      {/* Main Camera View - Occupying full screen height */}
       <div className="flex-1 relative bg-black">
         <PushUpCounter 
           isActive={true} 
           onCount={handlePlayerCount} 
           onReady={handleCameraReady}
           soundEnabled={true}
+          showSkeleton={true}
         />
         
+        {/* Large Centered Counter at Bottom */}
+        <div className="absolute bottom-10 left-0 right-0 flex justify-center z-30 pointer-events-none">
+          <div className="relative flex items-center justify-center">
+            {/* Pulsing ring on count change */}
+            <motion.div
+              key={playerPushups}
+              initial={{ scale: 1, opacity: 0.8 }}
+              animate={{ scale: 1.5, opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="absolute w-32 h-32 border-4 border-gold/60 rounded-full"
+            />
+            
+            {/* The Medal/Circle Counter */}
+            <div className="bg-gold p-1 rounded-full shadow-[0_0_40px_rgba(234,179,8,0.5)] border-4 border-gold/20">
+              <div className="bg-[#0B0E14] w-28 h-28 rounded-full border-4 border-gold/40 flex items-center justify-center">
+                <motion.span 
+                  key={playerPushups}
+                  initial={{ scale: 0.5, rotate: -20 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  className="text-6xl font-black italic text-gold drop-shadow-2xl tabular-nums"
+                >
+                  {playerPushups}
+                </motion.span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <AnimatePresence>
           {battleMessage && (
             <motion.div 
-              initial={{ y: 50, opacity: 0 }}
+              initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -50, opacity: 0 }}
-              className="absolute bottom-12 left-0 right-0 flex justify-center z-20 pointer-events-none"
+              exit={{ y: -20, opacity: 0 }}
+              className="absolute top-1/2 left-0 right-0 flex justify-center z-20 pointer-events-none -translate-y-24"
             >
-              <div className={`backdrop-blur-3xl px-10 py-4 rounded-3xl border-2 shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-colors duration-500 ${lastWhoIsAhead === 'player' ? 'bg-primary/20 border-primary/50 text-primary' : lastWhoIsAhead === 'opponent' ? 'bg-energy-red/20 border-energy-red/50 text-energy-red' : 'bg-black/60 border-white/10 text-white'}`}>
-                <p className="text-xl font-black italic uppercase tracking-tighter">{battleMessage}</p>
+              <div className={`backdrop-blur-3xl px-8 py-3 rounded-2xl border-2 shadow-2xl transition-colors duration-500 ${lastWhoIsAhead === 'player' ? 'bg-electric-blue/20 border-electric-blue/50 text-electric-blue' : lastWhoIsAhead === 'opponent' ? 'bg-energy-red/20 border-energy-red/50 text-energy-red' : 'bg-black/60 border-white/10 text-white'}`}>
+                <p className="text-sm font-black italic uppercase tracking-widest drop-shadow-md">{battleMessage}</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Guided Training Tips */}
+        {/* Guided Training Tips Overlay (Side) */}
         {isTraining && gameState === 'playing' && (
           <AnimatePresence>
             {showTip && (
@@ -1500,36 +1529,24 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
                 initial={{ x: 100, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 exit={{ x: 100, opacity: 0 }}
-                className="absolute top-1/2 right-4 -translate-y-1/2 z-40 w-48 pointer-events-none"
+                className="absolute top-1/2 right-4 -translate-y-32 z-40 w-44 pointer-events-none"
               >
-                <div className="bg-black/60 backdrop-blur-xl p-4 rounded-3xl border border-gold/30 shadow-[0_0_30px_rgba(234,179,8,0.2)]">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="p-2 rounded-xl bg-gold/20 text-gold">
+                <div className="bg-black/60 backdrop-blur-xl p-3 rounded-2xl border border-gold/30 shadow-lg">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <div className="p-1.5 rounded-lg bg-gold/20 text-gold">
                       {trainingTips[trainingStep].icon}
                     </div>
-                    <span className="text-[10px] font-black italic text-gold uppercase tracking-tighter">DICA MESTRE</span>
+                    <span className="text-[8px] font-black italic text-gold uppercase tracking-tighter">COACH</span>
                   </div>
-                  <h4 className="text-xs font-black text-white uppercase italic mb-1">{trainingTips[trainingStep].title}</h4>
-                  <p className="text-[9px] font-medium text-white/60 leading-relaxed uppercase">{trainingTips[trainingStep].text}</p>
-                  
-                  <div className="flex gap-1 mt-3">
-                    {trainingTips.map((_, i) => (
-                      <div key={i} className={`h-1 flex-1 rounded-full transition-all ${i === trainingStep ? 'bg-gold' : 'bg-white/10'}`} />
-                    ))}
-                  </div>
+                  <h4 className="text-[10px] font-black text-white uppercase italic mb-0.5">{trainingTips[trainingStep].title}</h4>
+                  <p className="text-[8px] font-medium text-white/50 leading-tight uppercase">{trainingTips[trainingStep].text}</p>
                 </div>
               </motion.div>
             )}
           </AnimatePresence>
         )}
-
-        {/* Action Buttons Overlay */}
-        <div className="absolute top-4 right-4 z-30">
-          <Button variant="ghost" size="icon" className="w-12 h-12 rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 text-white/50" onClick={onExit}>
-             <X className="w-6 h-6" />
-          </Button>
-        </div>
       </div>
+
 
       <AnimatePresence>
         {gameState === 'countdown' && (
