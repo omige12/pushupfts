@@ -861,8 +861,10 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
               <ArrowLeft className="w-4 h-4 text-electric-blue rotate-180" />
             </div>
           </div>
+        </NeonFireWrapper>
 
         <NeonFireWrapper 
+
           color="purple"
           onClick={() => toast.info("Missões em breve!")}
         >
