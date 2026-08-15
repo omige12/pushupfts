@@ -2223,63 +2223,85 @@ function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
   }, [user.id, tab]);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-10">
-      <div className="flex flex-col gap-6">
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">RANKING</h2>
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-20">
+      <div className="flex flex-col gap-8">
+        <div className="flex justify-between items-start">
+          <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">RANKING</h2>
+          <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => setView('dashboard')}>
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </Button>
+        </div>
         
-        <div className="flex p-1 bg-white/5 rounded-2xl">
+        <div className="flex p-1.5 bg-[#0A0D14] rounded-full border border-white/5">
           <button 
             onClick={() => setTab('local')}
-            className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'local' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+            className={`flex-1 py-3 text-xs font-black italic rounded-full transition-all tracking-widest ${tab === 'local' ? 'bg-electric-blue text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'text-white/40 hover:text-white'}`}
           >
             🇧🇷 BRASIL
           </button>
           <button 
             onClick={() => setTab('friends')}
-            className={`flex-1 py-3 text-[10px] font-black italic rounded-xl transition-all ${tab === 'friends' ? 'bg-primary text-white shadow-lg' : 'text-muted-foreground hover:text-white'}`}
+            className={`flex-1 py-3 text-xs font-black italic rounded-full transition-all tracking-widest ${tab === 'friends' ? 'bg-electric-blue text-white shadow-[0_0_15px_rgba(59,130,246,0.5)]' : 'text-white/40 hover:text-white'}`}
           >
             👥 AMIGOS
           </button>
         </div>
 
         {loading ? (
-          <div className="flex justify-center py-10">
-            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-10 h-10 text-electric-blue animate-spin" />
           </div>
         ) : rankingData.length === 0 ? (
-          <div className="text-center py-10 glass-panel p-8 border-white/5">
-            <Trophy className="w-12 h-12 text-white/20 mx-auto mb-4" />
-            <p className="text-sm font-black text-muted-foreground uppercase italic">O Ranking está vazio.</p>
-            <p className="text-[10px] text-muted-foreground/60 mt-1 uppercase">Seja o primeiro a pontuar!</p>
+          <div className="text-center py-20 glass-panel p-8 border-white/5 bg-[#0F131A]/50">
+            <Trophy className="w-16 h-16 text-white/10 mx-auto mb-6" />
+            <p className="text-xl font-black text-white/40 uppercase italic tracking-tighter">O Ranking está vazio.</p>
+            <p className="text-xs text-white/20 mt-2 uppercase tracking-widest">SEJA O PRIMEIRO A PONTUAR!</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-4">
             {rankingData.map((player: any, i) => (
-              <div key={player.id} className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${player.isUser ? 'bg-primary/20 border-primary/50 scale-[1.02] shadow-[0_0_20px_rgba(96,165,250,0.2)]' : 'bg-white/5 border-white/5'}`}>
-                <span className={`w-8 font-black text-lg italic ${i === 0 ? 'text-gold' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-orange-400' : 'text-muted-foreground'}`}>
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                key={player.id} 
+                className={`flex items-center gap-4 p-5 rounded-[2rem] border transition-all premium-glow-blue relative overflow-hidden ${player.isUser ? 'bg-electric-blue/10 border-electric-blue/30 scale-[1.02] z-10' : 'bg-[#0F131A] border-white/5'}`}
+              >
+                <div className={`w-10 flex justify-center items-center font-black text-2xl italic ${i === 0 ? 'text-gold' : i === 1 ? 'text-slate-300' : i === 2 ? 'text-orange-400' : 'text-white/20'}`}>
                   {i + 1}º
-                </span>
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-white text-lg overflow-hidden ${player.avatarUrl ? 'bg-black' : 'bg-secondary'}`}>
+                </div>
+                
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center font-black text-white text-xl overflow-hidden border-2 ${player.isUser ? 'border-electric-blue/40' : 'border-white/10'} bg-muted shadow-lg`}>
                   {player.avatarUrl ? (
-                    <img src={player.avatarUrl} className="w-full h-full object-cover" />
-                  ) : player.avatar}
+                    <img src={player.avatarUrl} className="w-full h-full object-cover" alt={player.name} />
+                  ) : (
+                    <span className="opacity-40">{player.avatar}</span>
+                  )}
                 </div>
+                
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1 overflow-hidden">
-                    <span className="font-black text-white tracking-tight truncate">{getPatentEmoji(player.patent)} {player.name}</span>
-                    {player.isUser && <Badge className="shrink-0 bg-primary text-[8px] h-4 py-0">VOCÊ</Badge>}
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-black text-white text-lg tracking-tighter italic truncate uppercase leading-none">
+                      {player.name}
+                    </span>
+                    <span className="text-lg">{getPatentEmoji(player.patent)}</span>
+                    {player.isUser && (
+                      <Badge className="bg-electric-blue text-[8px] h-4 py-0 font-black italic rounded-full border-none px-2">VOCÊ</Badge>
+                    )}
                   </div>
-                  <div className="flex items-center gap-3 text-[7px] font-black text-muted-foreground uppercase tracking-widest mt-1">
-                    <div className="flex items-center gap-0.5"><Target className="w-2.5 h-2.5 text-gold" /> {player.record}</div>
-                    <div className="flex items-center gap-0.5"><Shield className="w-2.5 h-2.5 text-blue-400" /> {player.wins}W</div>
-                    <div className="flex items-center gap-0.5"><Flame className="w-2.5 h-2.5 text-energy-red" /> {player.streak}D</div>
+                  
+                  <div className="flex items-center gap-3 text-[9px] font-black text-white/40 uppercase tracking-widest">
+                    <span className="flex items-center gap-1"><Target className="w-3 h-3 text-gold/60" /> {player.record}</span>
+                    <span className="flex items-center gap-1"><Shield className="w-3 h-3 text-electric-blue/60" /> {player.wins}W</span>
+                    <span className="flex items-center gap-1"><Flame className="w-3 h-3 text-energy-red/60" /> {player.streak}D</span>
                   </div>
                 </div>
+                
                 <div className="text-right shrink-0">
-                  <span className="font-black text-white italic">{player.count.toLocaleString()}</span>
-                  <p className="text-[8px] font-black text-muted-foreground uppercase">pontos</p>
+                  <span className="text-xl font-black text-white italic tracking-tighter leading-none">{player.count.toLocaleString()}</span>
+                  <p className="text-[8px] font-black text-white/40 uppercase tracking-widest mt-1">PONTOS</p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         )}
