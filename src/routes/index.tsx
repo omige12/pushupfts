@@ -993,30 +993,24 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         <div 
           className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden transition-all group"
         >
-          {/* Background pattern */}
-          <div className="absolute top-0 right-0 p-2 opacity-20 pointer-events-none flex items-center justify-center w-28 h-28 translate-x-4 -translate-y-4">
-            <Shield className="w-full h-full text-gold" />
-            <span className="absolute font-black text-[14px] text-gold mt-1 italic tracking-tighter">
-              {rank.xpInLevel}
-            </span>
-            <span className="absolute font-black text-[6px] text-gold/60 mt-8 uppercase tracking-widest">
-              XP
-            </span>
-          </div>
-
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full border-4 border-gold/30 flex items-center justify-center bg-gold/5 shadow-[inset_0_0_20px_rgba(234,179,8,0.2)]">
+          <div className="flex justify-between items-start mb-6 gap-4">
+            <div className="flex items-center gap-4 min-w-0">
+              <div className="w-16 h-16 rounded-2xl bg-gold/10 border-2 border-gold/30 flex items-center justify-center shadow-[inset_0_0_20px_rgba(234,179,8,0.2)] shrink-0">
                 <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
               </div>
-              <div>
-                <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">{rank.rankName.toUpperCase()}</h2>
+              <div className="min-w-0">
+                <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none truncate">{rank.rankName.toUpperCase()}</h2>
                 <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em] mt-1 opacity-70">SUA PATENTE ATUAL</p>
+                <div className="mt-2 flex flex-col">
+                  <span className="text-2xl font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel}</span>
+                  <span className="text-[10px] font-black text-white/20 uppercase tracking-widest mt-0.5">/ {rank.xpForNext} XP</span>
+                </div>
               </div>
             </div>
-            <div className="text-right flex flex-col items-end">
-              <span className="text-xl font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel}</span>
-              <span className="text-[8px] font-black text-white/20 uppercase tracking-widest">/ {rank.xpForNext} XP</span>
+            
+            {/* Background pattern decoration */}
+            <div className="shrink-0 opacity-20 pointer-events-none w-20 h-20 -mr-2 flex items-center justify-center">
+              <Shield className="w-full h-full text-gold" />
             </div>
           </div>
 
