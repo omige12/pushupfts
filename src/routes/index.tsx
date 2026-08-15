@@ -3918,7 +3918,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
         .update({
           streak_count: newStreak,
           last_claimed_at: new Date().toISOString()
-        })
+        } as any)
         .eq('user_id', session.user.id)
         .select()
         .single();
