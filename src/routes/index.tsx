@@ -1362,7 +1362,13 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       }));
 
       setEditing(false);
-      setView('profile'); // Force view back to profile just in case
+      // Ensure we navigate to profile view if not already there
+      setView('profile');
+      
+      // Update local state and trigger a refresh of the user data if needed
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('storage'));
+      }
 
       toast.success("✅ Perfil atualizado com sucesso!", {
         className: "font-black italic text-xs uppercase tracking-widest bg-card border-green-500/50 text-white shadow-[0_0_20px_rgba(34,197,94,0.2)]"
