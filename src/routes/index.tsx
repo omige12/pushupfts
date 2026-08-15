@@ -611,47 +611,57 @@ function App() {
         <nav className="fixed bottom-0 left-0 right-0 bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/5 px-6 pb-8 pt-4 flex justify-between items-center z-50">
           <Button 
             variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'dashboard' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            aria-label="Ir para o Início"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'dashboard' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
             onClick={() => setView('dashboard')}
           >
-            <Home className={`w-7 h-7 ${view === 'dashboard' ? 'fill-primary/20' : ''}`} />
+            <Home className={`w-7 h-7 transition-all ${view === 'dashboard' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
             <span className="text-[9px] font-black uppercase tracking-widest leading-none">Início</span>
+            {view === 'dashboard' && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
           </Button>
 
           <Button 
             variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('multiplayer')}
-          >
-            <Swords className={`w-7 h-7 ${view === 'multiplayer' ? 'fill-primary/20' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Batalha</span>
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'ranking' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('ranking')}
-          >
-            <Trophy className={`w-7 h-7 ${view === 'ranking' ? 'fill-primary/20' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Ranking</span>
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('profile')}
-          >
-            <UserCircle className={`w-7 h-7 ${view === 'profile' ? 'fill-primary/20' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Perfil</span>
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'achievements' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            aria-label="Ir para Conquistas"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'achievements' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
             onClick={() => setView('achievements')}
           >
-            <Medal className={`w-7 h-7 ${view === 'achievements' ? 'fill-primary/20' : ''}`} />
+            <Award className={`w-7 h-7 transition-all ${view === 'achievements' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
             <span className="text-[9px] font-black uppercase tracking-widest leading-none">Conquistas</span>
+            {view === 'achievements' && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            aria-label="Ir para Batalha"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('multiplayer')}
+          >
+            <Swords className={`w-7 h-7 transition-all ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Batalha</span>
+            {(view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge') && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            aria-label="Ir para o Ranking"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'ranking' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('ranking')}
+          >
+            <Trophy className={`w-7 h-7 transition-all ${view === 'ranking' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Ranking</span>
+            {view === 'ranking' && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            aria-label="Ir para o Perfil"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('profile')}
+          >
+            <UserCircle className={`w-7 h-7 transition-all ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Perfil</span>
+            {(view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile') && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
           </Button>
         </nav>
       )}
@@ -1657,7 +1667,8 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
         <div className="grid grid-cols-1 gap-4 w-full pt-4">
           <Button 
             variant="ghost" 
-            className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.98]"
+            aria-label="Ver Histórico de Partidas"
+            className="premium-glow-blue bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-blue-500/5 transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-blue-500"
             onClick={() => setView('history')}
           >
             <div className="flex items-center gap-5">
@@ -1666,7 +1677,9 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               </div>
               <div className="text-left">
                 <p className="text-xl font-black text-white italic tracking-tighter leading-none uppercase">HISTÓRICO</p>
-                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">PARTIDAS ANTERIORES</p>
+                <p className="text-[10px] text-white/40 font-black uppercase tracking-widest mt-1">
+                  {stats?.history?.length > 0 ? "PARTIDAS ANTERIORES" : "JOGADOR SEM PARTIDA"}
+                </p>
               </div>
             </div>
             <ChevronRight className="w-6 h-6 text-white/20" />
@@ -1674,7 +1687,8 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
 
           <Button 
             variant="ghost" 
-            className="premium-glow-green bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-green-500/5 transition-all active:scale-[0.98]"
+            aria-label="Acessar Suporte e Atendimento"
+            className="premium-glow-green bg-[#0F131A] p-6 h-auto flex justify-between items-center rounded-[2rem] hover:bg-green-500/5 transition-all active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-green-500"
             onClick={() => setView('support')}
           >
             <div className="flex items-center gap-5">
@@ -1718,27 +1732,35 @@ function FullHistory({ setView, user }: { setView: (v: View) => void, user: any 
       </div>
 
       <div className="space-y-4">
-        {user.history.map((match: any) => (
-          <div key={match.id} className="glass-panel p-5 flex items-center justify-between border-white/5">
-            <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white text-xl shadow-lg border-2 border-white/20 overflow-hidden ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`}>
-                {BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp) ? (
-                  <img src={BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp)?.avatar} className="w-full h-full object-cover" alt="Bot" />
-                ) : (
-                  match.opp[0]
-                )}
+        {user.history && user.history.length > 0 ? (
+          user.history.map((match: any) => (
+            <div key={match.id} className="glass-panel p-5 flex items-center justify-between border-white/5 active:scale-[0.98] transition-all" role="article" aria-label={`Partida contra ${match.opp}`}>
+              <div className="flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black text-white text-xl shadow-lg border-2 border-white/20 overflow-hidden ${match.res === 'Vitória' ? 'bg-green-500' : 'bg-energy-red'}`}>
+                  {BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp) ? (
+                    <img src={BOTS.find(b => b.name === match.opp || b.name + ' "Lendário"' === match.opp)?.avatar} className="w-full h-full object-cover" alt={`Avatar de ${match.opp}`} />
+                  ) : (
+                    match.opp[0]
+                  )}
+                </div>
+                <div>
+                  <p className="font-black text-lg italic text-white tracking-tight">{(match.opp || '').toUpperCase()}</p>
+                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{match.score} • {match.date}</p>
+                </div>
               </div>
-              <div>
-                <p className="font-black text-lg italic text-white tracking-tight">{(match.opp || '').toUpperCase()}</p>
-                <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest">{match.score} • {match.date}</p>
+              <div className="text-right">
+                <p className={`text-lg font-black italic ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{(match.res || '').toUpperCase()}</p>
+                <p className="text-[10px] text-gold font-black italic">{match.xp} XP</p>
               </div>
             </div>
-            <div className="text-right">
-              <p className={`text-lg font-black italic ${match.res === 'Vitória' ? 'text-green-500' : 'text-energy-red'}`}>{(match.res || '').toUpperCase()}</p>
-              <p className="text-[10px] text-gold font-black italic">{match.xp} XP</p>
-            </div>
+          ))
+        ) : (
+          <div className="text-center py-20 glass-panel p-8 border-white/5 bg-[#0F131A]/50">
+            <LayoutDashboard className="w-16 h-16 text-white/10 mx-auto mb-6" />
+            <p className="text-xl font-black text-white/40 uppercase italic tracking-tighter">Jogador sem partida</p>
+            <p className="text-xs text-white/20 mt-2 uppercase tracking-widest">COMECE UMA BATALHA AGORA!</p>
           </div>
-        ))}
+        )}
       </div>
     </motion.div>
   );
@@ -2360,7 +2382,7 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
   const [activeCat, setActiveCat] = useState('flexoes');
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-10">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-20 overflow-y-auto max-h-[calc(100vh-80px)]">
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">CONQUISTAS</h2>
@@ -2393,12 +2415,16 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       </div>
 
       {/* Categories Toggle */}
-      <div className="flex bg-[#151921] p-1.5 rounded-2xl border border-white/5">
+      <div className="flex bg-[#151921] p-1.5 rounded-2xl border border-white/5" role="tablist" aria-label="Categorias de Conquistas">
         {achievements.map((cat: any) => (
           <Button 
             key={cat.id} 
+            role="tab"
+            aria-selected={activeCat === cat.id}
+            aria-controls={`achievement-panel-${cat.id}`}
+            aria-label={`Ver conquistas de ${cat.label}`}
             onClick={() => setActiveCat(cat.id)}
-            className={`flex-1 h-12 rounded-xl transition-all border-none shadow-none font-black text-[10px] uppercase tracking-tighter italic ${activeCat === cat.id ? 'bg-electric-blue text-white glow-primary' : 'bg-transparent text-white/40 hover:text-white'}`}
+            className={`flex-1 h-12 rounded-xl transition-all border-none shadow-none font-black text-[10px] uppercase tracking-tighter italic focus-visible:ring-2 focus-visible:ring-electric-blue ${activeCat === cat.id ? 'bg-electric-blue text-white glow-primary' : 'bg-transparent text-white/40 hover:text-white'}`}
           >
             <cat.icon className="w-4 h-4 mr-2" />
             {cat.label}
@@ -2407,50 +2433,57 @@ function Achievements({ setView, user }: { setView: (v: View) => void, user: any
       </div>
 
       {/* Achievement List */}
-      <div className="space-y-3">
+      <div 
+        className="space-y-3 pb-20" 
+        id={`achievement-panel-${activeCat}`}
+        role="tabpanel"
+        aria-label={`Lista de conquistas: ${achievements.find(c => c.id === activeCat)?.label}`}
+      >
         {achievements.find((c: any) => c.id === activeCat)?.items.map((ach: any, i: number) => {
           const isCompleted = ach.current >= ach.req;
           const progress = Math.min((ach.current / ach.req) * 100, 100);
 
-          
           return (
             <motion.div 
               key={i}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-[#151921] rounded-[1.8rem] p-5 border border-white/5 flex items-center gap-4 active:scale-[0.99] transition-all group"
+              className="bg-[#151921] rounded-[1.8rem] p-5 border border-white/5 flex items-center gap-4 active:scale-[0.99] transition-all group focus-within:ring-2 focus-within:ring-electric-blue h-auto min-h-[120px]"
+              role="group"
+              aria-label={`Conquista: ${ach.title}. Status: ${isCompleted ? 'Concluída' : 'Em progresso'}. Requisito: ${ach.req}. Atual: ${ach.current}. Recompensa: ${ach.reward}.`}
             >
-              <div className={`w-14 h-14 rounded-full flex items-center justify-center border-2 ${isCompleted ? 'bg-electric-blue/20 border-electric-blue/40 text-electric-blue' : 'bg-white/5 border-white/10 text-white/20'}`}>
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center border-2 shrink-0 ${isCompleted ? 'bg-electric-blue/20 border-electric-blue/40 text-electric-blue' : 'bg-white/5 border-white/10 text-white/20'}`}>
                 <Zap className="w-6 h-6" />
               </div>
               
-              <div className="flex-1">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h4 className="text-sm font-black italic text-white uppercase tracking-tighter leading-tight">{ach.title.toUpperCase()}</h4>
-                    <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-1">{ach.desc.toUpperCase()}</p>
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-start gap-2">
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-black italic text-white uppercase tracking-tighter leading-tight truncate">{ach.title.toUpperCase()}</h4>
+                    <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-1 break-words">{ach.desc.toUpperCase()}</p>
                   </div>
-                  <div className="text-[9px] font-black text-electric-blue uppercase tracking-widest">
+                  <div className="text-[9px] font-black text-electric-blue uppercase tracking-widest shrink-0">
                     {ach.reward}
                   </div>
                 </div>
                 
                 <div className="mt-4 space-y-1.5">
-                  <div className="h-1.5 w-full bg-[#0B0E14] rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-[#0B0E14] rounded-full overflow-hidden border border-white/5">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: `${progress}%` }}
                       className={`h-full ${isCompleted ? 'bg-electric-blue shadow-[0_0_10px_rgba(59,130,246,0.5)]' : 'bg-white/10'}`}
                     />
                   </div>
-                  <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em]">
-                    {ach.current} / {ach.req}
+                  <div className="text-[8px] font-black text-white/20 uppercase tracking-[0.2em] flex justify-between">
+                    <span>{ach.current} / {ach.req}</span>
+                    {isCompleted && <span className="text-electric-blue font-black">CONCLUÍDO</span>}
                   </div>
                 </div>
               </div>
               
-              <ChevronRight className="w-4 h-4 text-white/10" />
+              <ChevronRight className="w-4 h-4 text-white/10 shrink-0" />
             </motion.div>
           );
         })}
