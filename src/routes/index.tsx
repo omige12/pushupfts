@@ -994,10 +994,13 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden transition-all group"
         >
           {/* Background pattern */}
-          <div className="absolute top-0 right-0 p-2 opacity-10 pointer-events-none flex items-center justify-center w-24 h-24">
+          <div className="absolute top-0 right-0 p-2 opacity-20 pointer-events-none flex items-center justify-center w-28 h-28 translate-x-4 -translate-y-4">
             <Shield className="w-full h-full text-gold" />
-            <span className="absolute font-black text-[10px] text-gold mt-1 italic tracking-tighter">
-              {rank.xpInLevel} XP
+            <span className="absolute font-black text-[14px] text-gold mt-1 italic tracking-tighter">
+              {rank.xpInLevel}
+            </span>
+            <span className="absolute font-black text-[6px] text-gold/60 mt-8 uppercase tracking-widest">
+              XP
             </span>
           </div>
 
