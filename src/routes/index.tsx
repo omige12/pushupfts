@@ -1517,14 +1517,14 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
                   value={formData.goal}
                   onChange={(e) => setFormData({ ...formData, goal: e.target.value })}
                 >
-                  <option value="Ganhar força" className="bg-[#1A1F2C] text-white uppercase">GANHAR FORÇA</option>
-                  <option value="Perder peso" className="bg-[#1A1F2C] text-white uppercase">PERDER PESO</option>
-                  <option value="Condicionamento" className="bg-[#1A1F2C] text-white uppercase">CONDICIONAMENTO</option>
-                  <option value="Massa muscular" className="bg-[#1A1F2C] text-white uppercase">MASSA MUSCULAR</option>
-                  <option value="Melhorar minhas flexões" className="bg-[#1A1F2C] text-white uppercase">MELHORAR FLEXÕES</option>
-                  <option value="Bater recordes" className="bg-[#1A1F2C] text-white uppercase">BATER RECORDES</option>
-                  <option value="Vencer outras pessoas" className="bg-[#1A1F2C] text-white uppercase">VENCER PESSOAS</option>
-                  <option value="Chegar ao topo do ranking" className="bg-[#1A1F2C] text-white uppercase">TOPO DO RANKING</option>
+                  <option value="Ganhar força" className="bg-[#1A1F2C] text-white">GANHAR FORÇA</option>
+                  <option value="Perder peso" className="bg-[#1A1F2C] text-white">PERDER PESO</option>
+                  <option value="Condicionamento" className="bg-[#1A1F2C] text-white">CONDICIONAMENTO</option>
+                  <option value="Massa muscular" className="bg-[#1A1F2C] text-white">MASSA MUSCULAR</option>
+                  <option value="Melhorar minhas flexões" className="bg-[#1A1F2C] text-white">MELHORAR FLEXÕES</option>
+                  <option value="Bater recordes" className="bg-[#1A1F2C] text-white">BATER RECORDES</option>
+                  <option value="Vencer outras pessoas" className="bg-[#1A1F2C] text-white">VENCER PESSOAS</option>
+                  <option value="Chegar ao topo do ranking" className="bg-[#1A1F2C] text-white">TOPO DO RANKING</option>
                 </select>
                 <ChevronRight className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 rotate-90 pointer-events-none" />
               </div>
