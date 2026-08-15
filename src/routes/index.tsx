@@ -242,6 +242,30 @@ function App() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
+  const [incomingChallenge, setIncomingChallenge] = useState<any>(null);
+
+  useEffect(() => {
+    const handleChallenge = (e: any) => {
+      setIncomingChallenge(e.detail);
+    };
+    window.addEventListener('challenge-received', handleChallenge);
+    return () => window.removeEventListener('challenge-received', handleChallenge);
+  }, []);
+
+  const acceptChallenge = (challenge: any) => {
+    setOpponent({
+      id: challenge.challenger_id,
+      name: "DESAFIANTE",
+      avatar: null,
+      record: 0,
+      patent: "Bronze"
+    });
+    setDuration(challenge.duration);
+    setIsTraining(false);
+    setSelectedBot(null);
+    setIncomingChallenge(null);
+    setView('challenge');
+  };
 
 
   const [loading, setLoading] = useState(true);
