@@ -1362,7 +1362,14 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
       setUser((prev: any) => ({ ...prev, ...updateData, avatar: updateData.avatar_url }));
       
       setEditing(false);
-      setView('profile');
+      // Forçar atualização do estado e garantir que a visualização seja 'profile'
+      setTimeout(() => {
+        setView('profile');
+        // Opcional: Recarregar dados se houver sessão para garantir sincronia total
+        if (session?.user?.id) {
+          window.dispatchEvent(new CustomEvent('profile-changes'));
+        }
+      }, 100);
       toast.success("✅ Perfil atualizado!");
     } catch (err: any) {
       console.error("Erro ao salvar:", err);
