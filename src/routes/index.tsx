@@ -2064,7 +2064,7 @@ function FullHistory({ setView, user, goBack }: { setView: (v: View) => void, us
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6 pb-10">
       <div className="flex items-center gap-4 mb-6">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('profile')}><ArrowLeft className="w-5 h-5" /></Button>
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">HISTÓRICO</h2>
       </div>
 
