@@ -221,7 +221,7 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
   useEffect(() => {
     if (!isActive) return;
 
-    let pose: Pose | null = null;
+    let pose: any = null;
     let stream: MediaStream | null = null;
     let animationFrameId: number;
 
