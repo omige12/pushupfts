@@ -3818,13 +3818,387 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
   );
 };
 
-const ProfileReady = ({ setView, user }: { setView: (v: View) => void, user: any }) => (
-  <div className="p-6 text-center space-y-8 flex flex-col items-center justify-center min-h-screen">
-    <h2 className="text-4xl font-black italic text-primary">🎉 PERFIL CRIADO!</h2>
-    <p className="text-muted-foreground">"Agora sua jornada começa."</p>
-    <Button className="game-button w-full" onClick={() => setView('dashboard')}>🔥 COMEÇAR</Button>
-  </div>
-);
+function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) => void, user: any, setUser: any, goBack: () => void }) {
+  const [rewardData, setRewardData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [claiming, setClaiming] = useState(false);
+
+  const REWARDS = [
+    { day: 1, type: 'XP', amount: 100, label: '100 XP' },
+    { day: 2, type: 'Moedas', amount: 50, label: '50 MOEDAS' },
+    { day: 3, type: 'Misto', amount: 150, label: 'XP + MOEDAS' },
+    { day: 4, type: 'XP', amount: 500, label: '500 XP' },
+    { day: 5, type: 'Especial', amount: 1, label: 'BAÚ ESPECIAL' },
+    { day: 6, type: 'Misto', amount: 300, label: 'XP + MOEDAS' },
+    { day: 7, type: 'Premium', amount: 1, label: 'RECOMPENSA PREMIUM' },
+  ];
+
+  useEffect(() => {
+    const fetchRewardStatus = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase
+        .from('daily_rewards')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
+
+      if (data) {
+        setRewardData(data);
+      } else {
+        const { data: newReward } = await supabase
+          .from('daily_rewards')
+          .insert({ user_id: session.user.id, streak_count: 0 })
+          .select()
+          .single();
+        setRewardData(newReward);
+      }
+      setLoading(false);
+    };
+
+    fetchRewardStatus();
+  }, []);
+
+  const claimReward = async () => {
+    if (!rewardData || claiming) return;
+    
+    const lastClaimed = rewardData.last_claimed_at ? new Date(rewardData.last_claimed_at) : null;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (lastClaimed) {
+      const lastClaimedDate = new Date(lastClaimed);
+      lastClaimedDate.setHours(0, 0, 0, 0);
+      if (lastClaimedDate.getTime() === today.getTime()) {
+        toast.error("Você já resgatou sua recompensa de hoje!");
+        return;
+      }
+    }
+
+    setClaiming(true);
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      let newStreak = rewardData.streak_count + 1;
+      if (lastClaimed) {
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const lastClaimedDate = new Date(lastClaimed);
+        lastClaimedDate.setHours(0, 0, 0, 0);
+        
+        if (lastClaimedDate.getTime() < yesterday.getTime()) {
+          newStreak = 1;
+        }
+      }
+
+      if (newStreak > 7) newStreak = 1;
+
+      const { data: updated, error } = await supabase
+        .from('daily_rewards')
+        .update({
+          streak_count: newStreak,
+          last_claimed_at: new Date().toISOString()
+        })
+        .eq('user_id', session.user.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      setRewardData(updated);
+      
+      const reward = REWARDS[newStreak - 1];
+      if (reward.type === 'XP' || reward.type === 'Misto') {
+        const xpAmount = reward.amount;
+        const newTotalXp = user.xp + xpAmount;
+        await supabase.from('profiles').update({ xp: newTotalXp }).eq('id', session.user.id);
+        setUser((prev: any) => ({ ...prev, xp: newTotalXp }));
+      }
+
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#00D2FF', '#FFD700', '#FF3131']
+      });
+
+      toast.success(`Parabéns! Você resgatou: ${reward.label}`);
+      
+      // Update login mission
+      await supabase.rpc('increment_mission_progress', { p_user_id: session.user.id, p_type: 'login', p_amount: 1 });
+
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao resgatar recompensa");
+    } finally {
+      setClaiming(false);
+    }
+  };
+
+  const isClaimedToday = () => {
+    if (!rewardData?.last_claimed_at) return false;
+    const lastClaimed = new Date(rewardData.last_claimed_at);
+    const today = new Date();
+    return lastClaimed.toDateString() === today.toDateString();
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
+
+  const currentStreak = rewardData?.streak_count || 0;
+  const claimedToday = isClaimedToday();
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0B0E14] p-6 pb-24">
+      <div className="flex items-center gap-4 mb-8">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90" onClick={goBack}><ArrowLeft className="w-5 h-5 text-white" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">RECOMPENSA DIÁRIA</h2>
+      </div>
+
+      <div className="space-y-6">
+        {/* Streak Header */}
+        <div className="bg-white/5 border border-white/10 rounded-[2rem] p-6 text-center premium-glow-blue">
+          <div className="flex justify-center mb-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-electric-blue/20 rounded-full blur-xl animate-pulse" />
+              <div className="relative w-20 h-20 bg-[#0B0E14] rounded-full border-2 border-electric-blue flex items-center justify-center">
+                <Flame className={`w-10 h-10 ${currentStreak > 0 ? 'text-energy-red fill-energy-red' : 'text-white/20'}`} />
+              </div>
+            </div>
+          </div>
+          <h3 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">{currentStreak} DIAS SEGUIDOS</h3>
+          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-2">MANTENHA A CONSTÂNCIA</p>
+        </div>
+
+        {/* Rewards Calendar */}
+        <div className="grid grid-cols-7 gap-2">
+          {REWARDS.map((reward, index) => {
+            const isToday = index === currentStreak && !claimedToday;
+            const isCompleted = index < currentStreak || (index === currentStreak - 1 && claimedToday);
+            const isFuture = index > currentStreak || (index === currentStreak && claimedToday);
+
+            return (
+              <div key={reward.day} className="flex flex-col items-center gap-2">
+                <motion.div
+                  whileHover={!isCompleted ? { scale: 1.05 } : {}}
+                  className={`w-full aspect-square rounded-xl border-2 flex items-center justify-center relative overflow-hidden transition-all ${
+                    isCompleted ? 'bg-electric-blue/20 border-electric-blue shadow-[0_0_10px_rgba(0,210,255,0.3)]' :
+                    isToday ? 'bg-gold/10 border-gold animate-pulse shadow-[0_0_15px_rgba(255,215,0,0.4)]' :
+                    'bg-white/5 border-white/10 opacity-50'
+                  }`}
+                >
+                  {isCompleted ? <Check className="w-6 h-6 text-electric-blue" /> : 
+                   reward.type === 'XP' ? <Zap className="w-6 h-6 text-gold" /> :
+                   reward.type === 'Moedas' ? <Trophy className="w-6 h-6 text-yellow-500" /> :
+                   reward.type === 'Premium' ? <Star className="w-6 h-6 text-purple-evolve" /> :
+                   <Sparkles className="w-6 h-6 text-white/40" />}
+                  
+                  {isToday && <div className="absolute top-0 right-0 p-1"><div className="w-1.5 h-1.5 rounded-full bg-gold shadow-[0_0_5px_gold]" /></div>}
+                </motion.div>
+                <span className={`text-[8px] font-black uppercase tracking-widest ${isToday ? 'text-gold' : 'text-white/40'}`}>DIA {reward.day}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Claim Button */}
+        <div className="pt-4">
+          <NeonFireWrapper color={claimedToday ? 'blue' : 'gold'} onClick={claimedToday ? undefined : claimReward}>
+            <Button 
+              disabled={claimedToday || claiming}
+              className={`w-full py-8 text-xl font-black italic uppercase transition-all ${
+                claimedToday 
+                  ? 'bg-white/5 text-white/40 border-white/10 cursor-default' 
+                  : 'bg-gold text-black shadow-[0_0_30px_rgba(255,215,0,0.3)] hover:scale-[1.02]'
+              }`}
+            >
+              {claiming ? <Loader2 className="w-6 h-6 animate-spin mr-2" /> : null}
+              {claimedToday ? 'RESGATADO' : 'RESGATAR RECOMPENSA'}
+            </Button>
+          </NeonFireWrapper>
+        </div>
+
+        {/* Next Reward Info */}
+        {!claimedToday && (
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center">
+              <Gift className="w-6 h-6 text-gold" />
+            </div>
+            <div>
+              <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">HOJE VOCÊ GANHA:</p>
+              <p className="text-lg font-black text-white italic">{REWARDS[currentStreak]?.label || 'RECOMPENSA'}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) => void, user: any, setUser: any, goBack: () => void }) {
+  const [missions, setMissions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [claimingId, setClaimingId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchMissions = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { data, error } = await supabase
+        .from('daily_missions')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .eq('mission_date', new Date().toISOString().split('T')[0]);
+
+      if (data && data.length > 0) {
+        setMissions(data);
+      } else {
+        // Generate new missions for today
+        const newMissions = [
+          { user_id: session.user.id, type: 'pushups', title: '🏋️ FAZER 50 FLEXÕES', goal: 50, xp_reward: 100 },
+          { user_id: session.user.id, type: 'matches', title: '⚔️ COMPLETAR 3 PARTIDAS', goal: 3, xp_reward: 150 },
+          { user_id: session.user.id, type: 'wins', title: '🏆 VENCER 1 BATALHA', goal: 1, xp_reward: 200 },
+          { user_id: session.user.id, type: 'xp', title: '⭐ GANHAR 500 XP', goal: 500, xp_reward: 250 },
+          { user_id: session.user.id, type: 'login', title: '📱 ENTRAR NO APP', goal: 1, xp_reward: 50 }
+        ];
+
+        const { data: inserted } = await supabase
+          .from('daily_missions')
+          .insert(newMissions)
+          .select();
+        
+        if (inserted) setMissions(inserted);
+      }
+      setLoading(false);
+    };
+
+    fetchMissions();
+    
+    // Subscribe to progress changes
+    const channel = supabase
+      .channel('mission-updates')
+      .on('postgres_changes', { 
+        event: 'UPDATE', 
+        schema: 'public', 
+        table: 'daily_missions' 
+      }, (payload) => {
+        setMissions(prev => prev.map(m => m.id === payload.new.id ? payload.new : m));
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  const claimMission = async (mission: any) => {
+    if (mission.current_progress < mission.goal || mission.claimed || claimingId) return;
+
+    setClaimingId(mission.id);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      const { error } = await supabase
+        .from('daily_missions')
+        .update({ claimed: true })
+        .eq('id', mission.id);
+
+      if (error) throw error;
+
+      const newTotalXp = user.xp + mission.xp_reward;
+      await supabase.from('profiles').update({ xp: newTotalXp }).eq('id', session.user.id);
+      
+      setUser((prev: any) => ({ ...prev, xp: newTotalXp }));
+      
+      confetti({
+        particleCount: 100,
+        spread: 50,
+        origin: { y: 0.7 },
+        colors: ['#A855F7', '#60A5FA']
+      });
+
+      toast.success(`Missão concluída! +${mission.xp_reward} XP`);
+    } catch (err) {
+      console.error(err);
+      toast.error("Erro ao resgatar missão");
+    } finally {
+      setClaimingId(null);
+    }
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0B0E14] p-6 pb-24">
+      <div className="flex items-center gap-4 mb-8">
+        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90" onClick={goBack}><ArrowLeft className="w-5 h-5 text-white" /></Button>
+        <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">MISSÕES DIÁRIAS</h2>
+      </div>
+
+      <div className="space-y-4">
+        {missions.map((mission) => {
+          const progress = Math.min(100, (mission.current_progress / mission.goal) * 100);
+          const isCompleted = mission.current_progress >= mission.goal;
+          const isClaimed = mission.claimed;
+
+          return (
+            <NeonFireWrapper key={mission.id} color={isClaimed ? 'blue' : isCompleted ? 'gold' : 'purple'} className="group">
+              <div className={`p-5 rounded-[1.8rem] bg-[#151921] border-2 transition-all ${
+                isClaimed ? 'opacity-60 border-white/5' : 
+                isCompleted ? 'border-gold shadow-[0_0_20px_rgba(255,215,0,0.1)]' : 
+                'border-white/10'
+              }`}>
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="text-sm font-black italic text-white uppercase tracking-tight">{mission.title}</h3>
+                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-1">+{mission.xp_reward} XP</p>
+                  </div>
+                  {isClaimed ? (
+                    <Badge className="bg-white/10 text-white/40 border-none font-black italic text-[9px]">CONCLUÍDA</Badge>
+                  ) : isCompleted ? (
+                    <Button 
+                      size="sm" 
+                      className="h-8 bg-gold text-black font-black italic text-[10px] rounded-xl shadow-[0_0_15px_rgba(255,215,0,0.4)] animate-bounce"
+                      onClick={() => claimMission(mission)}
+                      disabled={!!claimingId}
+                    >
+                      {claimingId === mission.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'RESGATAR'}
+                    </Button>
+                  ) : (
+                    <span className="text-[10px] font-black text-white/20 italic">{mission.current_progress} / {mission.goal}</span>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden p-0.5 border border-white/5">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progress}%` }}
+                      className={`h-full rounded-full transition-all duration-500 ${
+                        isClaimed ? 'bg-white/20' : 
+                        isCompleted ? 'bg-gold shadow-[0_0_10px_gold]' : 
+                        'bg-purple-evolve shadow-[0_0_10px_rgba(139,92,246,0.5)]'
+                      }`}
+                    />
+                  </div>
+                </div>
+              </div>
+            </NeonFireWrapper>
+          );
+        })}
+      </div>
+
+      <div className="mt-8 text-center p-6 bg-white/5 rounded-3xl border border-white/10">
+        <Timer className="w-8 h-8 text-white/20 mx-auto mb-2" />
+        <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">MISSÕES ATUALIZAM EM:</p>
+        <p className="text-lg font-black text-white italic mt-1">NOVO DIA</p>
+      </div>
+    </motion.div>
+  );
+}
+
 
 
 
