@@ -195,12 +195,20 @@ const NeonFireWrapper = ({ children, color, onClick, className = "", intense = f
       <motion.div
         className="absolute inset-0 pointer-events-none rounded-[1.8rem] z-10"
         animate={{
-          boxShadow: [
+          boxShadow: intense ? [
+            `0 0 20px ${glowColor.replace('0.4', '0.3')}`,
+            `0 0 40px ${glowColor.replace('0.4', '0.6')}`,
+            `0 0 20px ${glowColor.replace('0.4', '0.3')}`
+          ] : [
             `0 0 10px ${glowColor.replace('0.4', '0.15')}`,
             `0 0 20px ${glowColor.replace('0.4', '0.3')}`,
             `0 0 10px ${glowColor.replace('0.4', '0.15')}`
           ],
-          borderColor: [
+          borderColor: intense ? [
+            glowColor.replace('0.4', '0.4'),
+            glowColor.replace('0.4', '0.8'),
+            glowColor.replace('0.4', '0.4')
+          ] : [
             glowColor.replace('0.4', '0.2'),
             glowColor.replace('0.4', '0.4'),
             glowColor.replace('0.4', '0.2')
