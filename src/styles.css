@@ -158,6 +158,7 @@
     @apply border border-gold/20 shadow-[0_0_25px_rgba(234,179,8,0.15)];
   }
 
+}
 @utility nav-button-active {
   @apply text-primary shadow-[0_0_15px_rgba(59,130,246,0.3)];
 }
@@ -188,7 +189,6 @@
 
 @utility premium-challenge-btn {
   @apply relative overflow-hidden bg-gradient-to-br from-blue-600 to-blue-800 border-t border-white/20 shadow-[0_4px_0_0_rgba(30,58,138,1),0_0_20px_rgba(59,130,246,0.3)] active:shadow-none active:translate-y-1 transition-all duration-75 rounded-2xl font-black italic tracking-tighter uppercase;
-}
 }
 
 #lovable-badge {
