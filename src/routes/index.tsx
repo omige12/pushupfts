@@ -2722,7 +2722,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
 }
 
 
-function Ranking({ setView, user }: { setView: (v: View) => void, user: any }) {
+function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   const [tab, setTab] = useState<'local' | 'friends'>('local');
   const [rankingData, setRankingData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
