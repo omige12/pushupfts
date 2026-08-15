@@ -2485,11 +2485,16 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
       <div className="glass-panel p-6 border-blue-500/20 space-y-4">
         <h3 className="text-xs font-black text-white/40 uppercase tracking-widest">SEU ID DE JOGADOR</h3>
         <div className="flex gap-2">
-          <div className="flex-1 bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-xl font-black text-white tracking-[0.2em]">
-            {user.id}
+          <div className="flex-1 bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-xl font-black text-white tracking-[0.2em] overflow-hidden truncate">
+            {user.player_id || user.id.substring(0, 8).toUpperCase()}
           </div>
-          <Button variant="ghost" size="icon" className="h-full rounded-xl bg-primary/20 text-primary" onClick={copyId}>
-            <Copy className="w-5 h-5" />
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className={`h-full w-14 rounded-xl transition-all ${copied ? 'bg-green-500/20 text-green-500' : 'bg-primary/20 text-primary'}`} 
+            onClick={copyId}
+          >
+            {copied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
           </Button>
         </div>
       </div>
