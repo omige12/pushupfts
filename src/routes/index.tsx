@@ -611,47 +611,57 @@ function App() {
         <nav className="fixed bottom-0 left-0 right-0 bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/5 px-6 pb-8 pt-4 flex justify-between items-center z-50">
           <Button 
             variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'dashboard' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            aria-label="Ir para o Início"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'dashboard' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
             onClick={() => setView('dashboard')}
           >
-            <Home className={`w-7 h-7 ${view === 'dashboard' ? 'fill-primary/20' : ''}`} />
+            <Home className={`w-7 h-7 transition-all ${view === 'dashboard' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
             <span className="text-[9px] font-black uppercase tracking-widest leading-none">Início</span>
+            {view === 'dashboard' && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
           </Button>
 
           <Button 
             variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('multiplayer')}
-          >
-            <Swords className={`w-7 h-7 ${view === 'multiplayer' ? 'fill-primary/20' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Batalha</span>
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'ranking' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('ranking')}
-          >
-            <Trophy className={`w-7 h-7 ${view === 'ranking' ? 'fill-primary/20' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Ranking</span>
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
-            onClick={() => setView('profile')}
-          >
-            <UserCircle className={`w-7 h-7 ${view === 'profile' ? 'fill-primary/20' : ''}`} />
-            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Perfil</span>
-          </Button>
-
-          <Button 
-            variant="ghost" 
-            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all ${view === 'achievements' ? 'text-primary scale-110' : 'text-white/40 hover:text-white'}`}
+            aria-label="Ir para Conquistas"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'achievements' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
             onClick={() => setView('achievements')}
           >
-            <Medal className={`w-7 h-7 ${view === 'achievements' ? 'fill-primary/20' : ''}`} />
+            <Award className={`w-7 h-7 transition-all ${view === 'achievements' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
             <span className="text-[9px] font-black uppercase tracking-widest leading-none">Conquistas</span>
+            {view === 'achievements' && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            aria-label="Ir para Batalha"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('multiplayer')}
+          >
+            <Swords className={`w-7 h-7 transition-all ${view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Batalha</span>
+            {(view === 'multiplayer' || view === 'select-bot' || view === 'select-duration' || view === 'matchmaking' || view === 'challenge') && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            aria-label="Ir para o Ranking"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'ranking' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('ranking')}
+          >
+            <Trophy className={`w-7 h-7 transition-all ${view === 'ranking' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Ranking</span>
+            {view === 'ranking' && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
+          </Button>
+
+          <Button 
+            variant="ghost" 
+            aria-label="Ir para o Perfil"
+            className={`flex flex-col items-center gap-1.5 h-auto py-2 transition-all active:scale-90 relative ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'text-primary' : 'text-white/40 hover:text-white'}`}
+            onClick={() => setView('profile')}
+          >
+            <UserCircle className={`w-7 h-7 transition-all ${view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile' ? 'fill-primary/20 drop-shadow-[0_0_8px_rgba(59,130,246,0.5)]' : ''}`} />
+            <span className="text-[9px] font-black uppercase tracking-widest leading-none">Perfil</span>
+            {(view === 'profile' || view === 'history' || view === 'support' || view === 'settings' || view === 'edit-profile') && <motion.div layoutId="nav-glow" className="absolute -inset-2 bg-primary/10 blur-xl rounded-full -z-10" />}
           </Button>
         </nav>
       )}
