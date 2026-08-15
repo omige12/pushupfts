@@ -2967,7 +2967,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
             <item.icon className={`w-6 h-6 ${item.color}`} />
             <div className="space-y-0.5">
               <p className="text-[7px] font-black text-white/40 uppercase tracking-widest leading-tight">{item.label}</p>
-              <div className="text-2xl font-black italic text-white leading-none">{item.val}</div>
+              <div className={`font-black italic text-white leading-none ${String(item.val).length > 8 ? 'text-lg' : 'text-2xl'}`}>{item.val}</div>
               <p className="text-[7px] font-black text-white/40 uppercase tracking-widest leading-tight">{item.sub}</p>
             </div>
           </div>
