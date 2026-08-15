@@ -757,7 +757,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       {/* Action Grid */}
       <div className="grid grid-cols-2 gap-4">
         <div 
-          className="bg-electric-blue/5 border border-electric-blue/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-primary"
+          className="bg-electric-blue/5 border border-electric-blue/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all shadow-[0_0_20px_rgba(59,130,246,0.1)] border-electric-blue/30"
           onClick={() => setView('multiplayer')}
         >
           <div className="w-14 h-14 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-4">
@@ -773,7 +773,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         </div>
 
         <div 
-          className="bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-purple"
+          className="bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all shadow-[0_0_20px_rgba(139,92,246,0.1)] border-purple-evolve/30"
           onClick={() => toast.info("Missões em breve!")}
         >
           <div className="w-14 h-14 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-4">
@@ -791,7 +791,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
       {/* Workout Banner */}
       <div 
-        className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red"
+        className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between cursor-pointer active:scale-[0.95] btn-respond-fast transition-all shadow-[0_0_20px_rgba(239,68,68,0.1)] border-energy-red/30"
         onClick={() => setView('treino')}
       >
         <div className="flex items-center gap-4">
@@ -812,7 +812,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       {/* Bottom Stats Footer - Recreating WA0087.jpg */}
       <div className="grid grid-cols-4 gap-2 pt-6 border-t border-white/5 mt-4">
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-2 border border-gold/20 shadow-[0_0_15px_rgba(234,179,8,0.1)]">
+          <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-2 border border-gold/30 shadow-[0_0_20px_rgba(234,179,8,0.2)]">
             <Trophy className="w-6 h-6 text-gold neon-text-gold" />
           </div>
           <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">VITÓRIAS</span>

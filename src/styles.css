@@ -38,10 +38,14 @@
   --color-ring-offset-background: var(--background);
   
   /* Competition Colors - Refined from reference */
-  --color-gold: #EAB308;
-  --color-purple-evolve: #8B5CF6;
-  --color-energy-red: #EF4444;
-  --color-electric-blue: #3B82F6;
+  --color-gold: #FFD700;
+  --color-purple-evolve: #A855F7;
+  --color-energy-red: #FF3131;
+  --color-electric-blue: #00D2FF;
+  --blue-rgb: 0, 210, 255;
+  --purple-rgb: 168, 85, 247;
+  --red-rgb: 255, 49, 49;
+  --orange-rgb: 255, 215, 0;
   
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
