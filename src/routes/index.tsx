@@ -692,7 +692,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
               </div>
               <div className="flex items-center gap-1 text-gold">
                 <Flame className="w-3 h-3 fill-gold" />
-                <span className="text-[11px] font-black">{stats.streak}</span>
+                <span className="text-[11px] font-black">{stats.streak ?? 0}</span>
               </div>
             </div>
           </div>
@@ -816,7 +816,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             <Trophy className="w-6 h-6 text-gold neon-text-gold" />
           </div>
           <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">VITÓRIAS</span>
-          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.wins}</span>
+          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.wins ?? 0}</span>
         </div>
         
         <div className="flex flex-col items-center text-center">
@@ -824,7 +824,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             <Target className="w-6 h-6 text-electric-blue neon-text-blue" />
           </div>
           <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">RECORDE</span>
-          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.record}</span>
+          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.record ?? 0}</span>
         </div>
         
         <div className="flex flex-col items-center text-center">
@@ -832,7 +832,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             <Flame className="w-6 h-6 text-energy-red neon-text-red" />
           </div>
           <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">OFENSIVA</span>
-          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.streak}</span>
+          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.streak ?? 0}</span>
         </div>
         
         <div className="flex flex-col items-center text-center">
@@ -840,7 +840,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             <Zap className="w-6 h-6 text-purple-evolve neon-text-purple" />
           </div>
           <span className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] leading-none mb-1">TOTAL</span>
-          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.totalPushups}</span>
+          <span className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{stats.totalPushups ?? 0}</span>
         </div>
       </div>
     </motion.div>
@@ -1632,7 +1632,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               <Trophy className="w-4 h-4 text-green-500" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">VITÓRIAS</p>
-            <p className="text-2xl font-black text-white italic">{stats.wins}</p>
+            <p className="text-2xl font-black text-white italic">{stats.wins ?? 0}</p>
           </div>
           
           <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-blue-500/10 shadow-[0_0_15px_rgba(59,130,246,0.05)] hover:bg-blue-500/5 transition-all group">
@@ -1640,7 +1640,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               <Target className="w-4 h-4 text-blue-500" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">RECORDE</p>
-            <p className="text-2xl font-black text-white italic">{stats.record}</p>
+            <p className="text-2xl font-black text-white italic">{stats.record ?? 0}</p>
           </div>
           
           <div className="bg-[#0A0D14] p-5 rounded-3xl text-center border border-purple-500/10 shadow-[0_0_15px_rgba(168,85,247,0.05)] hover:bg-purple-500/5 transition-all group">
@@ -1648,7 +1648,7 @@ function Profile({ setView, user, setUser, initialEditing = false }: { setView: 
               <Zap className="w-4 h-4 text-purple-500" />
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">TOTAL</p>
-            <p className="text-2xl font-black text-white italic">{stats.totalPushups}</p>
+            <p className="text-2xl font-black text-white italic">{stats.totalPushups ?? 0}</p>
           </div>
         </div>
 
