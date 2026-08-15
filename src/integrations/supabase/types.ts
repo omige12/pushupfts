@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      challenges: {
+        Row: {
+          challenged_id: string
+          challenger_id: string
+          created_at: string | null
+          duration: number
+          id: string
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          challenged_id: string
+          challenger_id: string
+          created_at?: string | null
+          duration?: number
+          id?: string
+          status: string
+          updated_at?: string | null
+        }
+        Update: {
+          challenged_id?: string
+          challenger_id?: string
+          created_at?: string | null
+          duration?: number
+          id?: string
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      friendships: {
+        Row: {
+          created_at: string | null
+          friend_id: string
+          id: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          friend_id: string
+          id?: string
+          status: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          friend_id?: string
+          id?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       matches: {
         Row: {
           created_at: string | null
@@ -75,6 +132,7 @@ export type Database = {
           goal: Database["public"]["Enums"]["fitness_goal"] | null
           height: number | null
           id: string
+          last_seen_at: string | null
           level: number
           losses: number
           motivation: string | null
@@ -97,6 +155,7 @@ export type Database = {
           goal?: Database["public"]["Enums"]["fitness_goal"] | null
           height?: number | null
           id: string
+          last_seen_at?: string | null
           level?: number
           losses?: number
           motivation?: string | null
@@ -119,6 +178,7 @@ export type Database = {
           goal?: Database["public"]["Enums"]["fitness_goal"] | null
           height?: number | null
           id?: string
+          last_seen_at?: string | null
           level?: number
           losses?: number
           motivation?: string | null
