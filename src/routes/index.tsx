@@ -2450,10 +2450,15 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
   }, [user.id]);
 
   const searchFriend = async () => {
+    if (!/^\d+$/.test(searchQuery)) {
+      toast.error("O ID deve conter apenas números.");
+      return;
+    }
+
     const { data: profile, error } = await supabase
       .from('profiles')
       .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
-      .eq('player_id', searchQuery.toUpperCase())
+      .eq('player_id', searchQuery)
       .neq('id', user.id)
       .maybeSingle();
 
