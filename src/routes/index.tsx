@@ -818,6 +818,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
               <span className="text-xs font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel} / {rank.xpForNext} XP</span>
             </div>
           </div>
+        </div>
 
         <div className="space-y-4">
           <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
@@ -871,12 +872,13 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             <div className="w-14 h-14 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-4">
               <LayoutDashboard className="w-8 h-8 text-purple-evolve filter drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
             </div>
-          <div className="text-center space-y-1">
-            <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MISSÕES DIÁRIAS</h3>
-            <p className="text-[9px] font-medium text-white/40 leading-tight">Complete missões e ganhe recompensas</p>
-          </div>
-          <div className="mt-4 bg-purple-evolve/20 p-2 rounded-full">
-            <ArrowLeft className="w-4 h-4 text-purple-evolve rotate-180" />
+            <div className="text-center space-y-1">
+              <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MISSÕES DIÁRIAS</h3>
+              <p className="text-[9px] font-medium text-white/40 leading-tight">Complete missões e ganhe recompensas</p>
+            </div>
+            <div className="mt-4 bg-purple-evolve/20 p-2 rounded-full">
+              <ArrowLeft className="w-4 h-4 text-purple-evolve rotate-180" />
+            </div>
           </div>
         </NeonFireWrapper>
       </div>
@@ -893,9 +895,10 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             <div className="w-14 h-14 rounded-2xl bg-energy-red/10 flex items-center justify-center">
               <Dumbbell className="w-8 h-8 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
             </div>
-          <div>
-            <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
-            <p className="text-[10px] font-medium text-white/40 uppercase tracking-widest mt-1">Aperfeiçoe suas habilidades</p>
+            <div>
+              <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
+              <p className="text-[10px] font-medium text-white/40 uppercase tracking-widest mt-1">Aperfeiçoe suas habilidades</p>
+            </div>
           </div>
         </div>
         <div className="bg-energy-red/20 p-2.5 rounded-full">
