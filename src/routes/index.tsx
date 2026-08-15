@@ -699,6 +699,61 @@ function App() {
         {renderView()}
       </AnimatePresence>
 
+      {/* Challenge Invitation Modal */}
+      <AnimatePresence>
+        {incomingChallenge && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
+          >
+            <div className="w-full max-w-sm bg-[#1A1F26] border-2 border-electric-blue rounded-[2.5rem] p-8 space-y-8 premium-glow-blue relative overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-electric-blue to-transparent animate-pulse" />
+              
+              <div className="text-center space-y-4">
+                <div className="w-24 h-24 mx-auto relative">
+                  <div className="absolute inset-0 bg-electric-blue/20 rounded-full animate-ping" />
+                  <div className="relative w-full h-full bg-[#0B0E14] rounded-full border-2 border-electric-blue flex items-center justify-center overflow-hidden">
+                    <Swords className="w-12 h-12 text-electric-blue animate-bounce" />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">NOVO DESAFIO!</h2>
+                  <p className="text-[10px] font-black text-electric-blue uppercase tracking-[0.2em] mt-2 animate-pulse">ALGUÉM QUER TE ENCARAR</p>
+                </div>
+              </div>
+
+              <div className="bg-white/5 rounded-2xl p-4 flex items-center gap-4 border border-white/5">
+                <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
+                  <Timer className="w-6 h-6 text-white/40" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-white/40 uppercase tracking-widest">DURAÇÃO</p>
+                  <p className="text-xl font-black text-white italic">{incomingChallenge.duration} SEGUNDOS</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <Button 
+                  className="game-button bg-electric-blue py-7 text-lg"
+                  onClick={() => acceptChallenge(incomingChallenge)}
+                >
+                  ACEITAR DESAFIO
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="py-6 text-energy-red font-black italic uppercase tracking-widest hover:bg-energy-red/10"
+                  onClick={() => setIncomingChallenge(null)}
+                >
+                  RECUSAR
+                </Button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* PWA Banner removido a pedido do usuário */}
 
 
