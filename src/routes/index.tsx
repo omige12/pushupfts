@@ -2357,6 +2357,13 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [foundUser, setFoundUser] = useState<any>(null);
+  const [copied, setCopied] = useState(false);
+
+  const copyId = () => {
+    navigator.clipboard.writeText(user.id);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     const fetchFriends = async () => {
@@ -2364,14 +2371,18 @@ function FriendChallenge({ setView, user, onChallengePlayer }: { setView: (v: Vi
         .from('friendships')
         .select(`
           status,
-          user:profiles!friendships_user_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at),
-          friend:profiles!friendships_friend_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at)
+          user_id,
+          friend_id,
+          profiles_user:profiles!friendships_user_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at),
+          profiles_friend:profiles!friendships_friend_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at)
         `)
         .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
         .eq('status', 'accepted');
       
       if (friendships) {
-        setFriends(friendships.map(f => f.user.id === user.id ? f.friend : f.user));
+        setFriends(friendships.map((f: any) => 
+          f.user_id === user.id ? f.profiles_friend : f.profiles_user
+        ));
       }
     };
     fetchFriends();
