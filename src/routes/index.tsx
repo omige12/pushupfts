@@ -2799,7 +2799,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
   }, [user.id, tab]);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-20">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-32">
       <div className="flex flex-col gap-8">
         <div className="flex justify-between items-start">
           <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">RANKING</h2>
