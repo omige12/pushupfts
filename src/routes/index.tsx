@@ -3411,8 +3411,8 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
       </div>
 
       {/* Main Content Area - Scrollable but stabilized */}
-      <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col z-10">
-        <div className="w-full max-w-md mx-auto my-auto flex flex-col justify-center min-h-full">
+      <div className="flex-1 overflow-y-auto px-6 py-4 flex flex-col z-10 relative">
+        <div className="w-full max-w-md mx-auto flex flex-col justify-center min-h-full py-4">
           <AnimatePresence mode="wait">
             <motion.div 
               key={step}
