@@ -3207,51 +3207,73 @@ const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
 const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
   const [step, setStep] = useState(1);
   const [answers, setAnswers] = useState<any>({
+    name: '',
     age: '',
     weight: '',
     height: '',
-    level: '',
-    objective: '',
-    time: '',
-    motivation: ''
+    experience: '',
+    quantity: '',
+    frequency: '',
+    objective: ''
   });
+  const [isFinished, setIsFinished] = useState(false);
   
   const questions = [
     { 
+      id: 'name',
+      q: "QUAL O SEU NOME OU APELIDO?", 
+      type: 'text',
+      placeholder: "Digite seu nome",
+      icon: "👤"
+    },
+    { 
       id: 'age',
-      q: "🎂 QUAL É A SUA IDADE?", 
-      type: 'select',
-      opts: ["-18", "18–25", "26–35", "36–45", "46–55", "55+"] 
+      q: "QUAL É A SUA IDADE?", 
+      type: 'number',
+      placeholder: "Digite sua idade",
+      icon: "🎂"
     },
     { 
       id: 'weight',
-      q: "⚖️ QUAL É O SEU PESO (KG)?", 
+      q: "QUAL É O SEU PESO (KG)?", 
       type: 'number',
-      placeholder: "Ex: 75"
+      placeholder: "Digite seu peso",
+      icon: "⚖️"
     },
     { 
       id: 'height',
-      q: "📏 QUAL É A SUA ALTURA (CM)?", 
+      q: "QUAL É A SUA ALTURA (CM)?", 
       type: 'number',
-      placeholder: "Ex: 175"
+      placeholder: "Digite sua altura",
+      icon: "📏"
     },
     { 
-      id: 'level',
-      q: "💪 QUAL O SEU NÍVEL ATUAL?", 
+      id: 'experience',
+      q: "VOCÊ JÁ FAZ FLEXÕES?", 
       type: 'select',
-      opts: ["Iniciante (0-10)", "Intermediário (11-30)", "Avançado (31-50)", "Elite (50+)"] 
+      opts: ["Sim", "Não"],
+      icon: "💪"
+    },
+    { 
+      id: 'quantity',
+      q: "QUANTAS FLEXÕES VOCÊ CONSEGUE FAZER COM BOA TÉCNICA?", 
+      type: 'number',
+      placeholder: "Digite a quantidade",
+      icon: "🔢"
+    },
+    { 
+      id: 'frequency',
+      q: "COM QUE FREQUÊNCIA VOCÊ COSTUMA TREINAR?", 
+      type: 'select',
+      opts: ["Nunca", "1–2 vezes por semana", "3–4 vezes por semana", "5+ vezes por semana"],
+      icon: "⏱️"
     },
     { 
       id: 'objective',
-      q: "🎯 QUAL É O SEU OBJETIVO?", 
+      q: "QUAL É O SEU OBJETIVO NO APP?", 
       type: 'select',
-      opts: ["Ganhar Massa", "Perder Peso", "Resistência", "Competir no Topo"] 
-    },
-    { 
-      id: 'time',
-      q: "⏱️ QUANTO TEMPO POR DIA?", 
-      type: 'select',
-      opts: ["15 min", "30 min", "1 hora", "Mais de 1 hora"] 
+      opts: ["Participar de batalhas", "Melhorar minha técnica", "Acompanhar minha evolução", "Apenas me divertir"],
+      icon: "🎯"
     }
   ];
 
@@ -3261,75 +3283,121 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
     if (step < questions.length) {
       setStep(s => s + 1);
     } else {
+      setIsFinished(true);
+      confetti({
+        particleCount: 150,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#00D2FF', '#FFFFFF', '#3B82F6']
+      });
+
+      // Save data and redirect
       const goalMap: Record<string, string> = {
-        "Ganhar Massa": "Massa muscular",
-        "Perder Peso": "Perder peso",
-        "Resistência": "Condicionamento",
-        "Competir no Topo": "Chegar ao topo do ranking"
+        "Participar de batalhas": "Vencer outras pessoas",
+        "Melhorar minha técnica": "Melhorar minhas flexões",
+        "Acompanhar minha evolução": "Bater recordes",
+        "Apenas me divertir": "Condicionamento"
       };
-      
+
       setUser({
         ...user,
-        goal: goalMap[answers.objective] || 'Bater recordes',
+        name: answers.name || user.name,
+        goal: goalMap[answers.objective] || 'Condicionamento',
         height: parseInt(String(answers.height)) || 0,
         weight: parseInt(String(answers.weight)) || 0,
-        age: answers.age
+        age: parseInt(String(answers.age)) || 0
       });
-      
-      // Salvar respostas temporárias para o cadastro
+
       localStorage.setItem('quiz_answers', JSON.stringify(answers));
       localStorage.setItem('onboarding_registration', 'true');
-      setView('auth');
+      
+      setTimeout(() => {
+        setView('auth');
+      }, 3000);
     }
   };
 
   const select = (opt: string) => {
     setAnswers({ ...answers, [current.id]: opt });
-    setTimeout(next, 300);
+    setTimeout(next, 400);
   };
 
-  const handleNumberInput = (val: string) => {
+  const handleInput = (val: string) => {
     setAnswers({ ...answers, [current.id]: val });
-    
-    // Update local user state
-    if (current.id === 'weight') {
-      setUser((prev: any) => ({ ...prev, weight: parseInt(val) || 0 }));
-    } else if (current.id === 'height') {
-      setUser((prev: any) => ({ ...prev, height: parseInt(val) || 0 }));
-    }
   };
+
+  if (isFinished) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#0B0E14] text-center space-y-6">
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center border-2 border-primary shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+        >
+          <Check className="w-12 h-12 text-primary" />
+        </motion.div>
+        <motion.h2 
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="text-4xl font-black italic text-white uppercase tracking-tighter"
+        >
+          🔥 TUDO PRONTO!
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-white/40 font-bold uppercase tracking-[0.2em] text-[10px]"
+        >
+          PREPARANDO SUA ARENA...
+        </motion.p>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0B0E14] relative overflow-hidden">
-      <div className="pt-12 px-6 space-y-4 z-20">
+    <div className="flex flex-col min-h-screen bg-[#05070A] relative overflow-hidden">
+      {/* Background patterns and glows */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
+        <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-purple-600/10 blur-[100px] rounded-full" />
+      </div>
+
+      <div className="pt-10 px-6 space-y-4 z-20">
         <div className="flex justify-between items-end">
-          <p className="text-[10px] font-black uppercase text-primary tracking-[0.2em]">ETAPA {step} / {questions.length}</p>
-          <p className="text-[10px] font-black uppercase text-muted-foreground">{Math.round((step/questions.length)*100)}%</p>
+          <p className="text-[10px] font-black uppercase text-electric-blue tracking-[0.2em]">ETAPA {step} / {questions.length}</p>
+          <p className="text-[10px] font-black uppercase text-white/40">{Math.round((step/questions.length)*100)}%</p>
         </div>
-        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+        <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
           <motion.div 
-            className="h-full bg-primary shadow-[0_0_10px_rgba(59,130,246,0.5)]" 
+            className="h-full bg-gradient-to-r from-electric-blue to-blue-600 shadow-[0_0_10px_rgba(0,210,255,0.5)] rounded-full" 
             initial={{ width: 0 }}
             animate={{ width: `${(step / questions.length) * 100}%` }}
           />
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col px-6 justify-center z-10 w-full max-w-md mx-auto">
+      <div className="flex-1 flex flex-col px-6 justify-center z-10 w-full max-w-md mx-auto pt-4">
         <AnimatePresence mode="wait">
           <motion.div 
             key={step}
-            initial={{ x: 40, opacity: 0 }}
+            initial={{ x: 30, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            exit={{ x: -40, opacity: 0 }}
-            className="space-y-8"
+            exit={{ x: -30, opacity: 0 }}
+            className="space-y-10"
           >
-            <h2 className="text-3xl font-black italic text-white uppercase leading-tight tracking-tighter text-center">
-              {current.q}
-            </h2>
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-[#0B0E14] border border-white/10 rounded-2xl flex items-center justify-center mx-auto shadow-xl">
+                <span className="text-3xl">{current.icon}</span>
+              </div>
+              <h2 className="text-3xl font-black italic text-white uppercase leading-tight tracking-tighter drop-shadow-sm">
+                {current.q}
+              </h2>
+            </div>
 
             {current.type === 'select' ? (
-              <div className="grid gap-3">
+              <div className="grid gap-4">
                 {current.opts?.map((opt, i) => (
                   <motion.div
                     key={opt}
@@ -3339,72 +3407,62 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
                   >
                     <Button 
                       variant="outline" 
-                      className={`w-full h-16 text-sm font-black uppercase border-white/10 bg-white/5 hover:bg-primary/20 hover:border-primary transition-all justify-between px-6 rounded-2xl group shadow-lg active:scale-[0.95] btn-respond-fast relative overflow-hidden ${answers[current.id] === opt ? 'border-primary bg-primary/20' : ''}`} 
+                      className={`w-full h-18 text-sm font-black uppercase border-white/10 bg-[#0F131A] hover:bg-electric-blue/10 hover:border-electric-blue transition-all justify-between px-6 rounded-2xl group shadow-2xl active:scale-[0.97] btn-respond-fast relative overflow-hidden ${answers[current.id] === opt ? 'border-electric-blue bg-electric-blue/10' : ''}`} 
                       onClick={() => select(opt)}
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-primary/20 text-muted-foreground group-hover:text-primary transition-colors font-mono text-xs">
+                      <div className="flex items-center gap-5">
+                        <div className={`w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center transition-colors font-mono text-xs border border-white/5 ${answers[current.id] === opt ? 'text-electric-blue border-electric-blue/30' : 'text-white/20'}`}>
                           {String.fromCharCode(65 + i)}
                         </div>
-                        <span className="flex-1 text-left">{opt}</span>
+                        <span className="flex-1 text-left text-white/90">{opt}</span>
                       </div>
-                      <div className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${answers[current.id] === opt ? 'border-primary bg-primary' : 'border-white/10 group-hover:border-primary'}`}>
-                        <Check className={`w-4 h-4 text-white ${answers[current.id] === opt ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
+                      <div className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${answers[current.id] === opt ? 'border-electric-blue bg-electric-blue' : 'border-white/10'}`}>
+                        {answers[current.id] === opt && <Check className="w-3 h-3 text-black" />}
                       </div>
                     </Button>
                   </motion.div>
                 ))}
               </div>
             ) : (
-              <div className="space-y-6">
-                <div className="relative">
+              <div className="space-y-8">
+                <div className="relative group">
                   <input 
-                    type="number"
-                    pattern="[0-9]*"
-                    inputMode="numeric"
+                    type={current.type === 'number' ? 'number' : 'text'}
+                    pattern={current.type === 'number' ? '[0-9]*' : undefined}
+                    inputMode={current.type === 'number' ? 'numeric' : undefined}
                     placeholder={current.placeholder}
-                    className="w-full bg-white/5 border-2 border-white/10 rounded-2xl p-6 text-4xl font-black italic text-center text-white focus:outline-none focus:border-primary focus:bg-primary/5 transition-all"
+                    className="w-full bg-[#0F131A] border-2 border-white/10 rounded-2xl p-7 text-3xl font-black italic text-center text-white focus:outline-none focus:border-electric-blue focus:bg-electric-blue/5 transition-all shadow-2xl placeholder:text-white/10 placeholder:italic"
                     value={answers[current.id]}
-                    onChange={(e) => handleNumberInput(e.target.value)}
+                    onChange={(e) => handleInput(e.target.value)}
                     autoFocus
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && answers[current.id]) next();
+                    }}
                   />
-                  <div className="absolute inset-y-0 right-6 flex items-center pointer-events-none">
-                    <span className="text-white/20 font-black italic text-xl uppercase">{current.id === 'weight' ? 'KG' : 'CM'}</span>
-                  </div>
+                  <motion.div 
+                    initial={false}
+                    animate={{ scale: answers[current.id] ? 1.05 : 1 }}
+                    className="absolute -bottom-1 -right-1 p-2 bg-electric-blue rounded-xl shadow-lg opacity-0 group-focus-within:opacity-100 transition-opacity"
+                    onClick={() => answers[current.id] && next()}
+                  >
+                    <ChevronRight className="w-5 h-5 text-black" />
+                  </motion.div>
                 </div>
-                <Button 
-                  className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all"
-                  onClick={next}
-                  disabled={!answers[current.id]}
-                >
-                  PRÓXIMO →
-                </Button>
+                
+                <p className="text-center text-[9px] font-black text-white/20 uppercase tracking-[0.3em]">
+                  TOQUE EM ENTER PARA CONTINUAR
+                </p>
               </div>
             )}
           </motion.div>
         </AnimatePresence>
       </div>
-      
-      <div className="absolute top-1/2 left-[-20%] w-[60%] h-[40%] bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-0 right-[-10%] w-[40%] h-[30%] bg-energy-red/5 blur-[100px] rounded-full pointer-events-none" />
     </div>
   );
 };
 
-const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }) => {
-  useEffect(() => {
-    // Redireciona automaticamente para o cadastro após o quiz, removendo passos extras
-    localStorage.setItem('onboarding_registration', 'true');
-    setView('auth');
-  }, [setView]);
+const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }) => null;
 
-  return (
-    <div className="p-6 space-y-8 text-center flex flex-col items-center justify-center min-h-screen bg-[#0B0E14]">
-      <div className="w-20 h-20 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-      <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter">PREPARANDO SUA ARENA...</h2>
-    </div>
-  );
-};
 
 const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) => {
   const [loading, setLoading] = useState(false);
@@ -3467,24 +3525,28 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
-      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-primary/10 blur-[100px] rounded-full" />
+    <div className="flex flex-col min-h-screen bg-[#05070A] p-8 relative overflow-hidden">
+      {/* Background patterns and glows */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
+        <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/10 blur-[100px] rounded-full" />
+      </div>
       
-      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center space-y-12 z-10 w-full max-w-md mx-auto">
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          className="w-32 h-32 relative mb-0"
+          className="w-24 h-24 relative p-3 bg-[#0B0E14] border-2 border-electric-blue rounded-[2rem] shadow-[0_0_30px_rgba(0,210,255,0.3)]"
         >
-          <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_20px_rgba(59,130,246,0.3)]" alt="Logo" />
+          <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(0,210,255,0.5)]" alt="Logo" />
         </motion.div>
 
-        <div className="w-full space-y-1 text-center">
+        <div className="w-full space-y-2 text-center">
           <h2 className="text-4xl font-black italic text-white uppercase tracking-tighter leading-none flex flex-col items-center">
-            <span className="text-primary">FLEX</span>
+            <span className="text-electric-blue">FLEX</span>
             <span>BATTLE</span>
           </h2>
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">
+          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.4em]">
             {isLogin ? "DE VOLTA À ARENA" : "INICIE SUA JORNADA"}
           </p>
         </div>
@@ -3492,24 +3554,26 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
         <div className="w-full space-y-4">
           {!isLogin && (
             <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 flex items-center gap-2">
-                <UserIcon className="w-3 h-3" /> NOME DE USUÁRIO
+              <label className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] ml-5 flex items-center gap-2">
+                <UserIcon className="w-3 h-3 text-electric-blue" /> NOME DE USUÁRIO
               </label>
-              <input 
-                className="w-full bg-white/5 p-5 rounded-2xl text-white border border-white/10 focus:border-primary focus:bg-primary/5 outline-none transition-all font-bold italic tracking-tight" 
-                placeholder="Ex: GUERREIRO" 
-                value={name}
-                onChange={(e) => setName(e.target.value.toUpperCase())}
-              />
+              <div className="relative">
+                <input 
+                  className="w-full bg-[#0F131A] p-6 rounded-[1.8rem] text-white border border-white/10 focus:border-electric-blue focus:bg-electric-blue/5 outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+                  placeholder="Ex: GUERREIRO" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value.toUpperCase())}
+                />
+              </div>
             </div>
           )}
           
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 flex items-center gap-2">
-              <Mail className="w-3 h-3" /> E-MAIL
+            <label className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] ml-5 flex items-center gap-2">
+              <Mail className="w-3 h-3 text-electric-blue" /> E-MAIL
             </label>
             <input 
-              className="w-full bg-white/5 p-5 rounded-2xl text-white border border-white/10 focus:border-primary focus:bg-primary/5 outline-none transition-all font-bold italic tracking-tight" 
+              className="w-full bg-[#0F131A] p-6 rounded-[1.8rem] text-white border border-white/10 focus:border-electric-blue focus:bg-electric-blue/5 outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
               placeholder="seu@email.com" 
               type="email"
               value={email}
@@ -3518,49 +3582,54 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 flex items-center gap-2">
-              <Lock className="w-3 h-3" /> SENHA
+            <label className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] ml-5 flex items-center gap-2">
+              <Lock className="w-3 h-3 text-electric-blue" /> SENHA
             </label>
-            <input 
-              className="w-full bg-white/5 p-5 rounded-2xl text-white border border-white/10 focus:border-primary focus:bg-primary/5 outline-none transition-all font-bold italic tracking-tight" 
-              type="password" 
-              placeholder="••••••••" 
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <input 
+                className="w-full bg-[#0F131A] p-6 rounded-[1.8rem] text-white border border-white/10 focus:border-electric-blue focus:bg-electric-blue/5 outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+                type="password" 
+                placeholder="••••••••" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           </div>
           
           {isLogin && (
-            <button className="text-[10px] font-black text-primary uppercase tracking-widest ml-4 hover:text-white transition-colors">
+            <button className="text-[9px] font-black text-electric-blue/60 uppercase tracking-[0.2em] ml-5 hover:text-electric-blue transition-colors">
               ESQUECI MINHA SENHA
             </button>
           )}
         </div>
 
-        <Button 
-          className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all mt-4" 
-          onClick={handleAuth}
-          disabled={loading}
-        >
-          {loading ? (
-            <div className="flex items-center gap-3">
-              <Loader2 className="w-6 h-6 animate-spin" />
-              <span>{isLogin ? "ENTRANDO..." : "CRIANDO CONTA..."}</span>
-            </div>
-          ) : (isLogin ? "ENTRAR" : "CRIAR CONTA")}
-        </Button>
+        <div className="w-full space-y-4 pt-4">
+          <Button 
+            className="game-button w-full py-8 text-2xl italic uppercase bg-gradient-to-r from-electric-blue to-blue-600 shadow-[0_8px_0_0_rgba(30,58,138,0.5),0_0_20px_rgba(0,210,255,0.3)] active:translate-y-[8px] active:shadow-none transition-all" 
+            onClick={handleAuth}
+            disabled={loading}
+          >
+            {loading ? (
+              <div className="flex items-center gap-3">
+                <Loader2 className="w-6 h-6 animate-spin" />
+                <span>PROCESSANDO...</span>
+              </div>
+            ) : (isLogin ? "ENTRAR" : "CRIAR CONTA")}
+          </Button>
 
-        <Button 
-          variant="ghost" 
-          className="w-full text-white/40 uppercase text-[10px] font-black tracking-[0.2em] hover:text-white"
-          onClick={() => setIsLogin(!isLogin)}
-        >
-          {isLogin ? "Ainda não possui uma conta? Criar conta" : "Já possui uma conta? Entrar"}
-        </Button>
+          <Button 
+            variant="ghost" 
+            className="w-full text-white/30 uppercase text-[9px] font-black tracking-[0.3em] hover:text-white transition-colors"
+            onClick={() => setIsLogin(!isLogin)}
+          >
+            {isLogin ? "AINDA NÃO TEM CONTA? CRIAR" : "JÁ POSSUI UMA CONTA? ENTRAR"}
+          </Button>
+        </div>
       </div>
     </div>
   );
 };
+
 
 
 const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, user: any, setUser: (u: any) => void }) => {
