@@ -1761,7 +1761,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
         exit={{ opacity: 0, y: 20 }}
-        className="p-6 space-y-6 pb-24 min-h-screen overflow-y-auto"
+        className="p-6 space-y-6 pb-32 min-h-screen overflow-y-auto"
       >
         <div className="flex items-center gap-4 mb-2">
           <Button 
