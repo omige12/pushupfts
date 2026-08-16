@@ -3466,14 +3466,15 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
                         }}
                       />
                     </div>
-
-                
-                <p className="text-center text-[9px] font-black text-white/20 uppercase tracking-[0.3em]">
-                  TOQUE EM ENTER PARA CONTINUAR
-                </p>
+                    
+                    <p className="text-center text-[9px] font-black text-white/20 uppercase tracking-[0.3em]">
+                      TOQUE EM ENTER PARA CONTINUAR
+                    </p>
+                  </div>
+                )}
               </div>
-            )}
-          </motion.div>
+            </motion.div>
+
         </AnimatePresence>
       </div>
     </div>
