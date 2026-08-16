@@ -3474,12 +3474,13 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
                 )}
               </div>
             </motion.div>
-
-        </AnimatePresence>
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
 };
+
 
 const QuizResult = ({ setView, user }: { setView: (v: View) => void, user: any }) => null;
 
