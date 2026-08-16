@@ -1036,72 +1036,90 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         </div>
       </NeonFireWrapper>
 
-      {/* Action Grid */}
+      {/* Action Grid - Redesigned for Premium Neon Feel */}
       <div className="grid grid-cols-2 gap-4">
-        <NeonFireWrapper 
-          color="blue"
-          onClick={() => setView('multiplayer')}
+        <motion.div
+          whileTap={{ scale: 0.94 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="h-full"
         >
-          <div 
-            className="h-full bg-electric-blue/5 border border-electric-blue/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] transition-all shadow-[0_0_20px_rgba(59,130,246,0.1)] border-electric-blue/30"
+          <NeonFireWrapper 
+            color="blue"
+            onClick={() => setView('multiplayer')}
+            className="h-full"
           >
-            <div className="w-14 h-14 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-4">
-              <Swords className="w-8 h-8 text-electric-blue filter drop-shadow-[0_0_10px_rgba(59,130,246,0.5)]" />
+            <div 
+              className="h-full bg-electric-blue/5 border border-electric-blue/30 rounded-[2rem] p-6 flex flex-col items-center justify-between min-h-[180px] transition-all shadow-[0_0_20px_rgba(59,130,246,0.15)] group"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-electric-blue/10 flex items-center justify-center mb-4 border border-electric-blue/20 shadow-[0_0_15px_rgba(59,130,246,0.3)] group-hover:scale-110 transition-transform">
+                <Swords className="w-10 h-10 text-electric-blue filter drop-shadow-[0_0_12px_rgba(59,130,246,0.6)]" />
+              </div>
+              <div className="text-center space-y-1.5">
+                <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA</h3>
+                <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest leading-tight">ARENA ONLINE</p>
+              </div>
+              <div className="mt-4 bg-electric-blue/20 p-2.5 rounded-full group-hover:translate-x-1 transition-transform">
+                <ArrowLeft className="w-4 h-4 text-electric-blue rotate-180" />
+              </div>
             </div>
-            <div className="text-center space-y-1">
-              <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">PARTIDA RÁPIDA</h3>
-              <p className="text-[9px] font-medium text-white/40 leading-tight">Entre em uma partida com jogadores online</p>
-            </div>
-            <div className="mt-4 bg-electric-blue/20 p-2 rounded-full">
-              <ArrowLeft className="w-4 h-4 text-electric-blue rotate-180" />
-            </div>
-          </div>
-        </NeonFireWrapper>
+          </NeonFireWrapper>
+        </motion.div>
 
-        <NeonFireWrapper 
-
-          color="purple"
-          onClick={() => setView('daily-missions')}
+        <motion.div
+          whileTap={{ scale: 0.94 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="h-full"
         >
-          <div 
-            className="h-full bg-purple-evolve/5 border border-purple-evolve/20 rounded-[1.8rem] p-6 flex flex-col items-center justify-between min-h-[160px] transition-all shadow-[0_0_20px_rgba(139,92,246,0.1)] border-purple-evolve/30"
+          <NeonFireWrapper 
+            color="purple"
+            onClick={() => setView('daily-missions')}
+            className="h-full"
           >
-            <div className="w-14 h-14 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-4">
-              <LayoutDashboard className="w-8 h-8 text-purple-evolve filter drop-shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
+            <div 
+              className="h-full bg-purple-evolve/5 border border-purple-evolve/30 rounded-[2rem] p-6 flex flex-col items-center justify-between min-h-[180px] transition-all shadow-[0_0_20px_rgba(139,92,246,0.15)] group"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-purple-evolve/10 flex items-center justify-center mb-4 border border-purple-evolve/20 shadow-[0_0_15px_rgba(139,92,246,0.3)] group-hover:scale-110 transition-transform">
+                <LayoutDashboard className="w-10 h-10 text-purple-evolve filter drop-shadow-[0_0_12px_rgba(139,92,246,0.6)]" />
+              </div>
+              <div className="text-center space-y-1.5">
+                <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MISSÕES</h3>
+                <p className="text-[9px] font-bold text-white/40 uppercase tracking-widest leading-tight">DIÁRIAS</p>
+              </div>
+              <div className="mt-4 bg-purple-evolve/20 p-2.5 rounded-full group-hover:translate-x-1 transition-transform">
+                <ArrowLeft className="w-4 h-4 text-purple-evolve rotate-180" />
+              </div>
             </div>
-            <div className="text-center space-y-1">
-              <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MISSÕES DIÁRIAS</h3>
-              <p className="text-[9px] font-medium text-white/40 leading-tight">Complete missões e ganhe recompensas</p>
-            </div>
-            <div className="mt-4 bg-purple-evolve/20 p-2 rounded-full">
-              <ArrowLeft className="w-4 h-4 text-purple-evolve rotate-180" />
-            </div>
-          </div>
-        </NeonFireWrapper>
+          </NeonFireWrapper>
+        </motion.div>
       </div>
 
-      {/* Workout Banner */}
-      <NeonFireWrapper 
-        color="red"
-        onClick={() => setView('treino')}
+      {/* Workout Banner - Redesigned */}
+      <motion.div
+        whileTap={{ scale: 0.96 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
       >
-        <div 
-          className="bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-5 flex items-center justify-between transition-all shadow-[0_0_20px_rgba(239,68,68,0.1)] border-energy-red/30 group"
+        <NeonFireWrapper 
+          color="red"
+          onClick={() => setView('treino')}
         >
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-energy-red/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Dumbbell className="w-8 h-8 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+          <div 
+            className="bg-energy-red/5 border border-energy-red/30 rounded-[2rem] p-6 flex items-center justify-between transition-all shadow-[0_0_25px_rgba(239,68,68,0.15)] group"
+          >
+            <div className="flex items-center gap-5">
+              <div className="w-16 h-16 rounded-2xl bg-energy-red/10 flex items-center justify-center border border-energy-red/20 shadow-[0_0_15px_rgba(239,68,68,0.3)] group-hover:scale-110 transition-transform">
+                <Dumbbell className="w-9 h-9 text-energy-red filter drop-shadow-[0_0_12px_rgba(239,68,68,0.6)]" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
+                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1.5">Aperfeiçoe suas habilidades</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
-              <p className="text-[10px] font-medium text-white/40 uppercase tracking-widest mt-1">Aperfeiçoe suas habilidades</p>
+            <div className="bg-energy-red/20 p-3 rounded-full group-hover:translate-x-2 transition-transform shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+              <ChevronRight className="w-6 h-6 text-energy-red" />
             </div>
           </div>
-          <div className="bg-energy-red/20 p-2.5 rounded-full group-hover:translate-x-1 transition-transform">
-            <ChevronRight className="w-5 h-5 text-energy-red" />
-          </div>
-        </div>
-      </NeonFireWrapper>
+        </NeonFireWrapper>
+      </motion.div>
 
       {/* Bottom Stats Footer - Adjusted */}
       <div className="grid grid-cols-4 gap-2 pt-1 border-t border-white/5 -mt-2 pb-2">
@@ -3473,6 +3491,26 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
                   </div>
                 )}
               </div>
+
+              {/* Data Security Card */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="mt-auto pt-8"
+              >
+                <div className="glass-panel p-5 bg-white/5 border-white/5 flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-electric-blue/10 flex items-center justify-center shrink-0 border border-electric-blue/20">
+                    <Shield className="w-5 h-5 text-electric-blue" />
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-white uppercase tracking-widest leading-tight">Privacidade Total</p>
+                    <p className="text-[9px] font-medium text-white/40 leading-relaxed uppercase">
+                      Seus dados estão seguros. Usamos essas informações apenas para personalizar seu treino.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
           </AnimatePresence>
         </div>
