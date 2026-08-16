@@ -1145,7 +1145,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
 function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect: (b: typeof BOTS[0]) => void }) {
   return (
-    <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6">
+    <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6 pb-32">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">OPONENTES</h2>
