@@ -3721,27 +3721,26 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
+    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full -z-10" />
       
-      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-8">
         <div className="text-center space-y-2">
           <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">📸 FOTO DE ATLETA</h2>
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">IDENTIDADE DE GUERRA</p>
         </div>
 
         <div className="relative mx-auto group">
-          <div className="w-48 h-48 rounded-full bg-white/5 border-4 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5 shadow-2xl">
+          <div className="w-56 h-56 rounded-full bg-[#0F131A] border-4 border-dashed border-electric-blue/30 flex items-center justify-center overflow-hidden transition-all group-hover:border-electric-blue/50 group-hover:bg-electric-blue/5 shadow-[0_0_30px_rgba(0,210,255,0.1)]">
             {preview ? (
               <img src={preview} className="w-full h-full object-cover" alt="Profile" />
             ) : (
-              <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                <Plus className="w-12 h-12" />
+              <div className="flex flex-col items-center gap-2 text-white/20">
+                <Plus className="w-16 h-16" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Adicionar</span>
               </div>
             )}
           </div>
-          
           <input 
             type="file" 
             accept="image/*" 
@@ -3751,25 +3750,25 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
         </div>
 
         <div className="grid grid-cols-2 gap-4 w-full">
-          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 btn-respond-fast">
-            <Camera className="w-4 h-4 mr-2" /> Câmera
+          <Button variant="ghost" className="h-16 bg-white/5 border border-white/10 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 transition-all text-[11px]">
+            <Camera className="w-4 h-4 mr-2 text-electric-blue" /> Câmera
             <input type="file" accept="image/*" capture="user" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
           </Button>
-          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 btn-respond-fast">
-            <ImageIcon className="w-4 h-4 mr-2" /> Galeria
+          <Button variant="ghost" className="h-16 bg-white/5 border border-white/10 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 transition-all text-[11px]">
+            <ImageIcon className="w-4 h-4 mr-2 text-electric-blue" /> Galeria
             <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
           </Button>
         </div>
-
-        <div className="flex-1" />
         
-        <Button 
-          className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" 
-          onClick={() => setView('profile-setup')}
-          disabled={!preview}
-        >
-          PRÓXIMO PASSO →
-        </Button>
+        <div className="w-full space-y-4 pt-4">
+          <Button 
+            className="game-button w-full h-20 text-xl italic uppercase neon-border-animated bg-electric-blue/10 shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 transition-all" 
+            onClick={() => setView('profile-setup')}
+            disabled={!preview}
+          >
+            PRÓXIMO PASSO →
+          </Button>
+        </div>
       </div>
     </div>
   );
