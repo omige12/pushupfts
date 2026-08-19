@@ -3338,7 +3338,10 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
 
   const select = (opt: string) => {
     setAnswers({ ...answers, [current.id]: opt });
-    setTimeout(next, 400);
+    // Instant feedback then fast transition
+    requestAnimationFrame(() => {
+      setTimeout(next, 150);
+    });
   };
 
   const handleInput = (val: string) => {
