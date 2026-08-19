@@ -3506,7 +3506,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
       <div className="px-8 pb-12 z-20 shrink-0 flex flex-col items-center gap-6">
         {current.type !== 'select' && (
           <Button 
-            className="game-button bg-electric-blue w-full max-sm:max-w-none max-w-sm py-8 text-xl italic uppercase shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 transition-all flex items-center justify-center gap-3 group"
+            className="game-button bg-electric-blue w-full max-sm:max-w-none max-w-sm py-8 text-xl italic uppercase shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 active:brightness-125 transition-all flex items-center justify-center gap-3 group active:shadow-[0_0_40px_rgba(0,210,255,0.6)]"
             onClick={next}
             disabled={!answers[current.id]}
           >
