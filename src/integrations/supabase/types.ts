@@ -128,6 +128,55 @@ export type Database = {
         }
         Relationships: []
       }
+      match_invites_v2: {
+        Row: {
+          created_at: string | null
+          id: string
+          match_id: string | null
+          receiver_id: string
+          sender_id: string
+          status: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          match_id?: string | null
+          receiver_id: string
+          sender_id: string
+          status?: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          match_id?: string | null
+          receiver_id?: string
+          sender_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "match_invites_v2_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches_v2"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_invites_v2_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_invites_v2_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matches: {
         Row: {
           created_at: string | null
@@ -175,6 +224,67 @@ export type Database = {
           {
             foreignKeyName: "matches_player_id_fkey"
             columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matches_v2: {
+        Row: {
+          created_at: string | null
+          finished_at: string | null
+          id: string
+          player_1: string
+          player_1_reps: number | null
+          player_2: string | null
+          player_2_reps: number | null
+          started_at: string | null
+          status: string
+          winner_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          finished_at?: string | null
+          id?: string
+          player_1: string
+          player_1_reps?: number | null
+          player_2?: string | null
+          player_2_reps?: number | null
+          started_at?: string | null
+          status?: string
+          winner_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          finished_at?: string | null
+          id?: string
+          player_1?: string
+          player_1_reps?: number | null
+          player_2?: string | null
+          player_2_reps?: number | null
+          started_at?: string | null
+          status?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matches_v2_player_1_fkey"
+            columns: ["player_1"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_v2_player_2_fkey"
+            columns: ["player_2"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_v2_winner_id_fkey"
+            columns: ["winner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -262,6 +372,7 @@ export type Database = {
     }
     Functions: {
       generate_numeric_player_id: { Args: never; Returns: string }
+      generate_unique_player_id: { Args: never; Returns: string }
       increment_mission_progress: {
         Args: {
           p_amount: number
