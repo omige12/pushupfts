@@ -3426,9 +3426,10 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
               className="h-full bg-gradient-to-r from-electric-blue to-blue-500 rounded-full relative" 
               initial={{ width: 0 }}
               animate={{ width: `${(step / questions.length) * 100}%` }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              <div className="absolute inset-0 shadow-[0_0_12px_rgba(0,210,255,0.8)] rounded-full" />
+              <div className="absolute inset-0 shadow-[0_0_15px_rgba(0,210,255,0.8)] rounded-full animate-pulse" />
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/20 rounded-full" />
             </motion.div>
           </div>
         </div>
