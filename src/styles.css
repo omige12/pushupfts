@@ -256,3 +256,12 @@
 #lovable-badge {
   display: none !important;
 }
+
+@keyframes neon-border-pulse {
+  0%, 100% { border-color: rgba(0, 210, 255, 0.4); box-shadow: 0 0 5px rgba(0, 210, 255, 0.2); }
+  50% { border-color: rgba(0, 210, 255, 0.8); box-shadow: 0 0 15px rgba(0, 210, 255, 0.5); }
+}
+
+@utility neon-border-animated {
+  @apply border-2 border-electric-blue/40 animate-[neon-border-pulse_2s_ease-in-out_infinite];
+}
