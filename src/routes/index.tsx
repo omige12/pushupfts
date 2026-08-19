@@ -16,6 +16,7 @@ import { PushUpCounter } from "@/components/PushUpCounter";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import logoAsset from "@/assets/shield_logo.png.asset.json";
+import quizBgAsset from "@/assets/quiz_background.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: App,
