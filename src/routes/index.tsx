@@ -3466,7 +3466,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
                       <Button 
                         key={opt}
                         variant="ghost" 
-                        className={`w-full h-14 text-[10px] font-black uppercase border border-white/5 bg-white/5 hover:bg-electric-blue/10 hover:border-electric-blue/30 transition-all rounded-2xl active:scale-[0.97] ${answers[current.id] === opt ? 'border-electric-blue/50 bg-electric-blue/10 text-white' : 'text-white/60'}`} 
+                        className={`w-full h-14 text-[10px] font-black uppercase border border-white/5 bg-white/5 hover:bg-electric-blue/10 hover:border-electric-blue/30 transition-all rounded-2xl active:scale-[0.97] active:bg-electric-blue/20 active:shadow-[0_0_15px_rgba(0,210,255,0.3)] ${answers[current.id] === opt ? 'border-electric-blue/60 bg-electric-blue/20 text-white shadow-[0_0_20px_rgba(0,210,255,0.2)]' : 'text-white/60'}`} 
                         onClick={() => select(opt)}
                       >
                         {opt}
