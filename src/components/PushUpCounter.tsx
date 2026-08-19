@@ -320,9 +320,29 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
   }
 
   return (
-    <div className="relative w-full h-full bg-black overflow-hidden shadow-2xl">
-      <video ref={videoRef} className="hidden" playsInline muted />
-      <canvas ref={canvasRef} className="w-full h-full object-cover" width={720} height={1280} />
+    <div className="relative w-full h-full bg-[#0B0E14] overflow-hidden">
+      <video 
+        ref={videoRef} 
+        className="hidden" 
+        playsInline 
+        muted 
+      />
+      
+      {/* Container for centering and maintaining aspect ratio */}
+      <div className="absolute inset-0 flex items-center justify-center bg-black">
+        <div className="relative w-full h-full max-w-4xl mx-auto overflow-hidden rounded-[2.5rem] border-2 border-electric-blue/20 shadow-[0_0_50px_rgba(0,210,255,0.15)]">
+          <canvas 
+            ref={canvasRef} 
+            className="w-full h-full object-cover" 
+            width={720} 
+            height={1280} 
+          />
+          
+          {/* Subtle Neon Overlay Frame */}
+          <div className="absolute inset-0 border-[1.5px] border-electric-blue/30 rounded-[2.5rem] pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/40 pointer-events-none" />
+        </div>
+      </div>
       
       <AnimatePresence>
         {!isLoaded && (
@@ -332,16 +352,14 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
             className="absolute inset-0 flex flex-col items-center justify-center bg-[#0B0E14] z-20"
           >
             <div className="relative">
-              <div className="w-24 h-24 border-4 border-primary/20 rounded-full" />
-              <div className="absolute inset-0 w-24 h-24 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              <Camera className="absolute inset-0 m-auto w-8 h-8 text-primary animate-pulse" />
+              <div className="w-24 h-24 border-4 border-electric-blue/20 rounded-full" />
+              <div className="absolute inset-0 w-24 h-24 border-4 border-electric-blue border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(0,210,255,0.3)]" />
+              <Camera className="absolute inset-0 m-auto w-8 h-8 text-electric-blue animate-pulse" />
             </div>
-            <p className="font-black italic text-white tracking-[0.3em] text-[10px] mt-8 uppercase">📷 PREPARANDO CÂMERA...</p>
+            <p className="font-black italic text-white tracking-[0.3em] text-[10px] mt-8 uppercase">📷 SINCRONIZANDO CÂMERA...</p>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* HUD components are now controlled by the parent Challenge component for better design integration */}
     </div>
   );
 };
