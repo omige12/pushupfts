@@ -3437,12 +3437,13 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
 
       {/* Main Content Area - Question Card */}
       <div className="flex-1 px-6 flex flex-col items-center justify-center z-10 relative mt-4">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div 
             key={step}
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: -10 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2, ease: "circOut" }}
             className="w-full max-w-sm"
           >
             <div className="bg-[#0F131A]/90 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_2px_rgba(0,210,255,0.1)] flex flex-col items-center text-center">
