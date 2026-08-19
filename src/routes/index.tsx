@@ -3338,7 +3338,10 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
 
   const select = (opt: string) => {
     setAnswers({ ...answers, [current.id]: opt });
-    setTimeout(next, 400);
+    // Instant feedback then fast transition
+    requestAnimationFrame(() => {
+      setTimeout(next, 150);
+    });
   };
 
   const handleInput = (val: string) => {
@@ -3423,9 +3426,10 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
               className="h-full bg-gradient-to-r from-electric-blue to-blue-500 rounded-full relative" 
               initial={{ width: 0 }}
               animate={{ width: `${(step / questions.length) * 100}%` }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              <div className="absolute inset-0 shadow-[0_0_12px_rgba(0,210,255,0.8)] rounded-full" />
+              <div className="absolute inset-0 shadow-[0_0_15px_rgba(0,210,255,0.8)] rounded-full animate-pulse" />
+              <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/20 rounded-full" />
             </motion.div>
           </div>
         </div>
@@ -3433,12 +3437,13 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
 
       {/* Main Content Area - Question Card */}
       <div className="flex-1 px-6 flex flex-col items-center justify-center z-10 relative mt-4">
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div 
             key={step}
-            initial={{ opacity: 0, scale: 0.95, y: 10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: -10 }}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.2, ease: "circOut" }}
             className="w-full max-w-sm"
           >
             <div className="bg-[#0F131A]/90 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_2px_rgba(0,210,255,0.1)] flex flex-col items-center text-center">
@@ -3461,7 +3466,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
                       <Button 
                         key={opt}
                         variant="ghost" 
-                        className={`w-full h-14 text-[10px] font-black uppercase border border-white/5 bg-white/5 hover:bg-electric-blue/10 hover:border-electric-blue/30 transition-all rounded-2xl active:scale-[0.97] ${answers[current.id] === opt ? 'border-electric-blue/50 bg-electric-blue/10 text-white' : 'text-white/60'}`} 
+                        className={`w-full h-14 text-[10px] font-black uppercase border border-white/5 bg-white/5 hover:bg-electric-blue/10 hover:border-electric-blue/30 transition-all rounded-2xl active:scale-[0.97] active:bg-electric-blue/20 active:shadow-[0_0_15px_rgba(0,210,255,0.3)] ${answers[current.id] === opt ? 'border-electric-blue/60 bg-electric-blue/20 text-white shadow-[0_0_20px_rgba(0,210,255,0.2)]' : 'text-white/60'}`} 
                         onClick={() => select(opt)}
                       >
                         {opt}
@@ -3501,7 +3506,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
       <div className="px-8 pb-12 z-20 shrink-0 flex flex-col items-center gap-6">
         {current.type !== 'select' && (
           <Button 
-            className="game-button bg-electric-blue w-full max-sm:max-w-none max-w-sm py-8 text-xl italic uppercase shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 transition-all flex items-center justify-center gap-3 group"
+            className="game-button bg-electric-blue w-full max-sm:max-w-none max-w-sm py-8 text-xl italic uppercase shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 active:brightness-125 transition-all flex items-center justify-center gap-3 group active:shadow-[0_0_40px_rgba(0,210,255,0.6)]"
             onClick={next}
             disabled={!answers[current.id]}
           >
