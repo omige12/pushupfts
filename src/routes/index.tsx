@@ -6,8 +6,9 @@ import {
    Trophy, Dumbbell, Swords, Medal, TrendingUp, User as UserIcon,
    Flame, ArrowLeft, Timer, Shield, Target, ChevronRight, Home, LayoutDashboard, UserCircle, Star,
    Copy, Check, Search, Zap, Award, Sparkles, Pencil, Camera, Image as ImageIcon, Globe, Loader2, X, Plus,
-   Mail, Lock, HelpCircle, Gift
+   Mail, Lock, HelpCircle, Gift, AlertCircle
  } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -1336,6 +1337,13 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   const [showTip, setShowTip] = useState(false);
   const [cameraTimeout, setCameraTimeout] = useState(false);
 
+  const trainingTips = [
+    { title: "POSICIONE-SE", text: "Fique de lado para a câmera para que o scanner veja seu corpo inteiro.", icon: <Camera className="w-5 h-5" /> },
+    { title: "COSTAS RETAS", text: "Mantenha o corpo alinhado. Quadril nem muito alto, nem muito baixo.", icon: <Shield className="w-5 h-5" /> },
+    { title: "DESCIDA TOTAL", text: "Desça até que seus cotovelos formem um ângulo de 90 graus.", icon: <Target className="w-5 h-5" /> },
+    { title: "EXTENSÃO", text: "Suba totalmente esticando os braços para validar a repetição.", icon: <Zap className="w-5 h-5" /> }
+  ];
+
   // Auto-start timeout for camera
   useEffect(() => {
     let timeoutId: any;
@@ -1348,6 +1356,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
     }
     return () => clearTimeout(timeoutId);
   }, [gameState, isCameraReady]);
+
 
   const handlePlayerCount = useCallback((count: number) => {
     setPlayerPushups(count);
