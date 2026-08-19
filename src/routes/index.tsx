@@ -3376,163 +3376,149 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
   }
 
   return (
-    <div className="flex flex-col h-screen bg-[#05070A] relative overflow-hidden safe-area-padding">
-      {/* Background patterns and glows */}
+    <div className="flex flex-col min-h-screen bg-[#05070A] relative overflow-hidden safe-area-padding font-sans">
+      {/* Background - Structured per reference image */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <img 
-          src={quizBgAsset.url} 
-          className="w-full h-full object-cover" 
-          alt="" 
-        />
-        {/* Horizontal split overlay as requested: top dark, bottom cinza-escuro/preto */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-[#0F131A]/90" />
+        {/* Top structured background - Curved dark blue panel */}
+        <div className="absolute top-0 left-0 right-0 h-[35%] bg-gradient-to-b from-blue-900/20 to-black/80 rounded-b-[3.5rem] border-b border-electric-blue/20 overflow-hidden">
+           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-from)_0%,_transparent_70%)] from-electric-blue/10" />
+        </div>
+        
+        {/* Main background */}
+        <div className="absolute inset-0 bg-[#05070A] -z-10" />
+        
+        {/* Subtle Blue Glows */}
+        <div className="absolute top-[20%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Modern Progress Bar at Top */}
-      <div className="pt-10 px-6 pb-2 z-20 shrink-0">
-        <div className="max-w-md mx-auto space-y-3">
+      {/* Top Bar - Centralized Logo and Stats */}
+      <div className="pt-12 px-8 z-20 shrink-0 flex flex-col items-center gap-6">
+        <motion.div 
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          className="flex flex-col items-center gap-2"
+        >
+          <div className="w-16 h-16 relative p-2 bg-[#0B0E14] border border-electric-blue/30 rounded-2xl shadow-[0_0_20px_rgba(0,210,255,0.1)]">
+            <img src={logoAsset.url} className="w-full h-full object-contain" alt="Logo" />
+          </div>
+          <h1 className="text-xl font-black italic tracking-tighter text-white uppercase leading-none">
+            FLEX<span className="text-electric-blue">BATTLE</span>
+          </h1>
+        </motion.div>
+
+        <div className="w-full max-w-sm space-y-3 mt-2">
           <div className="flex justify-between items-end px-1">
             <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.2em] italic">
-              PERGUNTA <span className="text-electric-blue">{step}</span> DE {questions.length}
+              Pergunta {step} de {questions.length}
             </span>
-            <div className="bg-electric-blue/10 px-2 py-0.5 rounded-md border border-electric-blue/20">
-              <span className="text-[10px] font-black uppercase text-electric-blue tabular-nums">
-                {Math.round((step/questions.length)*100)}%
-              </span>
-            </div>
+            <span className="text-[10px] font-black uppercase text-electric-blue tabular-nums tracking-widest">
+              {Math.round((step/questions.length)*100)}%
+            </span>
           </div>
           
-          <div className="h-3 w-full bg-white/5 rounded-full overflow-hidden border border-white/10 p-[2px] shadow-[0_0_15px_rgba(0,0,0,0.5)] relative">
+          {/* Modern Progress Bar - Gradient and Glow */}
+          <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/10 p-[1.5px] shadow-inner relative">
             <motion.div 
-              className="h-full bg-gradient-to-r from-electric-blue via-blue-500 to-electric-blue rounded-full relative" 
+              className="h-full bg-gradient-to-r from-electric-blue to-blue-500 rounded-full relative" 
               initial={{ width: 0 }}
               animate={{ width: `${(step / questions.length) * 100}%` }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             >
-              <div className="absolute inset-0 shadow-[0_0_10px_rgba(0,210,255,0.6)] rounded-full" />
-              <div className="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent opacity-40" />
+              <div className="absolute inset-0 shadow-[0_0_12px_rgba(0,210,255,0.8)] rounded-full" />
             </motion.div>
           </div>
         </div>
       </div>
 
-      {/* Main Content Area - Fully Centralized */}
-      <div className="flex-1 overflow-y-auto px-6 flex flex-col items-center justify-center z-10 relative">
-        <div className="w-full max-w-sm mx-auto flex flex-col justify-center min-h-[70vh]">
-          <AnimatePresence mode="wait">
-            <motion.div 
-              key={step}
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ duration: 0.3, ease: "circOut" }}
-              className="space-y-10 py-8 flex flex-col items-center w-full"
-            >
-              {/* Question Icon & Text */}
-              <div className="text-center space-y-6 w-full px-4">
-                <motion.div 
-                  initial={{ scale: 0.8, rotate: -5 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  className="w-20 h-20 bg-black/40 backdrop-blur-md border border-white/10 rounded-[2rem] flex items-center justify-center mx-auto shadow-[0_10px_30px_rgba(0,0,0,0.5)] relative group"
-                >
-                  <div className="absolute inset-0 bg-electric-blue/10 blur-xl rounded-full group-hover:bg-electric-blue/20 transition-colors" />
-                  <span className="text-4xl relative z-10 filter drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">{current.icon}</span>
-                </motion.div>
-                
-                <h2 className="text-3xl font-black italic text-white uppercase leading-tight tracking-tighter drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)] px-2">
-                  {current.q}
-                </h2>
+      {/* Main Content Area - Question Card */}
+      <div className="flex-1 px-6 flex flex-col items-center justify-center z-10 relative mt-4">
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={step}
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: -10 }}
+            className="w-full max-w-sm"
+          >
+            <div className="bg-[#0F131A]/90 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_2px_rgba(0,210,255,0.1)] flex flex-col items-center text-center">
+              
+              {/* Question Icon */}
+              <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                <span className="drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{current.icon}</span>
               </div>
 
-              {/* Interaction Area - Centralized Column */}
-              <div className="w-full max-w-[320px] mx-auto">
+              {/* Question Text */}
+              <h2 className="text-2xl font-black italic text-white uppercase leading-tight tracking-tighter">
+                {current.q}
+              </h2>
+
+              {/* Input Area */}
+              <div className="w-full">
                 {current.type === 'select' ? (
-                  <div className="flex flex-col gap-3 items-center w-full">
+                  <div className="flex flex-col gap-3 w-full">
                     {current.opts?.map((opt, i) => (
-                      <motion.div
+                      <Button 
                         key={opt}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.08 }}
-                        className="w-full"
+                        variant="ghost" 
+                        className={`w-full h-14 text-[10px] font-black uppercase border border-white/5 bg-white/5 hover:bg-electric-blue/10 hover:border-electric-blue/30 transition-all rounded-2xl active:scale-[0.97] ${answers[current.id] === opt ? 'border-electric-blue/50 bg-electric-blue/10 text-white' : 'text-white/60'}`} 
+                        onClick={() => select(opt)}
                       >
-                        <Button 
-                          variant="ghost" 
-                          className={`w-full h-16 text-xs font-black uppercase border border-white/10 bg-black/30 backdrop-blur-sm hover:bg-electric-blue/10 hover:border-electric-blue/40 transition-all justify-between px-6 rounded-2xl group active:scale-[0.96] relative overflow-hidden ${answers[current.id] === opt ? 'border-electric-blue/60 bg-electric-blue/20 shadow-[0_0_20px_rgba(0,210,255,0.15)]' : ''}`} 
-                          onClick={() => select(opt)}
-                        >
-                          <div className="flex items-center gap-4">
-                            <div className={`w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center transition-colors font-mono text-[10px] border border-white/10 ${answers[current.id] === opt ? 'text-electric-blue border-electric-blue/40 bg-electric-blue/10' : 'text-white/30'}`}>
-                              {String.fromCharCode(65 + i)}
-                            </div>
-                            <span className="flex-1 text-left text-white/90 tracking-tighter">{opt}</span>
-                          </div>
-                          <div className={`w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${answers[current.id] === opt ? 'border-electric-blue bg-electric-blue shadow-[0_0_10px_rgba(0,210,255,0.6)]' : 'border-white/20'}`}>
-                            {answers[current.id] === opt && <Check className="w-3 h-3 text-black stroke-[4px]" />}
-                          </div>
-                        </Button>
-                      </motion.div>
+                        {opt}
+                      </Button>
                     ))}
                   </div>
                 ) : (
-                  <div className="space-y-8 w-full flex flex-col items-center">
-                    <div className="relative group w-full">
-                      <div className="absolute inset-0 bg-electric-blue/5 blur-2xl rounded-full opacity-0 group-focus-within:opacity-100 transition-opacity" />
-                      <input 
-                        type={current.type === 'number' ? 'number' : 'text'}
-                        pattern={current.type === 'number' ? '[0-9]*' : undefined}
-                        inputMode={current.type === 'number' ? 'numeric' : undefined}
-                        placeholder={current.placeholder}
-                        className="w-full bg-black/40 border-2 border-white/10 rounded-[2rem] p-8 text-4xl font-black italic text-center text-white focus:outline-none focus:border-electric-blue/60 focus:bg-black/60 transition-all shadow-2xl placeholder:text-white/5 placeholder:italic tabular-nums relative z-10"
-                        value={answers[current.id]}
-                        onChange={(e) => handleInput(e.target.value)}
-                        autoFocus
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && answers[current.id]) next();
-                        }}
-                      />
-                    </div>
-                    
-                    <div className="flex flex-col items-center gap-4 w-full">
-                      <Button 
-                        disabled={!answers[current.id]}
-                        onClick={next}
-                        className="game-button bg-electric-blue w-full max-w-[200px] py-6 text-sm italic uppercase shadow-[0_0_20px_rgba(0,210,255,0.3)] active:scale-95 transition-all"
-                      >
-                        PRÓXIMO 🚀
-                      </Button>
-                      <p className="text-center text-[8px] font-black text-white/20 uppercase tracking-[0.4em] animate-pulse">
-                        OU TOQUE EM ENTER
-                      </p>
-                    </div>
+                  <div className="relative group w-full">
+                    <input 
+                      type={current.type === 'number' ? 'number' : 'text'}
+                      pattern={current.type === 'number' ? '[0-9]*' : undefined}
+                      inputMode={current.type === 'number' ? 'numeric' : undefined}
+                      placeholder={current.placeholder || (current.type === 'number' ? 'Ex: 70' : '')}
+                      className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-2xl font-black italic text-center text-white focus:outline-none focus:border-electric-blue focus:bg-black/60 transition-all shadow-inner placeholder:text-white/10"
+                      value={answers[current.id]}
+                      onChange={(e) => handleInput(e.target.value)}
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && answers[current.id]) next();
+                      }}
+                    />
+                    {current.id === 'weight' && (
+                      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">kg</span>
+                    )}
+                    {current.id === 'height' && (
+                      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">cm</span>
+                    )}
                   </div>
                 )}
               </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-        {/* Data Security Card - Displaced slightly down to not crowd center */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="pb-10 w-full max-w-sm"
-        >
-          <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 flex items-center gap-4 shadow-xl">
-            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
-              <Lock className="w-5 h-5 text-white/40" />
-            </div>
-            <div>
-              <h4 className="text-[10px] font-black text-white uppercase tracking-widest italic">Segurança de Dados</h4>
-              <p className="text-[9px] text-white/40 font-bold uppercase tracking-tighter leading-tight mt-0.5">
-                Suas informações são privadas e usadas apenas para personalizar sua experiência.
-              </p>
-            </div>
-          </div>
-        </motion.div>
+      {/* Footer Area - Continue Button and Safety */}
+      <div className="px-8 pb-12 z-20 shrink-0 flex flex-col items-center gap-6">
+        {current.type !== 'select' && (
+          <Button 
+            className="game-button bg-electric-blue w-full max-sm:max-w-none max-w-sm py-8 text-xl italic uppercase shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 transition-all flex items-center justify-center gap-3 group"
+            onClick={next}
+            disabled={!answers[current.id]}
+          >
+            <span>CONTINUAR</span>
+            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        )}
+
+        {/* Data Security Info */}
+        <div className="flex items-center gap-2 opacity-30">
+          <Lock className="w-3 h-3 text-white" />
+          <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white">SEUS DADOS ESTÃO SEGUROS</span>
+        </div>
       </div>
     </div>
+  );
+};
   );
 };
 
