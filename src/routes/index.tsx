@@ -3382,143 +3382,154 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
     <div className="flex flex-col min-h-screen bg-[#05070A] relative overflow-hidden safe-area-padding font-sans">
       {/* Background - Structured per reference image */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Top structured background - Curved dark blue panel */}
         <div className="absolute top-0 left-0 right-0 h-[35%] bg-gradient-to-b from-blue-900/20 to-black/80 rounded-b-[3.5rem] border-b border-electric-blue/20 overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-from)_0%,_transparent_70%)] from-electric-blue/10" />
         </div>
-        
-        {/* Main background */}
         <div className="absolute inset-0 bg-[#05070A] -z-10" />
-        
-        {/* Subtle Blue Glows */}
         <div className="absolute top-[20%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/5 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Top Bar - Centralized Logo and Stats */}
-      <div className="pt-12 px-8 z-20 shrink-0 flex flex-col items-center gap-6">
-        <motion.div 
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="flex flex-col items-center gap-2"
-        >
-          <div className="w-16 h-16 relative p-2 bg-[#0B0E14] border border-electric-blue/30 rounded-2xl shadow-[0_0_20px_rgba(0,210,255,0.1)]">
-            <img src={logoAsset.url} className="w-full h-full object-contain" alt="Logo" />
-          </div>
-          <h1 className="text-xl font-black italic tracking-tighter text-white uppercase leading-none">
-            FLEX<span className="text-electric-blue">BATTLE</span>
-          </h1>
-        </motion.div>
+      <div className="flex-1 flex flex-col items-center justify-center z-10 w-full max-w-sm mx-auto px-6 py-12">
+        {/* Logo and Progress Area */}
+        <div className="w-full flex flex-col items-center gap-6 mb-8">
+          <motion.div 
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="flex flex-col items-center gap-2"
+          >
+            <div className="w-16 h-16 relative p-2 bg-[#0B0E14] border border-electric-blue/30 rounded-2xl shadow-[0_0_20px_rgba(0,210,255,0.1)]">
+              <img src={logoAsset.url} className="w-full h-full object-contain" alt="Logo" />
+            </div>
+            <h1 className="text-xl font-black italic tracking-tighter text-white uppercase leading-none">
+              FLEX<span className="text-electric-blue">BATTLE</span>
+            </h1>
+          </motion.div>
 
-        <div className="w-full max-w-sm space-y-3 mt-2">
-          <div className="flex justify-between items-end px-1">
-            <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.2em] italic">
-              Pergunta {step} de {questions.length}
-            </span>
-            <span className="text-[10px] font-black uppercase text-electric-blue tabular-nums tracking-widest">
-              {Math.round((step/questions.length)*100)}%
-            </span>
-          </div>
-          
-          {/* Modern Progress Bar - Gradient and Glow */}
-          <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/10 p-[1.5px] shadow-inner relative">
-            <motion.div 
-              className="h-full bg-gradient-to-r from-electric-blue to-blue-500 rounded-full relative" 
-              initial={{ width: 0 }}
-              animate={{ width: `${(step / questions.length) * 100}%` }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-            >
-              <div className="absolute inset-0 shadow-[0_0_15px_rgba(0,210,255,0.8)] rounded-full animate-pulse" />
-              <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/20 rounded-full" />
-            </motion.div>
+          <div className="w-full space-y-3">
+            <div className="flex justify-between items-center px-1">
+              <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.2em] italic">
+                Pergunta {step} de {questions.length}
+              </span>
+              <span className="text-[10px] font-black uppercase text-electric-blue tabular-nums tracking-widest">
+                {Math.round((step/questions.length)*100)}%
+              </span>
+            </div>
+            
+            <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/10 p-[1.5px] shadow-inner relative">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-electric-blue to-blue-500 rounded-full relative" 
+                initial={{ width: 0 }}
+                animate={{ width: `${(step / questions.length) * 100}%` }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
+                <div className="absolute inset-0 shadow-[0_0_15px_rgba(0,210,255,0.8)] rounded-full animate-pulse" />
+                <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/20 rounded-full" />
+              </motion.div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content Area - Question Card */}
-      <div className="flex-1 px-6 flex flex-col items-center justify-center z-10 relative mt-4">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div 
-            key={step}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2, ease: "circOut" }}
-            className="w-full max-w-sm"
-          >
-            <div className="bg-[#0F131A]/90 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_2px_rgba(0,210,255,0.1)] flex flex-col items-center text-center">
-              
-              {/* Question Icon */}
-              <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
-                <span className="drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{current.icon}</span>
+        {/* Question Card */}
+        <div className="w-full flex-1 flex flex-col justify-center min-h-[350px]">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div 
+              key={step}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2, ease: "circOut" }}
+              className="w-full"
+            >
+              <div className="bg-[#0F131A]/90 backdrop-blur-xl border-2 border-electric-blue/30 rounded-[2.5rem] p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_30px_rgba(0,210,255,0.15)] flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                  <span className="drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{current.icon}</span>
+                </div>
+
+                <h2 className="text-2xl font-black italic text-white uppercase leading-tight tracking-tighter">
+                  {current.q}
+                </h2>
+
+                <div className="w-full">
+                  {current.type === 'select' ? (
+                    <div className="flex flex-col gap-3 w-full">
+                      {current.opts?.map((opt) => (
+                        <Button 
+                          key={opt}
+                          variant="ghost" 
+                          className={`w-full h-16 text-[11px] font-black uppercase transition-all rounded-2xl active:scale-[0.97] active:brightness-125 neon-border-animated ${answers[current.id] === opt ? 'bg-electric-blue/20 text-white shadow-[0_0_20px_rgba(0,210,255,0.4)]' : 'bg-white/5 text-white/60'}`} 
+                          onClick={() => select(opt)}
+                        >
+                          {opt}
+                        </Button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="relative w-full">
+                      <input 
+                        type={current.type === 'number' ? 'number' : 'text'}
+                        pattern={current.type === 'number' ? '[0-9]*' : undefined}
+                        inputMode={current.type === 'number' ? 'numeric' : undefined}
+                        placeholder={current.placeholder || (current.type === 'number' ? 'Ex: 70' : '')}
+                        className="w-full bg-black/40 border-2 border-electric-blue/30 rounded-2xl p-6 text-2xl font-black italic text-center text-white focus:outline-none focus:border-electric-blue focus:bg-black/60 transition-all shadow-inner placeholder:text-white/10"
+                        value={answers[current.id]}
+                        onChange={(e) => handleInput(e.target.value)}
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && answers[current.id]) next();
+                        }}
+                      />
+                      {current.id === 'weight' && (
+                        <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">kg</span>
+                      )}
+                      {current.id === 'height' && (
+                        <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">cm</span>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-              {/* Question Text */}
-              <h2 className="text-2xl font-black italic text-white uppercase leading-tight tracking-tighter">
-                {current.q}
-              </h2>
-
-              {/* Input Area */}
-              <div className="w-full">
-                {current.type === 'select' ? (
-                  <div className="flex flex-col gap-3 w-full">
-                    {current.opts?.map((opt, i) => (
-                      <Button 
-                        key={opt}
-                        variant="ghost" 
-                        className={`w-full h-14 text-[10px] font-black uppercase border border-white/5 bg-white/5 hover:bg-electric-blue/10 hover:border-electric-blue/30 transition-all rounded-2xl active:scale-[0.97] active:bg-electric-blue/20 active:shadow-[0_0_15px_rgba(0,210,255,0.3)] ${answers[current.id] === opt ? 'border-electric-blue/60 bg-electric-blue/20 text-white shadow-[0_0_20px_rgba(0,210,255,0.2)]' : 'text-white/60'}`} 
-                        onClick={() => select(opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="relative group w-full">
-                    <input 
-                      type={current.type === 'number' ? 'number' : 'text'}
-                      pattern={current.type === 'number' ? '[0-9]*' : undefined}
-                      inputMode={current.type === 'number' ? 'numeric' : undefined}
-                      placeholder={current.placeholder || (current.type === 'number' ? 'Ex: 70' : '')}
-                      className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-2xl font-black italic text-center text-white focus:outline-none focus:border-electric-blue focus:bg-black/60 transition-all shadow-inner placeholder:text-white/10"
-                      value={answers[current.id]}
-                      onChange={(e) => handleInput(e.target.value)}
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && answers[current.id]) next();
-                      }}
-                    />
-                    {current.id === 'weight' && (
-                      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">kg</span>
-                    )}
-                    {current.id === 'height' && (
-                      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">cm</span>
-                    )}
-                  </div>
-                )}
-              </div>
+        {/* Actions & Footer */}
+        <div className="w-full mt-10 space-y-6 flex flex-col items-center">
+          {current.type !== 'select' && (
+            <div className="w-full flex flex-col gap-3">
+              <Button 
+                className="game-button w-full h-20 text-xl italic uppercase neon-border-animated bg-electric-blue/10 text-white shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 transition-all flex items-center justify-center gap-3 group"
+                onClick={next}
+                disabled={!answers[current.id]}
+              >
+                <span>CONTINUAR</span>
+                <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full h-16 text-[10px] font-black uppercase text-white/30 border border-white/5 hover:text-white transition-all rounded-2xl"
+                onClick={() => step > 1 && setStep(step - 1)}
+                disabled={step === 1}
+              >
+                VOLTAR
+              </Button>
             </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+          )}
+          
+          {current.type === 'select' && step > 1 && (
+            <Button 
+              variant="ghost" 
+              className="w-full h-16 text-[10px] font-black uppercase text-white/30 border border-white/5 hover:text-white transition-all rounded-2xl"
+              onClick={() => setStep(step - 1)}
+            >
+              VOLTAR
+            </Button>
+          )}
 
-      {/* Footer Area - Continue Button and Safety */}
-      <div className="px-8 pb-12 z-20 shrink-0 flex flex-col items-center gap-6">
-        {current.type !== 'select' && (
-          <Button 
-            className="game-button bg-electric-blue w-full max-sm:max-w-none max-w-sm py-8 text-xl italic uppercase shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 active:brightness-125 transition-all flex items-center justify-center gap-3 group active:shadow-[0_0_40px_rgba(0,210,255,0.6)]"
-            onClick={next}
-            disabled={!answers[current.id]}
-          >
-            <span>CONTINUAR</span>
-            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        )}
-
-        {/* Data Security Info */}
-        <div className="flex items-center gap-2 opacity-30">
-          <Lock className="w-3 h-3 text-white" />
-          <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white">SEUS DADOS ESTÃO SEGUROS</span>
+          <div className="flex items-center gap-2 opacity-30 mt-2">
+            <Lock className="w-3 h-3 text-white" />
+            <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white">SEUS DADOS ESTÃO SEGUROS</span>
+          </div>
         </div>
       </div>
     </div>
