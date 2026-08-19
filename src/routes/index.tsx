@@ -3893,20 +3893,20 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
-      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
+    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full -z-10" />
       
-      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-8">
         <div className="text-center space-y-2">
-          <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">💪 INFORMAÇÕES FINAIS</h2>
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">QUASE LÁ, ATLETA</p>
+          <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">💪 DADOS DO ATLETA</h2>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">QUASE LÁ, GUERREIRO!</p>
         </div>
-        
+
         <div className="w-full space-y-6">
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4">Nome de Atleta</label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-5">Nome de Atleta</label>
             <input 
-              className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-xl uppercase tracking-tight"
+              className="w-full bg-[#0F131A] border-2 border-electric-blue/30 rounded-2xl p-6 font-black italic text-white focus:outline-none focus:border-electric-blue transition-all text-xl uppercase tracking-tight"
               placeholder="EX: GUERREIRO"
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: (e.target.value || '').toUpperCase()})}
@@ -3914,11 +3914,11 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 text-center block">Idade</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest text-center block">Idade</label>
               <input 
                 type="number"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center text-xl"
+                className="w-full bg-[#0F131A] border-2 border-electric-blue/30 rounded-2xl p-6 font-black italic text-white focus:outline-none focus:border-electric-blue transition-all text-center text-2xl"
                 placeholder="00"
                 value={formData.age}
                 onChange={(e) => {
@@ -3929,11 +3929,11 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
                 }}
               />
             </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 text-center block">Peso (kg)</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest text-center block">Peso (kg)</label>
               <input 
                 type="number"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center text-xl"
+                className="w-full bg-[#0F131A] border-2 border-electric-blue/30 rounded-2xl p-6 font-black italic text-white focus:outline-none focus:border-electric-blue transition-all text-center text-2xl"
                 placeholder="00"
                 value={formData.weight}
                 onChange={(e) => {
@@ -3946,29 +3946,29 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
             </div>
           </div>
         </div>
-
-        <div className="flex-1" />
         
-        <Button 
-          className={`game-button w-full py-8 text-2xl italic uppercase transition-all shadow-[0_8px_0_0_rgba(0,0,0,0.3)] active:translate-y-[8px] active:shadow-none ${
-            status === 'success' ? 'bg-green-600' : 
-            status === 'error' ? 'bg-red-600' : 'bg-primary shadow-[0_8px_0_0_rgba(29,78,216,0.5)]'
-          }`} 
-          onClick={save}
-          disabled={isSaving || status === 'success'}
-        >
-          {status === 'saving' ? (
-            <span className="flex items-center gap-2">
-              <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO CONTA...
-            </span>
-          ) : status === 'success' ? (
-            "✅ CONTA CRIADA!"
-          ) : status === 'error' ? (
-            "❌ TENTAR NOVAMENTE"
-          ) : (
-            "CRIAR CONTA →"
-          )}
-        </Button>
+        <div className="w-full space-y-4 pt-4">
+          <Button 
+            className={`game-button w-full h-20 text-xl italic uppercase transition-all neon-border-animated ${
+              status === 'success' ? 'bg-green-600' : 
+              status === 'error' ? 'bg-red-600' : 'bg-electric-blue/10 text-white shadow-[0_0_25px_rgba(0,210,255,0.4)]'
+            }`} 
+            onClick={save}
+            disabled={isSaving || status === 'success'}
+          >
+            {status === 'saving' ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO CONTA...
+              </span>
+            ) : status === 'success' ? (
+              "✅ CONTA CRIADA!"
+            ) : status === 'error' ? (
+              "❌ TENTAR NOVAMENTE"
+            ) : (
+              "FINALIZAR CADASTRO →"
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
