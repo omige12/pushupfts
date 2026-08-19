@@ -3382,143 +3382,154 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
     <div className="flex flex-col min-h-screen bg-[#05070A] relative overflow-hidden safe-area-padding font-sans">
       {/* Background - Structured per reference image */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        {/* Top structured background - Curved dark blue panel */}
         <div className="absolute top-0 left-0 right-0 h-[35%] bg-gradient-to-b from-blue-900/20 to-black/80 rounded-b-[3.5rem] border-b border-electric-blue/20 overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-from)_0%,_transparent_70%)] from-electric-blue/10" />
         </div>
-        
-        {/* Main background */}
         <div className="absolute inset-0 bg-[#05070A] -z-10" />
-        
-        {/* Subtle Blue Glows */}
         <div className="absolute top-[20%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/5 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/5 blur-[120px] rounded-full" />
       </div>
 
-      {/* Top Bar - Centralized Logo and Stats */}
-      <div className="pt-12 px-8 z-20 shrink-0 flex flex-col items-center gap-6">
-        <motion.div 
-          initial={{ y: -20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="flex flex-col items-center gap-2"
-        >
-          <div className="w-16 h-16 relative p-2 bg-[#0B0E14] border border-electric-blue/30 rounded-2xl shadow-[0_0_20px_rgba(0,210,255,0.1)]">
-            <img src={logoAsset.url} className="w-full h-full object-contain" alt="Logo" />
-          </div>
-          <h1 className="text-xl font-black italic tracking-tighter text-white uppercase leading-none">
-            FLEX<span className="text-electric-blue">BATTLE</span>
-          </h1>
-        </motion.div>
+      <div className="flex-1 flex flex-col items-center justify-center z-10 w-full max-w-sm mx-auto px-6 py-12">
+        {/* Logo and Progress Area */}
+        <div className="w-full flex flex-col items-center gap-6 mb-8">
+          <motion.div 
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="flex flex-col items-center gap-2"
+          >
+            <div className="w-16 h-16 relative p-2 bg-[#0B0E14] border border-electric-blue/30 rounded-2xl shadow-[0_0_20px_rgba(0,210,255,0.1)]">
+              <img src={logoAsset.url} className="w-full h-full object-contain" alt="Logo" />
+            </div>
+            <h1 className="text-xl font-black italic tracking-tighter text-white uppercase leading-none">
+              FLEX<span className="text-electric-blue">BATTLE</span>
+            </h1>
+          </motion.div>
 
-        <div className="w-full max-w-sm space-y-3 mt-2">
-          <div className="flex justify-between items-end px-1">
-            <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.2em] italic">
-              Pergunta {step} de {questions.length}
-            </span>
-            <span className="text-[10px] font-black uppercase text-electric-blue tabular-nums tracking-widest">
-              {Math.round((step/questions.length)*100)}%
-            </span>
-          </div>
-          
-          {/* Modern Progress Bar - Gradient and Glow */}
-          <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/10 p-[1.5px] shadow-inner relative">
-            <motion.div 
-              className="h-full bg-gradient-to-r from-electric-blue to-blue-500 rounded-full relative" 
-              initial={{ width: 0 }}
-              animate={{ width: `${(step / questions.length) * 100}%` }}
-              transition={{ duration: 0.25, ease: "easeOut" }}
-            >
-              <div className="absolute inset-0 shadow-[0_0_15px_rgba(0,210,255,0.8)] rounded-full animate-pulse" />
-              <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/20 rounded-full" />
-            </motion.div>
+          <div className="w-full space-y-3">
+            <div className="flex justify-between items-center px-1">
+              <span className="text-[10px] font-black uppercase text-white/50 tracking-[0.2em] italic">
+                Pergunta {step} de {questions.length}
+              </span>
+              <span className="text-[10px] font-black uppercase text-electric-blue tabular-nums tracking-widest">
+                {Math.round((step/questions.length)*100)}%
+              </span>
+            </div>
+            
+            <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/10 p-[1.5px] shadow-inner relative">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-electric-blue to-blue-500 rounded-full relative" 
+                initial={{ width: 0 }}
+                animate={{ width: `${(step / questions.length) * 100}%` }}
+                transition={{ duration: 0.25, ease: "easeOut" }}
+              >
+                <div className="absolute inset-0 shadow-[0_0_15px_rgba(0,210,255,0.8)] rounded-full animate-pulse" />
+                <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/20 rounded-full" />
+              </motion.div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content Area - Question Card */}
-      <div className="flex-1 px-6 flex flex-col items-center justify-center z-10 relative mt-4">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div 
-            key={step}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.2, ease: "circOut" }}
-            className="w-full max-w-sm"
-          >
-            <div className="bg-[#0F131A]/90 backdrop-blur-xl border border-white/5 rounded-[2.5rem] p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_2px_rgba(0,210,255,0.1)] flex flex-col items-center text-center">
-              
-              {/* Question Icon */}
-              <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
-                <span className="drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{current.icon}</span>
+        {/* Question Card */}
+        <div className="w-full flex-1 flex flex-col justify-center min-h-[350px]">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div 
+              key={step}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              transition={{ duration: 0.2, ease: "circOut" }}
+              className="w-full"
+            >
+              <div className="bg-[#0F131A]/90 backdrop-blur-xl border-2 border-electric-blue/30 rounded-[2.5rem] p-8 space-y-8 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_30px_rgba(0,210,255,0.15)] flex flex-col items-center text-center">
+                <div className="w-16 h-16 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center text-3xl shadow-lg">
+                  <span className="drop-shadow-[0_0_8px_rgba(255,255,255,0.2)]">{current.icon}</span>
+                </div>
+
+                <h2 className="text-2xl font-black italic text-white uppercase leading-tight tracking-tighter">
+                  {current.q}
+                </h2>
+
+                <div className="w-full">
+                  {current.type === 'select' ? (
+                    <div className="flex flex-col gap-3 w-full">
+                      {current.opts?.map((opt) => (
+                        <Button 
+                          key={opt}
+                          variant="ghost" 
+                          className={`w-full h-16 text-[11px] font-black uppercase transition-all rounded-2xl active:scale-[0.97] active:brightness-125 neon-border-animated ${answers[current.id] === opt ? 'bg-electric-blue/20 text-white shadow-[0_0_20px_rgba(0,210,255,0.4)]' : 'bg-white/5 text-white/60'}`} 
+                          onClick={() => select(opt)}
+                        >
+                          {opt}
+                        </Button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="relative w-full">
+                      <input 
+                        type={current.type === 'number' ? 'number' : 'text'}
+                        pattern={current.type === 'number' ? '[0-9]*' : undefined}
+                        inputMode={current.type === 'number' ? 'numeric' : undefined}
+                        placeholder={current.placeholder || (current.type === 'number' ? 'Ex: 70' : '')}
+                        className="w-full bg-black/40 border-2 border-electric-blue/30 rounded-2xl p-6 text-2xl font-black italic text-center text-white focus:outline-none focus:border-electric-blue focus:bg-black/60 transition-all shadow-inner placeholder:text-white/10"
+                        value={answers[current.id]}
+                        onChange={(e) => handleInput(e.target.value)}
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && answers[current.id]) next();
+                        }}
+                      />
+                      {current.id === 'weight' && (
+                        <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">kg</span>
+                      )}
+                      {current.id === 'height' && (
+                        <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">cm</span>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-              {/* Question Text */}
-              <h2 className="text-2xl font-black italic text-white uppercase leading-tight tracking-tighter">
-                {current.q}
-              </h2>
-
-              {/* Input Area */}
-              <div className="w-full">
-                {current.type === 'select' ? (
-                  <div className="flex flex-col gap-3 w-full">
-                    {current.opts?.map((opt, i) => (
-                      <Button 
-                        key={opt}
-                        variant="ghost" 
-                        className={`w-full h-14 text-[10px] font-black uppercase border border-white/5 bg-white/5 hover:bg-electric-blue/10 hover:border-electric-blue/30 transition-all rounded-2xl active:scale-[0.97] active:bg-electric-blue/20 active:shadow-[0_0_15px_rgba(0,210,255,0.3)] ${answers[current.id] === opt ? 'border-electric-blue/60 bg-electric-blue/20 text-white shadow-[0_0_20px_rgba(0,210,255,0.2)]' : 'text-white/60'}`} 
-                        onClick={() => select(opt)}
-                      >
-                        {opt}
-                      </Button>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="relative group w-full">
-                    <input 
-                      type={current.type === 'number' ? 'number' : 'text'}
-                      pattern={current.type === 'number' ? '[0-9]*' : undefined}
-                      inputMode={current.type === 'number' ? 'numeric' : undefined}
-                      placeholder={current.placeholder || (current.type === 'number' ? 'Ex: 70' : '')}
-                      className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-2xl font-black italic text-center text-white focus:outline-none focus:border-electric-blue focus:bg-black/60 transition-all shadow-inner placeholder:text-white/10"
-                      value={answers[current.id]}
-                      onChange={(e) => handleInput(e.target.value)}
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && answers[current.id]) next();
-                      }}
-                    />
-                    {current.id === 'weight' && (
-                      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">kg</span>
-                    )}
-                    {current.id === 'height' && (
-                      <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-black italic text-white/20 uppercase">cm</span>
-                    )}
-                  </div>
-                )}
-              </div>
+        {/* Actions & Footer */}
+        <div className="w-full mt-10 space-y-6 flex flex-col items-center">
+          {current.type !== 'select' && (
+            <div className="w-full flex flex-col gap-3">
+              <Button 
+                className="game-button w-full h-20 text-xl italic uppercase neon-border-animated bg-electric-blue/10 text-white shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 transition-all flex items-center justify-center gap-3 group"
+                onClick={next}
+                disabled={!answers[current.id]}
+              >
+                <span>CONTINUAR</span>
+                <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button 
+                variant="ghost" 
+                className="w-full h-16 text-[10px] font-black uppercase text-white/30 border border-white/5 hover:text-white transition-all rounded-2xl"
+                onClick={() => step > 1 && setStep(step - 1)}
+                disabled={step === 1}
+              >
+                VOLTAR
+              </Button>
             </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
+          )}
+          
+          {current.type === 'select' && step > 1 && (
+            <Button 
+              variant="ghost" 
+              className="w-full h-16 text-[10px] font-black uppercase text-white/30 border border-white/5 hover:text-white transition-all rounded-2xl"
+              onClick={() => setStep(step - 1)}
+            >
+              VOLTAR
+            </Button>
+          )}
 
-      {/* Footer Area - Continue Button and Safety */}
-      <div className="px-8 pb-12 z-20 shrink-0 flex flex-col items-center gap-6">
-        {current.type !== 'select' && (
-          <Button 
-            className="game-button bg-electric-blue w-full max-sm:max-w-none max-w-sm py-8 text-xl italic uppercase shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 active:brightness-125 transition-all flex items-center justify-center gap-3 group active:shadow-[0_0_40px_rgba(0,210,255,0.6)]"
-            onClick={next}
-            disabled={!answers[current.id]}
-          >
-            <span>CONTINUAR</span>
-            <ChevronRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        )}
-
-        {/* Data Security Info */}
-        <div className="flex items-center gap-2 opacity-30">
-          <Lock className="w-3 h-3 text-white" />
-          <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white">SEUS DADOS ESTÃO SEGUROS</span>
+          <div className="flex items-center gap-2 opacity-30 mt-2">
+            <Lock className="w-3 h-3 text-white" />
+            <span className="text-[8px] font-black uppercase tracking-[0.3em] text-white">SEUS DADOS ESTÃO SEGUROS</span>
+          </div>
         </div>
       </div>
     </div>
@@ -3590,14 +3601,14 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#05070A] p-8 relative overflow-hidden">
-      {/* Background patterns and glows */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
-        <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/10 blur-[100px] rounded-full" />
+    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+      {/* Background - Atmospheric Glows */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/5 blur-[100px] rounded-full" />
       </div>
       
-      <div className="flex-1 flex flex-col items-center justify-center space-y-12 z-10 w-full max-w-md mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-10">
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -3618,27 +3629,25 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
 
         <div className="w-full space-y-4">
           {!isLogin && (
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <label className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] ml-5 flex items-center gap-2">
                 <UserIcon className="w-3 h-3 text-electric-blue" /> NOME DE USUÁRIO
               </label>
-              <div className="relative">
-                <input 
-                  className="w-full bg-[#0F131A] p-6 rounded-[1.8rem] text-white border border-white/10 focus:border-electric-blue focus:bg-electric-blue/5 outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
-                  placeholder="Ex: GUERREIRO" 
-                  value={name}
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
-                />
-              </div>
+              <input 
+                className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+                placeholder="Ex: GUERREIRO" 
+                value={name}
+                onChange={(e) => setName(e.target.value.toUpperCase())}
+              />
             </div>
           )}
           
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] ml-5 flex items-center gap-2">
               <Mail className="w-3 h-3 text-electric-blue" /> E-MAIL
             </label>
             <input 
-              className="w-full bg-[#0F131A] p-6 rounded-[1.8rem] text-white border border-white/10 focus:border-electric-blue focus:bg-electric-blue/5 outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+              className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
               placeholder="seu@email.com" 
               type="email"
               value={email}
@@ -3646,19 +3655,17 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
             />
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] ml-5 flex items-center gap-2">
               <Lock className="w-3 h-3 text-electric-blue" /> SENHA
             </label>
-            <div className="relative">
-              <input 
-                className="w-full bg-[#0F131A] p-6 rounded-[1.8rem] text-white border border-white/10 focus:border-electric-blue focus:bg-electric-blue/5 outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
-                type="password" 
-                placeholder="••••••••" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            <input 
+              className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+              type="password" 
+              placeholder="••••••••" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           
           {isLogin && (
@@ -3670,7 +3677,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
 
         <div className="w-full space-y-4 pt-4">
           <Button 
-            className="game-button w-full py-8 text-2xl italic uppercase bg-gradient-to-r from-electric-blue to-blue-600 shadow-[0_8px_0_0_rgba(30,58,138,0.5),0_0_20px_rgba(0,210,255,0.3)] active:translate-y-[8px] active:shadow-none transition-all" 
+            className="game-button w-full h-20 text-xl italic uppercase neon-border-animated bg-electric-blue/10 shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 transition-all" 
             onClick={handleAuth}
             disabled={loading}
           >
@@ -3684,7 +3691,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
 
           <Button 
             variant="ghost" 
-            className="w-full text-white/30 uppercase text-[9px] font-black tracking-[0.3em] hover:text-white transition-colors"
+            className="w-full h-16 text-[10px] font-black uppercase text-white/30 border border-white/5 hover:text-white transition-all rounded-2xl"
             onClick={() => setIsLogin(!isLogin)}
           >
             {isLogin ? "AINDA NÃO TEM CONTA? CRIAR" : "JÁ POSSUI UMA CONTA? ENTRAR"}
@@ -3714,27 +3721,26 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
+    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full -z-10" />
       
-      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-8">
         <div className="text-center space-y-2">
           <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">📸 FOTO DE ATLETA</h2>
           <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">IDENTIDADE DE GUERRA</p>
         </div>
 
         <div className="relative mx-auto group">
-          <div className="w-48 h-48 rounded-full bg-white/5 border-4 border-dashed border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-primary/50 group-hover:bg-primary/5 shadow-2xl">
+          <div className="w-56 h-56 rounded-full bg-[#0F131A] border-4 border-dashed border-electric-blue/30 flex items-center justify-center overflow-hidden transition-all group-hover:border-electric-blue/50 group-hover:bg-electric-blue/5 shadow-[0_0_30px_rgba(0,210,255,0.1)]">
             {preview ? (
               <img src={preview} className="w-full h-full object-cover" alt="Profile" />
             ) : (
-              <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                <Plus className="w-12 h-12" />
+              <div className="flex flex-col items-center gap-2 text-white/20">
+                <Plus className="w-16 h-16" />
                 <span className="text-[10px] font-black uppercase tracking-widest">Adicionar</span>
               </div>
             )}
           </div>
-          
           <input 
             type="file" 
             accept="image/*" 
@@ -3744,25 +3750,25 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
         </div>
 
         <div className="grid grid-cols-2 gap-4 w-full">
-          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 btn-respond-fast">
-            <Camera className="w-4 h-4 mr-2" /> Câmera
+          <Button variant="ghost" className="h-16 bg-white/5 border border-white/10 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 transition-all text-[11px]">
+            <Camera className="w-4 h-4 mr-2 text-electric-blue" /> Câmera
             <input type="file" accept="image/*" capture="user" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
           </Button>
-          <Button variant="outline" className="h-16 border-white/10 bg-white/5 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 btn-respond-fast">
-            <ImageIcon className="w-4 h-4 mr-2" /> Galeria
+          <Button variant="ghost" className="h-16 bg-white/5 border border-white/10 uppercase font-black relative overflow-hidden rounded-2xl active:scale-95 transition-all text-[11px]">
+            <ImageIcon className="w-4 h-4 mr-2 text-electric-blue" /> Galeria
             <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFile} />
           </Button>
         </div>
-
-        <div className="flex-1" />
         
-        <Button 
-          className="game-button w-full py-8 text-2xl italic uppercase shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all" 
-          onClick={() => setView('profile-setup')}
-          disabled={!preview}
-        >
-          PRÓXIMO PASSO →
-        </Button>
+        <div className="w-full space-y-4 pt-4">
+          <Button 
+            className="game-button w-full h-20 text-xl italic uppercase neon-border-animated bg-electric-blue/10 shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 transition-all" 
+            onClick={() => setView('profile-setup')}
+            disabled={!preview}
+          >
+            PRÓXIMO PASSO →
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -3887,20 +3893,20 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0B0E14] p-8 relative overflow-hidden">
-      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
+    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+      <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full -z-10" />
       
-      <div className="flex-1 flex flex-col items-center justify-center space-y-10 z-10 w-full max-w-md mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-8">
         <div className="text-center space-y-2">
-          <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">💪 INFORMAÇÕES FINAIS</h2>
-          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">QUASE LÁ, ATLETA</p>
+          <h2 className="text-4xl font-black italic uppercase text-white tracking-tighter leading-none">💪 DADOS DO ATLETA</h2>
+          <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.3em]">QUASE LÁ, GUERREIRO!</p>
         </div>
-        
+
         <div className="w-full space-y-6">
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4">Nome de Atleta</label>
+          <div className="space-y-2">
+            <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-5">Nome de Atleta</label>
             <input 
-              className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-xl uppercase tracking-tight"
+              className="w-full bg-[#0F131A] border-2 border-electric-blue/30 rounded-2xl p-6 font-black italic text-white focus:outline-none focus:border-electric-blue transition-all text-xl uppercase tracking-tight"
               placeholder="EX: GUERREIRO"
               value={formData.name}
               onChange={(e) => setFormData({...formData, name: (e.target.value || '').toUpperCase()})}
@@ -3908,11 +3914,11 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 text-center block">Idade</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest text-center block">Idade</label>
               <input 
                 type="number"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center text-xl"
+                className="w-full bg-[#0F131A] border-2 border-electric-blue/30 rounded-2xl p-6 font-black italic text-white focus:outline-none focus:border-electric-blue transition-all text-center text-2xl"
                 placeholder="00"
                 value={formData.age}
                 onChange={(e) => {
@@ -3923,11 +3929,11 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
                 }}
               />
             </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest ml-4 text-center block">Peso (kg)</label>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-white/40 uppercase tracking-widest text-center block">Peso (kg)</label>
               <input 
                 type="number"
-                className="w-full bg-white/5 border border-white/10 rounded-2xl p-5 font-black italic text-white focus:outline-none focus:border-primary transition-all text-center text-xl"
+                className="w-full bg-[#0F131A] border-2 border-electric-blue/30 rounded-2xl p-6 font-black italic text-white focus:outline-none focus:border-electric-blue transition-all text-center text-2xl"
                 placeholder="00"
                 value={formData.weight}
                 onChange={(e) => {
@@ -3940,29 +3946,29 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
             </div>
           </div>
         </div>
-
-        <div className="flex-1" />
         
-        <Button 
-          className={`game-button w-full py-8 text-2xl italic uppercase transition-all shadow-[0_8px_0_0_rgba(0,0,0,0.3)] active:translate-y-[8px] active:shadow-none ${
-            status === 'success' ? 'bg-green-600' : 
-            status === 'error' ? 'bg-red-600' : 'bg-primary shadow-[0_8px_0_0_rgba(29,78,216,0.5)]'
-          }`} 
-          onClick={save}
-          disabled={isSaving || status === 'success'}
-        >
-          {status === 'saving' ? (
-            <span className="flex items-center gap-2">
-              <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO CONTA...
-            </span>
-          ) : status === 'success' ? (
-            "✅ CONTA CRIADA!"
-          ) : status === 'error' ? (
-            "❌ TENTAR NOVAMENTE"
-          ) : (
-            "CRIAR CONTA →"
-          )}
-        </Button>
+        <div className="w-full space-y-4 pt-4">
+          <Button 
+            className={`game-button w-full h-20 text-xl italic uppercase transition-all neon-border-animated ${
+              status === 'success' ? 'bg-green-600' : 
+              status === 'error' ? 'bg-red-600' : 'bg-electric-blue/10 text-white shadow-[0_0_25px_rgba(0,210,255,0.4)]'
+            }`} 
+            onClick={save}
+            disabled={isSaving || status === 'success'}
+          >
+            {status === 'saving' ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="w-6 h-6 animate-spin" /> ⏳ CRIANDO CONTA...
+              </span>
+            ) : status === 'success' ? (
+              "✅ CONTA CRIADA!"
+            ) : status === 'error' ? (
+              "❌ TENTAR NOVAMENTE"
+            ) : (
+              "FINALIZAR CADASTRO →"
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
