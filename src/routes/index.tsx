@@ -1222,61 +1222,105 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
 function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, isTraining, onStartTraining }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot?: any, onStartMatchmaking?: () => void, isTraining?: boolean, onStartTraining?: () => void }) {
   const [localDuration, setLocalDuration] = useState(60);
   const durations = [
-    { label: '30 seg', value: 30 },
-    { label: '1 min', value: 60 },
-    { label: '2 min', value: 120 },
-    { label: '3 min', value: 180 },
-    { label: '5 min', value: 300 },
+    { label: '30 segundos', value: 30 },
+    { label: '1 minuto', value: 60 },
+    { label: '2 minutos', value: 120 },
+    { label: '3 minutos', value: 180 },
+    { label: '5 minutos', value: 300 },
   ];
 
   return (
-    <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6 flex flex-col min-h-screen pb-32">
-      <div className="flex items-center gap-4 mb-8">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView(isTraining ? 'dashboard' : (selectedBot ? 'select-bot' : 'multiplayer'))}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">{isTraining ? '⏱️ ESCOLHA O TEMPO' : '⚔️ ESCOLHA A DURAÇÃO'}</h2>
+    <motion.div 
+      initial={{ opacity: 0 }} 
+      animate={{ opacity: 1 }} 
+      className="fixed inset-0 bg-[#0B0E14] flex flex-col p-6 z-50 overflow-hidden"
+    >
+      <div className="flex items-center justify-between mb-8">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="rounded-2xl bg-white/5 border border-white/10 w-12 h-12 active:scale-90 transition-transform" 
+          onClick={() => setView(isTraining ? 'dashboard' : (selectedBot ? 'select-bot' : 'multiplayer'))}
+        >
+          <ArrowLeft className="w-6 h-6 text-white" />
+        </Button>
+        <div className="text-right">
+          <h2 className="text-2xl font-black italic text-white tracking-tighter uppercase leading-none">
+            {isTraining ? 'MODO TREINO' : 'DUELO REAL'}
+          </h2>
+          <p className="text-[10px] font-black text-electric-blue uppercase tracking-[0.2em] mt-1 italic">
+            DEFINA O TEMPO
+          </p>
+        </div>
       </div>
 
-
-      <div className="grid gap-4 flex-1">
+      <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full space-y-4">
         {durations.map(d => (
-          <Button 
+          <motion.button 
             key={d.value} 
-            variant="ghost"
-            className={`game-button h-20 text-xl tracking-tighter italic border-2 transition-all ${localDuration === d.value ? 'bg-primary/20 border-primary text-primary shadow-[0_0_20px_rgba(59,130,246,0.3)]' : 'bg-white/5 border-white/5 text-white'}`}
+            whileTap={{ scale: 0.97 }}
+            className={`w-full h-16 rounded-2xl flex items-center justify-between px-6 border-2 transition-all duration-200 group relative overflow-hidden ${
+              localDuration === d.value 
+                ? 'bg-electric-blue/20 border-electric-blue shadow-[0_0_25px_rgba(0,210,255,0.4)]' 
+                : 'bg-white/5 border-white/5 hover:border-white/10'
+            }`}
             onClick={() => {
               setLocalDuration(d.value);
               onSelect(d.value);
             }}
           >
-            <div className="flex items-center justify-between w-full px-4">
-              <span className="flex items-center gap-3">
-                <Timer className={`w-6 h-6 ${localDuration === d.value ? 'text-primary' : 'text-white/40'}`} />
-                {(d.label || '').toUpperCase()}
+            {localDuration === d.value && (
+              <motion.div 
+                layoutId="duration-glow"
+                className="absolute inset-0 bg-gradient-to-r from-electric-blue/10 via-transparent to-transparent pointer-events-none"
+              />
+            )}
+            <div className="flex items-center gap-4">
+              <div className={`p-2 rounded-xl transition-colors ${localDuration === d.value ? 'bg-electric-blue text-[#0B0E14]' : 'bg-white/5 text-white/40'}`}>
+                <Timer className="w-5 h-5" />
+              </div>
+              <span className={`text-lg font-black italic uppercase tracking-tight ${localDuration === d.value ? 'text-white' : 'text-white/40'}`}>
+                {d.label}
               </span>
-              {localDuration === d.value && <Check className="w-6 h-6" />}
             </div>
-          </Button>
+            {localDuration === d.value && (
+              <motion.div 
+                initial={{ scale: 0 }} 
+                animate={{ scale: 1 }} 
+                className="w-6 h-6 rounded-full bg-electric-blue flex items-center justify-center"
+              >
+                <Check className="w-4 h-4 text-[#0B0E14] stroke-[4px]" />
+              </motion.div>
+            )}
+          </motion.button>
         ))}
       </div>
 
-      <Button 
-        className="game-button bg-primary w-full py-8 text-xl italic uppercase mt-8 shadow-[0_8px_0_0_rgba(29,78,216,0.5)] active:translate-y-[8px] active:shadow-none transition-all"
-        onClick={() => {
-          if (isTraining && onStartTraining) {
-            onStartTraining();
-          } else if (selectedBot) {
-            setView('challenge');
-          } else if (onStartMatchmaking) {
-            onStartMatchmaking();
-          }
-        }}
-      >
-        {isTraining ? "💪 COMEÇAR TREINO" : (selectedBot ? "⚔️ INICIAR DESAFIO" : "⚔️ ENCONTRAR ADVERSÁRIO")}
-      </Button>
-
+      <div className="mt-auto pt-8">
+        <Button 
+          className={`game-button w-full h-20 text-2xl font-black italic uppercase tracking-tighter rounded-[2rem] transition-all active:scale-95 ${
+            isTraining ? 'bg-gold text-black shadow-[0_0_30px_rgba(234,179,8,0.4)]' : 'bg-electric-blue text-black shadow-[0_0_30px_rgba(0,210,255,0.4)]'
+          }`}
+          onClick={() => {
+            if (isTraining && onStartTraining) {
+              onStartTraining();
+            } else if (selectedBot) {
+              setView('challenge');
+            } else if (onStartMatchmaking) {
+              onStartMatchmaking();
+            }
+          }}
+        >
+          <span className="flex items-center gap-3">
+            {isTraining ? "COMEÇAR TREINO" : "COMEÇAR BATALHA"}
+            <ChevronRight className="w-6 h-6" />
+          </span>
+        </Button>
+      </div>
     </motion.div>
   );
 }
+
 
 
 function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraining }: { bot: any, opponent?: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void, isTraining?: boolean }) {
@@ -1290,32 +1334,33 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   const [lastWhoIsAhead, setLastWhoIsAhead] = useState<'player' | 'opponent' | null>(null);
   const [trainingStep, setTrainingStep] = useState(0);
   const [showTip, setShowTip] = useState(false);
+  const [cameraTimeout, setCameraTimeout] = useState(false);
 
-  const trainingTips = [
-    { title: "POSICIONE-SE", text: "Fique de lado para a câmera para que o scanner veja seu corpo inteiro.", icon: <Camera className="w-5 h-5" /> },
-    { title: "COSTAS RETAS", text: "Mantenha o corpo alinhado. Quadril nem muito alto, nem muito baixo.", icon: <Shield className="w-5 h-5" /> },
-    { title: "DESCIDA TOTAL", text: "Desça até que seus cotovelos formem um ângulo de 90 graus.", icon: <Target className="w-5 h-5" /> },
-    { title: "EXTENSÃO", text: "Suba totalmente esticando os braços para validar a repetição.", icon: <Zap className="w-5 h-5" /> }
-  ];
-
+  // Auto-start timeout for camera
   useEffect(() => {
-    if (isTraining && gameState === 'playing') {
-      setShowTip(true);
-      const interval = setInterval(() => {
-        setTrainingStep(prev => (prev + 1) % trainingTips.length);
-      }, 8000);
-      return () => clearInterval(interval);
+    let timeoutId: any;
+    if (gameState === 'loading') {
+      timeoutId = setTimeout(() => {
+        if (!isCameraReady) {
+          setCameraTimeout(true);
+        }
+      }, 15000); // 15 seconds safety timeout
     }
-  }, [isTraining, gameState]);
+    return () => clearTimeout(timeoutId);
+  }, [gameState, isCameraReady]);
 
   const handlePlayerCount = useCallback((count: number) => {
     setPlayerPushups(count);
   }, []);
 
-  const handleCameraReady = () => {
-    setIsCameraReady(true);
-    setGameState('countdown');
-  };
+  const handleCameraReady = useCallback(() => {
+    if (gameState === 'loading') {
+      setIsCameraReady(true);
+      setCameraTimeout(false);
+      setGameState('countdown');
+    }
+  }, [gameState]);
+
 
   const battleMessage = useMemo(() => {
     if (gameState !== 'playing' || isTraining) return "";
@@ -1660,20 +1705,62 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
           <motion.div 
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 flex flex-col items-center justify-center z-[120] bg-[#0B0E14]"
+            className="fixed inset-0 flex flex-col items-center justify-center z-[120] bg-[#0B0E14] p-6"
           >
-            <div className="relative">
-              <div className="w-24 h-24 border-4 border-primary/20 rounded-full" />
-              <div className="absolute inset-0 w-24 h-24 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-              <Camera className="absolute inset-0 m-auto w-8 h-8 text-primary animate-pulse" />
-            </div>
-            <p className="font-black italic text-white tracking-[0.3em] text-[10px] mt-8 uppercase tracking-widest">📷 PREPARANDO CAMERAS...</p>
+            {!cameraTimeout ? (
+              <>
+                <div className="relative mb-8">
+                  <div className="w-24 h-24 border-4 border-electric-blue/20 rounded-full" />
+                  <div className="absolute inset-0 w-24 h-24 border-4 border-electric-blue border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(0,210,255,0.3)]" />
+                  <Camera className="absolute inset-0 m-auto w-8 h-8 text-electric-blue animate-pulse" />
+                </div>
+                <div className="text-center space-y-2">
+                  <p className="font-black italic text-white tracking-[0.3em] text-xs uppercase">📷 PREPARANDO CÂMERA...</p>
+                  <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Aguardando sinal de vídeo</p>
+                </div>
+              </>
+            ) : (
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }} 
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center space-y-8 max-w-xs"
+              >
+                <div className="w-20 h-20 bg-energy-red/10 rounded-full flex items-center justify-center mx-auto border border-energy-red/20 shadow-[0_0_30px_rgba(255,49,49,0.1)]">
+                  <AlertCircle className="w-10 h-10 text-energy-red" />
+                </div>
+                <div className="space-y-3">
+                  <h3 className="text-2xl font-black italic text-white uppercase tracking-tighter">OPS! A CÂMERA FALHOU</h3>
+                  <p className="text-xs font-bold text-white/50 leading-relaxed uppercase tracking-wide">
+                    Não conseguimos acessar sua câmera a tempo. Verifique as permissões do navegador e tente novamente.
+                  </p>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <Button 
+                    className="game-button bg-electric-blue text-black h-16 text-lg rounded-2xl"
+                    onClick={() => {
+                      setCameraTimeout(false);
+                      setGameState('loading'); 
+                    }}
+                  >
+                    TENTAR NOVAMENTE
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    className="h-12 text-white/40 font-black uppercase tracking-widest text-[10px]"
+                    onClick={onExit}
+                  >
+                    VOLTAR
+                  </Button>
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
     </motion.div>
   );
 }
+
 
 
 function Profile({ setView, user, setUser, initialEditing = false, goBack }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean, goBack: () => void }) {
