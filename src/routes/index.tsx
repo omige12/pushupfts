@@ -3601,14 +3601,14 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#05070A] p-8 relative overflow-hidden">
-      {/* Background patterns and glows */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
-        <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/10 blur-[100px] rounded-full" />
+    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+      {/* Background - Atmospheric Glows */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
+        <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/5 blur-[100px] rounded-full" />
       </div>
       
-      <div className="flex-1 flex flex-col items-center justify-center space-y-12 z-10 w-full max-w-md mx-auto">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-10">
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -3629,27 +3629,25 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
 
         <div className="w-full space-y-4">
           {!isLogin && (
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               <label className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] ml-5 flex items-center gap-2">
                 <UserIcon className="w-3 h-3 text-electric-blue" /> NOME DE USUÁRIO
               </label>
-              <div className="relative">
-                <input 
-                  className="w-full bg-[#0F131A] p-6 rounded-[1.8rem] text-white border border-white/10 focus:border-electric-blue focus:bg-electric-blue/5 outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
-                  placeholder="Ex: GUERREIRO" 
-                  value={name}
-                  onChange={(e) => setName(e.target.value.toUpperCase())}
-                />
-              </div>
+              <input 
+                className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+                placeholder="Ex: GUERREIRO" 
+                value={name}
+                onChange={(e) => setName(e.target.value.toUpperCase())}
+              />
             </div>
           )}
           
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] ml-5 flex items-center gap-2">
               <Mail className="w-3 h-3 text-electric-blue" /> E-MAIL
             </label>
             <input 
-              className="w-full bg-[#0F131A] p-6 rounded-[1.8rem] text-white border border-white/10 focus:border-electric-blue focus:bg-electric-blue/5 outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+              className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
               placeholder="seu@email.com" 
               type="email"
               value={email}
@@ -3657,19 +3655,17 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
             />
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <label className="text-[9px] font-black text-white/30 uppercase tracking-[0.2em] ml-5 flex items-center gap-2">
               <Lock className="w-3 h-3 text-electric-blue" /> SENHA
             </label>
-            <div className="relative">
-              <input 
-                className="w-full bg-[#0F131A] p-6 rounded-[1.8rem] text-white border border-white/10 focus:border-electric-blue focus:bg-electric-blue/5 outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
-                type="password" 
-                placeholder="••••••••" 
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+            <input 
+              className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+              type="password" 
+              placeholder="••••••••" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           
           {isLogin && (
@@ -3681,7 +3677,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
 
         <div className="w-full space-y-4 pt-4">
           <Button 
-            className="game-button w-full py-8 text-2xl italic uppercase bg-gradient-to-r from-electric-blue to-blue-600 shadow-[0_8px_0_0_rgba(30,58,138,0.5),0_0_20px_rgba(0,210,255,0.3)] active:translate-y-[8px] active:shadow-none transition-all" 
+            className="game-button w-full h-20 text-xl italic uppercase neon-border-animated bg-electric-blue/10 shadow-[0_0_25px_rgba(0,210,255,0.4)] active:scale-95 transition-all" 
             onClick={handleAuth}
             disabled={loading}
           >
@@ -3695,7 +3691,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
 
           <Button 
             variant="ghost" 
-            className="w-full text-white/30 uppercase text-[9px] font-black tracking-[0.3em] hover:text-white transition-colors"
+            className="w-full h-16 text-[10px] font-black uppercase text-white/30 border border-white/5 hover:text-white transition-all rounded-2xl"
             onClick={() => setIsLogin(!isLogin)}
           >
             {isLogin ? "AINDA NÃO TEM CONTA? CRIAR" : "JÁ POSSUI UMA CONTA? ENTRAR"}
