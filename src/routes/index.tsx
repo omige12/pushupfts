@@ -307,8 +307,6 @@ function App() {
   }, []);
 
 
-  const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
-  const [matchOpponent, setMatchOpponent] = useState<any>(null);
 
 
   const acceptChallenge = async (challenge: any) => {
