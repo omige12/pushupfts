@@ -389,6 +389,7 @@ function App() {
 
 
   const [loading, setLoading] = useState(true);
+  const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated' | 'error'>('checking');
   const [user, setUser] = useState<{
     id: string;
     supabaseId?: string;
