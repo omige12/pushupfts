@@ -2914,12 +2914,13 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
 
   const addFriend = async (friendId: string) => {
     const { error } = await supabase.from('friendships').insert({
-      user_id: user.id,
+      user_id: user.supabaseId || user.id,
       friend_id: friendId,
       status: 'pending'
     });
     if (!error) toast.success("Solicitação enviada!");
     else toast.error("Erro ao enviar solicitação.");
+
   };
 
   return (
