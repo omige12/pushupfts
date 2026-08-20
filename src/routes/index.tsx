@@ -486,96 +486,110 @@ function App() {
     }
   };
 
+  const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated' | 'error'>('checking');
+
   // Load user data from Supabase
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchProfile = async () => {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("TIMEOUT")), 10000)
+      );
+
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const sessionResult = await Promise.race([
+          supabase.auth.getSession(),
+          timeoutPromise
+        ]) as any;
+        
+        const session = sessionResult.data?.session;
         
         if (session?.user) {
           const supabaseId = session.user.id;
-          const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .maybeSingle();
+          
+          // Parallelize profile and matches fetch
+          const [profileResult, matchesResult] = await Promise.allSettled([
+            supabase.from('profiles').select('*').eq('id', supabaseId).maybeSingle(),
+            supabase.from('matches').select('*').eq('player_id', supabaseId).order('created_at', { ascending: false }).limit(15)
+          ]);
 
-          if (profile) {
-            setUser(prev => ({
-              ...prev,
-              id: profile.player_id,
-              supabaseId: supabaseId,
-              player_id: profile.player_id,
-              name: profile.name,
-
-              age: profile.age || prev.age,
-              weight: profile.weight || prev.weight,
-              height: profile.height || prev.height,
-              goal: profile.goal || prev.goal,
-              level: profile.level,
-              xp: Number(profile.xp),
-              wins: profile.wins,
-              losses: profile.losses,
-              record: profile.record,
-              totalPushups: profile.total_pushups,
-              streak: profile.streak,
-              avatar: profile.avatar_url,
-              achievements: profile.achievements || [],
-            }));
-
-            // Fetch match history
-            const { data: matches } = await supabase
-              .from('matches')
-              .select('*')
-              .eq('player_id', session.user.id)
-              .order('created_at', { ascending: false })
-              .limit(15);
-            
-            if (matches) {
+          if (profileResult.status === 'fulfilled' && profileResult.value.data) {
+            const profile = profileResult.value.data;
+            if (isMounted) {
               setUser(prev => ({
                 ...prev,
-                history: matches.map(m => ({
-                  id: m.id,
-                  opp: m.opponent_name,
-                  res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
-                  score: `${m.player_score}-${m.opponent_score}`,
-                  xp: `+${m.xp_gained}`,
-                  date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
-                }))
+                id: profile.player_id,
+                supabaseId: supabaseId,
+                player_id: profile.player_id,
+                name: profile.name,
+                age: profile.age || prev.age,
+                weight: profile.weight || prev.weight,
+                height: profile.height || prev.height,
+                goal: profile.goal || prev.goal,
+                level: profile.level,
+                xp: Number(profile.xp),
+                wins: profile.wins,
+                losses: profile.losses,
+                record: profile.record,
+                totalPushups: profile.total_pushups,
+                streak: profile.streak,
+                avatar: profile.avatar_url,
+                achievements: profile.achievements || [],
               }));
-            }
-            
-            // Check if there's a view in the URL (from PWA shortcuts)
-            const urlParams = new URLSearchParams(window.location.search);
-            const initialView = urlParams.get('view') as View;
-            
-            if (initialView && ['dashboard', 'multiplayer', 'treino', 'profile', 'ranking'].includes(initialView)) {
-              setView(initialView);
-            } else {
-              setView('dashboard');
-            }
 
-            // PWA logic here if needed for state tracking, but banner is removed
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-              // Banner removed by user request
+              if (matchesResult.status === 'fulfilled' && matchesResult.value.data) {
+                setUser(prev => ({
+                  ...prev,
+                  history: matchesResult.value.data.map((m: any) => ({
+                    id: m.id,
+                    opp: m.opponent_name,
+                    res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
+                    score: `${m.player_score}-${m.opponent_score}`,
+                    xp: `+${m.xp_gained}`,
+                    date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
+                  }))
+                }));
+              }
+
+              setAuthStatus('authenticated');
+              
+              const urlParams = new URLSearchParams(window.location.search);
+              const initialView = urlParams.get('view') as View;
+              if (initialView && ['dashboard', 'multiplayer', 'treino', 'profile', 'ranking'].includes(initialView)) {
+                setView(initialView);
+              } else {
+                setView('dashboard');
+              }
             }
           } else {
-            console.log("Profile not found, staying in onboarding");
-            setView('onboarding-start');
+            if (isMounted) {
+              setAuthStatus('unauthenticated');
+              setView('onboarding-start');
+            }
           }
         } else {
-          console.log("No active session, checking if we should show auth first");
-          setView('onboarding-start');
+          if (isMounted) {
+            setAuthStatus('unauthenticated');
+            setView('onboarding-start');
+          }
         }
       } catch (err) {
-        console.error("Error fetching profile:", err);
-        setView('onboarding-start');
+        console.error("Auth initialization error:", err);
+        if (isMounted) {
+          setAuthStatus(err instanceof Error && err.message === "TIMEOUT" ? 'error' : 'unauthenticated');
+          setView('onboarding-start');
+          if (err instanceof Error && err.message === "TIMEOUT") {
+            toast.error("Conexão lenta detectada. Tente recarregar se o problema persistir.");
+          }
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchProfile();
+    return () => { isMounted = false; };
   }, []);
 
 
