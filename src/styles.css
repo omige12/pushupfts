@@ -142,6 +142,9 @@
     color: var(--color-foreground);
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-tap-highlight-color: transparent;
+    overflow: hidden;
+    height: 100dvh;
+    width: 100vw;
   }
 }
 

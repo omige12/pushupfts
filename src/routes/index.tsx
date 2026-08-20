@@ -1088,7 +1088,7 @@ function App() {
       </AnimatePresence>
 
       {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking', 'challenge', 'friend-challenge', 'patents-list', 'history', 'support', 'support-chat'].includes(view) && (
-        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[380px] bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-[100] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] safe-area-bottom">
+        <nav className="fixed bottom-0 left-0 right-0 w-full bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/10 px-2 py-3 flex justify-around items-center z-[100] shadow-[0_-10px_30px_rgba(0,0,0,0.5)] pb-[env(safe-area-inset-bottom,12px)]">
           {[
             { id: 'dashboard', label: 'Início', icon: Home, aliases: [] },
             { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
@@ -1124,7 +1124,7 @@ function App() {
                   <>
                     <motion.div 
                       layoutId="nav-indicator-line"
-                      className="absolute -bottom-1 w-5 h-1 bg-electric-blue rounded-full shadow-[0_0_10px_rgba(0,210,255,0.8)]"
+                      className="absolute -bottom-3 w-5 h-1 bg-electric-blue rounded-full shadow-[0_0_10px_rgba(0,210,255,0.8)]"
                     />
                     <motion.div 
                       layoutId="nav-bg-glow"
@@ -1150,7 +1150,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto min-h-0 pb-40 overflow-y-auto custom-scrollbar">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto h-[100dvh] pb-24 overflow-y-auto custom-scrollbar">
       {/* Header */}
       <header className="flex justify-between items-start w-full mt-4">
         <div className="flex items-center gap-3">
@@ -2198,7 +2198,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
         exit={{ opacity: 0, y: 20 }}
-        className="p-6 space-y-6 pb-40 h-full overflow-y-auto custom-scrollbar"
+        className="p-6 space-y-6 pb-20 h-full overflow-y-auto custom-scrollbar"
       >
         <div className="flex items-center gap-4 mb-2">
           <Button 
@@ -2351,7 +2351,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-full overflow-y-auto pb-40 custom-scrollbar">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-[100dvh] overflow-y-auto pb-24 custom-scrollbar">
       <div className="flex justify-between items-center w-full mb-2 mt-4 shrink-0">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
@@ -3539,7 +3539,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
               </p>
             )}
           </div>
-          <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
             <ArrowLeft className="w-5 h-5 text-white" />
           </Button>
         </div>
@@ -3797,6 +3797,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
           );
         })}
       </div>
+      <div className="h-20 shrink-0" />
     </motion.div>
   );
 }
@@ -3817,7 +3818,7 @@ function PatentsList({ setView, user, goBack }: { setView: (v: View) => void, us
   const currentInfo = getRankInfo(user.xp);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-40 space-y-6 h-full overflow-y-auto custom-scrollbar">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-20 space-y-6 h-[100dvh] overflow-y-auto custom-scrollbar">
       <div className="flex items-center gap-4 mb-2">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">TRILHA DE EVOLUÇÃO</h2>
@@ -4346,7 +4347,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#05070A] p-6 relative overflow-hidden">
+    <div className="flex flex-col h-[100dvh] bg-[#05070A] p-6 relative overflow-hidden pb-[env(safe-area-inset-bottom,24px)]">
       {/* Background - Atmospheric Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
