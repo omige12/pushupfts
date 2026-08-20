@@ -389,6 +389,7 @@ function App() {
 
 
   const [loading, setLoading] = useState(true);
+  const [opponentDetails, setOpponentDetails] = useState<any>(null);
   const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated' | 'error'>('checking');
   const [user, setUser] = useState<{
     id: string;
@@ -896,6 +897,7 @@ function App() {
           opponent={matchOpponent || opponent} 
           duration={duration} 
           user={user} 
+          setUser={setUser}
           matchId={activeMatchId || undefined}
           isTraining={isTraining} 
           onExit={() => { 
@@ -920,7 +922,7 @@ function App() {
       case 'support': return <Support setView={handleSetView} goBack={goBack} />;
       case 'support-chat': return <SupportChat setView={handleSetView} goBack={goBack} />;
       case 'history': return <FullHistory setView={handleSetView} user={user} goBack={goBack} />;
-      case 'friend-challenge': return <FriendChallenge setView={handleSetView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} duration={duration} />;
+      case 'friend-challenge': return <FriendChallenge setView={handleSetView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} duration={duration} setOpponentDetails={setOpponentDetails} opponentDetails={opponentDetails} />;
       case 'ranking': return <Ranking setView={handleSetView} user={user} goBack={goBack} />;
       case 'patents-list': return <PatentsList setView={handleSetView} user={user} goBack={goBack} />;
       case 'daily-reward': return <DailyReward setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
@@ -946,8 +948,8 @@ function App() {
 
 
   return (
-    <div className="flex flex-col h-[100dvh] bg-[#05070A] text-white overflow-hidden relative">
-      <div className="flex-1 overflow-y-auto overflow-x-hidden safe-area-padding custom-scrollbar relative">
+    <div className="flex flex-col h-[100dvh] bg-[#05070A] text-white overflow-hidden relative safe-area-padding">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative">
         <AnimatePresence mode="wait">
           {renderView()}
         </AnimatePresence>
@@ -1085,14 +1087,14 @@ function App() {
         )}
       </AnimatePresence>
 
-      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking', 'challenge'].includes(view) && (
+      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking', 'challenge', 'friend-challenge', 'patents-list', 'history', 'support', 'support-chat'].includes(view) && (
         <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[380px] bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-[100] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] safe-area-bottom">
           {[
             { id: 'dashboard', label: 'Início', icon: Home, aliases: [] },
             { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
             { id: 'multiplayer', label: 'Batalha', icon: Swords, aliases: ['select-bot', 'select-duration', 'matchmaking'] },
             { id: 'ranking', label: 'Ranking', icon: Trophy, aliases: [] },
-            { id: 'profile', label: 'Perfil', icon: UserCircle, aliases: ['history', 'support', 'settings', 'edit-profile'] }
+            { id: 'profile', label: 'Perfil', icon: UserCircle, aliases: ['settings', 'edit-profile'] }
           ].map((item) => {
             const isActive = view === item.id || item.aliases?.includes(view);
             
@@ -1148,7 +1150,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto min-h-0 pb-32">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto min-h-0 pb-40 overflow-y-auto custom-scrollbar">
       {/* Header */}
       <header className="flex justify-between items-start w-full mt-4">
         <div className="flex items-center gap-3">
@@ -1377,7 +1379,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
 function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect: (b: typeof BOTS[0]) => void }) {
   return (
-    <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6 pb-32">
+    <motion.div initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="p-6 pb-40 overflow-y-auto h-full custom-scrollbar">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => setView('dashboard')}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">OPONENTES</h2>
@@ -1446,7 +1448,7 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, is
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
-      className="fixed inset-0 bg-[#0B0E14] flex flex-col p-6 z-50 overflow-hidden"
+      className="fixed inset-0 bg-[#0B0E14] flex flex-col p-6 z-50 overflow-y-auto custom-scrollbar"
     >
       <div className="flex items-center justify-between mb-8">
         <Button 
@@ -1536,7 +1538,7 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, is
 
 
 
-function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraining, matchId }: { bot: any, opponent?: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void, isTraining?: boolean, matchId?: string }) {
+function Challenge({ bot, opponent, duration, user, setUser, onExit, onComplete, isTraining, matchId }: { bot: any, opponent?: any, duration: number, user: any, setUser: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void, isTraining?: boolean, matchId?: string }) {
   const activeOpponent = bot || opponent;
   const [playerPushups, setPlayerPushups] = useState(0);
   const [oppPushups, setOppPushups] = useState(0);
@@ -1698,6 +1700,20 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
       setGameState('finished');
       const won = isTraining ? true : playerPushups >= oppPushups;
       
+      const baseXp = playerPushups * 10;
+      const winBonus = won && !isTraining ? 100 : 0;
+      const totalXpGained = baseXp + winBonus;
+      
+      // Immediate update to local state for instant feedback
+      setUser((prev: any) => ({
+        ...prev,
+        xp: prev.xp + totalXpGained,
+        wins: won && !isTraining ? prev.wins + 1 : prev.wins,
+        losses: !won && !isTraining ? prev.losses + 1 : prev.losses,
+        totalPushups: prev.totalPushups + playerPushups,
+        record: Math.max(prev.record, playerPushups)
+      }));
+
       if (won) {
         confetti({ 
           particleCount: 250, 
@@ -1720,11 +1736,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
             .eq('id', matchId);
         }
         
-        if (won) {
-          onComplete(true, playerPushups, isTraining ? playerPushups * 2 : 150 + playerPushups, activeOpponent?.name || 'TREINO', oppPushups);
-        } else {
-          onComplete(false, playerPushups, 45 + playerPushups, activeOpponent?.name || 'BOT', oppPushups);
-        }
+        onComplete(won, playerPushups, totalXpGained, activeOpponent?.name || 'ARENA', oppPushups);
       };
       
       finishBattle();
@@ -1746,7 +1758,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none h-[100dvh]">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none h-[100dvh] custom-scrollbar overflow-y-auto">
       {/* HUD Superior — Mobile Optimized Premium HUD */}
       <div className="absolute top-0 left-0 right-0 z-30 p-4 pt-6 bg-gradient-to-b from-black/80 to-transparent">
         <div className="max-w-md mx-auto relative">
@@ -2186,7 +2198,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
         exit={{ opacity: 0, y: 20 }}
-        className="p-6 space-y-6 pb-32 h-full overflow-y-auto"
+        className="p-6 space-y-6 pb-40 h-full overflow-y-auto custom-scrollbar"
       >
         <div className="flex items-center gap-4 mb-2">
           <Button 
@@ -2339,7 +2351,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-full overflow-y-auto pb-32">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-full overflow-y-auto pb-40 custom-scrollbar">
       <div className="flex justify-between items-center w-full mb-2 mt-4 shrink-0">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
@@ -2534,7 +2546,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
 
 function FullHistory({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6 pb-10">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-6 pb-40 overflow-y-auto custom-scrollbar h-full">
       <div className="flex items-center gap-4 mb-6">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">HISTÓRICO</h2>
@@ -3002,7 +3014,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
   );
 }
 
-function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void, goBack: () => void, duration: number }) {
+function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, setOpponentDetails, opponentDetails }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void, goBack: () => void, duration: number, setOpponentDetails: (opp: any) => void, opponentDetails: any }) {
   const [friends, setFriends] = useState<any[]>([]);
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
   const [showInvites, setShowInvites] = useState(false);
@@ -3126,7 +3138,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration }:
   };
 
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8 pb-32 h-full overflow-y-auto">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8 pb-40 h-full overflow-y-auto custom-scrollbar">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
@@ -3182,31 +3194,141 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration }:
         </div>
         
         {foundUser && (
-          <div className="bg-[#151921] p-4 rounded-2xl flex items-center justify-between border border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/5 rounded-full overflow-hidden">
-                {foundUser.avatar_url && <img src={foundUser.avatar_url} className="w-full h-full object-cover" />}
+          <div className="bg-[#151921] p-5 rounded-[2rem] flex items-center justify-between border border-electric-blue/20 premium-glow-blue shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full border-2 border-electric-blue/30 overflow-hidden bg-muted p-0.5">
+                {foundUser.avatar_url ? (
+                  <img src={foundUser.avatar_url} className="w-full h-full object-cover rounded-full" />
+                ) : (
+                  <div className="w-full h-full bg-white/5 flex items-center justify-center rounded-full">
+                    <UserIcon className="w-6 h-6 text-white/20" />
+                  </div>
+                )}
               </div>
               <div>
-                <p className="font-black text-white italic">{foundUser.name}</p>
-                <p className="text-[10px] text-white/40 uppercase">{getRankInfo(foundUser.xp).patentName}</p>
+                <p className="font-black text-white italic tracking-tighter uppercase leading-none">{foundUser.name}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge className="bg-electric-blue/10 text-electric-blue border-electric-blue/20 text-[8px] h-4 px-1.5 font-black italic">
+                    {getRankInfo(foundUser.xp).patentName}
+                  </Badge>
+                  <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">ID: {foundUser.player_id}</span>
+                </div>
               </div>
             </div>
             <div className="flex gap-2">
-              <Button className="bg-electric-blue text-xs font-black italic px-4" onClick={() => onChallengePlayer({
-                id: foundUser.id,
-                name: foundUser.name,
-                avatar: foundUser.avatar_url,
-                patent: getRankInfo(foundUser.xp).patentName
-              })}>DESAFIAR</Button>
-              <Button className="bg-white/5 border border-white/10 text-xs font-black italic px-4" onClick={() => addFriend(foundUser.id)}>ADICIONAR</Button>
+              <Button 
+                className="bg-electric-blue text-black text-[10px] font-black italic px-4 h-11 rounded-xl shadow-[0_0_15px_rgba(0,210,255,0.3)] active:scale-90 transition-all" 
+                onClick={() => addFriend(foundUser.id)}
+              >
+                ADICIONAR
+              </Button>
+              <Button 
+                className="bg-white/5 border border-white/10 text-white/60 text-[10px] font-black italic px-4 h-11 rounded-xl active:scale-90 transition-all" 
+                onClick={() => setOpponentDetails(foundUser)}
+              >
+                INFO
+              </Button>
             </div>
-
           </div>
         )}
       </div>
 
       <AnimatePresence>
+        {opponentDetails && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setOpponentDetails(null);
+            }}
+          >
+            <motion.div 
+              className="w-full max-w-sm bg-[#151921] border-2 border-electric-blue/30 rounded-[3rem] p-8 space-y-8 relative premium-glow-blue overflow-hidden"
+              initial={{ y: 20 }}
+              animate={{ y: 0 }}
+            >
+              {/* Background Glow */}
+              <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-electric-blue/10 to-transparent pointer-events-none" />
+              
+              <div className="flex justify-between items-center relative z-10">
+                <h3 className="text-2xl font-black italic text-white tracking-tighter uppercase">PERFIL</h3>
+                <Button variant="ghost" size="icon" onClick={() => setOpponentDetails(null)} className="rounded-full bg-white/5 hover:bg-white/10 w-10 h-10 active:scale-90">
+                  <X className="w-5 h-5 text-white" />
+                </Button>
+              </div>
+
+              <div className="flex flex-col items-center gap-6 relative z-10">
+                <div className="relative">
+                  <div className="w-32 h-32 rounded-full border-4 border-electric-blue/40 overflow-hidden bg-muted p-1 shadow-[0_0_30px_rgba(0,210,255,0.2)]">
+                    {opponentDetails.avatar_url ? (
+                      <img src={opponentDetails.avatar_url} className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                      <div className="w-full h-full bg-white/5 flex items-center justify-center rounded-full">
+                        <UserIcon className="w-12 h-12 text-white/20" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 bg-electric-blue text-black w-10 h-10 rounded-2xl flex items-center justify-center text-xl shadow-lg border-2 border-[#151921] transform rotate-12">
+                    {getRankInfo(opponentDetails.xp).emoji}
+                  </div>
+                </div>
+
+                <div className="text-center space-y-2">
+                  <h4 className="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">{opponentDetails.name}</h4>
+                  <div className="flex items-center justify-center gap-3">
+                    <Badge className="bg-electric-blue/20 text-electric-blue border-electric-blue/40 text-[10px] py-1 px-3 font-black italic">
+                      {getRankInfo(opponentDetails.xp).rankName}
+                    </Badge>
+                    <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">ID: {opponentDetails.player_id}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 relative z-10">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                  <Trophy className="w-5 h-5 text-gold mx-auto mb-1" />
+                  <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">RECORD</p>
+                  <p className="text-xl font-black italic text-white">{opponentDetails.record || 0}</p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                  <Flame className="w-5 h-5 text-energy-red mx-auto mb-1" />
+                  <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">XP TOTAL</p>
+                  <p className="text-xl font-black italic text-white">{opponentDetails.xp || 0}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 pt-4 relative z-10">
+                <Button 
+                  className="w-full py-7 bg-electric-blue text-black font-black italic text-lg uppercase rounded-[1.5rem] shadow-[0_10px_30px_rgba(0,210,255,0.3)] hover:scale-[1.02] active:scale-95 transition-all"
+                  onClick={() => {
+                    onChallengePlayer({
+                      id: opponentDetails.id,
+                      name: opponentDetails.name,
+                      avatar: opponentDetails.avatar_url,
+                      patent: getRankInfo(opponentDetails.xp).patentName
+                    });
+                    setOpponentDetails(null);
+                  }}
+                >
+                  DESAFIAR AGORA
+                </Button>
+                
+                <Button 
+                  className="w-full py-7 bg-white/5 border-2 border-white/10 text-white font-black italic text-lg uppercase rounded-[1.5rem] hover:bg-white/10 active:scale-95 transition-all"
+                  onClick={() => {
+                    addFriend(opponentDetails.id);
+                    setOpponentDetails(null);
+                  }}
+                >
+                  ADICIONAR AMIGO
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
         {showInvites && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
@@ -3320,7 +3442,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration }:
                   }
                 }}
               >
-                {isOnline ? 'DESAFIAR' : 'OFFLINE'}
+                {isOnline ? 'DESAFIAR' : 'CONVIDAR'}
               </Button>
             </motion.div>
           );
@@ -3345,7 +3467,8 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
         let query = supabase
           .from('profiles')
           .select('id, name, xp, record, wins, streak, avatar_url, player_id')
-          .order('xp', { ascending: false });
+          .order('xp', { ascending: false })
+          .limit(100);
 
         if (tab === 'friends') {
           const { data: friendships } = await supabase
@@ -3405,7 +3528,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
   }, [user.id, tab]);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-32 h-full overflow-y-auto">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-40 h-full overflow-y-auto custom-scrollbar">
       <div className="flex flex-col gap-8">
         <div className="flex justify-between items-start">
           <div className="flex flex-col">
@@ -3494,15 +3617,21 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
               </motion.div>
             ))}
             
-            {userRank && (
-              <div className="mt-8 p-6 glass-panel border-electric-blue/30 bg-electric-blue/5 rounded-[2rem] text-center">
-                <p className="text-xs font-black text-white/40 uppercase tracking-[0.2em] mb-2">SUA POSIÇÃO ATUAL</p>
-                <div className="flex justify-center items-center gap-4">
-                  <div className="text-4xl font-black italic text-electric-blue">#{userRank}</div>
-                  <div className="h-8 w-px bg-white/10" />
-                  <div className="text-left">
+            {userRank !== null && (
+              <div className="mt-8 p-8 glass-panel border-electric-blue/30 bg-electric-blue/5 rounded-[2.5rem] text-center relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-electric-blue/10 to-transparent opacity-50 pointer-events-none" />
+                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-4 relative z-10">SUA POSIÇÃO ATUAL</p>
+                <div className="flex justify-center items-center gap-6 relative z-10">
+                  <div className="text-6xl font-black italic text-electric-blue shadow-text-neon tracking-tighter">#{userRank}</div>
+                  <div className="h-12 w-px bg-white/10" />
+                  <div className="text-left space-y-1">
                     <div className="text-[10px] font-black text-white/60 uppercase tracking-widest">VOCÊ ESTÁ ENTRE OS</div>
-                    <div className="text-lg font-black text-white italic tracking-tighter uppercase leading-none">MELHORES DO BRASIL</div>
+                    <div className="text-xl font-black text-white italic tracking-tighter uppercase leading-none">MELHORES DO BRASIL</div>
+                    {userRank > 1 && rankingData[userRank - 2] && (
+                      <p className="text-[9px] font-black text-gold uppercase mt-2 animate-pulse">
+                        PRÓXIMO ALVO: {rankingData[userRank - 2].name.toUpperCase()} (+{(rankingData[userRank - 2].count - (rankingData[userRank - 1]?.count || 0))} XP)
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -3562,7 +3691,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
   const [activeCat, setActiveCat] = useState('flexoes');
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32 overflow-y-auto h-full">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-40 overflow-y-auto h-full custom-scrollbar">
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">CONQUISTAS</h2>
@@ -3688,7 +3817,7 @@ function PatentsList({ setView, user, goBack }: { setView: (v: View) => void, us
   const currentInfo = getRankInfo(user.xp);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-32 space-y-6 h-full overflow-y-auto">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-40 space-y-6 h-full overflow-y-auto custom-scrollbar">
       <div className="flex items-center gap-4 mb-2">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">TRILHA DE EVOLUÇÃO</h2>
@@ -3989,7 +4118,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#05070A] relative overflow-hidden font-sans touch-none">
+    <div className="flex flex-col h-full bg-[#05070A] relative overflow-y-auto custom-scrollbar font-sans">
       {/* Background - Structured per reference image */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-0 right-0 h-[35%] bg-gradient-to-b from-blue-900/20 to-black/80 rounded-b-[3.5rem] border-b border-electric-blue/20 overflow-hidden">
@@ -4942,7 +5071,7 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
   if (loading) return <div className="h-full flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full bg-[#0B0E14] p-6 pb-32 overflow-y-auto">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full bg-[#0B0E14] p-6 pb-40 overflow-y-auto custom-scrollbar">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90" onClick={goBack}><ArrowLeft className="w-5 h-5 text-white" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">MISSÕES DIÁRIAS</h2>
