@@ -1006,8 +1006,8 @@ function App() {
         )}
       </AnimatePresence>
 
-      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready'].includes(view) && (
-        <nav className="fixed bottom-6 left-4 right-4 bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-50 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]">
+      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking'].includes(view) && (
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[380px] bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-50 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]">
           {[
             { id: 'dashboard', label: 'Início', icon: Home, aliases: [] },
             { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
@@ -1069,7 +1069,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 space-y-5 pb-32">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen flex flex-col justify-center p-5 space-y-6 sm:space-y-8 pb-32">
       {/* Header */}
       <header className="flex justify-between items-start">
         <div className="flex items-center gap-3">
@@ -1121,7 +1121,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       {/* Patent Progress Card */}
       <NeonFireWrapper 
         color="gold" 
-        className="mb-4"
+        className="w-full max-w-sm mx-auto"
         onClick={() => setView('patents-list')}
       >
         <div 
@@ -1171,7 +1171,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </NeonFireWrapper>
 
       {/* Action Grid - Redesigned for Premium Neon Feel */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 w-full max-w-sm mx-auto">
         <motion.div
           whileTap={{ scale: 0.94 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
@@ -1231,6 +1231,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       <motion.div
         whileTap={{ scale: 0.96 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        className="w-full max-w-sm mx-auto"
       >
         <NeonFireWrapper 
           color="red"
@@ -1256,7 +1257,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </motion.div>
 
       {/* Bottom Stats Footer - Adjusted */}
-      <div className="grid grid-cols-4 gap-2 pt-1 border-t border-white/5 -mt-2 pb-2">
+      <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full max-w-sm mx-auto">
         <div className="flex flex-col items-center text-center">
           <div className="w-10 h-10 rounded-2xl bg-gold/10 flex items-center justify-center mb-1 border border-gold/30 shadow-[0_0_15px_rgba(234,179,8,0.15)]">
             <Trophy className="w-5 h-5 text-gold neon-text-gold" />
@@ -1642,7 +1643,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none">
       {/* HUD Superior — Mobile Optimized Premium HUD */}
       <div className="absolute top-0 left-0 right-0 z-30 p-4 pt-6 bg-gradient-to-b from-black/80 to-transparent">
         <div className="max-w-md mx-auto relative">
@@ -1768,7 +1769,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
           showSkeleton={true}
         />
         
-        {/* Large Centered Counter at Bottom */}
+        {/* Large Centered Counter at Bottom - Visible only during battle */}
         <div className="absolute bottom-10 left-0 right-0 flex justify-center z-30 pointer-events-none">
           <div className="relative flex items-center justify-center">
             {/* Pulsing ring on count change */}
@@ -2228,7 +2229,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6 pb-32">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="min-h-screen flex flex-col items-center justify-center p-6 space-y-6 pb-32">
       <div className="flex justify-between items-center w-full mb-2">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
@@ -2304,7 +2305,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         <motion.div 
           whileTap={{ scale: 0.9, opacity: 0.8 }}
           transition={{ type: "spring", stiffness: 600, damping: 20 }}
-          className="w-full bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
+          className="w-full max-w-sm bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between items-end">
@@ -2332,7 +2333,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         </motion.div>
 
         {/* Stats Grid - Premium Neon Visual */}
-        <div className="grid grid-cols-3 gap-3 w-full">
+        <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
           <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-electric-blue/30 transition-all group">
             <div className="w-8 h-8 rounded-xl bg-electric-blue/10 flex items-center justify-center mx-auto mb-3 border border-electric-blue/20">
               <Trophy className="w-4 h-4 text-electric-blue" />
@@ -2359,7 +2360,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 gap-4 w-full pt-4">
+        <div className="grid grid-cols-1 gap-4 w-full max-w-sm pt-4">
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
@@ -2400,7 +2401,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
 
           <Button 
             variant="ghost" 
-            className="text-[10px] font-black text-energy-red/40 uppercase tracking-[0.4em] hover:text-energy-red/60 transition-colors py-8 hover:neon-text-red active:scale-95 btn-respond-fast"
+            className="text-[10px] font-black text-white uppercase tracking-[0.4em] transition-all py-8 hover:neon-text-red active:scale-95 btn-respond-fast relative overflow-hidden bg-energy-red/5 border-2 border-energy-red/20 rounded-[1.5rem] shadow-[0_0_20px_rgba(255,49,49,0.1)] before:absolute before:inset-0 before:bg-energy-red/10 before:opacity-0 hover:before:opacity-100"
             onClick={async () => {
               const { error } = await supabase.auth.signOut();
               if (error) {
