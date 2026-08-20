@@ -737,13 +737,16 @@ function App() {
                 .single();
 
               if (opponentProfile) {
-                setOpponent({
+                const opp = {
                   id: opponentProfile.id,
                   name: opponentProfile.name,
                   avatar: opponentProfile.avatar_url,
                   record: opponentProfile.record,
                   patent: getRankInfo(opponentProfile.xp).patentName
-                });
+                };
+                setOpponent(opp);
+                setMatchOpponent(opp);
+
               }
               
               setActiveMatchId(payload.new.match_id);
