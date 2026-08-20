@@ -1485,6 +1485,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   const [oppPushups, setOppPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(duration);
   const [gameState, setGameState] = useState<'loading' | 'countdown' | 'playing' | 'finished'>('loading');
+  const [initRetryCount, setInitRetryCount] = useState(0);
   const [countdown, setCountdown] = useState(5);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [lastWhoIsAhead, setLastWhoIsAhead] = useState<'player' | 'opponent' | null>(null);
