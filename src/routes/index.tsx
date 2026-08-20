@@ -585,7 +585,11 @@ function App() {
           }
         }
       } finally {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          // Safety: If for some reason authStatus is still checking, move to unauthenticated
+          setAuthStatus(prev => (prev === 'checking' ? 'unauthenticated' : prev));
+        }
       }
     };
 
