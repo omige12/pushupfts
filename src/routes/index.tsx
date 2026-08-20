@@ -1553,7 +1553,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
     { title: "EXTENSÃO", text: "Suba totalmente esticando os braços para validar a repetição.", icon: <Zap className="w-5 h-5" /> }
   ];
 
-  // Auto-start timeout for camera
+  // Auto-start safety timeout
   useEffect(() => {
     let timeoutId: any;
     if (gameState === 'loading') {
@@ -1561,7 +1561,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
         if (!isCameraReady) {
           setCameraTimeout(true);
         }
-      }, 20000); // 20 seconds safety timeout
+      }, 15000); // reduced to 15s for better UX
     }
     return () => clearTimeout(timeoutId);
   }, [gameState, isCameraReady]);
