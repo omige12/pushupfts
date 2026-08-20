@@ -3450,7 +3450,8 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
         let query = supabase
           .from('profiles')
           .select('id, name, xp, record, wins, streak, avatar_url, player_id')
-          .order('xp', { ascending: false });
+          .order('xp', { ascending: false })
+          .limit(100);
 
         if (tab === 'friends') {
           const { data: friendships } = await supabase
