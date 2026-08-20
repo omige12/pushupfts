@@ -2878,7 +2878,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
           profiles_user:profiles!friendships_user_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at),
           profiles_friend:profiles!friendships_friend_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at)
         `)
-        .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+        .or(`user_id.eq.${user.supabaseId || user.id},friend_id.eq.${user.supabaseId || user.id}`)
         .eq('status', 'accepted');
       
       if (friendships) {
