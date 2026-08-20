@@ -2724,8 +2724,8 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
   }, [user.id]);
 
   const searchFriend = async () => {
-    if (!/^\d+$/.test(searchQuery)) {
-      toast.error("O ID deve conter apenas números.");
+    if (!/^\d{8}$/.test(searchQuery)) {
+      toast.error("O ID deve conter exatamente 8 números.");
       return;
     }
 
@@ -2733,7 +2733,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
       .from('profiles')
       .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
       .eq('player_id', searchQuery)
-      .neq('id', user.id)
+      .neq('id', user.supabaseId || user.id)
       .maybeSingle();
 
     if (profile) setFoundUser(profile);
@@ -2742,6 +2742,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
       toast.error("Nenhum jogador encontrado.");
     }
   };
+
 
   const addFriend = async (friendId: string) => {
     const { error } = await supabase.from('friendships').insert({
