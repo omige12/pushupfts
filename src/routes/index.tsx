@@ -869,10 +869,12 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-8">
-      <AnimatePresence mode="wait">
-        {renderView()}
-      </AnimatePresence>
+    <div className="flex flex-col h-[100dvh] bg-[#05070A] text-white overflow-hidden relative">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden safe-area-padding custom-scrollbar relative">
+        <AnimatePresence mode="wait">
+          {renderView()}
+        </AnimatePresence>
+      </div>
 
       {/* Challenge Invitation Modal */}
       <AnimatePresence>
