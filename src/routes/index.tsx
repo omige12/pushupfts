@@ -3113,6 +3113,65 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
         )}
       </div>
 
+      <AnimatePresence>
+        {showInvites && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
+          >
+            <div className="w-full max-w-sm bg-[#1A1F26] border border-white/10 rounded-[2.5rem] p-8 space-y-6 relative">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-black italic text-white tracking-tighter uppercase">CONVITES</h3>
+                <Button variant="ghost" size="icon" onClick={() => setShowInvites(false)} className="rounded-full bg-white/5 hover:bg-white/10">
+                  <X className="w-5 h-5 text-white/40" />
+                </Button>
+              </div>
+
+              <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+                {friendRequests.length === 0 ? (
+                  <div className="py-10 text-center opacity-30">
+                    <Mail className="w-12 h-12 mx-auto mb-4" />
+                    <p className="text-[10px] font-black uppercase tracking-widest">Nenhum convite pendente</p>
+                  </div>
+                ) : (
+                  friendRequests.map(req => (
+                    <div key={req.id} className="bg-white/5 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10">
+                          {req.profiles.avatar_url && <img src={req.profiles.avatar_url} className="w-full h-full object-cover" />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-black italic text-white uppercase">{req.profiles.name}</p>
+                          <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest">Pedindo Amizade</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          size="icon" 
+                          className="w-8 h-8 rounded-lg bg-green-500 hover:bg-green-600 shadow-[0_0_10px_rgba(34,197,94,0.3)]"
+                          onClick={() => respondToRequest(req.id, 'accepted')}
+                        >
+                          <Check className="w-4 h-4 text-white" />
+                        </Button>
+                        <Button 
+                          size="icon" 
+                          className="w-8 h-8 rounded-lg bg-energy-red hover:bg-energy-red/60 shadow-[0_0_10px_rgba(255,49,49,0.3)]"
+                          onClick={() => respondToRequest(req.id, 'declined')}
+                        >
+                          <X className="w-4 h-4 text-white" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Friends List */}
       <div className="space-y-4">
         <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">AMIGOS ({friends.length})</h3>
