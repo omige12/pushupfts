@@ -4098,9 +4098,10 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
       };
 
       // Garantir que temos um player_id válido
-      const playerId = user.id && user.id.startsWith('PLAYER-') 
+      const playerId = user.id && /^\d{8}$/.test(user.id) 
         ? user.id 
-        : `PLAYER-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+        : Math.floor(10000000 + Math.random() * 90000000).toString();
+
       
       console.log("Saving profile for user:", session.user.id, "with player_id:", playerId);
 
