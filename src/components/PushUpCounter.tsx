@@ -232,14 +232,15 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
 
     const startCamera = async () => {
       try {
-        await tf.setBackend('webgl');
+        // Run TF backend set in parallel with MediaPipe initialization
+        const tfPromise = tf.setBackend('webgl');
         
         pose = new Pose({
           locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`,
         });
 
         pose.setOptions({
-          modelComplexity: 0, // Force low complexity for mobile performance
+          modelComplexity: 0,
           smoothLandmarks: true,
           minDetectionConfidence: 0.5,
           minTrackingConfidence: 0.5,
@@ -247,18 +248,21 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
 
         pose.onResults(onResults);
 
-        if (videoRef.current) {
-          const constraints = {
+        // Parallel: Camera access + Wait for TF backend
+        const [userStream] = await Promise.all([
+          navigator.mediaDevices.getUserMedia({
             video: { 
               width: { ideal: isMobile ? 640 : 1280 }, 
               height: { ideal: isMobile ? 480 : 720 },
               facingMode: 'user'
             },
-          };
+          }),
+          tfPromise
+        ]);
 
-          stream = await navigator.mediaDevices.getUserMedia(constraints);
+        stream = userStream;
+        if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          
           videoRef.current.onloadedmetadata = () => {
             if (videoRef.current) {
               videoRef.current.play();
@@ -266,12 +270,16 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
               setFeedback("Processando...");
               
               let lastProcessTime = 0;
-              const FRAME_MIN_INTERVAL = 66; // ~15 FPS process limit to save battery/CPU
+              const FRAME_MIN_INTERVAL = isMobile ? 100 : 66; // Save battery on mobile (~10-15 FPS)
 
               const detectFrame = async (now: number) => {
                 if (videoRef.current && pose && now - lastProcessTime >= FRAME_MIN_INTERVAL) {
                   lastProcessTime = now;
-                  await pose.send({ image: videoRef.current });
+                  try {
+                    await pose.send({ image: videoRef.current });
+                  } catch (e) {
+                    console.error("Pose detection error:", e);
+                  }
                 }
                 animationFrameId = requestAnimationFrame(detectFrame);
               };
@@ -280,11 +288,11 @@ export const PushUpCounter: React.FC<PushUpCounterProps> = ({
           };
         }
       } catch (error: any) {
-        console.error("Camera access error:", error);
+        console.error("Initialization error:", error);
         if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
           setPermissionDenied(true);
         }
-        setFeedback("Câmera desativada");
+        setFeedback("Erro na inicialização");
       }
     };
 
