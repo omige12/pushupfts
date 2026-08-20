@@ -270,9 +270,12 @@ function App() {
 
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
   const [opponent, setOpponent] = useState<any | null>(null);
+  const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
+  const [matchOpponent, setMatchOpponent] = useState<any | null>(null);
   const [isTraining, setIsTraining] = useState(false);
   const [duration, setDuration] = useState(60);
   const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
+
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
