@@ -405,6 +405,7 @@ function App() {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
+          const supabaseId = session.user.id;
           const { data: profile, error } = await supabase
             .from('profiles')
             .select('*')
