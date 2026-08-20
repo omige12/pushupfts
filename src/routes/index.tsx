@@ -1504,10 +1504,17 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
         if (!isCameraReady) {
           setCameraTimeout(true);
         }
-      }, 15000); // 15 seconds safety timeout
+      }, 20000); // 20 seconds safety timeout
     }
     return () => clearTimeout(timeoutId);
   }, [gameState, isCameraReady]);
+
+  const forceStart = () => {
+    setIsCameraReady(true);
+    setCameraTimeout(false);
+    setGameState('countdown');
+    toast.info("Iniciando sem câmera...");
+  };
 
 
   const handlePlayerCount = useCallback((count: number) => {
