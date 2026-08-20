@@ -1364,17 +1364,20 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
     setPlayerPushups(count);
     if (matchId && user.supabaseId) {
       const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+      const updateData = isPlayer1 
+        ? { player_1_reps: count } 
+        : { player_2_reps: count };
+        
       supabase
         .from('matches_v2')
-        .update({
-          [isPlayer1 ? 'player_1_reps' : 'player_2_reps']: count
-        })
+        .update(updateData)
         .eq('id', matchId)
         .then(({ error }) => {
           if (error) console.error("Error updating reps:", error);
         });
     }
   }, [matchId, user.supabaseId]);
+
 
 
   const handleCameraReady = useCallback(() => {
