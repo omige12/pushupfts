@@ -2925,7 +2925,8 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
 
   useEffect(() => {
     const fetchFriends = async () => {
-      const { data: friendships, error } = await supabase
+      // Fetch accepted friends
+      const { data: friendships } = await supabase
         .from('friendships')
         .select(`
           status,
@@ -2941,10 +2942,38 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
         setFriends(friendships.map((f: any) => 
           f.user_id === (user.supabaseId || user.id) ? f.profiles_friend : f.profiles_user
         ));
-
       }
+
+      // Fetch pending requests
+      const { data: requests } = await supabase
+        .from('friendships')
+        .select(`
+          id,
+          status,
+          user_id,
+          profiles:profiles!friendships_user_id_fkey(id, player_id, name, xp, avatar_url)
+        `)
+        .eq('friend_id', user.supabaseId || user.id)
+        .eq('status', 'pending');
+      
+      if (requests) setFriendRequests(requests);
     };
+
     fetchFriends();
+
+    // Set up real-time listener for friendships
+    const channel = supabase
+      .channel('friendship-updates')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'friendships' },
+        () => fetchFriends()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user.id]);
 
   const searchFriend = async () => {
@@ -2953,7 +2982,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
       return;
     }
 
-    const { data: profile, error } = await supabase
+    const { data: profile } = await supabase
       .from('profiles')
       .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
       .eq('player_id', searchQuery)
@@ -2967,8 +2996,20 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
     }
   };
 
-
   const addFriend = async (friendId: string) => {
+    // Check if already friends or pending
+    const { data: existing } = await supabase
+      .from('friendships')
+      .select('status')
+      .or(`and(user_id.eq.${user.supabaseId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${user.supabaseId})`)
+      .maybeSingle();
+
+    if (existing) {
+      if (existing.status === 'accepted') toast.info("Vocês já são amigos!");
+      else toast.info("Já existe um pedido pendente.");
+      return;
+    }
+
     const { error } = await supabase.from('friendships').insert({
       user_id: user.supabaseId || user.id,
       friend_id: friendId,
@@ -2976,7 +3017,19 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
     });
     if (!error) toast.success("Solicitação enviada!");
     else toast.error("Erro ao enviar solicitação.");
+  };
 
+  const respondToRequest = async (requestId: string, status: 'accepted' | 'declined') => {
+    if (status === 'declined') {
+      const { error } = await supabase.from('friendships').delete().eq('id', requestId);
+      if (!error) toast.info("Convite removido");
+    } else {
+      const { error } = await supabase
+        .from('friendships')
+        .update({ status: 'accepted', updated_at: new Date().toISOString() })
+        .eq('id', requestId);
+      if (!error) toast.success("Pedido aceito!");
+    }
   };
 
   return (
