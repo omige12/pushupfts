@@ -328,7 +328,8 @@ function App() {
         .update({ 
           status: 'accepted',
           match_id: matchId
-        })
+        } as any)
+
 
         .eq('id', challenge.id);
 
