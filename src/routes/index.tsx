@@ -938,7 +938,7 @@ function App() {
                 <Button 
                   variant="ghost" 
                   className="py-6 text-energy-red font-black italic uppercase tracking-widest hover:bg-energy-red/10"
-                  onClick={() => setIncomingChallenge(null)}
+                  onClick={() => declineChallenge(incomingChallenge.id)}
                 >
                   RECUSAR
                 </Button>
@@ -1010,7 +1010,7 @@ function App() {
               <Button 
                 variant="ghost" 
                 className="flex-1 h-14 rounded-2xl bg-white/5 text-white/60 hover:text-white"
-                onClick={() => setIncomingChallenge(null)}
+                onClick={() => declineChallenge(incomingChallenge.id)}
               >
                 RECUSAR
               </Button>
