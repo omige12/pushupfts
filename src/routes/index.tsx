@@ -779,7 +779,26 @@ function App() {
       case 'select-bot': return <SelectBot setView={handleSetView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
       case 'training-setup': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
-      case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} isTraining={isTraining} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); setIsTraining(false); }} onComplete={updateStats} />;
+      case 'challenge': return (
+        <Challenge 
+          bot={selectedBot} 
+          opponent={matchOpponent || opponent} 
+          duration={duration} 
+          user={user} 
+          matchId={activeMatchId}
+          isTraining={isTraining} 
+          onExit={() => { 
+            setView('dashboard'); 
+            setSelectedBot(null); 
+            setOpponent(null); 
+            setMatchOpponent(null);
+            setActiveMatchId(null);
+            setIsTraining(false); 
+          }} 
+          onComplete={updateStats} 
+        />
+      );
+
       case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('challenge'); }} onCancel={() => setView('select-duration')} duration={duration} />;
       case 'profile': return <Profile setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
       case 'settings': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} />;
