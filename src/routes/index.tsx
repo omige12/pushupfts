@@ -3003,7 +3003,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
   );
 }
 
-function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void, goBack: () => void, duration: number }) {
+function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, setOpponentDetails }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void, goBack: () => void, duration: number, setOpponentDetails: (opp: any) => void }) {
   const [friends, setFriends] = useState<any[]>([]);
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
   const [showInvites, setShowInvites] = useState(false);
