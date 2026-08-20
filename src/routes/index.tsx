@@ -829,11 +829,49 @@ function App() {
   }, []);
 
   const renderView = () => {
-    if (loading) return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-      </div>
-    );
+    if (loading) {
+      return (
+        <div className="min-h-[100dvh] bg-[#0B0E14] flex flex-col items-center justify-center p-6 text-center space-y-6 overflow-hidden">
+          <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full animate-pulse" />
+          <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-purple-600/10 blur-[100px] rounded-full animate-pulse" />
+          
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full border-t-2 border-r-2 border-electric-blue animate-spin shadow-[0_0_20px_rgba(0,210,255,0.3)]" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Trophy className="w-8 h-8 text-electric-blue animate-pulse" />
+            </div>
+          </div>
+          
+          <div className="space-y-2 relative z-10">
+            <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter shadow-text-neon">PREPARANDO ARENA</h2>
+            <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] animate-pulse">CARREGANDO DADOS DE BATALHA...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (authStatus === 'error') {
+      return (
+        <div className="min-h-[100dvh] bg-[#0B0E14] flex flex-col items-center justify-center p-6 text-center space-y-6">
+          <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-red-600/10 blur-[100px] rounded-full" />
+          <Shield className="w-16 h-16 text-red-500 mb-2 relative z-10" />
+          <div className="space-y-2 relative z-10">
+            <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter">ERRO DE CONEXÃO</h2>
+            <p className="text-xs font-black text-white/40 uppercase tracking-widest">A ARENA ESTÁ INSTÁVEL OU OCORREU UM TIMEOUT.</p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="game-button bg-electric-blue w-full py-4 text-sm font-black italic uppercase shadow-[0_4px_0_0_rgba(0,100,255,0.5)] active:translate-y-1 active:shadow-none transition-all relative z-10"
+          >
+            RECARREGAR APLICATIVO
+          </button>
+        </div>
+      );
+    }
+
+    if (!user.supabaseId && !['onboarding-start', 'quiz', 'quiz-result', 'auth'].includes(view)) {
+      return <AuthView setView={handleSetView} user={user} />;
+    }
 
     switch (view) {
       case 'onboarding-start': return <OnboardingStart setView={handleSetView} />;
