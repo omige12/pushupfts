@@ -2278,7 +2278,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
           
           <div className="flex flex-wrap items-center justify-center gap-2">
             <div className="bg-white/5 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2 cursor-pointer hover:bg-white/10 transition-colors" onClick={copyId}>
-              <span className="text-[10px] font-mono text-white/60 tracking-wider">ID: {stats?.playerId || stats?.id || '---'}</span>
+              <span className="text-[10px] font-mono text-white/60 tracking-wider">ID: {user.player_id || stats?.playerId || stats?.id || '---'}</span>
               {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3 text-white/40" />}
             </div>
             
