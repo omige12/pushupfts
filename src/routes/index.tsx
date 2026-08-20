@@ -487,7 +487,6 @@ function App() {
     }
   };
 
-  const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated' | 'error'>('checking');
 
   // Load user data from Supabase
   useEffect(() => {
