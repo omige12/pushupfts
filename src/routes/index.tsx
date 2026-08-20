@@ -3182,26 +3182,35 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration }:
         </div>
         
         {foundUser && (
-          <div className="bg-[#151921] p-4 rounded-2xl flex items-center justify-between border border-white/10">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-white/5 rounded-full overflow-hidden">
-                {foundUser.avatar_url && <img src={foundUser.avatar_url} className="w-full h-full object-cover" />}
+          <div className="bg-[#151921] p-5 rounded-[2rem] flex items-center justify-between border border-electric-blue/20 premium-glow-blue shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full border-2 border-electric-blue/30 overflow-hidden bg-muted p-0.5">
+                {foundUser.avatar_url ? (
+                  <img src={foundUser.avatar_url} className="w-full h-full object-cover rounded-full" />
+                ) : (
+                  <div className="w-full h-full bg-white/5 flex items-center justify-center rounded-full">
+                    <UserIcon className="w-6 h-6 text-white/20" />
+                  </div>
+                )}
               </div>
               <div>
-                <p className="font-black text-white italic">{foundUser.name}</p>
-                <p className="text-[10px] text-white/40 uppercase">{getRankInfo(foundUser.xp).patentName}</p>
+                <p className="font-black text-white italic tracking-tighter uppercase leading-none">{foundUser.name}</p>
+                <div className="flex items-center gap-2 mt-1">
+                  <Badge className="bg-electric-blue/10 text-electric-blue border-electric-blue/20 text-[8px] h-4 px-1.5 font-black italic">
+                    {getRankInfo(foundUser.xp).patentName}
+                  </Badge>
+                  <span className="text-[8px] font-black text-white/40 uppercase tracking-widest">ID: {foundUser.player_id}</span>
+                </div>
               </div>
             </div>
             <div className="flex gap-2">
-              <Button className="bg-electric-blue text-xs font-black italic px-4" onClick={() => onChallengePlayer({
-                id: foundUser.id,
-                name: foundUser.name,
-                avatar: foundUser.avatar_url,
-                patent: getRankInfo(foundUser.xp).patentName
-              })}>DESAFIAR</Button>
-              <Button className="bg-white/5 border border-white/10 text-xs font-black italic px-4" onClick={() => addFriend(foundUser.id)}>ADICIONAR</Button>
+              <Button 
+                className="bg-electric-blue/10 border border-electric-blue/30 text-electric-blue text-[10px] font-black italic px-5 h-11 rounded-xl shadow-[0_0_15px_rgba(0,210,255,0.1)] active:scale-90 transition-all" 
+                onClick={() => setOpponentDetails(foundUser)}
+              >
+                INFORMAÇÕES
+              </Button>
             </div>
-
           </div>
         )}
       </div>
