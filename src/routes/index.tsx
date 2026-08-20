@@ -1487,7 +1487,19 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   }, [gameState]);
 
 
+  const handlePlayerCount = useCallback(async (count: number) => {
+    setPlayerPushups(count);
+    if (matchId && user.supabaseId) {
+      const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+      await supabase
+        .from('matches_v2')
+        .update(isPlayer1 ? { player_1_reps: count } : { player_2_reps: count })
+        .eq('id', matchId);
+    }
+  }, [matchId, user.supabaseId]);
+
   const battleMessage = useMemo(() => {
+
     if (gameState !== 'playing' || isTraining) return "";
     const diff = playerPushups - oppPushups;
     if (diff > 5 && lastWhoIsAhead !== 'player') {
