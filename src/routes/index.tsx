@@ -1448,7 +1448,7 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, is
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
-      className="fixed inset-0 bg-[#0B0E14] flex flex-col p-6 z-50 overflow-hidden"
+      className="fixed inset-0 bg-[#0B0E14] flex flex-col p-6 z-50 overflow-y-auto custom-scrollbar"
     >
       <div className="flex items-center justify-between mb-8">
         <Button 
