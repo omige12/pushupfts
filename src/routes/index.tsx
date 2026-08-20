@@ -2883,8 +2883,9 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
       
       if (friendships) {
         setFriends(friendships.map((f: any) => 
-          f.user_id === user.id ? f.profiles_friend : f.profiles_user
+          f.user_id === (user.supabaseId || user.id) ? f.profiles_friend : f.profiles_user
         ));
+
       }
     };
     fetchFriends();
