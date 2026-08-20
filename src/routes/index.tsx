@@ -1522,8 +1522,9 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
   const handlePlayerCount = useCallback((count: number) => {
     setPlayerPushups(count);
-    if (matchId && user.supabaseId) {
-      const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+    if (matchId && (user.supabaseId || user.id)) {
+      const currentUserId = user.supabaseId || user.id;
+      const isPlayer1 = matchId.split('_')[0] === currentUserId;
       const updateData = isPlayer1 
         ? { player_1_reps: count } 
         : { player_2_reps: count };
@@ -1536,7 +1537,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
           if (error) console.error("Error updating reps:", error);
         });
     }
-  }, [matchId, user.supabaseId]);
+  }, [matchId, user.supabaseId, user.id]);
 
 
 
