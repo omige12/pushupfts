@@ -185,7 +185,7 @@ const NeonFireWrapper = ({ children, color, onClick, className = "", intense = f
 
   return (
     <motion.div 
-      className={`relative rounded-[1.8rem] overflow-hidden ${className}`}
+      className={`relative rounded-[1.8rem] overflow-hidden btn-respond-fast active:scale-[0.98] ${className}`}
       onClick={onClick}
       initial={false}
       whileTap={{ scale: 0.98 }}
