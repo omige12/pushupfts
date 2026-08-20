@@ -1171,7 +1171,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </NeonFireWrapper>
 
       {/* Action Grid - Redesigned for Premium Neon Feel */}
-      <div className="grid grid-cols-2 gap-4 w-full">>
+      <div className="grid grid-cols-2 gap-4 w-full">
         <motion.div
           whileTap={{ scale: 0.94 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
