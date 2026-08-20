@@ -3077,7 +3077,9 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
 function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   const [tab, setTab] = useState<'local' | 'friends'>('local');
   const [rankingData, setRankingData] = useState<any[]>([]);
+  const [userRank, setUserRank] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchRanking = async () => {
