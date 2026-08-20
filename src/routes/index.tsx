@@ -185,7 +185,7 @@ const NeonFireWrapper = ({ children, color, onClick, className = "", intense = f
 
   return (
     <motion.div 
-      className={`relative rounded-[1.8rem] overflow-hidden ${className}`}
+      className={`relative rounded-[1.8rem] overflow-hidden btn-respond-fast active:scale-[0.98] ${className}`}
       onClick={onClick}
       initial={false}
       whileTap={{ scale: 0.98 }}
@@ -389,6 +389,7 @@ function App() {
 
 
   const [loading, setLoading] = useState(true);
+  const [authStatus, setAuthStatus] = useState<'checking' | 'authenticated' | 'unauthenticated' | 'error'>('checking');
   const [user, setUser] = useState<{
     id: string;
     supabaseId?: string;
@@ -486,96 +487,114 @@ function App() {
     }
   };
 
+
   // Load user data from Supabase
   useEffect(() => {
+    let isMounted = true;
+    
     const fetchProfile = async () => {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("TIMEOUT")), 10000)
+      );
+
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const sessionResult = await Promise.race([
+          supabase.auth.getSession(),
+          timeoutPromise
+        ]) as any;
+        
+        const session = sessionResult.data?.session;
         
         if (session?.user) {
           const supabaseId = session.user.id;
-          const { data: profile, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .maybeSingle();
+          
+          // Parallelize profile and matches fetch
+          const [profileResult, matchesResult] = await Promise.allSettled([
+            supabase.from('profiles').select('*').eq('id', supabaseId).maybeSingle(),
+            supabase.from('matches').select('*').eq('player_id', supabaseId).order('created_at', { ascending: false }).limit(15)
+          ]);
 
-          if (profile) {
-            setUser(prev => ({
-              ...prev,
-              id: profile.player_id,
-              supabaseId: supabaseId,
-              player_id: profile.player_id,
-              name: profile.name,
-
-              age: profile.age || prev.age,
-              weight: profile.weight || prev.weight,
-              height: profile.height || prev.height,
-              goal: profile.goal || prev.goal,
-              level: profile.level,
-              xp: Number(profile.xp),
-              wins: profile.wins,
-              losses: profile.losses,
-              record: profile.record,
-              totalPushups: profile.total_pushups,
-              streak: profile.streak,
-              avatar: profile.avatar_url,
-              achievements: profile.achievements || [],
-            }));
-
-            // Fetch match history
-            const { data: matches } = await supabase
-              .from('matches')
-              .select('*')
-              .eq('player_id', session.user.id)
-              .order('created_at', { ascending: false })
-              .limit(15);
-            
-            if (matches) {
+          if (profileResult.status === 'fulfilled' && profileResult.value.data) {
+            const profile = profileResult.value.data;
+            if (isMounted) {
               setUser(prev => ({
                 ...prev,
-                history: matches.map(m => ({
-                  id: m.id,
-                  opp: m.opponent_name,
-                  res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
-                  score: `${m.player_score}-${m.opponent_score}`,
-                  xp: `+${m.xp_gained}`,
-                  date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
-                }))
+                id: profile.player_id,
+                supabaseId: supabaseId,
+                player_id: profile.player_id,
+                name: profile.name,
+                age: profile.age || prev.age,
+                weight: profile.weight || prev.weight,
+                height: profile.height || prev.height,
+                goal: profile.goal || prev.goal,
+                level: profile.level,
+                xp: Number(profile.xp),
+                wins: profile.wins,
+                losses: profile.losses,
+                record: profile.record,
+                totalPushups: profile.total_pushups,
+                streak: profile.streak,
+                avatar: profile.avatar_url,
+                achievements: profile.achievements || [],
               }));
-            }
-            
-            // Check if there's a view in the URL (from PWA shortcuts)
-            const urlParams = new URLSearchParams(window.location.search);
-            const initialView = urlParams.get('view') as View;
-            
-            if (initialView && ['dashboard', 'multiplayer', 'treino', 'profile', 'ranking'].includes(initialView)) {
-              setView(initialView);
-            } else {
-              setView('dashboard');
-            }
 
-            // PWA logic here if needed for state tracking, but banner is removed
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-              // Banner removed by user request
+              const matchesData = matchesResult.status === 'fulfilled' ? matchesResult.value.data : null;
+              if (matchesData && Array.isArray(matchesData)) {
+                setUser(prev => ({
+                  ...prev,
+                  history: matchesData.map((m: any) => ({
+                    id: m.id,
+                    opp: m.opponent_name,
+                    res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
+                    score: `${m.player_score}-${m.opponent_score}`,
+                    xp: `+${m.xp_gained}`,
+                    date: new Date(m.created_at || Date.now()).toISOString().split('T')[0]
+                  }))
+                }));
+              }
+
+              setAuthStatus('authenticated');
+              
+              const urlParams = new URLSearchParams(window.location.search);
+              const initialView = urlParams.get('view') as View;
+              if (initialView && ['dashboard', 'multiplayer', 'treino', 'profile', 'ranking'].includes(initialView)) {
+                setView(initialView);
+              } else {
+                setView('dashboard');
+              }
             }
           } else {
-            console.log("Profile not found, staying in onboarding");
-            setView('onboarding-start');
+            if (isMounted) {
+              setAuthStatus('unauthenticated');
+              setView('onboarding-start');
+            }
           }
         } else {
-          console.log("No active session, checking if we should show auth first");
-          setView('onboarding-start');
+          if (isMounted) {
+            setAuthStatus('unauthenticated');
+            setView('onboarding-start');
+          }
         }
       } catch (err) {
-        console.error("Error fetching profile:", err);
-        setView('onboarding-start');
+        console.error("Auth initialization error:", err);
+        if (isMounted) {
+          setAuthStatus(err instanceof Error && err.message === "TIMEOUT" ? 'error' : 'unauthenticated');
+          setView('onboarding-start');
+          if (err instanceof Error && err.message === "TIMEOUT") {
+            toast.error("Conexão lenta detectada. Tente recarregar se o problema persistir.");
+          }
+        }
       } finally {
-        setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+          // Safety: If for some reason authStatus is still checking, move to unauthenticated
+          setAuthStatus(prev => (prev === 'checking' ? 'unauthenticated' : prev));
+        }
       }
     };
 
     fetchProfile();
+    return () => { isMounted = false; };
   }, []);
 
 
@@ -814,11 +833,49 @@ function App() {
   }, []);
 
   const renderView = () => {
-    if (loading) return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-      </div>
-    );
+    if (loading || authStatus === 'checking') {
+      return (
+        <div className="min-h-[100dvh] bg-[#0B0E14] flex flex-col items-center justify-center p-6 text-center space-y-6 overflow-hidden">
+          <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full animate-pulse" />
+          <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-purple-600/10 blur-[100px] rounded-full animate-pulse" />
+          
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full border-t-2 border-r-2 border-electric-blue animate-spin shadow-[0_0_20px_rgba(0,210,255,0.3)]" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Trophy className="w-8 h-8 text-electric-blue animate-pulse" />
+            </div>
+          </div>
+          
+          <div className="space-y-2 relative z-10">
+            <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter shadow-text-neon">PREPARANDO ARENA</h2>
+            <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] animate-pulse">CARREGANDO DADOS DE BATALHA...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (authStatus === 'error') {
+      return (
+        <div className="min-h-[100dvh] bg-[#0B0E14] flex flex-col items-center justify-center p-6 text-center space-y-6">
+          <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-red-600/10 blur-[100px] rounded-full" />
+          <Shield className="w-16 h-16 text-red-500 mb-2 relative z-10" />
+          <div className="space-y-2 relative z-10">
+            <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter">ERRO DE CONEXÃO</h2>
+            <p className="text-xs font-black text-white/40 uppercase tracking-widest">A ARENA ESTÁ INSTÁVEL OU OCORREU UM TIMEOUT.</p>
+          </div>
+          <button 
+            onClick={() => window.location.reload()}
+            className="game-button bg-electric-blue w-full py-4 text-sm font-black italic uppercase shadow-[0_4px_0_0_rgba(0,100,255,0.5)] active:translate-y-1 active:shadow-none transition-all relative z-10"
+          >
+            RECARREGAR APLICATIVO
+          </button>
+        </div>
+      );
+    }
+
+    if (!user.supabaseId && !['onboarding-start', 'quiz', 'quiz-result', 'auth'].includes(view)) {
+      return <AuthView setView={handleSetView} user={user} />;
+    }
 
     switch (view) {
       case 'onboarding-start': return <OnboardingStart setView={handleSetView} />;
@@ -1485,6 +1542,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   const [oppPushups, setOppPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(duration);
   const [gameState, setGameState] = useState<'loading' | 'countdown' | 'playing' | 'finished'>('loading');
+  const [detectorStatus, setDetectorStatus] = useState<'idle' | 'initializing' | 'ready' | 'error'>('idle');
   const [initRetryCount, setInitRetryCount] = useState(0);
   const [countdown, setCountdown] = useState(5);
   const [isCameraReady, setIsCameraReady] = useState(false);
@@ -1500,7 +1558,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
     { title: "EXTENSÃO", text: "Suba totalmente esticando os braços para validar a repetição.", icon: <Zap className="w-5 h-5" /> }
   ];
 
-  // Auto-start timeout for camera
+  // Auto-start safety timeout
   useEffect(() => {
     let timeoutId: any;
     if (gameState === 'loading') {
@@ -1508,7 +1566,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
         if (!isCameraReady) {
           setCameraTimeout(true);
         }
-      }, 20000); // 20 seconds safety timeout
+      }, 15000); // reduced to 15s for better UX
     }
     return () => clearTimeout(timeoutId);
   }, [gameState, isCameraReady]);
@@ -1673,6 +1731,19 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
     }
   }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete, isTraining, matchId, user.supabaseId]);
 
+  // Unified camera status handler for Challenge UI
+  const handleAIStatus = useCallback((status: 'ready' | 'error') => {
+    setDetectorStatus(status);
+    if (status === 'ready') {
+      setIsCameraReady(true);
+      setCameraTimeout(false);
+      // Wait a moment before starting countdown for smooth transition
+      setTimeout(() => {
+        if (gameState === 'loading') setGameState('countdown');
+      }, 500);
+    }
+  }, [gameState]);
+
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none h-[100dvh]">
@@ -1796,7 +1867,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
         <PushUpCounter 
           isActive={true} 
           onCount={handlePlayerCount} 
-          onReady={handleCameraReady}
+          onReady={() => handleAIStatus('ready')}
           soundEnabled={true}
           showSkeleton={true}
         />
@@ -4095,6 +4166,8 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   const [name, setName] = useState(user.name === "GUERREIRO ALPHA" ? "" : user.name);
 
   const handleAuth = async () => {
+    if (loading) return; // Prevent multiple clicks
+    
     if (!email || !password || (!isLogin && !name)) {
       toast.error("⚠️ Preencha todos os campos corretamente.");
       return;
@@ -4144,14 +4217,14 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#05070A] p-6 relative">
+    <div className="flex flex-col h-full bg-[#05070A] p-6 relative overflow-hidden">
       {/* Background - Atmospheric Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/5 blur-[100px] rounded-full" />
       </div>
       
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-10">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-8 sm:gap-10">
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -4177,7 +4250,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
                 <UserIcon className="w-3 h-3 text-electric-blue" /> NOME DE USUÁRIO
               </label>
               <input 
-                className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+                className="w-full bg-[#0F131A] p-5 sm:p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
                 placeholder="Ex: GUERREIRO" 
                 value={name}
                 onChange={(e) => setName(e.target.value.toUpperCase())}
@@ -4190,7 +4263,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
               <Mail className="w-3 h-3 text-electric-blue" /> E-MAIL
             </label>
             <input 
-              className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+              className="w-full bg-[#0F131A] p-5 sm:p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
               placeholder="seu@email.com" 
               type="email"
               value={email}
