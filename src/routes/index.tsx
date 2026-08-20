@@ -2251,7 +2251,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
       </div>
 
       <div className="flex-1 w-full flex flex-col items-center justify-between py-4 space-y-8">
-        <div className="flex flex-col items-center gap-6 relative">
+        <div className="flex flex-col items-center gap-6 relative w-full">
         {/* Avatar and Info Header */}
         <div className="relative group">
           <div className="w-36 h-36 bg-[#0F131A] rounded-full border-[3px] border-electric-blue p-1 shadow-[0_0_35px_rgba(0,210,255,0.4),inset_0_0_15px_rgba(0,210,255,0.1)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
@@ -2359,6 +2359,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
             </div>
             <p className="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">TOTAL</p>
             <p className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">{stats.totalPushups ?? 0}</p>
+          </div>
           </div>
         </div>
         
