@@ -282,9 +282,27 @@ function App() {
     const handleChallenge = (e: any) => {
       setIncomingChallenge(e.detail);
     };
+    
+    const handleMatchStarted = (e: any) => {
+      const { matchId, opponent } = e.detail;
+      setActiveMatchId(matchId);
+      setMatchOpponent(opponent);
+      setDuration(60); // Default to 60 for now or get from event
+      setIsTraining(false);
+      setSelectedBot(null);
+      setIncomingChallenge(null);
+      setView('challenge');
+      toast.success("Batalha iniciada!");
+    };
+
     window.addEventListener('challenge-received', handleChallenge);
-    return () => window.removeEventListener('challenge-received', handleChallenge);
+    window.addEventListener('match-started', handleMatchStarted);
+    return () => {
+      window.removeEventListener('challenge-received', handleChallenge);
+      window.removeEventListener('match-started', handleMatchStarted);
+    };
   }, []);
+
 
   const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
   const [matchOpponent, setMatchOpponent] = useState<any>(null);
