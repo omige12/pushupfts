@@ -4112,7 +4112,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#05070A] relative overflow-hidden font-sans touch-none">
+    <div className="flex flex-col h-full bg-[#05070A] relative overflow-y-auto custom-scrollbar font-sans">
       {/* Background - Structured per reference image */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-0 right-0 h-[35%] bg-gradient-to-b from-blue-900/20 to-black/80 rounded-b-[3.5rem] border-b border-electric-blue/20 overflow-hidden">
