@@ -854,7 +854,7 @@ function App() {
   };
 
 
-  const isBattleActive = view === 'challenge' && (selectedBot || opponent || isTraining);
+  const isBattleActive = view === 'challenge';
   
   useEffect(() => {
     if (isBattleActive) {
@@ -869,10 +869,12 @@ function App() {
 
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-8">
-      <AnimatePresence mode="wait">
-        {renderView()}
-      </AnimatePresence>
+    <div className="flex flex-col h-[100dvh] bg-[#05070A] text-white overflow-hidden relative">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden safe-area-padding custom-scrollbar relative">
+        <AnimatePresence mode="wait">
+          {renderView()}
+        </AnimatePresence>
+      </div>
 
       {/* Challenge Invitation Modal */}
       <AnimatePresence>
@@ -1006,8 +1008,8 @@ function App() {
         )}
       </AnimatePresence>
 
-      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking'].includes(view) && (
-        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[380px] bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-[100] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]">
+      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking', 'challenge'].includes(view) && (
+        <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[380px] bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-[100] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] safe-area-bottom">
           {[
             { id: 'dashboard', label: 'Início', icon: Home, aliases: [] },
             { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
@@ -1069,7 +1071,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto min-h-screen">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto min-h-0 pb-32">
       {/* Header */}
       <header className="flex justify-between items-start w-full mt-4">
         <div className="flex items-center gap-3">
@@ -1257,7 +1259,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </motion.div>
 
       {/* Bottom Stats Footer - Adjusted */}
-      <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full mt-auto pb-32">
+      <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full mt-4">
         <div className="flex flex-col items-center text-center">
           <div className="w-10 h-10 rounded-2xl bg-gold/10 flex items-center justify-center mb-1 border border-gold/30 shadow-[0_0_15px_rgba(234,179,8,0.15)]">
             <Trophy className="w-5 h-5 text-gold neon-text-gold" />
@@ -1643,7 +1645,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none h-[100dvh]">
       {/* HUD Superior — Mobile Optimized Premium HUD */}
       <div className="absolute top-0 left-0 right-0 z-30 p-4 pt-6 bg-gradient-to-b from-black/80 to-transparent">
         <div className="max-w-md mx-auto relative">
@@ -2076,7 +2078,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
         exit={{ opacity: 0, y: 20 }}
-        className="p-6 space-y-6 pb-32 min-h-screen overflow-y-auto"
+        className="p-6 space-y-6 pb-32 h-full overflow-y-auto"
       >
         <div className="flex items-center gap-4 mb-2">
           <Button 
@@ -2229,7 +2231,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-4 w-full max-w-md mx-auto min-h-screen">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto min-h-0 pb-32">
       <div className="flex justify-between items-center w-full mb-2 mt-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
@@ -2305,7 +2307,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         <motion.div 
           whileTap={{ scale: 0.9, opacity: 0.8 }}
           transition={{ type: "spring", stiffness: 600, damping: 20 }}
-          className="w-full max-w-sm bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
+          className="w-full bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between items-end">
@@ -2360,7 +2362,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 gap-4 w-full pt-4 pb-32">
+        <div className="grid grid-cols-1 gap-4 w-full pt-4">
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
@@ -2568,7 +2570,7 @@ function SupportChat({ setView, goBack }: { setView: (v: View) => void, goBack: 
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[60] bg-[#0B0E14] flex flex-col p-6 gap-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[60] bg-[#0B0E14] flex flex-col p-6 gap-6 h-[100dvh]">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <div className="flex items-center gap-3">
@@ -2662,7 +2664,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
   }, [user, onMatchFound]);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-6 text-center">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-6 text-center h-[100dvh]">
       {status === 'searching' ? (
         <div className="space-y-8">
           <div className="relative">
@@ -2777,7 +2779,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
 
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32 h-full overflow-y-auto">
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">MULTIJOGADOR</h2>
@@ -2957,7 +2959,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
   };
 
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8 pb-32">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8 pb-32 h-full overflow-y-auto">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">SOCIAL</h2>
@@ -3161,7 +3163,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
   }, [user.id, tab]);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-32">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-32 h-full overflow-y-auto">
       <div className="flex flex-col gap-8">
         <div className="flex justify-between items-start">
           <div className="flex flex-col">
@@ -3318,7 +3320,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
   const [activeCat, setActiveCat] = useState('flexoes');
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32 overflow-y-auto max-h-[calc(100vh-80px)]">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32 overflow-y-auto h-full">
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">CONQUISTAS</h2>
@@ -3444,7 +3446,7 @@ function PatentsList({ setView, user, goBack }: { setView: (v: View) => void, us
   const currentInfo = getRankInfo(user.xp);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-32 space-y-6">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-32 space-y-6 h-full overflow-y-auto">
       <div className="flex items-center gap-4 mb-2">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">TRILHA DE EVOLUÇÃO</h2>
@@ -3544,7 +3546,7 @@ function PatentsList({ setView, user, goBack }: { setView: (v: View) => void, us
 }
 
 const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#0B0E14] relative overflow-hidden">
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-full p-8 bg-[#0B0E14] relative overflow-hidden">
     {/* Background Glows */}
     <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/20 blur-[100px] rounded-full" />
     <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-red-600/20 blur-[100px] rounded-full" />
@@ -3716,7 +3718,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
 
   if (isFinished) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#0B0E14] text-center space-y-6">
+      <div className="flex flex-col items-center justify-center h-full p-8 bg-[#0B0E14] text-center space-y-6">
         <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -3745,7 +3747,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
   }
 
   return (
-    <div className="flex flex-col h-screen bg-[#05070A] relative overflow-hidden safe-area-padding font-sans fixed inset-0 touch-none">
+    <div className="flex flex-col h-full bg-[#05070A] relative overflow-hidden font-sans touch-none">
       {/* Background - Structured per reference image */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-0 right-0 h-[35%] bg-gradient-to-b from-blue-900/20 to-black/80 rounded-b-[3.5rem] border-b border-electric-blue/20 overflow-hidden">
@@ -3971,7 +3973,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+    <div className="flex flex-col h-full bg-[#05070A] p-6 relative">
       {/* Background - Atmospheric Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
@@ -4091,7 +4093,7 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+    <div className="flex flex-col h-full bg-[#05070A] p-6 relative">
       <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full -z-10" />
       
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-8">
@@ -4266,7 +4268,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+    <div className="flex flex-col h-full bg-[#05070A] p-6 relative">
       <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full -z-10" />
       
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-8">
@@ -4348,7 +4350,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 };
 
 const ProfileReady = ({ setView, user }: { setView: (v: View) => void, user: any }) => (
-  <div className="p-6 text-center space-y-8 flex flex-col items-center justify-center min-h-screen">
+  <div className="p-6 text-center space-y-8 flex flex-col items-center justify-center h-full">
     <h2 className="text-4xl font-black italic text-primary">🎉 PERFIL CRIADO!</h2>
     <p className="text-muted-foreground">"Agora sua jornada começa."</p>
     <Button className="game-button w-full" onClick={() => setView('dashboard')}>🔥 COMEÇAR</Button>
@@ -4487,13 +4489,13 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
            lastClaimed.getDate() === today.getDate();
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
+  if (loading) return <div className="h-full flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
 
   const currentStreak = rewardData?.streak_count || 0;
   const claimedToday = isClaimedToday();
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0B0E14] p-6 pb-32">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full bg-[#0B0E14] p-6 pb-32 overflow-y-auto">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90" onClick={goBack}><ArrowLeft className="w-5 h-5 text-white" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">RECOMPENSA DIÁRIA</h2>
@@ -4693,10 +4695,10 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
     }
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
+  if (loading) return <div className="h-full flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen bg-[#0B0E14] p-6 pb-32">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full bg-[#0B0E14] p-6 pb-32 overflow-y-auto">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90" onClick={goBack}><ArrowLeft className="w-5 h-5 text-white" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">MISSÕES DIÁRIAS</h2>
