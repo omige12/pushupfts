@@ -1133,7 +1133,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
                 <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
               </div>
               <div className="min-w-0">
-                <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none truncate">{rank.rankName.toUpperCase()}</h2>
+                <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none truncate">{rank.rankName}</h2>
                 <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em] mt-1 opacity-70">SUA PATENTE ATUAL</p>
                 <div className="mt-2 flex flex-col">
                   <span className="text-2xl font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel}</span>
@@ -1245,7 +1245,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
               </div>
               <div>
                 <h3 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
-                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1.5">Aperfeiçoe suas habilidades</p>
+                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1.5">(Aperfeiçoe suas habilidades)</p>
               </div>
             </div>
             <div className="bg-energy-red/20 p-3 rounded-full group-hover:translate-x-2 transition-transform shadow-[0_0_15px_rgba(239,68,68,0.2)]">
@@ -1355,11 +1355,11 @@ function SelectBot({ setView, onSelect }: { setView: (v: View) => void, onSelect
 function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, isTraining, onStartTraining }: { setView: (v: View) => void, onSelect: (d: number) => void, selectedBot?: any, onStartMatchmaking?: () => void, isTraining?: boolean, onStartTraining?: () => void }) {
   const [localDuration, setLocalDuration] = useState(60);
   const durations = [
-    { label: '30 segundos', value: 30 },
-    { label: '1 minuto', value: 60 },
-    { label: '2 minutos', value: 120 },
-    { label: '3 minutos', value: 180 },
-    { label: '5 minutos', value: 300 },
+    { label: '30 SECONDS', value: 30 },
+    { label: '1 MINUTE', value: 60 },
+    { label: '2 MINUTES', value: 120 },
+    { label: '3 MINUTES', value: 180 },
+    { label: '5 MINUTES', value: 300 },
   ];
 
   return (
@@ -2286,7 +2286,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
               className="bg-gold/10 text-gold border-gold/20 px-4 py-1.5 font-black italic tracking-widest text-[10px] uppercase cursor-pointer hover:scale-105 transition-transform"
               onClick={() => setView('patents-list')}
             >
-              {getRankInfo(stats?.xp || 0).emoji} {getRankInfo(stats?.xp || 0).rankName.toUpperCase()}
+              {getRankInfo(stats?.xp || 0).emoji} {getRankInfo(stats?.xp || 0).rankName}
             </Badge>
           </div>
 
