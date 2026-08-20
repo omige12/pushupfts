@@ -3110,7 +3110,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
         if (error) throw error;
 
         if (data) {
-          setRankingData(data.map(p => ({
+          const mappedData = data.map(p => ({
             id: p.id,
             name: p.name,
             count: Number(p.xp),
@@ -3121,8 +3121,14 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
             wins: p.wins,
             streak: p.streak,
             patent: getRankInfo(Number(p.xp)).patentName
-          })));
+          }));
+          
+          setRankingData(mappedData);
+          
+          const uIdx = mappedData.findIndex(p => p.isUser);
+          if (uIdx !== -1) setUserRank(uIdx + 1);
         }
+
       } catch (err) {
         console.error("Error fetching ranking:", err);
       } finally {
