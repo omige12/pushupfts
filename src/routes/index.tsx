@@ -787,7 +787,7 @@ function App() {
           opponent={matchOpponent || opponent} 
           duration={duration} 
           user={user} 
-          matchId={activeMatchId}
+          matchId={activeMatchId || undefined}
           isTraining={isTraining} 
           onExit={() => { 
             setView('dashboard'); 
@@ -800,6 +800,7 @@ function App() {
           onComplete={updateStats} 
         />
       );
+
 
       case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('challenge'); }} onCancel={() => setView('select-duration')} duration={duration} />;
       case 'profile': return <Profile setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
