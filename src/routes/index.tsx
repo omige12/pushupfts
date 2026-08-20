@@ -286,20 +286,62 @@ function App() {
     return () => window.removeEventListener('challenge-received', handleChallenge);
   }, []);
 
-  const acceptChallenge = (challenge: any) => {
-    setOpponent({
-      id: challenge.challenger_id,
-      name: "DESAFIANTE",
-      avatar: null,
-      record: 0,
-      patent: "Bronze"
-    });
-    setDuration(challenge.duration);
-    setIsTraining(false);
-    setSelectedBot(null);
-    setIncomingChallenge(null);
-    setView('challenge');
+  const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
+
+  const acceptChallenge = async (challenge: any) => {
+    try {
+      const matchId = `${challenge.challenger_id}_${challenge.challenged_id}_${Date.now()}`;
+      
+      const { error: matchError } = await supabase
+        .from('matches_v2')
+        .insert({
+          id: matchId,
+          player_1: challenge.challenger_id,
+          player_2: challenge.challenged_id,
+          status: 'ongoing'
+        });
+        
+      if (matchError) throw matchError;
+
+      const { error: challengeError } = await supabase
+        .from('challenges')
+        .update({ 
+          status: 'accepted',
+          match_id: matchId 
+        })
+        .eq('id', challenge.id);
+        
+      if (challengeError) throw challengeError;
+
+      const { data: challengerProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', challenge.challenger_id)
+        .single();
+
+      if (challengerProfile) {
+        setOpponent({
+          id: challengerProfile.id,
+          name: challengerProfile.name,
+          avatar: challengerProfile.avatar_url,
+          record: challengerProfile.record,
+          patent: getRankInfo(challengerProfile.xp).patentName
+        });
+      }
+      
+      setActiveMatchId(matchId);
+      setDuration(challenge.duration);
+      setIsTraining(false);
+      setSelectedBot(null);
+      setIncomingChallenge(null);
+      setView('challenge');
+      toast.success("Batalha iniciada!");
+    } catch (err) {
+      console.error("Accept challenge error:", err);
+      toast.error("Erro ao aceitar desafio");
+    }
   };
+
 
 
   const [loading, setLoading] = useState(true);
