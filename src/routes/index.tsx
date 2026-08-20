@@ -1648,7 +1648,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
       const finishBattle = async () => {
         if (matchId) {
-          const winnerId = playerPushups >= oppPushups ? user.supabaseId : opponent.id;
+          const winnerId = playerPushups >= oppPushups ? user.supabaseId || user.id : opponent.id;
           await supabase
             .from('matches_v2')
             .update({ 
