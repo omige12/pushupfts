@@ -1362,7 +1362,20 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
   const handlePlayerCount = useCallback((count: number) => {
     setPlayerPushups(count);
-  }, []);
+    if (matchId && user.supabaseId) {
+      const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+      supabase
+        .from('matches_v2')
+        .update({
+          [isPlayer1 ? 'player_1_reps' : 'player_2_reps']: count
+        })
+        .eq('id', matchId)
+        .then(({ error }) => {
+          if (error) console.error("Error updating reps:", error);
+        });
+    }
+  }, [matchId, user.supabaseId]);
+
 
   const handleCameraReady = useCallback(() => {
     if (gameState === 'loading') {
