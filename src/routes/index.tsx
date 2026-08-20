@@ -1326,7 +1326,7 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, is
 
 
 
-function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraining }: { bot: any, opponent?: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void, isTraining?: boolean }) {
+function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraining, matchId }: { bot: any, opponent?: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void, isTraining?: boolean, matchId?: string }) {
   const activeOpponent = bot || opponent;
   const [playerPushups, setPlayerPushups] = useState(0);
   const [oppPushups, setOppPushups] = useState(0);
