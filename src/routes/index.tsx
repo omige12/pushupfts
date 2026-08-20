@@ -4200,14 +4200,14 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#05070A] p-6 relative">
+    <div className="flex flex-col h-full bg-[#05070A] p-6 relative overflow-hidden">
       {/* Background - Atmospheric Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[60%] h-[40%] bg-electric-blue/5 blur-[100px] rounded-full" />
       </div>
       
-      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-10">
+      <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-8 sm:gap-10">
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
