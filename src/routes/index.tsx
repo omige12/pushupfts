@@ -1972,12 +1972,19 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
                 <div className="flex flex-col gap-3">
                   <Button 
                     className="game-button bg-electric-blue text-black h-16 text-lg rounded-2xl"
+                    onClick={forceStart}
+                  >
+                    JOGAR SEM CÂMERA
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="h-14 border-white/10 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl"
                     onClick={() => {
                       setCameraTimeout(false);
                       setGameState('loading'); 
                     }}
                   >
-                    TENTAR NOVAMENTE
+                    TENTAR CÂMERA NOVAMENTE
                   </Button>
                   <Button 
                     variant="ghost"
