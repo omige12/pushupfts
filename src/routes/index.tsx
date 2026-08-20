@@ -3217,10 +3217,16 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, s
             </div>
             <div className="flex gap-2">
               <Button 
-                className="bg-electric-blue/10 border border-electric-blue/30 text-electric-blue text-[10px] font-black italic px-5 h-11 rounded-xl shadow-[0_0_15px_rgba(0,210,255,0.1)] active:scale-90 transition-all" 
+                className="bg-electric-blue text-black text-[10px] font-black italic px-4 h-11 rounded-xl shadow-[0_0_15px_rgba(0,210,255,0.3)] active:scale-90 transition-all" 
+                onClick={() => addFriend(foundUser.id)}
+              >
+                ADICIONAR
+              </Button>
+              <Button 
+                className="bg-white/5 border border-white/10 text-white/60 text-[10px] font-black italic px-4 h-11 rounded-xl active:scale-90 transition-all" 
                 onClick={() => setOpponentDetails(foundUser)}
               >
-                INFORMAÇÕES
+                INFO
               </Button>
             </div>
           </div>
