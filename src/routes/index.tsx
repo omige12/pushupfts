@@ -854,7 +854,7 @@ function App() {
   };
 
 
-  const isBattleActive = view === 'challenge' && (selectedBot || opponent || isTraining);
+  const isBattleActive = view === 'challenge';
   
   useEffect(() => {
     if (isBattleActive) {
