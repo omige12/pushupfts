@@ -4157,6 +4157,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
       setUser({
         ...updatedUser,
         id: verify.player_id,
+        supabaseId: session.user.id,
         xp: Number(verify.xp),
         level: verify.level,
         wins: verify.wins,
@@ -4166,6 +4167,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
         streak: verify.streak,
         avatar: verify.avatar_url
       });
+
       
       setStatus('success');
       
