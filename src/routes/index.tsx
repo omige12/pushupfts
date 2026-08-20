@@ -1700,6 +1700,20 @@ function Challenge({ bot, opponent, duration, user, setUser, onExit, onComplete,
       setGameState('finished');
       const won = isTraining ? true : playerPushups >= oppPushups;
       
+      const baseXp = playerPushups * 10;
+      const winBonus = won && !isTraining ? 100 : 0;
+      const totalXpGained = baseXp + winBonus;
+      
+      // Immediate update to local state for instant feedback
+      setUser((prev: any) => ({
+        ...prev,
+        xp: prev.xp + totalXpGained,
+        wins: won && !isTraining ? prev.wins + 1 : prev.wins,
+        losses: !won && !isTraining ? prev.losses + 1 : prev.losses,
+        totalPushups: prev.totalPushups + playerPushups,
+        record: Math.max(prev.record, playerPushups)
+      }));
+
       if (won) {
         confetti({ 
           particleCount: 250, 
@@ -1722,11 +1736,7 @@ function Challenge({ bot, opponent, duration, user, setUser, onExit, onComplete,
             .eq('id', matchId);
         }
         
-        if (won) {
-          onComplete(true, playerPushups, isTraining ? playerPushups * 2 : 150 + playerPushups, activeOpponent?.name || 'TREINO', oppPushups);
-        } else {
-          onComplete(false, playerPushups, 45 + playerPushups, activeOpponent?.name || 'BOT', oppPushups);
-        }
+        onComplete(won, playerPushups, totalXpGained, activeOpponent?.name || 'ARENA', oppPushups);
       };
       
       finishBattle();
