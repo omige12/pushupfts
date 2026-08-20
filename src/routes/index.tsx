@@ -921,7 +921,7 @@ function App() {
       case 'support': return <Support setView={handleSetView} goBack={goBack} />;
       case 'support-chat': return <SupportChat setView={handleSetView} goBack={goBack} />;
       case 'history': return <FullHistory setView={handleSetView} user={user} goBack={goBack} />;
-      case 'friend-challenge': return <FriendChallenge setView={handleSetView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} duration={duration} />;
+      case 'friend-challenge': return <FriendChallenge setView={handleSetView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} duration={duration} setOpponentDetails={setOpponentDetails} opponentDetails={opponentDetails} />;
       case 'ranking': return <Ranking setView={handleSetView} user={user} goBack={goBack} />;
       case 'patents-list': return <PatentsList setView={handleSetView} user={user} goBack={goBack} />;
       case 'daily-reward': return <DailyReward setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
