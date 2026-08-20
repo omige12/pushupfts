@@ -2935,7 +2935,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
         <h3 className="text-xs font-black text-white/40 uppercase tracking-widest">SEU ID DE JOGADOR</h3>
         <div className="flex gap-2">
           <div className="flex-1 bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-xl font-black text-white tracking-[0.2em] overflow-hidden truncate">
-            {user.player_id || user.id.substring(0, 8).toUpperCase()}
+            {user.player_id || user.id}
           </div>
           <Button 
             variant="ghost" 
