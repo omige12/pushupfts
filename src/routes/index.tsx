@@ -306,10 +306,10 @@ function App() {
       const { error: challengeError } = await supabase
         .from('challenges')
         .update({ 
-          status: 'accepted',
-          match_id: matchId 
+          status: 'accepted'
         })
         .eq('id', challenge.id);
+
         
       if (challengeError) throw challengeError;
 
