@@ -1571,7 +1571,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   }, [playerPushups, oppPushups, gameState, lastWhoIsAhead, activeOpponent, isTraining]);
 
   useEffect(() => {
-    if (matchId && user.supabaseId) {
+    if (matchId && (user.supabaseId || user.id)) {
       const channel = supabase
         .channel(`match:${matchId}`)
         .on(
