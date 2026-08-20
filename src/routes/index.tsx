@@ -1121,7 +1121,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       {/* Patent Progress Card */}
       <NeonFireWrapper 
         color="gold" 
-        className="mb-4"
+        className="w-full max-w-sm mx-auto"
         onClick={() => setView('patents-list')}
       >
         <div 
@@ -1171,7 +1171,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </NeonFireWrapper>
 
       {/* Action Grid - Redesigned for Premium Neon Feel */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 w-full max-w-sm mx-auto">
         <motion.div
           whileTap={{ scale: 0.94 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
@@ -1231,6 +1231,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       <motion.div
         whileTap={{ scale: 0.96 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        className="w-full max-w-sm mx-auto"
       >
         <NeonFireWrapper 
           color="red"
@@ -1256,7 +1257,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </motion.div>
 
       {/* Bottom Stats Footer - Adjusted */}
-      <div className="grid grid-cols-4 gap-2 pt-1 border-t border-white/5 -mt-2 pb-2">
+      <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full max-w-sm mx-auto">
         <div className="flex flex-col items-center text-center">
           <div className="w-10 h-10 rounded-2xl bg-gold/10 flex items-center justify-center mb-1 border border-gold/30 shadow-[0_0_15px_rgba(234,179,8,0.15)]">
             <Trophy className="w-5 h-5 text-gold neon-text-gold" />
@@ -2304,7 +2305,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         <motion.div 
           whileTap={{ scale: 0.9, opacity: 0.8 }}
           transition={{ type: "spring", stiffness: 600, damping: 20 }}
-          className="w-full bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
+          className="w-full max-w-sm bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
           onClick={() => setView('patents-list')}
         >
           <div className="flex justify-between items-end">
@@ -2332,7 +2333,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         </motion.div>
 
         {/* Stats Grid - Premium Neon Visual */}
-        <div className="grid grid-cols-3 gap-3 w-full">
+        <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
           <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-electric-blue/30 transition-all group">
             <div className="w-8 h-8 rounded-xl bg-electric-blue/10 flex items-center justify-center mx-auto mb-3 border border-electric-blue/20">
               <Trophy className="w-4 h-4 text-electric-blue" />
@@ -2359,7 +2360,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 gap-4 w-full pt-4">
+        <div className="grid grid-cols-1 gap-4 w-full max-w-sm pt-4">
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
