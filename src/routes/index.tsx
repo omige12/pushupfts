@@ -488,7 +488,9 @@ function App() {
               ...prev,
               id: profile.player_id,
               supabaseId: supabaseId,
+              player_id: profile.player_id,
               name: profile.name,
+
               age: profile.age || prev.age,
               weight: profile.weight || prev.weight,
               height: profile.height || prev.height,
