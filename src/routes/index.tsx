@@ -1645,7 +1645,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none h-[100dvh]">
       {/* HUD Superior — Mobile Optimized Premium HUD */}
       <div className="absolute top-0 left-0 right-0 z-30 p-4 pt-6 bg-gradient-to-b from-black/80 to-transparent">
         <div className="max-w-md mx-auto relative">
