@@ -3217,6 +3217,101 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration }:
       </div>
 
       <AnimatePresence>
+        {opponentDetails && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setOpponentDetails(null);
+            }}
+          >
+            <motion.div 
+              className="w-full max-w-sm bg-[#151921] border-2 border-electric-blue/30 rounded-[3rem] p-8 space-y-8 relative premium-glow-blue overflow-hidden"
+              initial={{ y: 20 }}
+              animate={{ y: 0 }}
+            >
+              {/* Background Glow */}
+              <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-electric-blue/10 to-transparent pointer-events-none" />
+              
+              <div className="flex justify-between items-center relative z-10">
+                <h3 className="text-2xl font-black italic text-white tracking-tighter uppercase">PERFIL</h3>
+                <Button variant="ghost" size="icon" onClick={() => setOpponentDetails(null)} className="rounded-full bg-white/5 hover:bg-white/10 w-10 h-10 active:scale-90">
+                  <X className="w-5 h-5 text-white" />
+                </Button>
+              </div>
+
+              <div className="flex flex-col items-center gap-6 relative z-10">
+                <div className="relative">
+                  <div className="w-32 h-32 rounded-full border-4 border-electric-blue/40 overflow-hidden bg-muted p-1 shadow-[0_0_30px_rgba(0,210,255,0.2)]">
+                    {opponentDetails.avatar_url ? (
+                      <img src={opponentDetails.avatar_url} className="w-full h-full object-cover rounded-full" />
+                    ) : (
+                      <div className="w-full h-full bg-white/5 flex items-center justify-center rounded-full">
+                        <UserIcon className="w-12 h-12 text-white/20" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute -bottom-2 -right-2 bg-electric-blue text-black w-10 h-10 rounded-2xl flex items-center justify-center text-xl shadow-lg border-2 border-[#151921] transform rotate-12">
+                    {getRankInfo(opponentDetails.xp).emoji}
+                  </div>
+                </div>
+
+                <div className="text-center space-y-2">
+                  <h4 className="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">{opponentDetails.name}</h4>
+                  <div className="flex items-center justify-center gap-3">
+                    <Badge className="bg-electric-blue/20 text-electric-blue border-electric-blue/40 text-[10px] py-1 px-3 font-black italic">
+                      {getRankInfo(opponentDetails.xp).rankName}
+                    </Badge>
+                    <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">ID: {opponentDetails.player_id}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 relative z-10">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                  <Trophy className="w-5 h-5 text-gold mx-auto mb-1" />
+                  <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">RECORD</p>
+                  <p className="text-xl font-black italic text-white">{opponentDetails.record || 0}</p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 text-center">
+                  <Flame className="w-5 h-5 text-energy-red mx-auto mb-1" />
+                  <p className="text-[8px] font-black text-white/40 uppercase tracking-widest">XP TOTAL</p>
+                  <p className="text-xl font-black italic text-white">{opponentDetails.xp || 0}</p>
+                </div>
+              </div>
+
+              <div className="space-y-4 pt-4 relative z-10">
+                <Button 
+                  className="w-full py-7 bg-electric-blue text-black font-black italic text-lg uppercase rounded-[1.5rem] shadow-[0_10px_30px_rgba(0,210,255,0.3)] hover:scale-[1.02] active:scale-95 transition-all"
+                  onClick={() => {
+                    onChallengePlayer({
+                      id: opponentDetails.id,
+                      name: opponentDetails.name,
+                      avatar: opponentDetails.avatar_url,
+                      patent: getRankInfo(opponentDetails.xp).patentName
+                    });
+                    setOpponentDetails(null);
+                  }}
+                >
+                  DESAFIAR AGORA
+                </Button>
+                
+                <Button 
+                  className="w-full py-7 bg-white/5 border-2 border-white/10 text-white font-black italic text-lg uppercase rounded-[1.5rem] hover:bg-white/10 active:scale-95 transition-all"
+                  onClick={() => {
+                    addFriend(opponentDetails.id);
+                    setOpponentDetails(null);
+                  }}
+                >
+                  ADICIONAR AMIGO
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
         {showInvites && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
