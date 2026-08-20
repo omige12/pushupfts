@@ -1583,7 +1583,8 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
             filter: `id=eq.${matchId}`
           },
           (payload) => {
-            const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+            const currentUserId = user.supabaseId || user.id;
+            const isPlayer1 = matchId.split('_')[0] === currentUserId;
             const newReps = isPlayer1 ? payload.new.player_2_reps : payload.new.player_1_reps;
             if (newReps !== undefined && newReps !== null) {
               setOppPushups(newReps);
