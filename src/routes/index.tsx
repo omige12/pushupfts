@@ -2198,7 +2198,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
         exit={{ opacity: 0, y: 20 }}
-        className="p-6 space-y-6 pb-40 h-full overflow-y-auto custom-scrollbar"
+        className="p-6 space-y-6 pb-[env(safe-area-inset-bottom,40px)] h-full overflow-y-auto custom-scrollbar"
       >
         <div className="flex items-center gap-4 mb-2">
           <Button 
@@ -3817,7 +3817,7 @@ function PatentsList({ setView, user, goBack }: { setView: (v: View) => void, us
   const currentInfo = getRankInfo(user.xp);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-40 space-y-6 h-full overflow-y-auto custom-scrollbar">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-[env(safe-area-inset-bottom,40px)] space-y-6 h-full overflow-y-auto custom-scrollbar">
       <div className="flex items-center gap-4 mb-2">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">TRILHA DE EVOLUÇÃO</h2>
@@ -4346,7 +4346,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   };
 
   return (
-    <div className="flex flex-col h-full bg-[#05070A] p-6 relative overflow-hidden">
+    <div className="flex flex-col h-[100dvh] bg-[#05070A] p-6 relative overflow-hidden pb-[env(safe-area-inset-bottom,24px)]">
       {/* Background - Atmospheric Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
