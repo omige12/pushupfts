@@ -3138,7 +3138,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, s
   };
 
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8 pb-32 h-full overflow-y-auto">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8 pb-40 h-full overflow-y-auto custom-scrollbar">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
