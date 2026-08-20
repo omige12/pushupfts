@@ -538,10 +538,11 @@ function App() {
                 achievements: profile.achievements || [],
               }));
 
-              if (matchesResult.status === 'fulfilled' && matchesResult.value.data && Array.isArray(matchesResult.value.data)) {
+              const matchesData = matchesResult.status === 'fulfilled' ? matchesResult.value.data : null;
+              if (matchesData && Array.isArray(matchesData)) {
                 setUser(prev => ({
                   ...prev,
-                  history: matchesResult.value.data.map((m: any) => ({
+                  history: matchesData.map((m: any) => ({
                     id: m.id,
                     opp: m.opponent_name,
                     res: m.result === 'win' ? "Vitória" : m.result === 'loss' ? "Derrota" : "Empate",
