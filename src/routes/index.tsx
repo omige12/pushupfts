@@ -3046,7 +3046,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
                 className="h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest transition-all bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)]" 
 
                 onClick={async () => {
-                  if (!isOnline) return;
+                  // Allow challenging regardless of status to test real-time flow
                   try {
                     const { error } = await supabase
                       .from('challenges')
