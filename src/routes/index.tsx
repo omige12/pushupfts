@@ -1006,8 +1006,8 @@ function App() {
         )}
       </AnimatePresence>
 
-      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready'].includes(view) && (
-        <nav className="fixed bottom-6 left-4 right-4 bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-50 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]">
+      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking'].includes(view) && (
+        <nav className="fixed bottom-6 left-4 right-4 sm:bottom-8 sm:left-auto sm:right-auto sm:w-[380px] bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-50 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]">
           {[
             { id: 'dashboard', label: 'Início', icon: Home, aliases: [] },
             { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
@@ -1069,7 +1069,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-5 space-y-5 pb-32">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen flex flex-col justify-center p-5 space-y-6 sm:space-y-8 pb-32">
       {/* Header */}
       <header className="flex justify-between items-start">
         <div className="flex items-center gap-3">
@@ -1642,7 +1642,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none">
       {/* HUD Superior — Mobile Optimized Premium HUD */}
       <div className="absolute top-0 left-0 right-0 z-30 p-4 pt-6 bg-gradient-to-b from-black/80 to-transparent">
         <div className="max-w-md mx-auto relative">
@@ -1768,7 +1768,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
           showSkeleton={true}
         />
         
-        {/* Large Centered Counter at Bottom */}
+        {/* Large Centered Counter at Bottom - Visible only during battle */}
         <div className="absolute bottom-10 left-0 right-0 flex justify-center z-30 pointer-events-none">
           <div className="relative flex items-center justify-center">
             {/* Pulsing ring on count change */}
@@ -2228,7 +2228,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 space-y-6 pb-32">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="min-h-screen flex flex-col items-center justify-center p-6 space-y-6 pb-32">
       <div className="flex justify-between items-center w-full mb-2">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
@@ -2400,7 +2400,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
 
           <Button 
             variant="ghost" 
-            className="text-[10px] font-black text-energy-red/40 uppercase tracking-[0.4em] hover:text-energy-red/60 transition-colors py-8 hover:neon-text-red active:scale-95 btn-respond-fast"
+            className="text-[10px] font-black text-white uppercase tracking-[0.4em] transition-all py-8 hover:neon-text-red active:scale-95 btn-respond-fast relative overflow-hidden bg-energy-red/5 border-2 border-energy-red/20 rounded-[1.5rem] shadow-[0_0_20px_rgba(255,49,49,0.1)] before:absolute before:inset-0 before:bg-energy-red/10 before:opacity-0 hover:before:opacity-100"
             onClick={async () => {
               const { error } = await supabase.auth.signOut();
               if (error) {
