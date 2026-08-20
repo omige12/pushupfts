@@ -4148,6 +4148,8 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   const [name, setName] = useState(user.name === "GUERREIRO ALPHA" ? "" : user.name);
 
   const handleAuth = async () => {
+    if (loading) return; // Prevent multiple clicks
+    
     if (!email || !password || (!isLogin && !name)) {
       toast.error("⚠️ Preencha todos os campos corretamente.");
       return;
