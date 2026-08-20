@@ -829,7 +829,7 @@ function App() {
   }, []);
 
   const renderView = () => {
-    if (loading) {
+    if (loading || authStatus === 'checking') {
       return (
         <div className="min-h-[100dvh] bg-[#0B0E14] flex flex-col items-center justify-center p-6 text-center space-y-6 overflow-hidden">
           <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full animate-pulse" />
@@ -1850,7 +1850,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
         <PushUpCounter 
           isActive={true} 
           onCount={handlePlayerCount} 
-          onReady={handleCameraReady}
+          onReady={() => handleAIStatus('ready')}
           soundEnabled={true}
           showSkeleton={true}
         />
@@ -4233,7 +4233,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
                 <UserIcon className="w-3 h-3 text-electric-blue" /> NOME DE USUÁRIO
               </label>
               <input 
-                className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+                className="w-full bg-[#0F131A] p-5 sm:p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
                 placeholder="Ex: GUERREIRO" 
                 value={name}
                 onChange={(e) => setName(e.target.value.toUpperCase())}
@@ -4246,7 +4246,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
               <Mail className="w-3 h-3 text-electric-blue" /> E-MAIL
             </label>
             <input 
-              className="w-full bg-[#0F131A] p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
+              className="w-full bg-[#0F131A] p-5 sm:p-6 rounded-2xl text-white border-2 border-electric-blue/30 focus:border-electric-blue outline-none transition-all font-black italic tracking-tight placeholder:text-white/10" 
               placeholder="seu@email.com" 
               type="email"
               value={email}
