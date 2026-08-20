@@ -1597,7 +1597,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
         supabase.removeChannel(channel);
       };
     }
-  }, [matchId, user.supabaseId]);
+  }, [matchId, user.supabaseId, user.id]);
 
 
   useEffect(() => {
