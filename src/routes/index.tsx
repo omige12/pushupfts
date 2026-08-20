@@ -3263,10 +3263,9 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
               </div>
             )}
           </div>
-
-          </div>
         )}
       </div>
+
     </motion.div>
   );
 }
