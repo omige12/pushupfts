@@ -416,6 +416,7 @@ function App() {
             setUser(prev => ({
               ...prev,
               id: profile.player_id,
+              supabaseId: supabaseId,
               name: profile.name,
               age: profile.age || prev.age,
               weight: profile.weight || prev.weight,
