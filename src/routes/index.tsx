@@ -2870,27 +2870,25 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
       try {
         let query = supabase
           .from('profiles')
-          .select('id, name, xp, record, wins, streak, avatar_url, player_id');
+          .select('id, name, xp, record, wins, streak, avatar_url, player_id')
+          .order('xp', { ascending: false });
 
         if (tab === 'friends') {
-          // Get all friend IDs
           const { data: friendships } = await supabase
             .from('friendships')
             .select('user_id, friend_id')
-            .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+            .or(`user_id.eq.${user.supabaseId || user.id},friend_id.eq.${user.supabaseId || user.id}`)
             .eq('status', 'accepted');
           
           const friendIds = friendships ? friendships.map((f: any) => 
-            f.user_id === user.id ? f.friend_id : f.user_id
+            (f.user_id === (user.supabaseId || user.id)) ? f.friend_id : f.user_id
           ) : [];
           
-          // Filter by these IDs plus the user's ID
-          query = query.in('id', [...friendIds, user.id]);
+          query = query.in('id', [...friendIds, user.supabaseId || user.id]);
         }
 
-        const { data, error } = await query
-          .order('xp', { ascending: false })
-          .limit(50);
+        const { data, error } = await query;
+
 
         if (error) throw error;
 
