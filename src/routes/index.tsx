@@ -3004,7 +3004,16 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
                 <p className="text-[10px] text-white/40 uppercase">{getRankInfo(foundUser.xp).patentName}</p>
               </div>
             </div>
-            <Button className="bg-primary text-xs" onClick={() => addFriend(foundUser.id)}>ADICIONAR</Button>
+            <div className="flex gap-2">
+              <Button className="bg-electric-blue text-xs font-black italic px-4" onClick={() => onChallengePlayer({
+                id: foundUser.id,
+                name: foundUser.name,
+                avatar: foundUser.avatar_url,
+                patent: getRankInfo(foundUser.xp).patentName
+              })}>DESAFIAR</Button>
+              <Button className="bg-white/5 border border-white/10 text-xs font-black italic px-4" onClick={() => addFriend(foundUser.id)}>ADICIONAR</Button>
+            </div>
+
           </div>
         )}
       </div>
