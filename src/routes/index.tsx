@@ -3043,7 +3043,8 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
                 </div>
               </div>
               <Button 
-                className={`h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest transition-all ${isOnline ? 'bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)]' : 'bg-white/5 text-white/20'}`} 
+                className="h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest transition-all bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)]" 
+
                 onClick={async () => {
                   if (!isOnline) return;
                   try {
