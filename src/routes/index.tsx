@@ -2779,7 +2779,7 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
 
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32 h-full overflow-y-auto">
       <div className="flex justify-between items-start">
         <div>
           <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">MULTIJOGADOR</h2>
