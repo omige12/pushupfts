@@ -3151,11 +3151,19 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-32">
       <div className="flex flex-col gap-8">
         <div className="flex justify-between items-start">
-          <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">RANKING</h2>
+          <div className="flex flex-col">
+            <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">RANKING</h2>
+            {userRank && (
+              <p className="text-[10px] font-black text-electric-blue uppercase tracking-[0.3em] mt-2">
+                SUA POSIÇÃO: #{userRank}
+              </p>
+            )}
+          </div>
           <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
             <ArrowLeft className="w-5 h-5 text-white" />
           </Button>
         </div>
+
         
         <div className="flex p-1.5 bg-[#0A0D14] rounded-full border border-white/5">
           <button 
