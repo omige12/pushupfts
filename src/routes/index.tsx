@@ -1069,9 +1069,9 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen flex flex-col justify-center p-5 space-y-6 sm:space-y-8 pb-32">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto min-h-screen">
       {/* Header */}
-      <header className="flex justify-between items-start">
+      <header className="flex justify-between items-start w-full mt-4">
         <div className="flex items-center gap-3">
           <div 
             className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
@@ -1121,7 +1121,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       {/* Patent Progress Card */}
       <NeonFireWrapper 
         color="gold" 
-        className="w-full max-w-sm mx-auto"
+        className="w-full"
         onClick={() => setView('patents-list')}
       >
         <div 
@@ -1171,7 +1171,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </NeonFireWrapper>
 
       {/* Action Grid - Redesigned for Premium Neon Feel */}
-      <div className="grid grid-cols-2 gap-4 w-full max-w-sm mx-auto">
+      <div className="grid grid-cols-2 gap-4 w-full">>
         <motion.div
           whileTap={{ scale: 0.94 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
@@ -1231,7 +1231,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       <motion.div
         whileTap={{ scale: 0.96 }}
         transition={{ type: "spring", stiffness: 400, damping: 25 }}
-        className="w-full max-w-sm mx-auto"
+        className="w-full"
       >
         <NeonFireWrapper 
           color="red"
@@ -1257,7 +1257,7 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </motion.div>
 
       {/* Bottom Stats Footer - Adjusted */}
-      <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full max-w-sm mx-auto">
+      <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full mt-auto pb-32">
         <div className="flex flex-col items-center text-center">
           <div className="w-10 h-10 rounded-2xl bg-gold/10 flex items-center justify-center mb-1 border border-gold/30 shadow-[0_0_15px_rgba(234,179,8,0.15)]">
             <Trophy className="w-5 h-5 text-gold neon-text-gold" />
@@ -1770,7 +1770,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
         />
         
         {/* Large Centered Counter at Bottom - Visible only during battle */}
-        <div className="absolute bottom-10 left-0 right-0 flex justify-center z-30 pointer-events-none">
+        <div className="absolute bottom-6 left-0 right-0 flex justify-center z-30 pointer-events-none">
           <div className="relative flex items-center justify-center">
             {/* Pulsing ring on count change */}
             <motion.div
@@ -2229,8 +2229,8 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="min-h-screen flex flex-col items-center justify-center p-6 space-y-6 pb-32">
-      <div className="flex justify-between items-center w-full mb-2">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-4 w-full max-w-md mx-auto min-h-screen">
+      <div className="flex justify-between items-center w-full mb-2 mt-4">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
             <ArrowLeft className="w-5 h-5" />
@@ -2333,7 +2333,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         </motion.div>
 
         {/* Stats Grid - Premium Neon Visual */}
-        <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
+        <div className="grid grid-cols-3 gap-3 w-full">
           <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-electric-blue/30 transition-all group">
             <div className="w-8 h-8 rounded-xl bg-electric-blue/10 flex items-center justify-center mx-auto mb-3 border border-electric-blue/20">
               <Trophy className="w-4 h-4 text-electric-blue" />
@@ -2360,7 +2360,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 gap-4 w-full max-w-sm pt-4">
+        <div className="grid grid-cols-1 gap-4 w-full pt-4 pb-32">
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
