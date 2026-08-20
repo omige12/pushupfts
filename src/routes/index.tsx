@@ -2222,7 +2222,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   const [copied, setCopied] = useState(false);
 
   const copyId = () => {
-    navigator.clipboard.writeText(stats?.playerId || stats?.id);
+    navigator.clipboard.writeText(user.player_id || stats?.playerId || stats?.id);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
