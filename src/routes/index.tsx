@@ -3600,15 +3600,21 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
               </motion.div>
             ))}
             
-            {userRank && (
-              <div className="mt-8 p-6 glass-panel border-electric-blue/30 bg-electric-blue/5 rounded-[2rem] text-center">
-                <p className="text-xs font-black text-white/40 uppercase tracking-[0.2em] mb-2">SUA POSIÇÃO ATUAL</p>
-                <div className="flex justify-center items-center gap-4">
-                  <div className="text-4xl font-black italic text-electric-blue">#{userRank}</div>
-                  <div className="h-8 w-px bg-white/10" />
-                  <div className="text-left">
+            {userRank !== null && (
+              <div className="mt-8 p-8 glass-panel border-electric-blue/30 bg-electric-blue/5 rounded-[2.5rem] text-center relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-electric-blue/10 to-transparent opacity-50 pointer-events-none" />
+                <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] mb-4 relative z-10">SUA POSIÇÃO ATUAL</p>
+                <div className="flex justify-center items-center gap-6 relative z-10">
+                  <div className="text-6xl font-black italic text-electric-blue shadow-text-neon tracking-tighter">#{userRank}</div>
+                  <div className="h-12 w-px bg-white/10" />
+                  <div className="text-left space-y-1">
                     <div className="text-[10px] font-black text-white/60 uppercase tracking-widest">VOCÊ ESTÁ ENTRE OS</div>
-                    <div className="text-lg font-black text-white italic tracking-tighter uppercase leading-none">MELHORES DO BRASIL</div>
+                    <div className="text-xl font-black text-white italic tracking-tighter uppercase leading-none">MELHORES DO BRASIL</div>
+                    {userRank > 1 && rankingData[userRank - 2] && (
+                      <p className="text-[9px] font-black text-gold uppercase mt-2 animate-pulse">
+                        PRÓXIMO ALVO: {rankingData[userRank - 2].name.toUpperCase()} (+{(rankingData[userRank - 2].count - (rankingData[userRank - 1]?.count || 0))} XP)
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
