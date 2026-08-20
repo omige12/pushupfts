@@ -690,13 +690,47 @@ function App() {
           },
           (payload) => {
             if (payload.new.status === 'pending') {
-              // We'll handle showing the challenge invite modal here via global state if needed
-              // For now, let's just trigger a custom event that the Dashboard or other components can listen to
               window.dispatchEvent(new CustomEvent('challenge-received', { detail: payload.new }));
             }
           }
         )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'challenges',
+            filter: `challenger_id=eq.${session.user.id}`
+          },
+          async (payload) => {
+            if (payload.new.status === 'accepted' && payload.new.match_id) {
+              const { data: opponentProfile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', payload.new.challenged_id)
+                .single();
+
+              if (opponentProfile) {
+                setOpponent({
+                  id: opponentProfile.id,
+                  name: opponentProfile.name,
+                  avatar: opponentProfile.avatar_url,
+                  record: opponentProfile.record,
+                  patent: getRankInfo(opponentProfile.xp).patentName
+                });
+              }
+              
+              setActiveMatchId(payload.new.match_id);
+              setDuration(payload.new.duration);
+              setIsTraining(false);
+              setSelectedBot(null);
+              setView('challenge');
+              toast.success("Oponente aceitou o desafio!");
+            }
+          }
+        )
         .subscribe();
+
 
       // Channel for global ranking updates
       const rankingChannel = supabase
