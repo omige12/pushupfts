@@ -1408,6 +1408,34 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   }, [playerPushups, oppPushups, gameState, lastWhoIsAhead, activeOpponent, isTraining]);
 
   useEffect(() => {
+    if (matchId) {
+      const channel = supabase
+        .channel(`match:${matchId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'matches_v2',
+            filter: `id=eq.${matchId}`
+          },
+          (payload) => {
+            const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+            const newReps = isPlayer1 ? payload.new.player_2_reps : payload.new.player_1_reps;
+            if (newReps !== undefined) {
+              setOppPushups(newReps);
+            }
+          }
+        )
+        .subscribe();
+      
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, [matchId, user.supabaseId]);
+
+  useEffect(() => {
     if (gameState === 'countdown') {
       if (countdown > 0) {
         const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
@@ -1421,7 +1449,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
       const timer = setInterval(() => {
         setTimeLeft(t => t - 1);
         
-        if (!isTraining) {
+        if (!isTraining && !matchId) {
           let increment = 0;
           if (bot) {
             const baseRate = bot.pushupRate || 0.1;
@@ -1453,12 +1481,32 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
           origin: { y: 0.6 },
           colors: ['#FFD700', '#60A5FA', '#F43F5E']
         });
-        onComplete(true, playerPushups, isTraining ? playerPushups * 2 : 150 + playerPushups, activeOpponent?.name || 'TREINO', oppPushups);
-      } else {
-        onComplete(false, playerPushups, 45 + playerPushups, activeOpponent?.name || 'BOT', oppPushups);
       }
+
+      const finishBattle = async () => {
+        if (matchId) {
+          const winnerId = playerPushups >= oppPushups ? user.supabaseId : opponent.id;
+          await supabase
+            .from('matches_v2')
+            .update({ 
+              status: 'finished',
+              winner_id: winnerId,
+              finished_at: new Date().toISOString()
+            })
+            .eq('id', matchId);
+        }
+        
+        if (won) {
+          onComplete(true, playerPushups, isTraining ? playerPushups * 2 : 150 + playerPushups, activeOpponent?.name || 'TREINO', oppPushups);
+        } else {
+          onComplete(false, playerPushups, 45 + playerPushups, activeOpponent?.name || 'BOT', oppPushups);
+        }
+      };
+      
+      finishBattle();
     }
-  }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete, isTraining]);
+  }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete, isTraining, matchId, user.supabaseId]);
+
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden">
