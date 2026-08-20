@@ -3436,7 +3436,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, s
                   }
                 }}
               >
-                {isOnline ? 'DESAFIAR' : 'OFFLINE'}
+                {isOnline ? 'DESAFIAR' : 'CONVIDAR'}
               </Button>
             </motion.div>
           );
