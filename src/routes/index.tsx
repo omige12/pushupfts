@@ -3718,7 +3718,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
 
   if (isFinished) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#0B0E14] text-center space-y-6">
+      <div className="flex flex-col items-center justify-center h-full p-8 bg-[#0B0E14] text-center space-y-6">
         <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
