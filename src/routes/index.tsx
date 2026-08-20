@@ -2198,7 +2198,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
         exit={{ opacity: 0, y: 20 }}
-        className="p-6 space-y-6 pb-[env(safe-area-inset-bottom,40px)] h-full overflow-y-auto custom-scrollbar"
+        className="p-6 space-y-6 pb-20 h-full overflow-y-auto custom-scrollbar"
       >
         <div className="flex items-center gap-4 mb-2">
           <Button 
@@ -2351,7 +2351,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-[100dvh] overflow-y-auto pb-[env(safe-area-inset-bottom,20px)] custom-scrollbar">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-[100dvh] overflow-y-auto pb-24 custom-scrollbar">
       <div className="flex justify-between items-center w-full mb-2 mt-4 shrink-0">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
@@ -3539,7 +3539,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
               </p>
             )}
           </div>
-          <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
             <ArrowLeft className="w-5 h-5 text-white" />
           </Button>
         </div>
@@ -3797,6 +3797,7 @@ function Achievements({ setView, user, goBack }: { setView: (v: View) => void, u
           );
         })}
       </div>
+      <div className="h-20 shrink-0" />
     </motion.div>
   );
 }
@@ -3817,7 +3818,7 @@ function PatentsList({ setView, user, goBack }: { setView: (v: View) => void, us
   const currentInfo = getRankInfo(user.xp);
   
   return (
-    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-[env(safe-area-inset-bottom,40px)] space-y-6 h-full overflow-y-auto custom-scrollbar">
+    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-20 space-y-6 h-[100dvh] overflow-y-auto custom-scrollbar">
       <div className="flex items-center gap-4 mb-2">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter">TRILHA DE EVOLUÇÃO</h2>
