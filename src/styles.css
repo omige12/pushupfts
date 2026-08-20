@@ -2,6 +2,15 @@
 @source "../src";
 @import "tw-animate-css";
 
+@layer base {
+  button:active, .btn-respond-fast:active {
+    transform: scale(0.97) !important;
+    filter: brightness(1.2) !important;
+    transition: transform 0.05s ease-out !important;
+  }
+}
+
+
 @utility clip-path-hexagon {
   clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
 }
