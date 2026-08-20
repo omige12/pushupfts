@@ -3248,6 +3248,22 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
                 </div>
               </motion.div>
             ))}
+            
+            {userRank && (
+              <div className="mt-8 p-6 glass-panel border-electric-blue/30 bg-electric-blue/5 rounded-[2rem] text-center">
+                <p className="text-xs font-black text-white/40 uppercase tracking-[0.2em] mb-2">SUA POSIÇÃO ATUAL</p>
+                <div className="flex justify-center items-center gap-4">
+                  <div className="text-4xl font-black italic text-electric-blue">#{userRank}</div>
+                  <div className="h-8 w-px bg-white/10" />
+                  <div className="text-left">
+                    <div className="text-[10px] font-black text-white/60 uppercase tracking-widest">VOCÊ ESTÁ ENTRE OS</div>
+                    <div className="text-lg font-black text-white italic tracking-tighter uppercase leading-none">MELHORES DO BRASIL</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           </div>
         )}
       </div>
