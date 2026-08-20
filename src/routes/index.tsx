@@ -2533,36 +2533,48 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
 function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallengePlayer, goBack }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void, onChallengePlayer: (opp: any) => void, goBack: () => void }) {
   const [searchId, setSearchId] = useState('');
   const [foundPlayer, setFoundPlayer] = useState<any>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = async () => {
-    if (!/^\d+$/.test(searchId)) {
-      toast.error("O ID deve conter apenas números.");
+    if (!/^\d{8}$/.test(searchId)) {
+      toast.error("O ID deve conter exatamente 8 números.");
       return;
     }
 
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('id, name, xp, record, avatar_url, level, player_id, last_seen_at')
-      .eq('player_id', searchId)
-      .neq('id', user.id)
-      .maybeSingle();
+    setIsSearching(true);
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('id, name, xp, record, avatar_url, level, player_id, last_seen_at')
+        .eq('player_id', searchId)
+        .neq('id', user.supabaseId || user.id)
+        .maybeSingle();
 
-    if (profile) {
-      setFoundPlayer({
-        id: profile.id,
-        name: profile.name,
-        level: profile.level,
-        patent: getRankInfo(profile.xp).patentName,
-        record: profile.record,
-        avatar: profile.avatar_url,
-        last_seen_at: profile.last_seen_at
-      });
-      toast.success("Jogador encontrado!");
-    } else {
-      setFoundPlayer(null);
-      toast.error("Jogador não encontrado");
+      if (error) throw error;
+
+      if (profile) {
+        setFoundPlayer({
+          id: profile.id,
+          name: profile.name,
+          level: profile.level,
+          patent: getRankInfo(profile.xp).patentName,
+          record: profile.record,
+          avatar: profile.avatar_url,
+          last_seen_at: profile.last_seen_at
+        });
+        toast.success("Jogador encontrado!");
+      } else {
+        setFoundPlayer(null);
+        toast.error("Jogador não encontrado");
+      }
+    } catch (err) {
+      console.error("Search error:", err);
+      toast.error("Erro ao buscar jogador");
+    } finally {
+      setIsSearching(false);
     }
   };
+
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32">
