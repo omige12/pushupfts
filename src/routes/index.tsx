@@ -270,9 +270,12 @@ function App() {
 
   const [selectedBot, setSelectedBot] = useState<any | null>(null);
   const [opponent, setOpponent] = useState<any | null>(null);
+  const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
+  const [matchOpponent, setMatchOpponent] = useState<any | null>(null);
   const [isTraining, setIsTraining] = useState(false);
   const [duration, setDuration] = useState(60);
   const [levelUpData, setLevelUpData] = useState<{old: string, new: string} | null>(null);
+
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isStandalone, setIsStandalone] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
@@ -282,29 +285,96 @@ function App() {
     const handleChallenge = (e: any) => {
       setIncomingChallenge(e.detail);
     };
+    
+    const handleMatchStarted = (e: any) => {
+      const { matchId, opponent } = e.detail;
+      setActiveMatchId(matchId);
+      setMatchOpponent(opponent);
+      setDuration(60); // Default to 60 for now or get from event
+      setIsTraining(false);
+      setSelectedBot(null);
+      setIncomingChallenge(null);
+      setView('challenge');
+      toast.success("Batalha iniciada!");
+    };
+
     window.addEventListener('challenge-received', handleChallenge);
-    return () => window.removeEventListener('challenge-received', handleChallenge);
+    window.addEventListener('match-started', handleMatchStarted);
+    return () => {
+      window.removeEventListener('challenge-received', handleChallenge);
+      window.removeEventListener('match-started', handleMatchStarted);
+    };
   }, []);
 
-  const acceptChallenge = (challenge: any) => {
-    setOpponent({
-      id: challenge.challenger_id,
-      name: "DESAFIANTE",
-      avatar: null,
-      record: 0,
-      patent: "Bronze"
-    });
-    setDuration(challenge.duration);
-    setIsTraining(false);
-    setSelectedBot(null);
-    setIncomingChallenge(null);
-    setView('challenge');
+
+
+
+  const acceptChallenge = async (challenge: any) => {
+    try {
+      const matchId = `${challenge.challenger_id}_${challenge.challenged_id}_${Date.now()}`;
+      
+      const { error: matchError } = await supabase
+        .from('matches_v2')
+        .insert({
+          id: matchId,
+          player_1: challenge.challenger_id,
+          player_2: challenge.challenged_id,
+          status: 'ongoing'
+        });
+        
+      if (matchError) throw matchError;
+
+      const { error: challengeError } = await supabase
+        .from('challenges')
+        .update({ 
+          status: 'accepted',
+          match_id: matchId
+        } as any)
+
+
+        .eq('id', challenge.id);
+
+        
+      if (challengeError) throw challengeError;
+
+      const { data: challengerProfile } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', challenge.challenger_id)
+        .single();
+
+      if (challengerProfile) {
+        const opp = {
+          id: challengerProfile.id,
+          name: challengerProfile.name,
+          avatar: challengerProfile.avatar_url,
+          record: challengerProfile.record,
+          patent: getRankInfo(challengerProfile.xp).patentName
+        };
+        setOpponent(opp);
+        setMatchOpponent(opp);
+      }
+
+      
+      setActiveMatchId(matchId);
+      setDuration(challenge.duration);
+      setIsTraining(false);
+      setSelectedBot(null);
+      setIncomingChallenge(null);
+      setView('challenge');
+      toast.success("Batalha iniciada!");
+    } catch (err) {
+      console.error("Accept challenge error:", err);
+      toast.error("Erro ao aceitar desafio");
+    }
   };
+
 
 
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{
     id: string;
+    supabaseId?: string;
     name: string;
     age: number;
     weight: number;
@@ -346,6 +416,7 @@ function App() {
     achievements: [],
     history: []
   });
+
 
 
   useEffect(() => {
@@ -405,6 +476,7 @@ function App() {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
+          const supabaseId = session.user.id;
           const { data: profile, error } = await supabase
             .from('profiles')
             .select('*')
@@ -415,7 +487,10 @@ function App() {
             setUser(prev => ({
               ...prev,
               id: profile.player_id,
+              supabaseId: supabaseId,
+              player_id: profile.player_id,
               name: profile.name,
+
               age: profile.age || prev.age,
               weight: profile.weight || prev.weight,
               height: profile.height || prev.height,
@@ -646,13 +721,50 @@ function App() {
           },
           (payload) => {
             if (payload.new.status === 'pending') {
-              // We'll handle showing the challenge invite modal here via global state if needed
-              // For now, let's just trigger a custom event that the Dashboard or other components can listen to
               window.dispatchEvent(new CustomEvent('challenge-received', { detail: payload.new }));
             }
           }
         )
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'challenges',
+            filter: `challenger_id=eq.${session.user.id}`
+          },
+          async (payload) => {
+            if (payload.new.status === 'accepted' && payload.new.match_id) {
+              const { data: opponentProfile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', payload.new.challenged_id)
+                .single();
+
+              if (opponentProfile) {
+                const opp = {
+                  id: opponentProfile.id,
+                  name: opponentProfile.name,
+                  avatar: opponentProfile.avatar_url,
+                  record: opponentProfile.record,
+                  patent: getRankInfo(opponentProfile.xp).patentName
+                };
+                setOpponent(opp);
+                setMatchOpponent(opp);
+
+              }
+              
+              setActiveMatchId(payload.new.match_id);
+              setDuration(payload.new.duration);
+              setIsTraining(false);
+              setSelectedBot(null);
+              setView('challenge');
+              toast.success("Oponente aceitou o desafio!");
+            }
+          }
+        )
         .subscribe();
+
 
       // Channel for global ranking updates
       const rankingChannel = supabase
@@ -697,11 +809,31 @@ function App() {
       case 'profile-setup': return <ProfileSetup setView={handleSetView} user={user} setUser={setUser} />;
       case 'profile-ready': return <ProfileReady setView={handleSetView} user={user} />;
       case 'dashboard': return <Dashboard setView={handleSetView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
-      case 'treino': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
+      case 'treino': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setMatchOpponent(null); setActiveMatchId(null); setView('challenge'); }} />;
       case 'select-bot': return <SelectBot setView={handleSetView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
-      case 'training-setup': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setView('challenge'); }} />;
-      case 'challenge': return <Challenge bot={selectedBot} opponent={opponent} duration={duration} user={user} isTraining={isTraining} onExit={() => { setView('dashboard'); setSelectedBot(null); setOpponent(null); setIsTraining(false); }} onComplete={updateStats} />;
+      case 'training-setup': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setMatchOpponent(null); setActiveMatchId(null); setView('challenge'); }} />;
+      case 'challenge': return (
+        <Challenge 
+          bot={selectedBot} 
+          opponent={matchOpponent || opponent} 
+          duration={duration} 
+          user={user} 
+          matchId={activeMatchId || undefined}
+          isTraining={isTraining} 
+          onExit={() => { 
+            setView('dashboard'); 
+            setSelectedBot(null); 
+            setOpponent(null); 
+            setMatchOpponent(null);
+            setActiveMatchId(null);
+            setIsTraining(false); 
+          }} 
+          onComplete={updateStats} 
+        />
+      );
+
+
       case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('challenge'); }} onCancel={() => setView('select-duration')} duration={duration} />;
       case 'profile': return <Profile setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
       case 'settings': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} />;
@@ -879,7 +1011,7 @@ function App() {
           {[
             { id: 'dashboard', label: 'Início', icon: Home, aliases: [] },
             { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
-            { id: 'multiplayer', label: 'Batalha', icon: Swords, aliases: ['select-bot', 'select-duration', 'matchmaking', 'challenge'] },
+            { id: 'multiplayer', label: 'Batalha', icon: Swords, aliases: ['select-bot', 'select-duration', 'matchmaking'] },
             { id: 'ranking', label: 'Ranking', icon: Trophy, aliases: [] },
             { id: 'profile', label: 'Perfil', icon: UserCircle, aliases: ['history', 'support', 'settings', 'edit-profile'] }
           ].map((item) => {
@@ -1324,7 +1456,7 @@ function SelectDuration({ setView, onSelect, selectedBot, onStartMatchmaking, is
 
 
 
-function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraining }: { bot: any, opponent?: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void, isTraining?: boolean }) {
+function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraining, matchId }: { bot: any, opponent?: any, duration: number, user: any, onExit: () => void, onComplete: (won: boolean, pushups: number, xpGained: number, oppName: string, oppPushups: number) => void, isTraining?: boolean, matchId?: string }) {
   const activeOpponent = bot || opponent;
   const [playerPushups, setPlayerPushups] = useState(0);
   const [oppPushups, setOppPushups] = useState(0);
@@ -1360,7 +1492,23 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
   const handlePlayerCount = useCallback((count: number) => {
     setPlayerPushups(count);
-  }, []);
+    if (matchId && user.supabaseId) {
+      const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+      const updateData = isPlayer1 
+        ? { player_1_reps: count } 
+        : { player_2_reps: count };
+        
+      supabase
+        .from('matches_v2')
+        .update(updateData)
+        .eq('id', matchId)
+        .then(({ error }) => {
+          if (error) console.error("Error updating reps:", error);
+        });
+    }
+  }, [matchId, user.supabaseId]);
+
+
 
   const handleCameraReady = useCallback(() => {
     if (gameState === 'loading') {
@@ -1372,6 +1520,8 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
 
   const battleMessage = useMemo(() => {
+
+
     if (gameState !== 'playing' || isTraining) return "";
     const diff = playerPushups - oppPushups;
     if (diff > 5 && lastWhoIsAhead !== 'player') {
@@ -1390,6 +1540,35 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   }, [playerPushups, oppPushups, gameState, lastWhoIsAhead, activeOpponent, isTraining]);
 
   useEffect(() => {
+    if (matchId && user.supabaseId) {
+      const channel = supabase
+        .channel(`match:${matchId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: 'UPDATE',
+            schema: 'public',
+            table: 'matches_v2',
+            filter: `id=eq.${matchId}`
+          },
+          (payload) => {
+            const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+            const newReps = isPlayer1 ? payload.new.player_2_reps : payload.new.player_1_reps;
+            if (newReps !== undefined && newReps !== null) {
+              setOppPushups(newReps);
+            }
+          }
+        )
+        .subscribe();
+      
+      return () => {
+        supabase.removeChannel(channel);
+      };
+    }
+  }, [matchId, user.supabaseId]);
+
+
+  useEffect(() => {
     if (gameState === 'countdown') {
       if (countdown > 0) {
         const timer = setTimeout(() => setCountdown(c => c - 1), 1000);
@@ -1403,7 +1582,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
       const timer = setInterval(() => {
         setTimeLeft(t => t - 1);
         
-        if (!isTraining) {
+        if (!isTraining && !matchId) {
           let increment = 0;
           if (bot) {
             const baseRate = bot.pushupRate || 0.1;
@@ -1435,12 +1614,32 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
           origin: { y: 0.6 },
           colors: ['#FFD700', '#60A5FA', '#F43F5E']
         });
-        onComplete(true, playerPushups, isTraining ? playerPushups * 2 : 150 + playerPushups, activeOpponent?.name || 'TREINO', oppPushups);
-      } else {
-        onComplete(false, playerPushups, 45 + playerPushups, activeOpponent?.name || 'BOT', oppPushups);
       }
+
+      const finishBattle = async () => {
+        if (matchId) {
+          const winnerId = playerPushups >= oppPushups ? user.supabaseId : opponent.id;
+          await supabase
+            .from('matches_v2')
+            .update({ 
+              status: 'finished',
+              winner_id: winnerId,
+              finished_at: new Date().toISOString()
+            })
+            .eq('id', matchId);
+        }
+        
+        if (won) {
+          onComplete(true, playerPushups, isTraining ? playerPushups * 2 : 150 + playerPushups, activeOpponent?.name || 'TREINO', oppPushups);
+        } else {
+          onComplete(false, playerPushups, 45 + playerPushups, activeOpponent?.name || 'BOT', oppPushups);
+        }
+      };
+      
+      finishBattle();
     }
-  }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete, isTraining]);
+  }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete, isTraining, matchId, user.supabaseId]);
+
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden">
@@ -2023,7 +2222,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   const [copied, setCopied] = useState(false);
 
   const copyId = () => {
-    navigator.clipboard.writeText(user.id);
+    navigator.clipboard.writeText(user.player_id || stats?.playerId || stats?.id);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -2079,7 +2278,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
           
           <div className="flex flex-wrap items-center justify-center gap-2">
             <div className="bg-white/5 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 flex items-center gap-2 cursor-pointer hover:bg-white/10 transition-colors" onClick={copyId}>
-              <span className="text-[10px] font-mono text-white/60 tracking-wider">ID: {stats?.id || '---'}</span>
+              <span className="text-[10px] font-mono text-white/60 tracking-wider">ID: {user.player_id || stats?.playerId || stats?.id || '---'}</span>
               {copied ? <Check className="w-3 h-3 text-green-500" /> : <Copy className="w-3 h-3 text-white/40" />}
             </div>
             
@@ -2533,36 +2732,48 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
 function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallengePlayer, goBack }: { setView: (v: View) => void, user: any, onSelectBot: () => void, onStartMatchmaking: (isTraining: boolean) => void, onChallengePlayer: (opp: any) => void, goBack: () => void }) {
   const [searchId, setSearchId] = useState('');
   const [foundPlayer, setFoundPlayer] = useState<any>(null);
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = async () => {
-    if (!/^\d+$/.test(searchId)) {
-      toast.error("O ID deve conter apenas números.");
+    if (!/^\d{8}$/.test(searchId)) {
+      toast.error("O ID deve conter exatamente 8 números.");
       return;
     }
 
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('id, name, xp, record, avatar_url, level, player_id, last_seen_at')
-      .eq('player_id', searchId)
-      .neq('id', user.id)
-      .maybeSingle();
+    setIsSearching(true);
+    try {
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('id, name, xp, record, avatar_url, level, player_id, last_seen_at')
+        .eq('player_id', searchId)
+        .neq('id', user.supabaseId || user.id)
+        .maybeSingle();
 
-    if (profile) {
-      setFoundPlayer({
-        id: profile.id,
-        name: profile.name,
-        level: profile.level,
-        patent: getRankInfo(profile.xp).patentName,
-        record: profile.record,
-        avatar: profile.avatar_url,
-        last_seen_at: profile.last_seen_at
-      });
-      toast.success("Jogador encontrado!");
-    } else {
-      setFoundPlayer(null);
-      toast.error("Jogador não encontrado");
+      if (error) throw error;
+
+      if (profile) {
+        setFoundPlayer({
+          id: profile.id,
+          name: profile.name,
+          level: profile.level,
+          patent: getRankInfo(profile.xp).patentName,
+          record: profile.record,
+          avatar: profile.avatar_url,
+          last_seen_at: profile.last_seen_at
+        });
+        toast.success("Jogador encontrado!");
+      } else {
+        setFoundPlayer(null);
+        toast.error("Jogador não encontrado");
+      }
+    } catch (err) {
+      console.error("Search error:", err);
+      toast.error("Erro ao buscar jogador");
+    } finally {
+      setIsSearching(false);
     }
   };
+
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32">
@@ -2699,21 +2910,22 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
           profiles_user:profiles!friendships_user_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at),
           profiles_friend:profiles!friendships_friend_id_fkey(id, player_id, name, xp, avatar_url, last_seen_at)
         `)
-        .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+        .or(`user_id.eq.${user.supabaseId || user.id},friend_id.eq.${user.supabaseId || user.id}`)
         .eq('status', 'accepted');
       
       if (friendships) {
         setFriends(friendships.map((f: any) => 
-          f.user_id === user.id ? f.profiles_friend : f.profiles_user
+          f.user_id === (user.supabaseId || user.id) ? f.profiles_friend : f.profiles_user
         ));
+
       }
     };
     fetchFriends();
   }, [user.id]);
 
   const searchFriend = async () => {
-    if (!/^\d+$/.test(searchQuery)) {
-      toast.error("O ID deve conter apenas números.");
+    if (!/^\d{8}$/.test(searchQuery)) {
+      toast.error("O ID deve conter exatamente 8 números.");
       return;
     }
 
@@ -2721,7 +2933,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
       .from('profiles')
       .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
       .eq('player_id', searchQuery)
-      .neq('id', user.id)
+      .neq('id', user.supabaseId || user.id)
       .maybeSingle();
 
     if (profile) setFoundUser(profile);
@@ -2731,14 +2943,16 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
     }
   };
 
+
   const addFriend = async (friendId: string) => {
     const { error } = await supabase.from('friendships').insert({
-      user_id: user.id,
+      user_id: user.supabaseId || user.id,
       friend_id: friendId,
       status: 'pending'
     });
     if (!error) toast.success("Solicitação enviada!");
     else toast.error("Erro ao enviar solicitação.");
+
   };
 
   return (
@@ -2753,7 +2967,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
         <h3 className="text-xs font-black text-white/40 uppercase tracking-widest">SEU ID DE JOGADOR</h3>
         <div className="flex gap-2">
           <div className="flex-1 bg-white/5 p-4 rounded-xl border border-white/10 font-mono text-xl font-black text-white tracking-[0.2em] overflow-hidden truncate">
-            {user.player_id || user.id.substring(0, 8).toUpperCase()}
+            {user.player_id || user.id}
           </div>
           <Button 
             variant="ghost" 
@@ -2792,7 +3006,16 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
                 <p className="text-[10px] text-white/40 uppercase">{getRankInfo(foundUser.xp).patentName}</p>
               </div>
             </div>
-            <Button className="bg-primary text-xs" onClick={() => addFriend(foundUser.id)}>ADICIONAR</Button>
+            <div className="flex gap-2">
+              <Button className="bg-electric-blue text-xs font-black italic px-4" onClick={() => onChallengePlayer({
+                id: foundUser.id,
+                name: foundUser.name,
+                avatar: foundUser.avatar_url,
+                patent: getRankInfo(foundUser.xp).patentName
+              })}>DESAFIAR</Button>
+              <Button className="bg-white/5 border border-white/10 text-xs font-black italic px-4" onClick={() => addFriend(foundUser.id)}>ADICIONAR</Button>
+            </div>
+
           </div>
         )}
       </div>
@@ -2801,7 +3024,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
       <div className="space-y-4">
         <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">AMIGOS ({friends.length})</h3>
         {friends.map(friend => {
-          const lastSeen = new Date(friend.last_seen_at).getTime();
+          const lastSeen = friend.last_seen_at ? new Date(friend.last_seen_at).getTime() : 0;
           const isOnline = Date.now() - lastSeen < 60000;
           return (
             <motion.div 
@@ -2831,9 +3054,26 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
                 </div>
               </div>
               <Button 
-                disabled={!isOnline}
-                className={`h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest transition-all ${isOnline ? 'bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)]' : 'bg-white/5 text-white/20'}`} 
-                onClick={() => onChallengePlayer(friend)}
+                className="h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest transition-all bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)]" 
+
+                onClick={async () => {
+                  // Allow challenging regardless of status to test real-time flow
+                  try {
+                    const { error } = await supabase
+                      .from('challenges')
+                      .insert({
+                        challenger_id: user.supabaseId,
+                        challenged_id: friend.id,
+                        duration: 60,
+                        status: 'pending'
+                      });
+                    if (error) throw error;
+                    toast.success(`Desafio enviado para ${friend.name}!`);
+                  } catch (err) {
+                    console.error("Challenge error:", err);
+                    toast.error("Erro ao enviar desafio");
+                  }
+                }}
               >
                 {isOnline ? 'DESAFIAR' : 'OFFLINE'}
               </Button>
@@ -2849,7 +3089,9 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
 function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: any, goBack: () => void }) {
   const [tab, setTab] = useState<'local' | 'friends'>('local');
   const [rankingData, setRankingData] = useState<any[]>([]);
+  const [userRank, setUserRank] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const fetchRanking = async () => {
@@ -2857,44 +3099,48 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
       try {
         let query = supabase
           .from('profiles')
-          .select('id, name, xp, record, wins, streak, avatar_url, player_id');
+          .select('id, name, xp, record, wins, streak, avatar_url, player_id')
+          .order('xp', { ascending: false });
 
         if (tab === 'friends') {
-          // Get all friend IDs
           const { data: friendships } = await supabase
             .from('friendships')
             .select('user_id, friend_id')
-            .or(`user_id.eq.${user.id},friend_id.eq.${user.id}`)
+            .or(`user_id.eq.${user.supabaseId || user.id},friend_id.eq.${user.supabaseId || user.id}`)
             .eq('status', 'accepted');
           
           const friendIds = friendships ? friendships.map((f: any) => 
-            f.user_id === user.id ? f.friend_id : f.user_id
+            (f.user_id === (user.supabaseId || user.id)) ? f.friend_id : f.user_id
           ) : [];
           
-          // Filter by these IDs plus the user's ID
-          query = query.in('id', [...friendIds, user.id]);
+          query = query.in('id', [...friendIds, user.supabaseId || user.id]);
         }
 
-        const { data, error } = await query
-          .order('xp', { ascending: false })
-          .limit(50);
+        const { data, error } = await query;
+
 
         if (error) throw error;
 
         if (data) {
-          setRankingData(data.map(p => ({
+          const mappedData = data.map(p => ({
             id: p.id,
             name: p.name,
             count: Number(p.xp),
             avatar: p.name.substring(0, 2).toUpperCase(),
             avatarUrl: p.avatar_url,
-            isUser: p.id === user.id,
+            isUser: p.id === (user.supabaseId || user.id),
             record: p.record,
             wins: p.wins,
             streak: p.streak,
             patent: getRankInfo(Number(p.xp)).patentName
-          })));
+          }));
+          
+          setRankingData(mappedData);
+          
+          const uIdx = mappedData.findIndex(p => p.isUser);
+          if (uIdx !== -1) setUserRank(uIdx + 1);
         }
+
       } catch (err) {
         console.error("Error fetching ranking:", err);
       } finally {
@@ -2917,11 +3163,19 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 pb-32">
       <div className="flex flex-col gap-8">
         <div className="flex justify-between items-start">
-          <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">RANKING</h2>
+          <div className="flex flex-col">
+            <h2 className="text-5xl font-black italic text-white tracking-tighter uppercase leading-none">RANKING</h2>
+            {userRank && (
+              <p className="text-[10px] font-black text-electric-blue uppercase tracking-[0.3em] mt-2">
+                SUA POSIÇÃO: #{userRank}
+              </p>
+            )}
+          </div>
           <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
             <ArrowLeft className="w-5 h-5 text-white" />
           </Button>
         </div>
+
         
         <div className="flex p-1.5 bg-[#0A0D14] rounded-full border border-white/5">
           <button 
@@ -2994,9 +3248,24 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
                 </div>
               </motion.div>
             ))}
+            
+            {userRank && (
+              <div className="mt-8 p-6 glass-panel border-electric-blue/30 bg-electric-blue/5 rounded-[2rem] text-center">
+                <p className="text-xs font-black text-white/40 uppercase tracking-[0.2em] mb-2">SUA POSIÇÃO ATUAL</p>
+                <div className="flex justify-center items-center gap-4">
+                  <div className="text-4xl font-black italic text-electric-blue">#{userRank}</div>
+                  <div className="h-8 w-px bg-white/10" />
+                  <div className="text-left">
+                    <div className="text-[10px] font-black text-white/60 uppercase tracking-widest">VOCÊ ESTÁ ENTRE OS</div>
+                    <div className="text-lg font-black text-white italic tracking-tighter uppercase leading-none">MELHORES DO BRASIL</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
+
     </motion.div>
   );
 }
@@ -3907,9 +4176,10 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
       };
 
       // Garantir que temos um player_id válido
-      const playerId = user.id && user.id.startsWith('PLAYER-') 
+      const playerId = user.id && /^\d{8}$/.test(user.id) 
         ? user.id 
-        : `PLAYER-${Math.random().toString(36).substr(2, 6).toUpperCase()}`;
+        : Math.floor(10000000 + Math.random() * 90000000).toString();
+
       
       console.log("Saving profile for user:", session.user.id, "with player_id:", playerId);
 
@@ -3965,6 +4235,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
       setUser({
         ...updatedUser,
         id: verify.player_id,
+        supabaseId: session.user.id,
         xp: Number(verify.xp),
         level: verify.level,
         wins: verify.wins,
@@ -3974,6 +4245,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
         streak: verify.streak,
         avatar: verify.avatar_url
       });
+
       
       setStatus('success');
       

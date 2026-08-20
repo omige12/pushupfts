@@ -21,6 +21,7 @@ export type Database = {
           created_at: string | null
           duration: number
           id: string
+          match_id: string | null
           status: string
           updated_at: string | null
         }
@@ -30,6 +31,7 @@ export type Database = {
           created_at?: string | null
           duration?: number
           id?: string
+          match_id?: string | null
           status: string
           updated_at?: string | null
         }
@@ -39,6 +41,7 @@ export type Database = {
           created_at?: string | null
           duration?: number
           id?: string
+          match_id?: string | null
           status?: string
           updated_at?: string | null
         }
