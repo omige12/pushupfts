@@ -4489,7 +4489,7 @@ function DailyReward({ setView, user, setUser, goBack }: { setView: (v: View) =>
            lastClaimed.getDate() === today.getDate();
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
+  if (loading) return <div className="h-full flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
 
   const currentStreak = rewardData?.streak_count || 0;
   const claimedToday = isClaimedToday();
