@@ -777,6 +777,9 @@ function App() {
               setSelectedBot(null);
               setView('challenge');
               toast.success("Oponente aceitou o desafio!");
+            } else if (payload.new.status === 'declined') {
+              toast.error("O oponente recusou o desafio.");
+              setIncomingChallenge(null);
             }
           }
         )
