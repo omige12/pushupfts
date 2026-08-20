@@ -2362,7 +2362,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 gap-4 w-full pt-4 pb-32">
+        <div className="grid grid-cols-1 gap-4 w-full pt-4">
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
