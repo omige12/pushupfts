@@ -2899,22 +2899,6 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
             </div>
           </NeonFireWrapper>
         </div>
-            <div 
-              className="h-full bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red group"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-energy-red/10 flex items-center justify-center">
-                <Dumbbell className="w-6 h-6 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-              </div>
-              <div>
-                <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
-                <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">Aperfeiçoe suas habilidades com a IA</p>
-              </div>
-              <div className="self-end bg-energy-red/20 p-1.5 rounded-full mt-auto">
-                <ArrowLeft className="w-4 h-4 text-energy-red rotate-180" />
-              </div>
-            </div>
-          </NeonFireWrapper>
-        </div>
 
         {/* Jogar com Amigos (Full Width) */}
         <NeonFireWrapper 
