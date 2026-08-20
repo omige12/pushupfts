@@ -2570,7 +2570,7 @@ function SupportChat({ setView, goBack }: { setView: (v: View) => void, goBack: 
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[60] bg-[#0B0E14] flex flex-col p-6 gap-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[60] bg-[#0B0E14] flex flex-col p-6 gap-6 h-[100dvh]">
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
         <div className="flex items-center gap-3">
