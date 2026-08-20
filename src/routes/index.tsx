@@ -3546,7 +3546,7 @@ function PatentsList({ setView, user, goBack }: { setView: (v: View) => void, us
 }
 
 const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center min-h-screen p-8 bg-[#0B0E14] relative overflow-hidden">
+  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-full p-8 bg-[#0B0E14] relative overflow-hidden">
     {/* Background Glows */}
     <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[40%] bg-blue-600/20 blur-[100px] rounded-full" />
     <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] bg-red-600/20 blur-[100px] rounded-full" />
