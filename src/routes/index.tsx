@@ -1087,14 +1087,14 @@ function App() {
         )}
       </AnimatePresence>
 
-      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking', 'challenge', 'friend-challenge', 'patents-list'].includes(view) && (
+      {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking', 'challenge', 'friend-challenge', 'patents-list', 'history', 'support', 'support-chat'].includes(view) && (
         <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-[380px] bg-[#0B0E14]/80 backdrop-blur-xl border border-white/10 px-2 py-3 flex justify-around items-center z-[100] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)] safe-area-bottom">
           {[
             { id: 'dashboard', label: 'Início', icon: Home, aliases: [] },
             { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
             { id: 'multiplayer', label: 'Batalha', icon: Swords, aliases: ['select-bot', 'select-duration', 'matchmaking'] },
             { id: 'ranking', label: 'Ranking', icon: Trophy, aliases: [] },
-            { id: 'profile', label: 'Perfil', icon: UserCircle, aliases: ['history', 'support', 'settings', 'edit-profile'] }
+            { id: 'profile', label: 'Perfil', icon: UserCircle, aliases: ['settings', 'edit-profile'] }
           ].map((item) => {
             const isActive = view === item.id || item.aliases?.includes(view);
             
