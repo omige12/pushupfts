@@ -1727,6 +1727,19 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
     }
   }, [timeLeft, bot, opponent, activeOpponent, gameState, countdown, playerPushups, oppPushups, onComplete, isTraining, matchId, user.supabaseId]);
 
+  // Unified camera status handler for Challenge UI
+  const handleAIStatus = useCallback((status: 'ready' | 'error') => {
+    setDetectorStatus(status);
+    if (status === 'ready') {
+      setIsCameraReady(true);
+      setCameraTimeout(false);
+      // Wait a moment before starting countdown for smooth transition
+      setTimeout(() => {
+        if (gameState === 'loading') setGameState('countdown');
+      }, 500);
+    }
+  }, [gameState]);
+
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden select-none h-[100dvh]">
