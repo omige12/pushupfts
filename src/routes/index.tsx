@@ -311,6 +311,7 @@ function App() {
 
   const acceptChallenge = async (challenge: any) => {
     try {
+      // First, create the match
       const matchId = `${challenge.challenger_id}_${challenge.challenged_id}_${Date.now()}`;
       
       const { error: matchError } = await supabase
@@ -319,24 +320,25 @@ function App() {
           id: matchId,
           player_1: challenge.challenger_id,
           player_2: challenge.challenged_id,
-          status: 'ongoing'
+          status: 'ongoing',
+          started_at: new Date().toISOString()
         });
         
       if (matchError) throw matchError;
 
+      // Then, update the challenge status and associate with match
       const { error: challengeError } = await supabase
         .from('challenges')
         .update({ 
           status: 'accepted',
-          match_id: matchId
+          match_id: matchId,
+          updated_at: new Date().toISOString()
         } as any)
-
-
         .eq('id', challenge.id);
-
         
       if (challengeError) throw challengeError;
 
+      // Fetch challenger profile for display
       const { data: challengerProfile } = await supabase
         .from('profiles')
         .select('*')
@@ -354,7 +356,6 @@ function App() {
         setOpponent(opp);
         setMatchOpponent(opp);
       }
-
       
       setActiveMatchId(matchId);
       setDuration(challenge.duration);
@@ -366,6 +367,22 @@ function App() {
     } catch (err) {
       console.error("Accept challenge error:", err);
       toast.error("Erro ao aceitar desafio");
+    }
+  };
+
+  const declineChallenge = async (challengeId: string) => {
+    try {
+      const { error } = await supabase
+        .from('challenges')
+        .update({ status: 'declined', updated_at: new Date().toISOString() } as any)
+        .eq('id', challengeId);
+      
+      if (error) throw error;
+      setIncomingChallenge(null);
+      toast.info("Desafio recusado");
+    } catch (err) {
+      console.error("Decline challenge error:", err);
+      toast.error("Erro ao recusar desafio");
     }
   };
 
@@ -760,6 +777,9 @@ function App() {
               setSelectedBot(null);
               setView('challenge');
               toast.success("Oponente aceitou o desafio!");
+            } else if (payload.new.status === 'declined') {
+              toast.error("O oponente recusou o desafio.");
+              setIncomingChallenge(null);
             }
           }
         )
@@ -843,7 +863,7 @@ function App() {
       case 'support': return <Support setView={handleSetView} goBack={goBack} />;
       case 'support-chat': return <SupportChat setView={handleSetView} goBack={goBack} />;
       case 'history': return <FullHistory setView={handleSetView} user={user} goBack={goBack} />;
-      case 'friend-challenge': return <FriendChallenge setView={handleSetView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} />;
+      case 'friend-challenge': return <FriendChallenge setView={handleSetView} user={user} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} duration={duration} />;
       case 'ranking': return <Ranking setView={handleSetView} user={user} goBack={goBack} />;
       case 'patents-list': return <PatentsList setView={handleSetView} user={user} goBack={goBack} />;
       case 'daily-reward': return <DailyReward setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
@@ -921,7 +941,7 @@ function App() {
                 <Button 
                   variant="ghost" 
                   className="py-6 text-energy-red font-black italic uppercase tracking-widest hover:bg-energy-red/10"
-                  onClick={() => setIncomingChallenge(null)}
+                  onClick={() => declineChallenge(incomingChallenge.id)}
                 >
                   RECUSAR
                 </Button>
@@ -993,7 +1013,7 @@ function App() {
               <Button 
                 variant="ghost" 
                 className="flex-1 h-14 rounded-2xl bg-white/5 text-white/60 hover:text-white"
-                onClick={() => setIncomingChallenge(null)}
+                onClick={() => declineChallenge(incomingChallenge.id)}
               >
                 RECUSAR
               </Button>
@@ -1465,6 +1485,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   const [oppPushups, setOppPushups] = useState(0);
   const [timeLeft, setTimeLeft] = useState(duration);
   const [gameState, setGameState] = useState<'loading' | 'countdown' | 'playing' | 'finished'>('loading');
+  const [initRetryCount, setInitRetryCount] = useState(0);
   const [countdown, setCountdown] = useState(5);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [lastWhoIsAhead, setLastWhoIsAhead] = useState<'player' | 'opponent' | null>(null);
@@ -1487,16 +1508,24 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
         if (!isCameraReady) {
           setCameraTimeout(true);
         }
-      }, 15000); // 15 seconds safety timeout
+      }, 20000); // 20 seconds safety timeout
     }
     return () => clearTimeout(timeoutId);
   }, [gameState, isCameraReady]);
 
+  const forceStart = () => {
+    setIsCameraReady(true);
+    setCameraTimeout(false);
+    setGameState('countdown');
+    toast.info("Iniciando sem câmera...");
+  };
+
 
   const handlePlayerCount = useCallback((count: number) => {
     setPlayerPushups(count);
-    if (matchId && user.supabaseId) {
-      const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+    if (matchId && (user.supabaseId || user.id)) {
+      const currentUserId = user.supabaseId || user.id;
+      const isPlayer1 = matchId.split('_')[0] === currentUserId;
       const updateData = isPlayer1 
         ? { player_1_reps: count } 
         : { player_2_reps: count };
@@ -1509,7 +1538,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
           if (error) console.error("Error updating reps:", error);
         });
     }
-  }, [matchId, user.supabaseId]);
+  }, [matchId, user.supabaseId, user.id]);
 
 
 
@@ -1543,7 +1572,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   }, [playerPushups, oppPushups, gameState, lastWhoIsAhead, activeOpponent, isTraining]);
 
   useEffect(() => {
-    if (matchId && user.supabaseId) {
+    if (matchId && (user.supabaseId || user.id)) {
       const channel = supabase
         .channel(`match:${matchId}`)
         .on(
@@ -1555,7 +1584,8 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
             filter: `id=eq.${matchId}`
           },
           (payload) => {
-            const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
+            const currentUserId = user.supabaseId || user.id;
+            const isPlayer1 = matchId.split('_')[0] === currentUserId;
             const newReps = isPlayer1 ? payload.new.player_2_reps : payload.new.player_1_reps;
             if (newReps !== undefined && newReps !== null) {
               setOppPushups(newReps);
@@ -1568,7 +1598,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
         supabase.removeChannel(channel);
       };
     }
-  }, [matchId, user.supabaseId]);
+  }, [matchId, user.supabaseId, user.id]);
 
 
   useEffect(() => {
@@ -1621,7 +1651,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
 
       const finishBattle = async () => {
         if (matchId) {
-          const winnerId = playerPushups >= oppPushups ? user.supabaseId : opponent.id;
+          const winnerId = playerPushups >= oppPushups ? user.supabaseId || user.id : opponent.id;
           await supabase
             .from('matches_v2')
             .update({ 
@@ -1948,12 +1978,19 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
                 <div className="flex flex-col gap-3">
                   <Button 
                     className="game-button bg-electric-blue text-black h-16 text-lg rounded-2xl"
+                    onClick={forceStart}
+                  >
+                    JOGAR SEM CÂMERA
+                  </Button>
+                  <Button 
+                    variant="outline"
+                    className="h-14 border-white/10 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl"
                     onClick={() => {
                       setCameraTimeout(false);
                       setGameState('loading'); 
                     }}
                   >
-                    TENTAR NOVAMENTE
+                    TENTAR CÂMERA NOVAMENTE
                   </Button>
                   <Button 
                     variant="ghost"
@@ -2783,14 +2820,16 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32 h-full overflow-y-auto">
-      <div className="flex justify-between items-start">
-        <div>
-          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">MULTIJOGADOR</h2>
-          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">COMPITA. VENÇA. DOMINE.</p>
+      <div className="flex justify-between items-center mb-2">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}>
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </Button>
+          <div>
+            <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">MULTIJOGADOR</h2>
+            <p className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">COMPITA. VENÇA. DOMINE.</p>
+          </div>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
-          <ArrowLeft className="w-5 h-5 text-white" />
-        </Button>
       </div>
 
       <div className="space-y-4">
@@ -2822,23 +2861,23 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
           </div>
         </NeonFireWrapper>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 h-48">
           <NeonFireWrapper 
             color="gold"
             onClick={onSelectBot}
             className="h-full"
           >
             <div 
-              className="h-full bg-gold/5 border border-gold/20 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all group"
+              className="h-full bg-gold/5 border border-gold/20 rounded-[1.8rem] p-6 flex flex-col justify-between cursor-pointer active:scale-[0.95] btn-respond-fast transition-all group"
             >
-              <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center">
-                <Zap className="w-6 h-6 text-gold" />
-              </div>
               <div>
+                <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-4">
+                  <Zap className="w-6 h-6 text-gold" />
+                </div>
                 <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">TREINO VS BOTS</h3>
-                <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APRIMORE SUAS HABILIDADES CONTRA BOTS</p>
+                <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APRIMORE SUAS HABILIDADES</p>
               </div>
-              <div className="self-end bg-white/5 p-1.5 rounded-full mt-auto">
+              <div className="self-end bg-white/5 p-1.5 rounded-full">
                 <ArrowLeft className="w-4 h-4 text-white rotate-180" />
               </div>
             </div>
@@ -2850,17 +2889,17 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
             className="h-full"
           >
             <div 
-              className="h-full bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red group"
+              className="h-full bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-6 flex flex-col justify-between cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red group"
             >
-              <div className="w-12 h-12 rounded-2xl bg-energy-red/10 flex items-center justify-center">
-                <Dumbbell className="w-6 h-6 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-              </div>
               <div>
+                <div className="w-12 h-12 rounded-2xl bg-energy-red/10 flex items-center justify-center mb-4">
+                  <Dumbbell className="w-6 h-6 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+                </div>
                 <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
-                <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">Aperfeiçoe suas habilidades com a IA</p>
+                <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APERFEIÇOE-SE COM A IA</p>
               </div>
-              <div className="self-end bg-energy-red/20 p-1.5 rounded-full mt-auto">
-                <ArrowLeft className="w-4 h-4 text-energy-red rotate-180" />
+              <div className="self-end bg-white/5 p-1.5 rounded-full">
+                <ArrowLeft className="w-4 h-4 text-white rotate-180" />
               </div>
             </div>
           </NeonFireWrapper>
@@ -2892,9 +2931,10 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
   );
 }
 
-function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void, goBack: () => void }) {
+function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration }: { setView: (v: View) => void, user: any, onChallengePlayer: (opp: any) => void, goBack: () => void, duration: number }) {
   const [friends, setFriends] = useState<any[]>([]);
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
+  const [showInvites, setShowInvites] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [foundUser, setFoundUser] = useState<any>(null);
   const [copied, setCopied] = useState(false);
@@ -2907,7 +2947,8 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
 
   useEffect(() => {
     const fetchFriends = async () => {
-      const { data: friendships, error } = await supabase
+      // Fetch accepted friends
+      const { data: friendships } = await supabase
         .from('friendships')
         .select(`
           status,
@@ -2923,10 +2964,38 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
         setFriends(friendships.map((f: any) => 
           f.user_id === (user.supabaseId || user.id) ? f.profiles_friend : f.profiles_user
         ));
-
       }
+
+      // Fetch pending requests
+      const { data: requests } = await supabase
+        .from('friendships')
+        .select(`
+          id,
+          status,
+          user_id,
+          profiles:profiles!friendships_user_id_fkey(id, player_id, name, xp, avatar_url)
+        `)
+        .eq('friend_id', user.supabaseId || user.id)
+        .eq('status', 'pending');
+      
+      if (requests) setFriendRequests(requests);
     };
+
     fetchFriends();
+
+    // Set up real-time listener for friendships
+    const channel = supabase
+      .channel('friendship-updates')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'friendships' },
+        () => fetchFriends()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [user.id]);
 
   const searchFriend = async () => {
@@ -2935,7 +3004,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
       return;
     }
 
-    const { data: profile, error } = await supabase
+    const { data: profile } = await supabase
       .from('profiles')
       .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
       .eq('player_id', searchQuery)
@@ -2949,8 +3018,20 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
     }
   };
 
-
   const addFriend = async (friendId: string) => {
+    // Check if already friends or pending
+    const { data: existing } = await supabase
+      .from('friendships')
+      .select('status')
+      .or(`and(user_id.eq.${user.supabaseId},friend_id.eq.${friendId}),and(user_id.eq.${friendId},friend_id.eq.${user.supabaseId})`)
+      .maybeSingle();
+
+    if (existing) {
+      if (existing.status === 'accepted') toast.info("Vocês já são amigos!");
+      else toast.info("Já existe um pedido pendente.");
+      return;
+    }
+
     const { error } = await supabase.from('friendships').insert({
       user_id: user.supabaseId || user.id,
       friend_id: friendId,
@@ -2958,14 +3039,42 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
     });
     if (!error) toast.success("Solicitação enviada!");
     else toast.error("Erro ao enviar solicitação.");
+  };
 
+  const respondToRequest = async (requestId: string, status: 'accepted' | 'declined') => {
+    if (status === 'declined') {
+      const { error } = await supabase.from('friendships').delete().eq('id', requestId);
+      if (!error) toast.info("Convite removido");
+    } else {
+      const { error } = await supabase
+        .from('friendships')
+        .update({ status: 'accepted', updated_at: new Date().toISOString() })
+        .eq('id', requestId);
+      if (!error) toast.success("Pedido aceito!");
+    }
   };
 
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8 pb-32 h-full overflow-y-auto">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">SOCIAL</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
+          <h2 className="text-3xl font-black italic text-white tracking-tighter">SOCIAL</h2>
+        </div>
+        
+        <Button 
+          variant="ghost" 
+          onClick={() => setShowInvites(true)}
+          className="relative bg-[#1A1F26] border border-white/10 rounded-xl px-4 py-2 flex items-center gap-2 group hover:border-electric-blue/30 transition-all"
+        >
+          <span className="text-[10px] font-black italic uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">CONVITES</span>
+          {friendRequests.length > 0 && (
+            <div className="flex items-center gap-1.5 ml-1">
+              <span className="w-2 h-2 rounded-full bg-energy-red animate-pulse" />
+              <span className="text-[10px] font-black text-energy-red">{friendRequests.length}</span>
+            </div>
+          )}
+        </Button>
       </div>
 
       {/* ID Section */}
@@ -3026,6 +3135,65 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
         )}
       </div>
 
+      <AnimatePresence>
+        {showInvites && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed inset-0 z-[110] flex items-center justify-center p-6 bg-black/80 backdrop-blur-md"
+          >
+            <div className="w-full max-w-sm bg-[#1A1F26] border border-white/10 rounded-[2.5rem] p-8 space-y-6 relative">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-black italic text-white tracking-tighter uppercase">CONVITES</h3>
+                <Button variant="ghost" size="icon" onClick={() => setShowInvites(false)} className="rounded-full bg-white/5 hover:bg-white/10">
+                  <X className="w-5 h-5 text-white/40" />
+                </Button>
+              </div>
+
+              <div className="space-y-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+                {friendRequests.length === 0 ? (
+                  <div className="py-10 text-center opacity-30">
+                    <Mail className="w-12 h-12 mx-auto mb-4" />
+                    <p className="text-[10px] font-black uppercase tracking-widest">Nenhum convite pendente</p>
+                  </div>
+                ) : (
+                  friendRequests.map(req => (
+                    <div key={req.id} className="bg-white/5 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10">
+                          {req.profiles.avatar_url && <img src={req.profiles.avatar_url} className="w-full h-full object-cover" />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-black italic text-white uppercase">{req.profiles.name}</p>
+                          <p className="text-[9px] text-white/40 font-bold uppercase tracking-widest">Pedindo Amizade</p>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          size="icon" 
+                          className="w-8 h-8 rounded-lg bg-green-500 hover:bg-green-600 shadow-[0_0_10px_rgba(34,197,94,0.3)]"
+                          onClick={() => respondToRequest(req.id, 'accepted')}
+                        >
+                          <Check className="w-4 h-4 text-white" />
+                        </Button>
+                        <Button 
+                          size="icon" 
+                          className="w-8 h-8 rounded-lg bg-energy-red hover:bg-energy-red/60 shadow-[0_0_10px_rgba(255,49,49,0.3)]"
+                          onClick={() => respondToRequest(req.id, 'declined')}
+                        >
+                          <X className="w-4 h-4 text-white" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Friends List */}
       <div className="space-y-4">
         <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">AMIGOS ({friends.length})</h3>
@@ -3068,9 +3236,9 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
                     const { error } = await supabase
                       .from('challenges')
                       .insert({
-                        challenger_id: user.supabaseId,
+                        challenger_id: user.supabaseId || user.id,
                         challenged_id: friend.id,
-                        duration: 60,
+                        duration: duration || 60,
                         status: 'pending'
                       });
                     if (error) throw error;
