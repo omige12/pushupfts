@@ -897,6 +897,7 @@ function App() {
           opponent={matchOpponent || opponent} 
           duration={duration} 
           user={user} 
+          setUser={setUser}
           matchId={activeMatchId || undefined}
           isTraining={isTraining} 
           onExit={() => { 
