@@ -1506,7 +1506,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
   }, [playerPushups, oppPushups, gameState, lastWhoIsAhead, activeOpponent, isTraining]);
 
   useEffect(() => {
-    if (matchId) {
+    if (matchId && user.supabaseId) {
       const channel = supabase
         .channel(`match:${matchId}`)
         .on(
@@ -1520,7 +1520,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
           (payload) => {
             const isPlayer1 = matchId.split('_')[0] === user.supabaseId;
             const newReps = isPlayer1 ? payload.new.player_2_reps : payload.new.player_1_reps;
-            if (newReps !== undefined) {
+            if (newReps !== undefined && newReps !== null) {
               setOppPushups(newReps);
             }
           }
@@ -1532,6 +1532,7 @@ function Challenge({ bot, opponent, duration, user, onExit, onComplete, isTraini
       };
     }
   }, [matchId, user.supabaseId]);
+
 
   useEffect(() => {
     if (gameState === 'countdown') {
