@@ -2846,9 +2846,25 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
                 </div>
               </div>
               <Button 
-                disabled={!isOnline}
                 className={`h-10 px-6 rounded-xl font-black italic text-[10px] tracking-widest transition-all ${isOnline ? 'bg-electric-blue text-white shadow-[0_0_15px_rgba(0,210,255,0.3)]' : 'bg-white/5 text-white/20'}`} 
-                onClick={() => onChallengePlayer(friend)}
+                onClick={async () => {
+                  if (!isOnline) return;
+                  try {
+                    const { error } = await supabase
+                      .from('challenges')
+                      .insert({
+                        challenger_id: user.supabaseId,
+                        challenged_id: friend.id,
+                        duration: 60,
+                        status: 'pending'
+                      });
+                    if (error) throw error;
+                    toast.success(`Desafio enviado para ${friend.name}!`);
+                  } catch (err) {
+                    console.error("Challenge error:", err);
+                    toast.error("Erro ao enviar desafio");
+                  }
+                }}
               >
                 {isOnline ? 'DESAFIAR' : 'OFFLINE'}
               </Button>
