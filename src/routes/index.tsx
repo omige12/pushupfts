@@ -344,14 +344,17 @@ function App() {
         .single();
 
       if (challengerProfile) {
-        setOpponent({
+        const opp = {
           id: challengerProfile.id,
           name: challengerProfile.name,
           avatar: challengerProfile.avatar_url,
           record: challengerProfile.record,
           patent: getRankInfo(challengerProfile.xp).patentName
-        });
+        };
+        setOpponent(opp);
+        setMatchOpponent(opp);
       }
+
       
       setActiveMatchId(matchId);
       setDuration(challenge.duration);
