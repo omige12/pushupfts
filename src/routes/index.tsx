@@ -4268,7 +4268,7 @@ const ProfileSetup = ({ setView, user, setUser }: { setView: (v: View) => void, 
 
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+    <div className="flex flex-col h-full bg-[#05070A] p-6 relative">
       <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full -z-10" />
       
       <div className="flex-1 flex flex-col items-center justify-center w-full max-w-sm mx-auto gap-8">
