@@ -2856,23 +2856,23 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
           </div>
         </NeonFireWrapper>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 h-48">
           <NeonFireWrapper 
             color="gold"
             onClick={onSelectBot}
             className="h-full"
           >
             <div 
-              className="h-full bg-gold/5 border border-gold/20 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all group"
+              className="h-full bg-gold/5 border border-gold/20 rounded-[1.8rem] p-6 flex flex-col justify-between cursor-pointer active:scale-[0.95] btn-respond-fast transition-all group"
             >
-              <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center">
-                <Zap className="w-6 h-6 text-gold" />
-              </div>
               <div>
+                <div className="w-12 h-12 rounded-2xl bg-gold/10 flex items-center justify-center mb-4">
+                  <Zap className="w-6 h-6 text-gold" />
+                </div>
                 <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">TREINO VS BOTS</h3>
-                <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APRIMORE SUAS HABILIDADES CONTRA BOTS</p>
+                <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APRIMORE SUAS HABILIDADES</p>
               </div>
-              <div className="self-end bg-white/5 p-1.5 rounded-full mt-auto">
+              <div className="self-end bg-white/5 p-1.5 rounded-full">
                 <ArrowLeft className="w-4 h-4 text-white rotate-180" />
               </div>
             </div>
@@ -2883,6 +2883,22 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
             onClick={() => setView('treino')}
             className="h-full"
           >
+            <div 
+              className="h-full bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-6 flex flex-col justify-between cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red group"
+            >
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-energy-red/10 flex items-center justify-center mb-4">
+                  <Dumbbell className="w-6 h-6 text-energy-red filter drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+                </div>
+                <h3 className="text-lg font-black italic text-white uppercase tracking-tighter leading-none">MODO TREINO</h3>
+                <p className="text-[9px] font-medium text-white/40 uppercase tracking-widest mt-2">APERFEIÇOE-SE COM A IA</p>
+              </div>
+              <div className="self-end bg-white/5 p-1.5 rounded-full">
+                <ArrowLeft className="w-4 h-4 text-white rotate-180" />
+              </div>
+            </div>
+          </NeonFireWrapper>
+        </div>
             <div 
               className="h-full bg-energy-red/5 border border-energy-red/20 rounded-[1.8rem] p-6 flex flex-col gap-4 min-h-[160px] cursor-pointer active:scale-[0.95] btn-respond-fast transition-all glow-red group"
             >
