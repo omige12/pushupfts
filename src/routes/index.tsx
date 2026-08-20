@@ -3235,9 +3235,9 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
                     const { error } = await supabase
                       .from('challenges')
                       .insert({
-                        challenger_id: user.supabaseId,
+                        challenger_id: user.supabaseId || user.id,
                         challenged_id: friend.id,
-                        duration: 60,
+                        duration: duration || 60,
                         status: 'pending'
                       });
                     if (error) throw error;
