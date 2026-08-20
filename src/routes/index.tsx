@@ -2816,7 +2816,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
       <div className="space-y-4">
         <h3 className="text-xs font-black text-white/40 uppercase tracking-widest px-1">AMIGOS ({friends.length})</h3>
         {friends.map(friend => {
-          const lastSeen = new Date(friend.last_seen_at).getTime();
+          const lastSeen = friend.last_seen_at ? new Date(friend.last_seen_at).getTime() : 0;
           const isOnline = Date.now() - lastSeen < 60000;
           return (
             <motion.div 
