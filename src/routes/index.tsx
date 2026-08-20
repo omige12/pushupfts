@@ -538,7 +538,7 @@ function App() {
                 achievements: profile.achievements || [],
               }));
 
-              if (matchesResult.status === 'fulfilled' && matchesResult.value.data) {
+              if (matchesResult.status === 'fulfilled' && matchesResult.value.data && Array.isArray(matchesResult.value.data)) {
                 setUser(prev => ({
                   ...prev,
                   history: matchesResult.value.data.map((m: any) => ({
