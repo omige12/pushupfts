@@ -3973,7 +3973,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#05070A] p-6 relative safe-area-padding">
+    <div className="flex flex-col h-full bg-[#05070A] p-6 relative">
       {/* Background - Atmospheric Glows */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10">
         <div className="absolute top-[-10%] right-[-10%] w-[80%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full" />
