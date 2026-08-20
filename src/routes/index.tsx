@@ -2664,7 +2664,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
   }, [user, onMatchFound]);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-6 text-center">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-6 text-center h-[100dvh]">
       {status === 'searching' ? (
         <div className="space-y-8">
           <div className="relative">
