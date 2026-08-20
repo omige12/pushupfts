@@ -349,6 +349,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{
     id: string;
+    supabaseId?: string;
     name: string;
     age: number;
     weight: number;
@@ -390,6 +391,7 @@ function App() {
     achievements: [],
     history: []
   });
+
 
 
   useEffect(() => {
