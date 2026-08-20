@@ -2819,14 +2819,16 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-5 space-y-6 pb-32 h-full overflow-y-auto">
-      <div className="flex justify-between items-start">
-        <div>
-          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">MULTIJOGADOR</h2>
-          <p className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">COMPITA. VENÇA. DOMINE.</p>
+      <div className="flex justify-between items-center mb-2">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}>
+            <ArrowLeft className="w-5 h-5 text-white" />
+          </Button>
+          <div>
+            <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase leading-none">MULTIJOGADOR</h2>
+            <p className="text-[8px] font-black text-white/40 uppercase tracking-[0.2em] mt-1">COMPITA. VENÇA. DOMINE.</p>
+          </div>
         </div>
-        <Button variant="ghost" size="icon" className="rounded-full bg-white/5 w-10 h-10" onClick={() => goBack()}>
-          <ArrowLeft className="w-5 h-5 text-white" />
-        </Button>
       </div>
 
       <div className="space-y-4">
