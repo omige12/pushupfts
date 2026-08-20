@@ -5065,7 +5065,7 @@ function DailyMissions({ setView, user, setUser, goBack }: { setView: (v: View) 
   if (loading) return <div className="h-full flex items-center justify-center bg-background"><Loader2 className="w-10 h-10 text-primary animate-spin" /></div>;
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full bg-[#0B0E14] p-6 pb-32 overflow-y-auto">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full bg-[#0B0E14] p-6 pb-40 overflow-y-auto custom-scrollbar">
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90" onClick={goBack}><ArrowLeft className="w-5 h-5 text-white" /></Button>
         <h2 className="text-3xl font-black italic text-white tracking-tighter uppercase">MISSÕES DIÁRIAS</h2>
