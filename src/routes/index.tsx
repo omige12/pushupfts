@@ -3034,9 +3034,25 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
 
   return (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="p-6 space-y-8 pb-32 h-full overflow-y-auto">
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
-        <h2 className="text-3xl font-black italic text-white tracking-tighter">SOCIAL</h2>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5" onClick={() => goBack()}><ArrowLeft className="w-5 h-5" /></Button>
+          <h2 className="text-3xl font-black italic text-white tracking-tighter">SOCIAL</h2>
+        </div>
+        
+        <Button 
+          variant="ghost" 
+          onClick={() => setShowInvites(true)}
+          className="relative bg-[#1A1F26] border border-white/10 rounded-xl px-4 py-2 flex items-center gap-2 group hover:border-electric-blue/30 transition-all"
+        >
+          <span className="text-[10px] font-black italic uppercase tracking-widest text-white/60 group-hover:text-white transition-colors">CONVITES</span>
+          {friendRequests.length > 0 && (
+            <div className="flex items-center gap-1.5 ml-1">
+              <span className="w-2 h-2 rounded-full bg-energy-red animate-pulse" />
+              <span className="text-[10px] font-black text-energy-red">{friendRequests.length}</span>
+            </div>
+          )}
+        </Button>
       </div>
 
       {/* ID Section */}
