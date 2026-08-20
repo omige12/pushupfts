@@ -311,6 +311,7 @@ function App() {
 
   const acceptChallenge = async (challenge: any) => {
     try {
+      // First, create the match
       const matchId = `${challenge.challenger_id}_${challenge.challenged_id}_${Date.now()}`;
       
       const { error: matchError } = await supabase
@@ -319,24 +320,25 @@ function App() {
           id: matchId,
           player_1: challenge.challenger_id,
           player_2: challenge.challenged_id,
-          status: 'ongoing'
+          status: 'ongoing',
+          started_at: new Date().toISOString()
         });
         
       if (matchError) throw matchError;
 
+      // Then, update the challenge status and associate with match
       const { error: challengeError } = await supabase
         .from('challenges')
         .update({ 
           status: 'accepted',
-          match_id: matchId
+          match_id: matchId,
+          updated_at: new Date().toISOString()
         } as any)
-
-
         .eq('id', challenge.id);
-
         
       if (challengeError) throw challengeError;
 
+      // Fetch challenger profile for display
       const { data: challengerProfile } = await supabase
         .from('profiles')
         .select('*')
@@ -354,7 +356,6 @@ function App() {
         setOpponent(opp);
         setMatchOpponent(opp);
       }
-
       
       setActiveMatchId(matchId);
       setDuration(challenge.duration);
@@ -366,6 +367,22 @@ function App() {
     } catch (err) {
       console.error("Accept challenge error:", err);
       toast.error("Erro ao aceitar desafio");
+    }
+  };
+
+  const declineChallenge = async (challengeId: string) => {
+    try {
+      const { error } = await supabase
+        .from('challenges')
+        .update({ status: 'declined', updated_at: new Date().toISOString() } as any)
+        .eq('id', challengeId);
+      
+      if (error) throw error;
+      setIncomingChallenge(null);
+      toast.info("Desafio recusado");
+    } catch (err) {
+      console.error("Decline challenge error:", err);
+      toast.error("Erro ao recusar desafio");
     }
   };
 
