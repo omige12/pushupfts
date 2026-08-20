@@ -2894,7 +2894,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack }: { setView
   const [copied, setCopied] = useState(false);
 
   const copyId = () => {
-    navigator.clipboard.writeText(user.id || user.player_id);
+    navigator.clipboard.writeText(user.player_id || user.id);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
