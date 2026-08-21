@@ -2189,7 +2189,7 @@ function Challenge({ bot, opponent, duration, user, setUser, onExit, onComplete,
 
 
 
-function Profile({ setView, user, setUser, initialEditing = false, goBack }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean, goBack: () => void }) {
+function Profile({ setView, user, setUser, initialEditing = false, goBack, isEditMode, setIsEditMode, elementPositions, savePosition }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean, goBack: () => void, isEditMode: boolean, setIsEditMode: (v: boolean) => void, elementPositions: any, savePosition: (id: string, x: number, y: number) => void }) {
   const [editing, setEditing] = useState(initialEditing);
   const [formData, setFormData] = useState({ 
     name: user?.name || '',
