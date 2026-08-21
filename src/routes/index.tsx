@@ -2620,10 +2620,17 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack, isEdi
             <p className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">{stats.totalPushups ?? 0}</p>
           </div>
           </div>
-        </div>
+        </DraggableElement>
         
-        <div className="w-full space-y-8 pb-4">
-          <div className="grid grid-cols-1 gap-4 w-full pt-4">
+        <DraggableElement 
+          id="profile-action-buttons"
+          isEditMode={isEditMode}
+          position={elementPositions['profile-action-buttons']}
+          onDragEnd={savePosition}
+          className="w-full space-y-8 pb-4 pt-4"
+        >
+          <div className="grid grid-cols-1 gap-4 w-full">
+
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
