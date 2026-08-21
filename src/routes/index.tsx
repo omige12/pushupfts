@@ -118,7 +118,10 @@ const DraggableElement = ({ id, isEditMode, position, onDragEnd, children, class
         x: position?.x || 0, 
         y: position?.y || 0,
         outline: isEditMode ? "2px dashed #00D2FF" : "none",
-        cursor: isEditMode ? "move" : "inherit"
+        outlineOffset: isEditMode ? "-2px" : "0",
+        cursor: isEditMode ? "move" : "inherit",
+        zIndex: isEditMode ? 100 : "auto",
+        position: position ? "relative" : "static"
       }}
       className={className}
     >
