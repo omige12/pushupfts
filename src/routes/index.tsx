@@ -2684,9 +2684,10 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack, isEdi
             SAIR DA CONTA
           </Button>
         </div>
-        </div>
+      </DraggableElement>
       </div>
     </motion.div>
+
   );
 }
 
