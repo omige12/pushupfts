@@ -101,6 +101,32 @@ const getPatentEmoji = (patent: string) => {
 
 
 
+const DraggableElement = ({ id, isEditMode, position, onDragEnd, children, className = "" }: { id: string, isEditMode: boolean, position?: {x: number, y: number}, onDragEnd: (id: string, x: number, y: number) => void, children: React.ReactNode, className?: string }) => {
+  return (
+    <motion.div
+      drag={isEditMode}
+      dragMomentum={false}
+      onDragEnd={(_, info) => {
+        if (isEditMode) {
+          const newX = (position?.x || 0) + info.offset.x;
+          const newY = (position?.y || 0) + info.offset.y;
+          onDragEnd(id, newX, newY);
+        }
+      }}
+      initial={false}
+      animate={{ 
+        x: position?.x || 0, 
+        y: position?.y || 0,
+        outline: isEditMode ? "2px dashed #00D2FF" : "none",
+        cursor: isEditMode ? "move" : "inherit"
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
 const BOTS = [
   { 
     id: '1', 
