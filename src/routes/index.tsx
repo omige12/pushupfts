@@ -1315,10 +1315,19 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining, isEditMode, s
           </div>
           <ChevronRight className="w-4 h-4 text-white/20" />
         </motion.div>
-      </header>
+        </header>
+      </DraggableElement>
 
       {/* Action Grid - Redesigned for Premium Neon Feel */}
-      <div className="grid grid-cols-2 gap-4 w-full">
+      <DraggableElement 
+        id="dashboard-action-grid"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-action-grid']}
+        onDragEnd={savePosition}
+        className="w-full"
+      >
+        <div className="grid grid-cols-2 gap-4 w-full">
+
         <motion.div
           whileTap={{ scale: 0.94 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
