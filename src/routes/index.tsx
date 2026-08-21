@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-// Crie uma tela de seleção de níveis para eu escolher e começar partidas no meu jogo de xadrez.
-// 
-// Corrija o redirecionamento após o login para eu fazer login e entrar na área correta do app sem ficar preso na tela inicial.
+// Na tela inicial, adicione o card de Rank/Patente igual ao do perfil e coloque ele entre os botões "Partida" e "Perfil", mantendo o mesmo design, XP, patente e barra de progresso.
+//
+// Não altere mais nada no aplicativo e não altere nenhum outro código, funcionalidade, layout ou design. Faça somente essa adição.
 
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
