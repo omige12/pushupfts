@@ -1088,7 +1088,7 @@ function App() {
       </AnimatePresence>
 
       {!isBattleActive && !['onboarding-start', 'quiz', 'quiz-result', 'auth', 'photo-upload', 'profile-setup', 'profile-ready', 'pvp-battle', 'treino', 'matchmaking', 'challenge', 'friend-challenge', 'patents-list', 'history', 'support', 'support-chat'].includes(view) && (
-        <nav className="fixed bottom-0 left-0 right-0 w-full bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/10 px-2 py-3 flex justify-around items-center z-[100] shadow-[0_-10px_30px_rgba(0,0,0,0.5)] pb-[env(safe-area-inset-bottom,12px)]">
+        <nav className="fixed bottom-0 left-0 right-0 w-full bg-[#0B0E14]/90 backdrop-blur-xl border-t border-white/10 px-2 flex justify-around items-center z-[100] shadow-[0_-10px_30px_rgba(0,0,0,0.5)] pt-3 pb-[calc(env(safe-area-inset-bottom,12px)+8px)]">
           {[
             { id: 'dashboard', label: 'Início', icon: Home, aliases: [] },
             { id: 'achievements', label: 'Conquistas', icon: Award, aliases: [] },
