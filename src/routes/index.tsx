@@ -1190,7 +1190,7 @@ function App() {
 
 
 
-function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void, setIsTraining: (t: boolean) => void }) {
+function Dashboard({ setView, user, setSelectedBot, setIsTraining, isEditMode, setIsEditMode, elementPositions, savePosition }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void, setIsTraining: (t: boolean) => void, isEditMode: boolean, setIsEditMode: (v: boolean) => void, elementPositions: any, savePosition: (id: string, x: number, y: number) => void }) {
   const stats = user;
   const rank = getRankInfo(user.xp);
 
