@@ -1420,9 +1420,18 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining, isEditMode, s
           </div>
         </NeonFireWrapper>
       </motion.div>
+      </DraggableElement>
 
       {/* Bottom Stats Footer - Adjusted */}
-      <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full mt-4">
+      <DraggableElement 
+        id="dashboard-stats-footer"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-stats-footer']}
+        onDragEnd={savePosition}
+        className="w-full"
+      >
+        <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full mt-4">
+
         <div className="flex flex-col items-center text-center">
           <div className="w-10 h-10 rounded-2xl bg-gold/10 flex items-center justify-center mb-1 border border-gold/30 shadow-[0_0_15px_rgba(234,179,8,0.15)]">
             <Trophy className="w-5 h-5 text-gold neon-text-gold" />
