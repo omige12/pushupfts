@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-// Vocês está funcionando normalmente?
+// Crie uma tela de seleção de níveis para eu escolher e começar partidas no meu jogo de xadrez.
+// 
+// Corrija o redirecionamento após o login para eu fazer login e entrar na área correta do app sem ficar preso na tela inicial.
 
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
