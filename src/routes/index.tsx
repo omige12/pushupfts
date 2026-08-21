@@ -2,6 +2,22 @@ import { createFileRoute } from "@tanstack/react-router";
 // Na tela inicial, adicione o card de Rank/Patente igual ao do perfil e coloque ele entre os botões "Partida" e "Perfil", mantendo o mesmo design, XP, patente e barra de progresso.
 //
 // Não altere mais nada no aplicativo e não altere nenhum outro código, funcionalidade, layout ou design. Faça somente essa adição.
+//
+// [CONTEXTO LOVABLE ATIVO]
+// Projeto: 01349571-7574-446a-9023-91a482199f2c
+// Página/rota: Pular para a caixa de texto do chat
+// URL: https://lovable.dev/projects/01349571-7574-446a-9023-91a482199f2c
+//
+// [PRODUCT EXECUTION]
+// - Defina objetivo, público, arquitetura de informação, estados de carregamento/erro/vazio, responsividade, acessibilidade e critérios de aceite.
+// - Use componentes reutilizáveis, tokens visuais, conteúdo realista e comportamento mobile/desktop.
+//
+// [CRITÉRIOS DE ACEITE]
+// - Entrega executável, sem placeholders críticos ou funções quebradas.
+// - Explique arquivos alterados, decisões, riscos e como validar.
+// - Preserve o comportamento existente salvo quando uma mudança for explicitamente solicitada.
+// - Defina objetivo, público, arquitetura de informação, estados de carregamento/erro/vazio, responsividade, acessibilidade e critérios de aceite.
+// - Use componentes reutilizáveis, tokens visuais, conteúdo realista e comportamento mobile/desktop.
 
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
