@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+// E como eu faço pra arrastar?
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
