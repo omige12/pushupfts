@@ -931,7 +931,7 @@ function App() {
       case 'photo-upload': return <PhotoUpload setView={handleSetView} user={user} setUser={setUser} />;
       case 'profile-setup': return <ProfileSetup setView={handleSetView} user={user} setUser={setUser} />;
       case 'profile-ready': return <ProfileReady setView={handleSetView} user={user} />;
-      case 'dashboard': return <Dashboard setView={handleSetView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
+      case 'dashboard': return <Dashboard setView={handleSetView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} isEditMode={isEditMode} setIsEditMode={setIsEditMode} elementPositions={elementPositions} savePosition={savePosition} />;
       case 'treino': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setMatchOpponent(null); setActiveMatchId(null); setView('challenge'); }} />;
       case 'select-bot': return <SelectBot setView={handleSetView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
