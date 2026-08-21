@@ -1263,11 +1263,20 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining, isEditMode, s
           </div>
         </div>
       </NeonFireWrapper>
+      </DraggableElement>
 
       {/* Header */}
-      <header className="flex justify-between items-center w-full pt-2">
-        <div className="flex items-center gap-3">
-          <div 
+      <DraggableElement 
+        id="dashboard-header"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-header']}
+        onDragEnd={savePosition}
+        className="w-full"
+      >
+        <header className="flex justify-between items-center w-full pt-2">
+          <div className="flex items-center gap-3">
+            <div 
+
             className="relative w-12 h-12 rounded-full border-2 border-gold/40 shadow-[0_0_15px_rgba(234,179,8,0.2)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
             onClick={() => setView('profile')}
           >
