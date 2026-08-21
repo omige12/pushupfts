@@ -280,6 +280,8 @@ function App() {
   const [isStandalone, setIsStandalone] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [incomingChallenge, setIncomingChallenge] = useState<any>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [elementPositions, setElementPositions] = useState<Record<string, {x: number, y: number}>>({});
 
   useEffect(() => {
     const handleChallenge = (e: any) => {
@@ -298,12 +300,29 @@ function App() {
       toast.success("Batalha iniciada!");
     };
 
+    const savedPositions = localStorage.getItem('flexbattle_positions');
+    if (savedPositions) {
+      try {
+        setElementPositions(JSON.parse(savedPositions));
+      } catch (e) {
+        console.error("Error loading positions", e);
+      }
+    }
+    
     window.addEventListener('challenge-received', handleChallenge);
     window.addEventListener('match-started', handleMatchStarted);
     return () => {
       window.removeEventListener('challenge-received', handleChallenge);
       window.removeEventListener('match-started', handleMatchStarted);
     };
+  }, []);
+
+  const savePosition = useCallback((id: string, x: number, y: number) => {
+    setElementPositions(prev => {
+      const newPos = { ...prev, [id]: { x, y } };
+      localStorage.setItem('flexbattle_positions', JSON.stringify(newPos));
+      return newPos;
+    });
   }, []);
 
 
