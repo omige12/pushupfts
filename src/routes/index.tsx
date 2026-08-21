@@ -2446,14 +2446,32 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack, isEdi
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-[100dvh] overflow-y-auto pb-24 custom-scrollbar">
-      <div className="flex justify-between items-center w-full mb-2 mt-4 shrink-0">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
-        </div>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-[100dvh] overflow-y-auto pb-24 custom-scrollbar relative">
+      {user.email === 'rianfrefire375@gmail.com' && (
+        <Button 
+          variant="outline"
+          className={`fixed top-4 right-4 z-[200] border-electric-blue/50 text-[9px] font-black italic bg-black/40 ${isEditMode ? 'bg-electric-blue text-black shadow-[0_0_15px_rgba(0,210,255,0.4)]' : 'text-white/60'}`}
+          onClick={() => setIsEditMode(!isEditMode)}
+        >
+          {isEditMode ? 'SALVAR LAYOUT' : 'MODO EDIÇÃO'}
+        </Button>
+      )}
+
+      <DraggableElement 
+        id="profile-header"
+        isEditMode={isEditMode}
+        position={elementPositions['profile-header']}
+        onDragEnd={savePosition}
+        className="w-full"
+      >
+        <div className="flex justify-between items-center w-full mb-2 mt-4 shrink-0">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
+          </div>
+
         
         <Button 
           variant="ghost" 
