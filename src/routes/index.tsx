@@ -1154,44 +1154,43 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       {/* Patent Progress Card (Moved to top as requested) */}
       <NeonFireWrapper 
         color="gold" 
-        className="w-full mt-4"
+        className="w-full mt-2"
         onClick={() => setView('patents-list')}
       >
         <div 
-          className="relative p-6 rounded-[1.8rem] border-2 border-gold bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.15)] overflow-hidden transition-all group"
+          className="relative p-6 rounded-[1.8rem] border-2 border-gold/40 bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.1)] overflow-hidden transition-all group"
         >
           <div className="flex justify-between items-start mb-6 gap-4">
             <div className="flex items-center gap-4 min-w-0">
-              <div className="w-16 h-16 rounded-2xl bg-gold/10 border-2 border-gold/30 flex items-center justify-center shadow-[inset_0_0_20px_rgba(234,179,8,0.2)] shrink-0">
-                <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.5)]">{rank.emoji}</div>
+              <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                <div className="text-3xl filter drop-shadow-[0_0_8px_rgba(234,179,8,0.3)]">{rank.emoji}</div>
               </div>
               <div className="min-w-0">
                 <h2 className="text-2xl font-black italic text-white uppercase tracking-tighter leading-none truncate">{rank.rankName}</h2>
                 <p className="text-[10px] font-black text-gold uppercase tracking-[0.2em] mt-1 opacity-70">SUA PATENTE ATUAL</p>
-                <div className="mt-2 flex flex-col">
+                <div className="mt-2 flex items-baseline gap-2">
                   <span className="text-2xl font-black text-white italic tracking-tighter leading-none">{rank.xpInLevel}</span>
-                  <span className="text-[10px] font-black text-white/20 uppercase tracking-widest mt-0.5">/ {rank.xpForNext} XP</span>
+                  <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">/ {rank.xpForNext} XP</span>
                 </div>
               </div>
             </div>
             
-            {/* Background pattern decoration */}
-            <div className="shrink-0 opacity-20 pointer-events-none w-20 h-20 -mr-2 flex items-center justify-center">
-              <Shield className="w-full h-full text-gold" />
+            <div className="shrink-0 opacity-10 pointer-events-none w-16 h-16 -mr-1 flex items-center justify-center">
+              <Shield className="w-full h-full text-white" />
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="h-2.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-0.5">
+          <div className="space-y-3">
+            <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: `${rank.progress}%` }}
-                className="h-full bg-gradient-to-r from-gold to-yellow-300 shadow-[0_0_10px_rgba(234,179,8,0.5)] rounded-full"
+                className="h-full bg-gold shadow-[0_0_10px_rgba(234,179,8,0.4)] rounded-full"
               />
             </div>
             
-            <div className="flex justify-between items-center pt-1">
-              <p className="text-[9px] font-black text-white/40 uppercase tracking-widest italic">
+            <div className="flex justify-between items-center">
+              <p className="text-[9px] font-black text-white/30 uppercase tracking-widest italic">
                 PRÓXIMO NÍVEL EM {rank.xpForNext - rank.xpInLevel} XP
               </p>
               <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
@@ -1204,10 +1203,10 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
       </NeonFireWrapper>
 
       {/* Header */}
-      <header className="flex justify-between items-start w-full">
+      <header className="flex justify-between items-center w-full pt-2">
         <div className="flex items-center gap-3">
           <div 
-            className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
+            className="relative w-12 h-12 rounded-full border-2 border-gold/40 shadow-[0_0_15px_rgba(234,179,8,0.2)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
             onClick={() => setView('profile')}
           >
             <div className="w-full h-full rounded-full overflow-hidden">
@@ -1215,17 +1214,17 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
                 <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
               ) : (
                 <div className="w-full h-full bg-[#1A1F26] flex items-center justify-center">
-                  <UserIcon className="w-6 h-6 text-white/40" />
+                  <UserIcon className="w-5 h-5 text-white/40" />
                 </div>
               )}
             </div>
           </div>
           <div>
-            <h1 className="font-black text-xl italic text-white tracking-tight leading-none">{(stats.name || 'ATLETA').toUpperCase()}</h1>
+            <h1 className="font-black text-lg italic text-white tracking-tight leading-none">{(stats.name || 'ATLETA').toUpperCase()}</h1>
             <div className="flex items-center gap-2 mt-1">
-              <div className="bg-purple-evolve/20 border border-purple-evolve/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+              <div className="bg-white/5 border border-white/10 px-2 py-0.5 rounded-full flex items-center gap-1">
                 <span className="text-[10px]">{getRankInfo(user.xp).emoji}</span>
-                <span className="text-[9px] font-black text-purple-evolve uppercase tracking-widest">{(rank.patentName || '').toUpperCase()}</span>
+                <span className="text-[9px] font-black text-white/60 uppercase tracking-widest">{(rank.patentName || '').toUpperCase()}</span>
               </div>
               <div className="flex items-center gap-1 text-gold">
                 <Flame className="w-3 h-3 fill-gold" />
@@ -1237,15 +1236,11 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
         
         <motion.div 
           whileTap={{ scale: 0.95 }}
-          className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer transition-all hover:bg-purple-evolve/20 active:border-purple-evolve/40 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
+          className="bg-white/5 border border-white/10 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer transition-all hover:bg-white/10"
           onClick={() => setView('daily-reward')}
         >
-          <div className="bg-gold/20 p-1.5 rounded-xl">
-            <Trophy className="w-5 h-5 text-gold filter drop-shadow-[0_0_8px_gold]" />
-          </div>
-          <div className="flex flex-col pr-2">
-            <span className="text-[10px] font-black text-white leading-none uppercase tracking-tighter">RECOMPENSAS</span>
-            <span className="text-[8px] text-white/40 font-bold uppercase tracking-widest mt-0.5">Resgate prêmios</span>
+          <div className="bg-gold/10 p-1.5 rounded-xl">
+            <Trophy className="w-5 h-5 text-gold" />
           </div>
           <ChevronRight className="w-4 h-4 text-white/20" />
         </motion.div>
