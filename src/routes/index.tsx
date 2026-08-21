@@ -1464,7 +1464,9 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining, isEditMode, s
           <span className="text-xl font-black text-white italic">{stats.totalPushups ?? 0}</span>
         </div>
       </div>
+      </DraggableElement>
     </motion.div>
+
   );
 }
 
