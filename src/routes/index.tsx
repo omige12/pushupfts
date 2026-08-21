@@ -2584,9 +2584,18 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack, isEdi
             <span className="text-[8px] font-black text-purple-evolve/60 uppercase tracking-[0.3em] animate-pulse">TOQUE PARA VER PATENTES</span>
           </div>
         </motion.div>
+        </DraggableElement>
 
         {/* Stats Grid - Premium Neon Visual */}
-        <div className="grid grid-cols-3 gap-3 w-full">
+        <DraggableElement 
+          id="profile-stats-grid"
+          isEditMode={isEditMode}
+          position={elementPositions['profile-stats-grid']}
+          onDragEnd={savePosition}
+          className="w-full"
+        >
+          <div className="grid grid-cols-3 gap-3 w-full">
+
           <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-electric-blue/30 transition-all group">
             <div className="w-8 h-8 rounded-xl bg-electric-blue/10 flex items-center justify-center mx-auto mb-3 border border-electric-blue/20">
               <Trophy className="w-4 h-4 text-electric-blue" />
