@@ -1195,13 +1195,30 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining, isEditMode, s
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto h-[100dvh] pb-24 overflow-y-auto custom-scrollbar">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto h-[100dvh] pb-24 overflow-y-auto custom-scrollbar relative">
+      {user.email === 'rianfrefire375@gmail.com' && (
+        <Button 
+          variant="outline"
+          className={`fixed top-4 right-4 z-[200] border-electric-blue/50 text-[9px] font-black italic bg-black/40 ${isEditMode ? 'bg-electric-blue text-black shadow-[0_0_15px_rgba(0,210,255,0.4)]' : 'text-white/60'}`}
+          onClick={() => setIsEditMode(!isEditMode)}
+        >
+          {isEditMode ? 'SALVAR LAYOUT' : 'MODO EDIÇÃO'}
+        </Button>
+      )}
+
       {/* Patent Progress Card (Moved to top as requested) */}
-      <NeonFireWrapper 
-        color="gold" 
-        className="w-full mt-2"
-        onClick={() => setView('patents-list')}
+      <DraggableElement 
+        id="dashboard-rank-card"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-rank-card']}
+        onDragEnd={savePosition}
+        className="w-full"
       >
+        <NeonFireWrapper 
+          color="gold" 
+          className="w-full mt-2"
+          onClick={() => !isEditMode && setView('patents-list')}
+        >
         <div 
           className="relative p-6 rounded-[1.8rem] border-2 border-gold/40 bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.1)] overflow-hidden transition-all group"
         >
