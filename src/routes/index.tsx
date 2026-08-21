@@ -1381,14 +1381,23 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining, isEditMode, s
             </div>
           </NeonFireWrapper>
         </motion.div>
-      </div>
+        </div>
+      </DraggableElement>
 
       {/* Workout Banner - Redesigned */}
-      <motion.div
-        whileTap={{ scale: 0.96 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      <DraggableElement 
+        id="dashboard-workout-banner"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-workout-banner']}
+        onDragEnd={savePosition}
         className="w-full"
       >
+        <motion.div
+          whileTap={{ scale: 0.96 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="w-full"
+        >
+
         <NeonFireWrapper 
           color="red"
           onClick={() => setView('treino')}
