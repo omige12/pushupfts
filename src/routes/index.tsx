@@ -4321,7 +4321,10 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
             .maybeSingle();
             
           if (profile) {
-            window.location.reload();
+            // Direct call to setView to trigger re-render and profile fetch
+            setView('dashboard');
+            // We use a small delay before reload to let state settle or just reload
+            setTimeout(() => window.location.reload(), 100);
           } else {
             setView('photo-upload');
           }
