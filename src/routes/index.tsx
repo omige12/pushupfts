@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-// Porra resolver esse caralho do problema do login diz que o login foi feito com sucesso mas não entra nessa merda de appp
+// Nao vai tomar no cu lovable plmds eu pesso pra vcs arrumar essa droga e vcs ainda errado sendo sincero esse e o pior site pra criar app ou site jesus do céu
+
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
