@@ -1,13 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-// O modo de edição visual foi criado, mas os elementos não estão podendo ser arrastados.
-// 
-// Corrija isso para que, quando o modo de edição estiver ativado na conta rianfrefire375@gmail.com, eu possa clicar e segurar qualquer elemento editável e arrastá-lo livremente pela tela, vendo a posição mudar em tempo real.
-// 
-// O elemento deve acompanhar o movimento do dedo/mouse e permanecer exatamente na posição onde eu soltar.
-// 
-// Também deve funcionar corretamente no celular usando toque e arrastar.
-// 
-// Não altere nenhuma outra funcionalidade, design, layout ou código que não seja necessário para corrigir o sistema de arrastar.
+// Porra resolver esse caralho do problema do login diz que o login foi feito com sucesso mas não entra nessa merda de appp
+
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
