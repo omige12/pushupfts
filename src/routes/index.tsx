@@ -2544,9 +2544,18 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack, isEdi
             <span className="text-[10px] font-black text-gold uppercase tracking-widest">{stats?.height || 0}CM</span>
           </div>
         </div>
+        </DraggableElement>
 
         {/* Progress Card */}
-        <motion.div 
+        <DraggableElement 
+          id="profile-progress-card"
+          isEditMode={isEditMode}
+          position={elementPositions['profile-progress-card']}
+          onDragEnd={savePosition}
+          className="w-full"
+        >
+          <motion.div 
+
           whileTap={{ scale: 0.9, opacity: 0.8 }}
           transition={{ type: "spring", stiffness: 600, damping: 20 }}
           className="w-full bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
