@@ -959,9 +959,9 @@ function App() {
 
 
       case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('challenge'); }} onCancel={() => setView('select-duration')} duration={duration} />;
-      case 'profile': return <Profile setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
-      case 'settings': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} />;
-      case 'edit-profile': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} />;
+      case 'profile': return <Profile setView={handleSetView} user={user} setUser={setUser} goBack={goBack} isEditMode={isEditMode} setIsEditMode={setIsEditMode} elementPositions={elementPositions} savePosition={savePosition} />;
+      case 'settings': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} isEditMode={isEditMode} setIsEditMode={setIsEditMode} elementPositions={elementPositions} savePosition={savePosition} />;
+      case 'edit-profile': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} isEditMode={isEditMode} setIsEditMode={setIsEditMode} elementPositions={elementPositions} savePosition={savePosition} />;
       case 'multiplayer': return <Multiplayer setView={handleSetView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={(training) => { setIsTraining(training); setView('select-duration'); }} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} />;
       case 'achievements': return <Achievements setView={handleSetView} user={user} goBack={goBack} />;
       case 'support': return <Support setView={handleSetView} goBack={goBack} />;
