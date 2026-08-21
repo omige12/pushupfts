@@ -2481,11 +2481,19 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack, isEdi
         >
           <Pencil className="w-5 h-5 text-electric-blue" />
         </Button>
-      </div>
+        </div>
+      </DraggableElement>
 
       <div className="flex-1 w-full flex flex-col items-center justify-between py-4 space-y-8">
-        <div className="flex flex-col items-center gap-6 relative w-full">
+        <DraggableElement 
+          id="profile-avatar-section"
+          isEditMode={isEditMode}
+          position={elementPositions['profile-avatar-section']}
+          onDragEnd={savePosition}
+          className="w-full flex flex-col items-center gap-6 relative"
+        >
         {/* Avatar and Info Header */}
+
         <div className="relative group">
           <div className="w-36 h-36 bg-[#0F131A] rounded-full border-[3px] border-electric-blue p-1 shadow-[0_0_35px_rgba(0,210,255,0.4),inset_0_0_15px_rgba(0,210,255,0.1)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
             <div className="w-full h-full rounded-full overflow-hidden bg-muted flex items-center justify-center relative">
