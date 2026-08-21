@@ -101,6 +101,35 @@ const getPatentEmoji = (patent: string) => {
 
 
 
+const DraggableElement = ({ id, isEditMode, position, onDragEnd, children, className = "" }: { id: string, isEditMode: boolean, position?: {x: number, y: number}, onDragEnd: (id: string, x: number, y: number) => void, children: React.ReactNode, className?: string }) => {
+  return (
+    <motion.div
+      drag={isEditMode}
+      dragMomentum={false}
+      onDragEnd={(_, info) => {
+        if (isEditMode) {
+          const newX = (position?.x || 0) + info.offset.x;
+          const newY = (position?.y || 0) + info.offset.y;
+          onDragEnd(id, newX, newY);
+        }
+      }}
+      initial={false}
+      animate={{ 
+        x: position?.x || 0, 
+        y: position?.y || 0,
+        outline: isEditMode ? "2px dashed #00D2FF" : "none",
+        outlineOffset: isEditMode ? "-2px" : "0",
+        cursor: isEditMode ? "move" : "inherit",
+        zIndex: isEditMode ? 100 : "auto",
+        position: position ? "relative" : "static"
+      }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
 const BOTS = [
   { 
     id: '1', 
@@ -280,6 +309,8 @@ function App() {
   const [isStandalone, setIsStandalone] = useState(false);
   const [showInstallBanner, setShowInstallBanner] = useState(false);
   const [incomingChallenge, setIncomingChallenge] = useState<any>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [elementPositions, setElementPositions] = useState<Record<string, {x: number, y: number}>>({});
 
   useEffect(() => {
     const handleChallenge = (e: any) => {
@@ -298,12 +329,29 @@ function App() {
       toast.success("Batalha iniciada!");
     };
 
+    const savedPositions = localStorage.getItem('flexbattle_positions');
+    if (savedPositions) {
+      try {
+        setElementPositions(JSON.parse(savedPositions));
+      } catch (e) {
+        console.error("Error loading positions", e);
+      }
+    }
+    
     window.addEventListener('challenge-received', handleChallenge);
     window.addEventListener('match-started', handleMatchStarted);
     return () => {
       window.removeEventListener('challenge-received', handleChallenge);
       window.removeEventListener('match-started', handleMatchStarted);
     };
+  }, []);
+
+  const savePosition = useCallback((id: string, x: number, y: number) => {
+    setElementPositions(prev => {
+      const newPos = { ...prev, [id]: { x, y } };
+      localStorage.setItem('flexbattle_positions', JSON.stringify(newPos));
+      return newPos;
+    });
   }, []);
 
 
@@ -886,7 +934,7 @@ function App() {
       case 'photo-upload': return <PhotoUpload setView={handleSetView} user={user} setUser={setUser} />;
       case 'profile-setup': return <ProfileSetup setView={handleSetView} user={user} setUser={setUser} />;
       case 'profile-ready': return <ProfileReady setView={handleSetView} user={user} />;
-      case 'dashboard': return <Dashboard setView={handleSetView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} />;
+      case 'dashboard': return <Dashboard setView={handleSetView} user={user} setSelectedBot={setSelectedBot} setIsTraining={setIsTraining} isEditMode={isEditMode} setIsEditMode={setIsEditMode} elementPositions={elementPositions} savePosition={savePosition} />;
       case 'treino': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} isTraining={true} onStartTraining={() => { setIsTraining(true); setSelectedBot(null); setOpponent(null); setMatchOpponent(null); setActiveMatchId(null); setView('challenge'); }} />;
       case 'select-bot': return <SelectBot setView={handleSetView} onSelect={(b) => { setSelectedBot(b); setIsTraining(false); setView('select-duration'); }} />;
       case 'select-duration': return <SelectDuration setView={handleSetView} onSelect={(d) => setDuration(d)} selectedBot={selectedBot} isTraining={isTraining} onStartMatchmaking={() => setView('matchmaking')} />;
@@ -914,9 +962,9 @@ function App() {
 
 
       case 'matchmaking': return <Matchmaking user={user} onMatchFound={(opp: any) => { setOpponent(opp); setView('challenge'); }} onCancel={() => setView('select-duration')} duration={duration} />;
-      case 'profile': return <Profile setView={handleSetView} user={user} setUser={setUser} goBack={goBack} />;
-      case 'settings': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} />;
-      case 'edit-profile': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} />;
+      case 'profile': return <Profile setView={handleSetView} user={user} setUser={setUser} goBack={goBack} isEditMode={isEditMode} setIsEditMode={setIsEditMode} elementPositions={elementPositions} savePosition={savePosition} />;
+      case 'settings': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} isEditMode={isEditMode} setIsEditMode={setIsEditMode} elementPositions={elementPositions} savePosition={savePosition} />;
+      case 'edit-profile': return <Profile setView={handleSetView} user={user} setUser={setUser} initialEditing={true} goBack={goBack} isEditMode={isEditMode} setIsEditMode={setIsEditMode} elementPositions={elementPositions} savePosition={savePosition} />;
       case 'multiplayer': return <Multiplayer setView={handleSetView} user={user} onSelectBot={() => setView('select-bot')} onStartMatchmaking={(training) => { setIsTraining(training); setView('select-duration'); }} onChallengePlayer={(opp: any) => { setOpponent(opp); setIsTraining(false); setView('select-duration'); }} goBack={goBack} />;
       case 'achievements': return <Achievements setView={handleSetView} user={user} goBack={goBack} />;
       case 'support': return <Support setView={handleSetView} goBack={goBack} />;
@@ -1145,18 +1193,35 @@ function App() {
 
 
 
-function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void, setIsTraining: (t: boolean) => void }) {
+function Dashboard({ setView, user, setSelectedBot, setIsTraining, isEditMode, setIsEditMode, elementPositions, savePosition }: { setView: (v: View) => void, user: any, setSelectedBot: (b: any) => void, setIsTraining: (t: boolean) => void, isEditMode: boolean, setIsEditMode: (v: boolean) => void, elementPositions: any, savePosition: (id: string, x: number, y: number) => void }) {
   const stats = user;
   const rank = getRankInfo(user.xp);
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto h-[100dvh] pb-24 overflow-y-auto custom-scrollbar">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto h-[100dvh] pb-24 overflow-y-auto custom-scrollbar relative">
+      {user.email === 'rianfrefire375@gmail.com' && (
+        <Button 
+          variant="outline"
+          className={`fixed top-4 right-4 z-[200] border-electric-blue/50 text-[9px] font-black italic bg-black/40 ${isEditMode ? 'bg-electric-blue text-black shadow-[0_0_15px_rgba(0,210,255,0.4)]' : 'text-white/60'}`}
+          onClick={() => setIsEditMode(!isEditMode)}
+        >
+          {isEditMode ? 'SALVAR LAYOUT' : 'MODO EDIÇÃO'}
+        </Button>
+      )}
+
       {/* Patent Progress Card (Moved to top as requested) */}
-      <NeonFireWrapper 
-        color="gold" 
-        className="w-full mt-2"
-        onClick={() => setView('patents-list')}
+      <DraggableElement 
+        id="dashboard-rank-card"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-rank-card']}
+        onDragEnd={savePosition}
+        className="w-full"
       >
+        <NeonFireWrapper 
+          color="gold" 
+          className="w-full mt-2"
+          onClick={() => !isEditMode && setView('patents-list')}
+        >
         <div 
           className="relative p-6 rounded-[1.8rem] border-2 border-gold/40 bg-[#151921] shadow-[0_0_30px_rgba(234,179,8,0.1)] overflow-hidden transition-all group"
         >
@@ -1201,11 +1266,20 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           </div>
         </div>
       </NeonFireWrapper>
+      </DraggableElement>
 
       {/* Header */}
-      <header className="flex justify-between items-center w-full pt-2">
-        <div className="flex items-center gap-3">
-          <div 
+      <DraggableElement 
+        id="dashboard-header"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-header']}
+        onDragEnd={savePosition}
+        className="w-full"
+      >
+        <header className="flex justify-between items-center w-full pt-2">
+          <div className="flex items-center gap-3">
+            <div 
+
             className="relative w-12 h-12 rounded-full border-2 border-gold/40 shadow-[0_0_15px_rgba(234,179,8,0.2)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
             onClick={() => setView('profile')}
           >
@@ -1244,10 +1318,19 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           </div>
           <ChevronRight className="w-4 h-4 text-white/20" />
         </motion.div>
-      </header>
+        </header>
+      </DraggableElement>
 
       {/* Action Grid - Redesigned for Premium Neon Feel */}
-      <div className="grid grid-cols-2 gap-4 w-full">
+      <DraggableElement 
+        id="dashboard-action-grid"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-action-grid']}
+        onDragEnd={savePosition}
+        className="w-full"
+      >
+        <div className="grid grid-cols-2 gap-4 w-full">
+
         <motion.div
           whileTap={{ scale: 0.94 }}
           transition={{ type: "spring", stiffness: 400, damping: 25 }}
@@ -1301,14 +1384,23 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
             </div>
           </NeonFireWrapper>
         </motion.div>
-      </div>
+        </div>
+      </DraggableElement>
 
       {/* Workout Banner - Redesigned */}
-      <motion.div
-        whileTap={{ scale: 0.96 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      <DraggableElement 
+        id="dashboard-workout-banner"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-workout-banner']}
+        onDragEnd={savePosition}
         className="w-full"
       >
+        <motion.div
+          whileTap={{ scale: 0.96 }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          className="w-full"
+        >
+
         <NeonFireWrapper 
           color="red"
           onClick={() => setView('treino')}
@@ -1331,9 +1423,18 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           </div>
         </NeonFireWrapper>
       </motion.div>
+      </DraggableElement>
 
       {/* Bottom Stats Footer - Adjusted */}
-      <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full mt-4">
+      <DraggableElement 
+        id="dashboard-stats-footer"
+        isEditMode={isEditMode}
+        position={elementPositions['dashboard-stats-footer']}
+        onDragEnd={savePosition}
+        className="w-full"
+      >
+        <div className="grid grid-cols-4 gap-2 pt-4 border-t border-white/5 w-full mt-4">
+
         <div className="flex flex-col items-center text-center">
           <div className="w-10 h-10 rounded-2xl bg-gold/10 flex items-center justify-center mb-1 border border-gold/30 shadow-[0_0_15px_rgba(234,179,8,0.15)]">
             <Trophy className="w-5 h-5 text-gold neon-text-gold" />
@@ -1366,7 +1467,9 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           <span className="text-xl font-black text-white italic">{stats.totalPushups ?? 0}</span>
         </div>
       </div>
+      </DraggableElement>
     </motion.div>
+
   );
 }
 
@@ -2089,7 +2192,7 @@ function Challenge({ bot, opponent, duration, user, setUser, onExit, onComplete,
 
 
 
-function Profile({ setView, user, setUser, initialEditing = false, goBack }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean, goBack: () => void }) {
+function Profile({ setView, user, setUser, initialEditing = false, goBack, isEditMode, setIsEditMode, elementPositions, savePosition }: { setView: (v: View) => void, user: any, setUser: any, initialEditing?: boolean, goBack: () => void, isEditMode: boolean, setIsEditMode: (v: boolean) => void, elementPositions: any, savePosition: (id: string, x: number, y: number) => void }) {
   const [editing, setEditing] = useState(initialEditing);
   const [formData, setFormData] = useState({ 
     name: user?.name || '',
@@ -2346,14 +2449,32 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
   };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-[100dvh] overflow-y-auto pb-24 custom-scrollbar">
-      <div className="flex justify-between items-center w-full mb-2 mt-4 shrink-0">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-          <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
-        </div>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col items-center justify-start p-6 space-y-6 w-full max-w-md mx-auto h-[100dvh] overflow-y-auto pb-24 custom-scrollbar relative">
+      {user.email === 'rianfrefire375@gmail.com' && (
+        <Button 
+          variant="outline"
+          className={`fixed top-4 right-4 z-[200] border-electric-blue/50 text-[9px] font-black italic bg-black/40 ${isEditMode ? 'bg-electric-blue text-black shadow-[0_0_15px_rgba(0,210,255,0.4)]' : 'text-white/60'}`}
+          onClick={() => setIsEditMode(!isEditMode)}
+        >
+          {isEditMode ? 'SALVAR LAYOUT' : 'MODO EDIÇÃO'}
+        </Button>
+      )}
+
+      <DraggableElement 
+        id="profile-header"
+        isEditMode={isEditMode}
+        position={elementPositions['profile-header']}
+        onDragEnd={savePosition}
+        className="w-full"
+      >
+        <div className="flex justify-between items-center w-full mb-2 mt-4 shrink-0">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" className="rounded-xl bg-white/5 active:scale-90 btn-respond-fast" onClick={() => goBack()}>
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+            <h2 className="text-4xl font-black italic text-white tracking-tighter uppercase leading-tight">PERFIL</h2>
+          </div>
+
         
         <Button 
           variant="ghost" 
@@ -2363,11 +2484,19 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
         >
           <Pencil className="w-5 h-5 text-electric-blue" />
         </Button>
-      </div>
+        </div>
+      </DraggableElement>
 
       <div className="flex-1 w-full flex flex-col items-center justify-between py-4 space-y-8">
-        <div className="flex flex-col items-center gap-6 relative w-full">
+        <DraggableElement 
+          id="profile-avatar-section"
+          isEditMode={isEditMode}
+          position={elementPositions['profile-avatar-section']}
+          onDragEnd={savePosition}
+          className="w-full flex flex-col items-center gap-6 relative"
+        >
         {/* Avatar and Info Header */}
+
         <div className="relative group">
           <div className="w-36 h-36 bg-[#0F131A] rounded-full border-[3px] border-electric-blue p-1 shadow-[0_0_35px_rgba(0,210,255,0.4),inset_0_0_15px_rgba(0,210,255,0.1)] group-hover:scale-105 transition-transform duration-500 overflow-hidden relative">
             <div className="w-full h-full rounded-full overflow-hidden bg-muted flex items-center justify-center relative">
@@ -2418,9 +2547,18 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
             <span className="text-[10px] font-black text-gold uppercase tracking-widest">{stats?.height || 0}CM</span>
           </div>
         </div>
+        </DraggableElement>
 
         {/* Progress Card */}
-        <motion.div 
+        <DraggableElement 
+          id="profile-progress-card"
+          isEditMode={isEditMode}
+          position={elementPositions['profile-progress-card']}
+          onDragEnd={savePosition}
+          className="w-full"
+        >
+          <motion.div 
+
           whileTap={{ scale: 0.9, opacity: 0.8 }}
           transition={{ type: "spring", stiffness: 600, damping: 20 }}
           className="w-full bg-[#0F131A] rounded-[2rem] p-6 space-y-4 cursor-pointer border border-purple-evolve/20 shadow-[0_0_20px_rgba(168,85,247,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"
@@ -2449,9 +2587,18 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
             <span className="text-[8px] font-black text-purple-evolve/60 uppercase tracking-[0.3em] animate-pulse">TOQUE PARA VER PATENTES</span>
           </div>
         </motion.div>
+        </DraggableElement>
 
         {/* Stats Grid - Premium Neon Visual */}
-        <div className="grid grid-cols-3 gap-3 w-full">
+        <DraggableElement 
+          id="profile-stats-grid"
+          isEditMode={isEditMode}
+          position={elementPositions['profile-stats-grid']}
+          onDragEnd={savePosition}
+          className="w-full"
+        >
+          <div className="grid grid-cols-3 gap-3 w-full">
+
           <div className="bg-[#0F131A] p-5 rounded-[2rem] text-center border border-white/5 shadow-[0_4px_20px_rgba(0,0,0,0.4),inset_0_1px_1px_rgba(255,255,255,0.05)] hover:border-electric-blue/30 transition-all group">
             <div className="w-8 h-8 rounded-xl bg-electric-blue/10 flex items-center justify-center mx-auto mb-3 border border-electric-blue/20">
               <Trophy className="w-4 h-4 text-electric-blue" />
@@ -2476,10 +2623,17 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
             <p className="text-2xl font-black text-white italic drop-shadow-[0_0_8px_rgba(168,85,247,0.3)]">{stats.totalPushups ?? 0}</p>
           </div>
           </div>
-        </div>
+        </DraggableElement>
         
-        <div className="w-full space-y-8 pb-4">
-          <div className="grid grid-cols-1 gap-4 w-full pt-4">
+        <DraggableElement 
+          id="profile-action-buttons"
+          isEditMode={isEditMode}
+          position={elementPositions['profile-action-buttons']}
+          onDragEnd={savePosition}
+          className="w-full space-y-8 pb-4 pt-4"
+        >
+          <div className="grid grid-cols-1 gap-4 w-full">
+
           <Button 
             variant="ghost" 
             aria-label="Ver Histórico de Partidas"
@@ -2533,9 +2687,10 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack }: { s
             SAIR DA CONTA
           </Button>
         </div>
-        </div>
+      </DraggableElement>
       </div>
     </motion.div>
+
   );
 }
 
