@@ -1151,58 +1151,10 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-start p-5 space-y-4 sm:space-y-6 w-full max-w-md mx-auto h-[100dvh] pb-24 overflow-y-auto custom-scrollbar">
-      {/* Header */}
-      <header className="flex justify-between items-start w-full mt-4">
-        <div className="flex items-center gap-3">
-          <div 
-            className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
-            onClick={() => setView('profile')}
-          >
-            <div className="w-full h-full rounded-full overflow-hidden">
-              {stats.avatar ? (
-                <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
-              ) : (
-                <div className="w-full h-full bg-[#1A1F26] flex items-center justify-center">
-                  <UserIcon className="w-6 h-6 text-white/40" />
-                </div>
-              )}
-            </div>
-          </div>
-          <div>
-            <h1 className="font-black text-xl italic text-white tracking-tight leading-none">{(stats.name || 'ATLETA').toUpperCase()}</h1>
-            <div className="flex items-center gap-2 mt-1">
-              <div className="bg-purple-evolve/20 border border-purple-evolve/30 px-2 py-0.5 rounded-full flex items-center gap-1">
-                <span className="text-[10px]">{getRankInfo(user.xp).emoji}</span>
-                <span className="text-[9px] font-black text-purple-evolve uppercase tracking-widest">{(rank.patentName || '').toUpperCase()}</span>
-              </div>
-              <div className="flex items-center gap-1 text-gold">
-                <Flame className="w-3 h-3 fill-gold" />
-                <span className="text-[11px] font-black">{stats.streak ?? 0}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <motion.div 
-          whileTap={{ scale: 0.95 }}
-          className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer transition-all hover:bg-purple-evolve/20 active:border-purple-evolve/40 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
-          onClick={() => setView('daily-reward')}
-        >
-          <div className="bg-gold/20 p-1.5 rounded-xl">
-            <Trophy className="w-5 h-5 text-gold filter drop-shadow-[0_0_8px_gold]" />
-          </div>
-          <div className="flex flex-col pr-2">
-            <span className="text-[10px] font-black text-white leading-none uppercase tracking-tighter">RECOMPENSAS</span>
-            <span className="text-[8px] text-white/40 font-bold uppercase tracking-widest mt-0.5">Resgate prêmios</span>
-          </div>
-          <ChevronRight className="w-4 h-4 text-white/20" />
-        </motion.div>
-      </header>
-
-      {/* Patent Progress Card */}
+      {/* Patent Progress Card (Moved to top as requested) */}
       <NeonFireWrapper 
         color="gold" 
-        className="w-full"
+        className="w-full mt-4"
         onClick={() => setView('patents-list')}
       >
         <div 
@@ -1250,6 +1202,54 @@ function Dashboard({ setView, user, setSelectedBot, setIsTraining }: { setView: 
           </div>
         </div>
       </NeonFireWrapper>
+
+      {/* Header */}
+      <header className="flex justify-between items-start w-full">
+        <div className="flex items-center gap-3">
+          <div 
+            className="relative w-14 h-14 rounded-full border-2 border-gold shadow-[0_0_15px_rgba(234,179,8,0.4)] p-0.5 cursor-pointer active:scale-95 btn-respond-fast transition-transform"
+            onClick={() => setView('profile')}
+          >
+            <div className="w-full h-full rounded-full overflow-hidden">
+              {stats.avatar ? (
+                <img src={stats.avatar} className="w-full h-full object-cover" alt={stats.name} />
+              ) : (
+                <div className="w-full h-full bg-[#1A1F26] flex items-center justify-center">
+                  <UserIcon className="w-6 h-6 text-white/40" />
+                </div>
+              )}
+            </div>
+          </div>
+          <div>
+            <h1 className="font-black text-xl italic text-white tracking-tight leading-none">{(stats.name || 'ATLETA').toUpperCase()}</h1>
+            <div className="flex items-center gap-2 mt-1">
+              <div className="bg-purple-evolve/20 border border-purple-evolve/30 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="text-[10px]">{getRankInfo(user.xp).emoji}</span>
+                <span className="text-[9px] font-black text-purple-evolve uppercase tracking-widest">{(rank.patentName || '').toUpperCase()}</span>
+              </div>
+              <div className="flex items-center gap-1 text-gold">
+                <Flame className="w-3 h-3 fill-gold" />
+                <span className="text-[11px] font-black">{stats.streak ?? 0}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <motion.div 
+          whileTap={{ scale: 0.95 }}
+          className="bg-purple-evolve/10 border border-purple-evolve/20 rounded-2xl p-2.5 flex items-center gap-3 cursor-pointer transition-all hover:bg-purple-evolve/20 active:border-purple-evolve/40 shadow-[0_0_15px_rgba(139,92,246,0.2)]"
+          onClick={() => setView('daily-reward')}
+        >
+          <div className="bg-gold/20 p-1.5 rounded-xl">
+            <Trophy className="w-5 h-5 text-gold filter drop-shadow-[0_0_8px_gold]" />
+          </div>
+          <div className="flex flex-col pr-2">
+            <span className="text-[10px] font-black text-white leading-none uppercase tracking-tighter">RECOMPENSAS</span>
+            <span className="text-[8px] text-white/40 font-bold uppercase tracking-widest mt-0.5">Resgate prêmios</span>
+          </div>
+          <ChevronRight className="w-4 h-4 text-white/20" />
+        </motion.div>
+      </header>
 
       {/* Action Grid - Redesigned for Premium Neon Feel */}
       <div className="grid grid-cols-2 gap-4 w-full">
