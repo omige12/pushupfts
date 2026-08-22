@@ -1,5 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
-// Implementar o redirecionamento correto após o login para eu não ficar preso na tela inicial.
+/*
+Corrija o problema do login do aplicativo.
+
+
+
+
+Quando o usuário coloca e-mail e senha corretos, o login não é concluído e ele não consegue entrar na conta.
+
+
+
+
+Verifique e corrija toda a lógica de autenticação, incluindo validação das credenciais, conexão com o sistema de autenticação, criação/manutenção da sessão e redirecionamento após o login.
+
+
+
+
+O login deve funcionar normalmente com contas já cadastradas e, após autenticar com sucesso, o usuário deve ser levado para a tela inicial do aplicativo.
+
+
+
+
+Não altere nenhum outro recurso, design, layout, textos ou funcionalidades do projeto. Faça somente as correções necessárias para o login funcionar corretamente.
+*/
 
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
