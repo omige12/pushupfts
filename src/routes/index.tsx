@@ -1,31 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 /*
-Corrija o problema de autenticação do login.
-
-
-
-
-O usuário informa um e-mail e senha de uma conta já cadastrada, mas o login não é concluído.
-
-
-
-
-Antes de alterar qualquer arquivo, investigue a causa real do problema na autenticação. Verifique a configuração do sistema de autenticação, validação de e-mail e senha, conexão com o backend/banco, sessão do usuário e tratamento de erros.
-
-
-
-
-Depois de identificar a causa, faça somente as alterações necessárias para que uma conta cadastrada consiga fazer login normalmente e permaneça autenticada ao entrar no aplicativo.
-
-
-
-
-Não altere o design, layout, textos, ranking, perfil, partidas, banco de dados ou qualquer outra funcionalidade que não seja necessária para corrigir o login.
-
-
-
-
-Não apenas altere "src/routes/index.tsx": corrija a causa real do problema de autenticação.
+Verificar se após eu efetuar login eu permaneço autenticado ao atualizar a página e ao navegar entre rotas protegidas do aplicativo.
 */
 
 
