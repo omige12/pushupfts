@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 /*
-Oi
+Criar testes automatizados de integração para garantir que contas cadastradas conseguem fazer login e permanecer autenticadas ao navegar pelo aplicativo.
+
+IMPORTANTE: Execute TODOS os detalhes desta tarefa com máxima precisão. Não ignore nada, não simplifique, implemente EXATAMENTE o que foi pedido.
 */
 
 
