@@ -1,6 +1,77 @@
 import { createFileRoute } from "@tanstack/react-router";
 /*
-Criar testes automatizados de integração para garantir que contas cadastradas conseguem fazer login e permanecer autenticadas ao navegar pelo aplicativo.
+IMPORTANTE: NÃO APENAS DESCREVA O QUE FOI FEITO E NÃO RESPONDA SOMENTE COM ALGO COMO “O TEXTO FOI ATUALIZADO NO ARQUIVO...”.
+
+
+
+
+Quero que você REALMENTE FAÇA as alterações solicitadas diretamente no projeto.
+
+
+
+
+REGRAS OBRIGATÓRIAS:
+
+
+
+
+1. Analise primeiro o código/arquivo relacionado à alteração.
+
+2. Faça a alteração diretamente no código do projeto.
+
+3. Não apenas me diga qual arquivo deveria ser alterado.
+
+4. Não responda dizendo que “foi atualizado” se você não tiver realmente aplicado a alteração.
+
+5. Depois de alterar, verifique o código para confirmar que a mudança foi aplicada corretamente.
+
+6. Se necessário, corrija erros causados pela alteração.
+
+7. Não altere outros arquivos, funcionalidades, componentes ou estilos que não tenham relação com o meu pedido.
+
+8. Preserve tudo que já está funcionando.
+
+9. Não recrie o projeto do zero.
+
+10. Não faça alterações diferentes das que eu pedi.
+
+11. Se a alteração exigir modificar mais de um arquivo, altere somente os arquivos realmente necessários.
+
+12. Ao finalizar, confirme de forma curta o que foi EXECUTADO, e não apenas o que você pretendia fazer.
+
+
+
+
+PRINCIPALMENTE:
+
+Quando eu enviar uma solicitação de alteração, trate-a como uma tarefa de implementação no código, e não como uma pergunta ou pedido de explicação.
+
+
+
+
+NÃO QUERO:
+
+“O texto foi atualizado no arquivo...”
+
+“Você pode alterar...”
+
+“Seria necessário modificar...”
+
+“Para fazer isso, faça...”
+
+
+
+
+QUERO:
+
+Que você entre no código, faça a alteração, verifique se funcionou e entregue a alteração pronta no projeto.
+
+
+
+
+Agora execute exatamente a alteração que vou solicitar abaixo:
+
+[COLE AQUI A SUA ALTERAÇÃO]
 
 IMPORTANTE: Execute TODOS os detalhes desta tarefa com máxima precisão. Não ignore nada, não simplifique, implemente EXATAMENTE o que foi pedido.
 */
