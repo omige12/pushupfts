@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 /*
-Verificar se após eu efetuar login eu permaneço autenticado ao atualizar a página e ao navegar entre rotas protegidas do aplicativo.
+Oi
 */
 
 
