@@ -3019,14 +3019,14 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
 
     setIsSearching(true);
     try {
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('id, name, xp, record, avatar_url, level, player_id, last_seen_at')
-        .eq('player_id', searchId)
-        .neq('id', user.supabaseId || user.id)
-        .maybeSingle();
+      const { data: searchRows, error } = await (supabase as any)
+        .rpc('search_player', { _player_id: searchId });
 
       if (error) throw error;
+
+      const profile = (searchRows || []).find(
+        (p: any) => p.id !== (user.supabaseId || user.id)
+      );
 
       if (profile) {
         setFoundPlayer({
