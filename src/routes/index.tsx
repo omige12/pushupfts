@@ -3614,11 +3614,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
     const fetchRanking = async () => {
       setLoading(true);
       try {
-        let query = supabase
-          .from('profiles')
-          .select('id, name, xp, record, wins, streak, avatar_url, player_id')
-          .order('xp', { ascending: false })
-          .limit(100);
+        let ids: string[] | null = null;
 
         if (tab === 'friends') {
           const { data: friendships } = await supabase
@@ -3631,16 +3627,17 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
             (f.user_id === (user.supabaseId || user.id)) ? f.friend_id : f.user_id
           ) : [];
           
-          query = query.in('id', [...friendIds, user.supabaseId || user.id]);
+          ids = [...friendIds, user.supabaseId || user.id];
         }
 
-        const { data, error } = await query;
+        const { data, error } = await (supabase as any)
+          .rpc('get_ranking', { _ids: ids, _limit: 100 });
 
 
         if (error) throw error;
 
         if (data) {
-          const mappedData = data.map(p => ({
+          const mappedData = data.map((p: any) => ({
             id: p.id,
             name: p.name,
             count: Number(p.xp),
