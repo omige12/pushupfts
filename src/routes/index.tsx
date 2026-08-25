@@ -3652,7 +3652,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
           
           setRankingData(mappedData);
           
-          const uIdx = mappedData.findIndex(p => p.isUser);
+          const uIdx = mappedData.findIndex((p: any) => p.isUser);
           if (uIdx !== -1) setUserRank(uIdx + 1);
         }
 
