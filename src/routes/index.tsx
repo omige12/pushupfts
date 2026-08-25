@@ -823,11 +823,9 @@ function App() {
           },
           async (payload) => {
             if (payload.new.status === 'accepted' && payload.new.match_id) {
-              const { data: opponentProfile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', payload.new.challenged_id)
-                .single();
+              const { data: opponentRows } = await (supabase as any)
+                .rpc('get_public_profile', { _id: payload.new.challenged_id });
+              const opponentProfile = opponentRows?.[0];
 
               if (opponentProfile) {
                 const opp = {
