@@ -172,10 +172,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "match_invites_v2_receiver_id_fkey"
+            columns: ["receiver_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "match_invites_v2_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "match_invites_v2_sender_id_fkey"
+            columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -231,6 +245,13 @@ export type Database = {
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "matches_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       matches_v2: {
@@ -279,8 +300,29 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matches_v2_player_1_fkey"
+            columns: ["player_1"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "matches_v2_player_2_fkey"
             columns: ["player_2"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_v2_player_2_fkey"
+            columns: ["player_2"]
+            isOneToOne: false
+            referencedRelation: "public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matches_v2_winner_id_fkey"
+            columns: ["winner_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -289,7 +331,7 @@ export type Database = {
             foreignKeyName: "matches_v2_winner_id_fkey"
             columns: ["winner_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "public_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -371,7 +413,54 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      public_profiles: {
+        Row: {
+          achievements: string[] | null
+          avatar_url: string | null
+          id: string | null
+          last_seen_at: string | null
+          level: number | null
+          losses: number | null
+          name: string | null
+          player_id: string | null
+          record: number | null
+          streak: number | null
+          total_pushups: number | null
+          wins: number | null
+          xp: number | null
+        }
+        Insert: {
+          achievements?: string[] | null
+          avatar_url?: string | null
+          id?: string | null
+          last_seen_at?: string | null
+          level?: number | null
+          losses?: number | null
+          name?: string | null
+          player_id?: string | null
+          record?: number | null
+          streak?: number | null
+          total_pushups?: number | null
+          wins?: number | null
+          xp?: number | null
+        }
+        Update: {
+          achievements?: string[] | null
+          avatar_url?: string | null
+          id?: string | null
+          last_seen_at?: string | null
+          level?: number | null
+          losses?: number | null
+          name?: string | null
+          player_id?: string | null
+          record?: number | null
+          streak?: number | null
+          total_pushups?: number | null
+          wins?: number | null
+          xp?: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       generate_numeric_player_id: { Args: never; Returns: string }
