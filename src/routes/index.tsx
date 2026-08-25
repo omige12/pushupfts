@@ -392,11 +392,9 @@ function App() {
       if (challengeError) throw challengeError;
 
       // Fetch challenger profile for display
-      const { data: challengerProfile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', challenge.challenger_id)
-        .single();
+      const { data: challengerRows } = await (supabase as any)
+        .rpc('get_public_profile', { _id: challenge.challenger_id });
+      const challengerProfile = challengerRows?.[0];
 
       if (challengerProfile) {
         const opp = {
