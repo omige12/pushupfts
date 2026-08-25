@@ -26,6 +26,18 @@ import quizBgAsset from "@/assets/quiz_background.png.asset.json";
 
 export const Route = createFileRoute("/")({
   component: App,
+  head: () => ({
+    meta: [
+      { title: "Flex Battle — Contador de Flexões com IA e Duelos Online" },
+      { name: "description", content: "Treine flexões com contagem automática por IA na câmera, desafie amigos em duelos em tempo real e evolua de Bronze a Lenda no ranking global." },
+      { property: "og:title", content: "Flex Battle — Contador de Flexões com IA e Duelos Online" },
+      { property: "og:description", content: "Contagem automática de flexões por IA, duelos em tempo real contra amigos e ranking global de patentes." },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://pushupfts.lovable.app/" },
+      { name: "twitter:card", content: "summary" },
+    ],
+    links: [{ rel: "canonical", href: "https://pushupfts.lovable.app/" }],
+  }),
 });
 
 
