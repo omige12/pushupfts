@@ -1885,7 +1885,7 @@ function Challenge({ bot, opponent, duration, user, setUser, onExit, onComplete,
               <div className="relative">
                 <div className="w-16 h-16 clip-path-hexagon bg-electric-blue/30 p-0.5 shadow-[0_0_20px_rgba(0,210,255,0.3)] border border-electric-blue/40">
                   <div className="w-full h-full clip-path-hexagon overflow-hidden bg-slate-900 flex items-center justify-center">
-                    {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-7 h-7 text-electric-blue" />}
+                    {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" alt="Foto de perfil do seu jogador" /> : <UserIcon className="w-7 h-7 text-electric-blue" />}
                   </div>
                 </div>
                 {/* Rank Badge */}
@@ -1915,7 +1915,7 @@ function Challenge({ bot, opponent, duration, user, setUser, onExit, onComplete,
                 <div className="w-16 h-16 clip-path-hexagon bg-energy-red/30 p-0.5 shadow-[0_0_20px_rgba(255,49,49,0.3)] border border-energy-red/40">
                   <div className="w-full h-full clip-path-hexagon overflow-hidden bg-slate-900 flex items-center justify-center">
                     {!isTraining ? (
-                      <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" />
+                      <img src={activeOpponent?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${activeOpponent?.id || 'bot'}`} className="w-full h-full object-cover" alt={`Avatar do oponente ${activeOpponent?.name || 'bot'}`} />
                     ) : (
                       <Trophy className="w-7 h-7 text-gold" />
                     )}
@@ -2328,7 +2328,7 @@ function Profile({ setView, user, setUser, initialEditing = false, goBack, isEdi
             <div className="relative group">
               <div className="w-32 h-32 bg-[#0F131A] rounded-full border-4 border-electric-blue p-1 shadow-[0_0_20px_rgba(0,210,255,0.2)] overflow-hidden">
                 {formData.avatar ? (
-                  <img src={formData.avatar} className="w-full h-full object-cover" alt="Preview" />
+                  <img src={formData.avatar} className="w-full h-full object-cover" alt="Pré-visualização do seu avatar" />
                 ) : (
                   <div className="w-full h-full bg-white/5 flex items-center justify-center">
                     <UserIcon className="w-16 h-16 text-white/20" />
@@ -2980,7 +2980,7 @@ function Matchmaking({ user, onMatchFound, onCancel, duration }: { user: any, on
              {/* Player */}
              <div className="flex-1 space-y-3">
                <div className="w-20 h-20 mx-auto bg-primary/20 rounded-2xl border-2 border-primary flex items-center justify-center overflow-hidden">
-                 {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-10 h-10 text-primary" />}
+                 {user.avatar ? <img src={user.avatar} className="w-full h-full object-cover" alt="Foto de perfil do seu jogador" /> : <UserIcon className="w-10 h-10 text-primary" />}
                </div>
                <div>
                  <p className="text-xs font-black text-white italic truncate">{user.name}</p>
@@ -3360,7 +3360,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, s
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-full border-2 border-electric-blue/30 overflow-hidden bg-muted p-0.5">
                 {foundUser.avatar_url ? (
-                  <img src={foundUser.avatar_url} className="w-full h-full object-cover rounded-full" />
+                  <img src={foundUser.avatar_url} className="w-full h-full object-cover rounded-full" alt={`Avatar do jogador ${foundUser.name || 'encontrado'}`} />
                 ) : (
                   <div className="w-full h-full bg-white/5 flex items-center justify-center rounded-full">
                     <UserIcon className="w-6 h-6 text-white/20" />
@@ -3425,7 +3425,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, s
                 <div className="relative">
                   <div className="w-32 h-32 rounded-full border-4 border-electric-blue/40 overflow-hidden bg-muted p-1 shadow-[0_0_30px_rgba(0,210,255,0.2)]">
                     {opponentDetails.avatar_url ? (
-                      <img src={opponentDetails.avatar_url} className="w-full h-full object-cover rounded-full" />
+                      <img src={opponentDetails.avatar_url} className="w-full h-full object-cover rounded-full" alt={`Avatar do oponente ${opponentDetails.name || ''}`} />
                     ) : (
                       <div className="w-full h-full bg-white/5 flex items-center justify-center rounded-full">
                         <UserIcon className="w-12 h-12 text-white/20" />
@@ -3517,7 +3517,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, s
                     <div key={req.id} className="bg-white/5 p-4 rounded-2xl border border-white/5 flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full overflow-hidden bg-white/10">
-                          {req.profiles.avatar_url && <img src={req.profiles.avatar_url} className="w-full h-full object-cover" />}
+                          {req.profiles.avatar_url && <img src={req.profiles.avatar_url} className="w-full h-full object-cover" alt="Avatar do jogador que enviou o convite" />}
                         </div>
                         <div>
                           <p className="text-sm font-black italic text-white uppercase">{req.profiles.name}</p>
@@ -3566,7 +3566,7 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, s
                 <div className="relative">
                   <div className="w-12 h-12 rounded-full overflow-hidden border border-white/10">
                     {friend.avatar_url ? (
-                      <img src={friend.avatar_url} className="w-full h-full object-cover" />
+                      <img src={friend.avatar_url} className="w-full h-full object-cover" alt={`Avatar do amigo ${friend.name || ''}`} />
                     ) : (
                       <div className="w-full h-full bg-white/5 flex items-center justify-center">
                         <UserIcon className="w-5 h-5 text-white/20" />
@@ -4089,7 +4089,7 @@ const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="w-48 h-48 mb-2"
       >
-        <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]" alt="Flex Battle Logo" />
+        <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]" alt="Logotipo do Flex Battle" />
       </motion.div>
 
       <div className="space-y-1 text-center mb-8">
@@ -4098,7 +4098,7 @@ const OnboardingStart = ({ setView }: { setView: (v: View) => void }) => (
           <span>BATTLE</span>
         </h1>
         <p className="text-xs text-muted-foreground font-bold uppercase tracking-[0.3em] leading-relaxed">
-          "Desafie seus limites."
+          Contagem de flexões por IA · Duelos em tempo real · Ranking global
         </p>
       </div>
 
@@ -4298,7 +4298,7 @@ const Quiz = ({ setView, user, setUser }: { setView: (v: View) => void, user: an
             className="flex flex-col items-center gap-2"
           >
             <div className="w-14 h-14 relative p-2 bg-[#0B0E14] border border-electric-blue/30 rounded-2xl shadow-[0_0_20px_rgba(0,210,255,0.1)]">
-              <img src={logoAsset.url} className="w-full h-full object-contain" alt="Logo" />
+              <img src={logoAsset.url} className="w-full h-full object-contain" alt="Logotipo do Flex Battle" />
             </div>
             <h1 className="text-lg font-black italic tracking-tighter text-white uppercase leading-none">
               FLEX<span className="text-electric-blue">BATTLE</span>
@@ -4522,7 +4522,7 @@ const AuthView = ({ setView, user }: { setView: (v: View) => void, user: any }) 
           animate={{ y: 0, opacity: 1 }}
           className="w-24 h-24 relative p-3 bg-[#0B0E14] border-2 border-electric-blue rounded-[2rem] shadow-[0_0_30px_rgba(0,210,255,0.3)]"
         >
-          <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(0,210,255,0.5)]" alt="Logo" />
+          <img src={logoAsset.url} className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(0,210,255,0.5)]" alt="Logotipo do Flex Battle" />
         </motion.div>
 
         <div className="w-full space-y-2 text-center">
@@ -4641,7 +4641,7 @@ const PhotoUpload = ({ setView, user, setUser }: { setView: (v: View) => void, u
         <div className="relative mx-auto group">
           <div className="w-56 h-56 rounded-full bg-[#0F131A] border-4 border-dashed border-electric-blue/30 flex items-center justify-center overflow-hidden transition-all group-hover:border-electric-blue/50 group-hover:bg-electric-blue/5 shadow-[0_0_30px_rgba(0,210,255,0.1)]">
             {preview ? (
-              <img src={preview} className="w-full h-full object-cover" alt="Profile" />
+              <img src={preview} className="w-full h-full object-cover" alt="Pré-visualização da sua foto de perfil" />
             ) : (
               <div className="flex flex-col items-center gap-2 text-white/20">
                 <Plus className="w-16 h-16" />
