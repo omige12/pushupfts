@@ -3238,12 +3238,11 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, s
       return;
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
-      .eq('player_id', searchQuery)
-      .neq('id', user.supabaseId || user.id)
-      .maybeSingle();
+    const { data: searchRows } = await (supabase as any)
+      .rpc('search_player', { _player_id: searchQuery });
+    const profile = (searchRows || []).find(
+      (p: any) => p.id !== (user.supabaseId || user.id)
+    );
 
     if (profile) setFoundUser(profile);
     else {
