@@ -376,6 +376,36 @@ export type Database = {
     Functions: {
       generate_numeric_player_id: { Args: never; Returns: string }
       generate_unique_player_id: { Args: never; Returns: string }
+      get_public_profile: {
+        Args: { _id: string }
+        Returns: {
+          avatar_url: string
+          id: string
+          last_seen_at: string
+          level: number
+          losses: number
+          name: string
+          player_id: string
+          record: number
+          streak: number
+          wins: number
+          xp: number
+        }[]
+      }
+      get_ranking: {
+        Args: { _ids?: string[]; _limit?: number }
+        Returns: {
+          avatar_url: string
+          id: string
+          level: number
+          name: string
+          player_id: string
+          record: number
+          streak: number
+          wins: number
+          xp: number
+        }[]
+      }
       increment_mission_progress: {
         Args: {
           p_amount: number
@@ -383,6 +413,22 @@ export type Database = {
           p_user_id: string
         }
         Returns: undefined
+      }
+      search_player: {
+        Args: { _player_id: string }
+        Returns: {
+          avatar_url: string
+          id: string
+          last_seen_at: string
+          level: number
+          losses: number
+          name: string
+          player_id: string
+          record: number
+          streak: number
+          wins: number
+          xp: number
+        }[]
       }
       track_daily_login: { Args: { user_id_param: string }; Returns: undefined }
     }

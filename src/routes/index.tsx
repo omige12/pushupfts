@@ -392,11 +392,9 @@ function App() {
       if (challengeError) throw challengeError;
 
       // Fetch challenger profile for display
-      const { data: challengerProfile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', challenge.challenger_id)
-        .single();
+      const { data: challengerRows } = await (supabase as any)
+        .rpc('get_public_profile', { _id: challenge.challenger_id });
+      const challengerProfile = challengerRows?.[0];
 
       if (challengerProfile) {
         const opp = {
@@ -825,11 +823,9 @@ function App() {
           },
           async (payload) => {
             if (payload.new.status === 'accepted' && payload.new.match_id) {
-              const { data: opponentProfile } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', payload.new.challenged_id)
-                .single();
+              const { data: opponentRows } = await (supabase as any)
+                .rpc('get_public_profile', { _id: payload.new.challenged_id });
+              const opponentProfile = opponentRows?.[0];
 
               if (opponentProfile) {
                 const opp = {
@@ -3023,14 +3019,14 @@ function Multiplayer({ setView, user, onSelectBot, onStartMatchmaking, onChallen
 
     setIsSearching(true);
     try {
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('id, name, xp, record, avatar_url, level, player_id, last_seen_at')
-        .eq('player_id', searchId)
-        .neq('id', user.supabaseId || user.id)
-        .maybeSingle();
+      const { data: searchRows, error } = await (supabase as any)
+        .rpc('search_player', { _player_id: searchId });
 
       if (error) throw error;
+
+      const profile = (searchRows || []).find(
+        (p: any) => p.id !== (user.supabaseId || user.id)
+      );
 
       if (profile) {
         setFoundPlayer({
@@ -3242,12 +3238,11 @@ function FriendChallenge({ setView, user, onChallengePlayer, goBack, duration, s
       return;
     }
 
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id, player_id, name, xp, avatar_url, level, last_seen_at')
-      .eq('player_id', searchQuery)
-      .neq('id', user.supabaseId || user.id)
-      .maybeSingle();
+    const { data: searchRows } = await (supabase as any)
+      .rpc('search_player', { _player_id: searchQuery });
+    const profile = (searchRows || []).find(
+      (p: any) => p.id !== (user.supabaseId || user.id)
+    );
 
     if (profile) setFoundUser(profile);
     else {
@@ -3619,11 +3614,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
     const fetchRanking = async () => {
       setLoading(true);
       try {
-        let query = supabase
-          .from('profiles')
-          .select('id, name, xp, record, wins, streak, avatar_url, player_id')
-          .order('xp', { ascending: false })
-          .limit(100);
+        let ids: string[] | null = null;
 
         if (tab === 'friends') {
           const { data: friendships } = await supabase
@@ -3636,16 +3627,17 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
             (f.user_id === (user.supabaseId || user.id)) ? f.friend_id : f.user_id
           ) : [];
           
-          query = query.in('id', [...friendIds, user.supabaseId || user.id]);
+          ids = [...friendIds, user.supabaseId || user.id];
         }
 
-        const { data, error } = await query;
+        const { data, error } = await (supabase as any)
+          .rpc('get_ranking', { _ids: ids, _limit: 100 });
 
 
         if (error) throw error;
 
         if (data) {
-          const mappedData = data.map(p => ({
+          const mappedData = data.map((p: any) => ({
             id: p.id,
             name: p.name,
             count: Number(p.xp),
@@ -3660,7 +3652,7 @@ function Ranking({ setView, user, goBack }: { setView: (v: View) => void, user: 
           
           setRankingData(mappedData);
           
-          const uIdx = mappedData.findIndex(p => p.isUser);
+          const uIdx = mappedData.findIndex((p: any) => p.isUser);
           if (uIdx !== -1) setUserRank(uIdx + 1);
         }
 
